@@ -15,7 +15,9 @@
     "express-session": "^1.17.3",
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
-    "morgan": "~1.9.1"
+    "mongodb": "^5.0.0",
+    "morgan": "~1.9.1",
+    "sqlite3": "^5.1.4"
   },
   "devDependencies": {
     "eslint": "^8.33.0"

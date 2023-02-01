@@ -2,6 +2,7 @@ import express from 'express'
 import path from 'path'
 import sessions from 'express-session'
 import cookieParser from 'cookie-parser'
+import sqlite3 from 'sqlite3';
 const app = express()
 const port = 3000
 const oneDay = 1000*60*60*24
@@ -13,6 +14,48 @@ const oneDay = 1000*60*60*24
 // app.listen(port, () => {
 //   console.log(`Example app listening on port ${port}`)
 // })
+
+const db = new sqlite3.Database("db.sqlite", (err) => {
+  if (err) {
+    // Cannot open database
+    console.error(err.message);
+    throw err;
+  } else {
+    console.log("Connected to the SQLite database.");
+  }
+});
+
+var users = [
+  {
+    id: '1',
+    username: 'user',
+    password: 'pass'
+  },
+  {
+    id: '2',
+    username: 'users',
+    password: 'passs'
+  }
+]
+
+db.run(
+  `CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT, username text, password text)`,
+  (err) => {
+    if (err) {
+      // console.log(err)
+      // Table already created
+    } else {
+      // Table just created, creating some rows
+      var insert = "INSERT INTO users (username, password) VALUES (?,?)";
+      users.map((user) => {
+        db.run(insert, [
+          `${user.username}`,
+          `${user.password}`
+        ]);
+      });
+    }
+  }
+)
 
 app.use(sessions({
   secret: 'abc',
@@ -29,10 +72,6 @@ const __dirname = path.dirname('app.js')
 app.use(express.static(__dirname))
 
 app.use(cookieParser())
-
-//store in database
-const user = 'user'
-const password = 'pass'
 
 var session
 
