@@ -5,7 +5,7 @@ import cookieParser from 'cookie-parser'
 import sqlite3 from 'sqlite3';
 const app = express()
 const port = 3000
-const oneDay = 1000*60*60*24
+const oneDay = 1000 * 60 * 60 * 24
 
 // app.get('/', (req, res) => {
 //   res.send('Hello World!')
@@ -15,13 +15,13 @@ const oneDay = 1000*60*60*24
 //   console.log(`Example app listening on port ${port}`)
 // })
 
-const db = new sqlite3.Database("db.sqlite", (err) => {
+const db = new sqlite3.Database('db.sqlite', (err) => {
   if (err) {
     // Cannot open database
     console.error(err.message);
     throw err;
   } else {
-    console.log("Connected to the SQLite database.");
+    console.log('Connected to the SQLite database.');
   }
 });
 
@@ -38,15 +38,14 @@ var users = [
   }
 ]
 
-db.run(
-  `CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT, username text, password text)`,
+db.each(
+  'CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT, username text, password text)',
   (err) => {
     if (err) {
-      // console.log(err)
       // Table already created
     } else {
       // Table just created, creating some rows
-      var insert = "INSERT INTO users (username, password) VALUES (?,?)";
+      var insert = 'INSERT INTO users (username, password) VALUES (?,?)';
       users.map((user) => {
         db.run(insert, [
           `${user.username}`,
@@ -60,12 +59,12 @@ db.run(
 app.use(sessions({
   secret: 'abc',
   saveUnintialized: true,
-  cookie: {maxAge: oneDay},
+  cookie: { maxAge: oneDay },
   resave: false
 }))
 
 app.use(express.json())
-app.use(express.urlencoded({extended: true}))
+app.use(express.urlencoded({ extended: true }))
 
 const __dirname = path.dirname('app.js')
 
@@ -77,22 +76,35 @@ var session
 
 app.get('/', (request, result) => {
   session = request.session
-  if(session.userid) {
+  if (session.userid) {
     result.send("Welcome! <a href='/logout'>Click to logout</a>")
   } else {
-    result.sendFile('views/index.html', {root: __dirname})
+    result.sendFile('views/index.html', { root: __dirname })
   }
 })
 
+
 app.post('/user', (request, result) => {
-  if(request.body.username == user && request.body.password == password) {
-    session = request.session
-    session.userid = request.body.username
-    console.log(request.session)
-    result.send("Whats up! <a href='/logout'>Click to logout</a>")
-  } else {
-    result.send('Invalid login combo')
-  }
+  const selectQuery = `SELECT * FROM users WHERE username='${request.body.username}'`
+  db.get(
+    selectQuery,
+    (error, rows) => {
+      if (error || request.body.password == '') {
+        result.send("Username does not exist\n<a href='/logout'>Logout</a>")
+      } else if (rows.password == request.body.password) {
+        result.send("Username already exists\n<a href='/logout'>Logout</a>")
+      } else {
+        result.send("Username does not exist\n<a href='/logout'>Logout</a>")
+      }
+    })
+  // if (request.body.username == user && request.body.password == password) {
+  //   session = request.session
+  //   session.userid = request.body.username
+  //   console.log(request.session)
+  //   result.send("Whats up! <a href='/logout'>Click to logout</a>")
+  // } else {
+  //   result.send('Invalid login combo')
+  // }
 })
 
 app.get('/logout', (request, result) => {
