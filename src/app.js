@@ -53,7 +53,6 @@ app.use(sessions({
   cookie: { maxAge: oneDay },
   resave: false
 }))
-
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(express.static(directoryName))
