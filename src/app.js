@@ -1,30 +1,22 @@
+import 'dotenv/config';
 import express from 'express'
 import path from 'path'
 import sessions from 'express-session'
 import cookieParser from 'cookie-parser'
 import sqlite3 from 'sqlite3';
+
 const app = express()
 const port = 3000
 const oneDay = 1000 * 60 * 60 * 24
-
-// app.get('/', (req, res) => {
-//   res.send('Hello World!')
-// })
-
-// app.listen(port, () => {
-//   console.log(`Example app listening on port ${port}`)
-// })
-
-const db = new sqlite3.Database('db.sqlite', (err) => {
-  if (err) {
-    // Cannot open database
-    console.error(err.message);
-    throw err;
+const database = new sqlite3.Database('db.sqlite', (error) => {
+  if (error) {
+    console.error(error.message);
+    throw error;
   } else {
-    console.log('Connected to the SQLite database.');
+    console.log('Connected to database!');
   }
 });
-
+const directoryName = path.dirname('app.js')
 var users = [
   {
     id: '1',
@@ -37,17 +29,16 @@ var users = [
     password: 'passs'
   }
 ]
+var session
 
-db.each(
+database.each(
   'CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT, username text, password text)',
-  (err) => {
-    if (err) {
-      // Table already created
+  (error) => {
+    if (error) {
     } else {
-      // Table just created, creating some rows
       var insert = 'INSERT INTO users (username, password) VALUES (?,?)';
       users.map((user) => {
-        db.run(insert, [
+        database.run(insert, [
           `${user.username}`,
           `${user.password}`
         ]);
@@ -57,54 +48,41 @@ db.each(
 )
 
 app.use(sessions({
-  secret: 'abc',
-  saveUnintialized: true,
+  secret: 'blah',
+  saveUninitialized: true,
   cookie: { maxAge: oneDay },
   resave: false
 }))
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-
-const __dirname = path.dirname('app.js')
-
-app.use(express.static(__dirname))
-
+app.use(express.static(directoryName))
 app.use(cookieParser())
-
-var session
 
 app.get('/', (request, result) => {
   session = request.session
   if (session.userid) {
-    result.send("Welcome! <a href='/logout'>Click to logout</a>")
+    result.send(`Welcome ${session.userid}!<a href='/logout'>Click to logout</a>`)
   } else {
-    result.sendFile('views/index.html', { root: __dirname })
+    result.sendFile('views/index.html', { root: directoryName })
   }
 })
 
-
 app.post('/user', (request, result) => {
   const selectQuery = `SELECT * FROM users WHERE username='${request.body.username}'`
-  db.get(
+  database.get(
     selectQuery,
-    (error, rows) => {
+    (error, queryResult) => {
       if (error || request.body.password == '') {
         result.send("Username does not exist\n<a href='/logout'>Logout</a>")
-      } else if (rows.password == request.body.password) {
-        result.send("Username already exists\n<a href='/logout'>Logout</a>")
+      } else if (queryResult.password == request.body.password) {
+        session = request.session
+        session.userid = request.body.username
+        result.send("Whats up! <a href='/logout'>Click to logout</a>")
       } else {
         result.send("Username does not exist\n<a href='/logout'>Logout</a>")
       }
     })
-  // if (request.body.username == user && request.body.password == password) {
-  //   session = request.session
-  //   session.userid = request.body.username
-  //   console.log(request.session)
-  //   result.send("Whats up! <a href='/logout'>Click to logout</a>")
-  // } else {
-  //   result.send('Invalid login combo')
-  // }
 })
 
 app.get('/logout', (request, result) => {
@@ -113,4 +91,3 @@ app.get('/logout', (request, result) => {
 })
 
 app.listen(port, () => console.log(`Server running at port ${port}`))
-
