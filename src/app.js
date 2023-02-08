@@ -1,19 +1,19 @@
-import 'dotenv/config';
+import 'dotenv/config'
 import express from 'express'
 import path from 'path'
 import sessions from 'express-session'
 import cookieParser from 'cookie-parser'
-import sqlite3 from 'sqlite3';
+import sqlite3 from 'sqlite3'
 
 const app = express()
 const port = 3000
 const oneDay = 1000 * 60 * 60 * 24
 const database = new sqlite3.Database('db.sqlite', (error) => {
   if (error) {
-    console.error(error.message);
-    throw error;
+    console.error(error.message)
+    throw error
   } else {
-    console.log('Connected to database!');
+    console.log('Connected to database!')
   }
 });
 const directoryName = path.dirname('app.js')
