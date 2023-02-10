@@ -2,10 +2,8 @@ import mongoose from 'mongoose'
 mongoose.set('strictQuery', false)
 
 const UserSchema = new mongoose.Schema({
-        user: String,
-        password: String
-    })
+    username: String,
+    password: String
+})
 
-const User = mongoose.model("d2-vendor-alert-users", UserSchema)
-
-export { User }
+export const User = mongoose.model("d2-vendor-alert-users", UserSchema)

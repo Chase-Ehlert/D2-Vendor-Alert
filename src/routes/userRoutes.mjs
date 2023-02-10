@@ -15,6 +15,28 @@ export const getUsers = app.get('/users', async (request, response) => {
     }
 })
 
+export const getUserEndpoint = app.get('/user', jsonParser, async (request, response) => {
+    const userRequest = new User(request.body)
+    await User.findOne({ user: userRequest.user }).then((user, error) => {
+        if (error) {
+            response.status(500).send(error)
+        } else {
+            user == null ? response.send("User record does not exist!") : response.send(user)
+        }
+    })
+})
+
+export async function getUser(user) {
+    const userRequest = new User(user)
+    return await User.findOne({ user: userRequest.username }).lean().then((user, error) => {
+        if (error) {
+            return error
+        } else {
+            return user.user
+        }
+    })
+}
+
 export const addUser = app.post('/save', jsonParser, async (request, response) => {
     const user = new User(request.body)
     try {
@@ -38,7 +60,7 @@ export const updateUser = app.patch('/user/:id', jsonParser, async (request, res
 export const deleteUser = app.delete('/user/:id', jsonParser, async (request, response) => {
     try {
         const user = await User.findByIdAndDelete(request.params.id)
-        
+
         if (!user) {
             response.status(404).send('The user does not exist')
         }

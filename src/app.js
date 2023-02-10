@@ -3,52 +3,68 @@ import express from 'express'
 import path from 'path'
 import sessions from 'express-session'
 import cookieParser from 'cookie-parser'
-import sqlite3 from 'sqlite3'
+import mongoose from 'mongoose'
+import {getUser} from './routes/userRoutes.mjs'
 
+mongoose.set('strictQuery', false)
 const app = express()
 const port = 3000
 const oneDay = 1000 * 60 * 60 * 24
-const database = new sqlite3.Database('db.sqlite', (error) => {
-  if (error) {
-    console.error(error.message)
-    throw error
-  } else {
-    console.log('Connected to database!')
-  }
-});
-const directoryName = path.dirname('app.js')
-var users = [
-  {
-    id: '1',
-    username: 'user',
-    password: 'pass'
-  },
-  {
-    id: '2',
-    username: 'users',
-    password: 'passs'
-  }
-]
 var session
 
-database.each(
-  'CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT, username text, password text)',
-  (error) => {
-    if (error) {
-    } else {
-      var insert = 'INSERT INTO users (username, password) VALUES (?,?)';
-      users.map((user) => {
-        database.run(insert, [
-          `${user.username}`,
-          `${user.password}`
-        ]);
-      });
-    }
+// const database = new sqlite3.Database('db.sqlite', (error) => {
+//   if (error) {
+//     console.error(error.message)
+//     throw error
+//   } else {
+//     console.log('Connected to database!')
+//   }
+// });
+
+mongoose.connect(
+  `mongodb+srv://deathdealer699:${process.env.DATABASE_PASSWORD}@cluster0.ikypndl.mongodb.net/users`,
+  {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
   }
 )
 
+app.listen(port, () => {
+  console.log('Server is running...')
+})
+
+const directoryName = path.dirname('app.js')
+// var users = [
+//   {
+//     id: '1',
+//     username: 'user',
+//     password: 'pass'
+//   },
+//   {
+//     id: '2',
+//     username: 'users',
+//     password: 'passs'
+//   }
+// ]
+
+// database.each(
+//   'CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT, username text, password text)',
+//   (error) => {
+//     if (error) {
+//     } else {
+//       var insert = 'INSERT INTO users (username, password) VALUES (?,?)';
+//       users.map((user) => {
+//         database.run(insert, [
+//           `${user.username}`,
+//           `${user.password}`
+//         ]);
+//       });
+//     }
+//   }
+// )
+
 app.use(sessions({
-  secret: 'blah',
+  secret: process.env.SESSION_KEY,
   saveUninitialized: true,
   cookie: { maxAge: oneDay },
   resave: false
@@ -67,21 +83,23 @@ app.get('/', (request, result) => {
   }
 })
 
-app.post('/user', (request, result) => {
-  const selectQuery = `SELECT * FROM users WHERE username='${request.body.username}'`
-  database.get(
-    selectQuery,
-    (error, queryResult) => {
-      if (error || request.body.password == '') {
-        result.send("Username does not exist\n<a href='/logout'>Logout</a>")
-      } else if (queryResult.password == request.body.password) {
-        session = request.session
-        session.userid = request.body.username
-        result.send("Whats up! <a href='/logout'>Click to logout</a>")
-      } else {
-        result.send("Username does not exist\n<a href='/logout'>Logout</a>")
-      }
-    })
+app.post('/user', async (request, result) => {
+  // const selectQuery = `SELECT * FROM users WHERE username='${request.body.username}'`
+  // database.get(
+  //   selectQuery,
+  //   (error, queryResult) => {
+  //     if (error || request.body.password == '') {
+  //       result.send("Username does not exist\n<a href='/logout'>Logout</a>")
+  //     } else if (queryResult.password == request.body.password) {
+  //       session = request.session
+  //       session.userid = request.body.username
+  //       result.send("Whats up! <a href='/logout'>Click to logout</a>")
+  //     } else {
+  //       result.send("Username does not exist\n<a href='/logout'>Logout</a>")
+  //     }
+  //   })
+    const userQuery = await getUser(request.body)
+    console.log(userQuery)
 })
 
 app.get('/logout', (request, result) => {
@@ -89,4 +107,4 @@ app.get('/logout', (request, result) => {
   result.redirect('/')
 })
 
-app.listen(port, () => console.log(`Server running at port ${port}`))
+// app.listen(port, () => console.log(`Server running at port ${port}`))
