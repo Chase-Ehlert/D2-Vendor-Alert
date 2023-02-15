@@ -8,7 +8,7 @@ import {getUser} from './routes/userRoutes.mjs'
 
 mongoose.set('strictQuery', false)
 const app = express()
-const port = 3000
+const port = 3001
 const oneDay = 1000 * 60 * 60 * 24
 var session
 
@@ -106,5 +106,11 @@ app.get('/logout', (request, result) => {
   request.session.destroy()
   result.redirect('/')
 })
+
+const minutes = 5
+const interval = minutes * 60 * 1000
+setInterval(function() {
+  console.log('here')
+}, interval)
 
 // app.listen(port, () => console.log(`Server running at port ${port}`))
