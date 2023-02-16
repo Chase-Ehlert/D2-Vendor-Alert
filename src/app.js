@@ -5,9 +5,11 @@ import sessions from 'express-session'
 import cookieParser from 'cookie-parser'
 import mongoose from 'mongoose'
 import {getUser} from './routes/userRoutes.mjs'
+import discord from 'discord.js'
 
 mongoose.set('strictQuery', false)
 const app = express()
+const discordClient = new discord.Client
 const port = 3001
 const oneDay = 1000 * 60 * 60 * 24
 var session
@@ -74,16 +76,16 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.static(directoryName))
 app.use(cookieParser())
 
-app.get('/', (request, result) => {
-  session = request.session
-  if (session.userid) {
-    result.send(`Welcome ${session.userid}!<a href='/logout'>Click to logout</a>`)
-  } else {
-    result.sendFile('views/index.html', { root: directoryName })
-  }
-})
+// app.get('/', (request, result) => {
+//   session = request.session
+//   if (session.userid) {
+//     result.send(`Welcome ${session.userid}!<a href='/logout'>Click to logout</a>`)
+//   } else {
+//     result.sendFile('views/index.html', { root: directoryName })
+//   }
+// })
 
-app.post('/user', async (request, result) => {
+// app.post('/user', async (request, result) => {
   // const selectQuery = `SELECT * FROM users WHERE username='${request.body.username}'`
   // database.get(
   //   selectQuery,
@@ -98,14 +100,14 @@ app.post('/user', async (request, result) => {
   //       result.send("Username does not exist\n<a href='/logout'>Logout</a>")
   //     }
   //   })
-    const userQuery = await getUser(request.body)
-    console.log(userQuery)
-})
+//     const userQuery = await getUser(request.body)
+//     console.log(userQuery)
+// })
 
-app.get('/logout', (request, result) => {
-  request.session.destroy()
-  result.redirect('/')
-})
+// app.get('/logout', (request, result) => {
+//   request.session.destroy()
+//   result.redirect('/')
+// })
 
 const minutes = 5
 const interval = minutes * 60 * 1000
@@ -114,3 +116,11 @@ setInterval(function() {
 }, interval)
 
 // app.listen(port, () => console.log(`Server running at port ${port}`))
+
+discordClient.on('message', message => {
+  if (message.content == 'Speak Bot') {
+    message.reply('Hello World')
+  }
+})
+
+discordClient.login(process.env.VENDOR_ALERT_CLIENT_ID)
