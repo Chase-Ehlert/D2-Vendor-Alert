@@ -123,4 +123,4 @@ discordClient.on('message', message => {
   }
 })
 
-discordClient.login(process.env.VENDOR_ALERT_CLIENT_ID)
+discordClient.login(process.env.VENDOR_ALERT_TOKEN)
