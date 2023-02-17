@@ -14,19 +14,10 @@ const app = express()
 const discordClient = new discord.Client({intents: [discord.GatewayIntentBits.Guilds]})
 const port = 3001
 const oneDay = 1000 * 60 * 60 * 24
-var session
+// var session
 const dirName = url.fileURLToPath(new URL('.', import.meta.url))
 
 discordClient.commands = new Collection()
-
-// const database = new sqlite3.Database('db.sqlite', (error) => {
-//   if (error) {
-//     console.error(error.message)
-//     throw error
-//   } else {
-//     console.log('Connected to database!')
-//   }
-// })
 
 mongoose.connect(
   `mongodb+srv://deathdealer699:${process.env.DATABASE_PASSWORD}@cluster0.ikypndl.mongodb.net/users`,
@@ -38,6 +29,10 @@ mongoose.connect(
 
 app.listen(port, () => {
   console.log('Server is running...')
+})
+
+app.listen(443, () => {
+  console.log('MESSAGED RECIEVED')
 })
 
 const directoryName = path.dirname('app.js')
@@ -120,8 +115,6 @@ setInterval(function() {
   console.log('here')
 }, interval)
 
-// app.listen(port, () => console.log(`Server running at port ${port}`))
-
 discordClient.once(discord.Events.ClientReady, eventClient => {
   console.log(`Ready, logged in as ${eventClient.user.tag}`)
 })
@@ -154,3 +147,4 @@ discordClient.on(Events.InteractionCreate, async interaction => {
     await interaction.reply({content: 'Something went wrong!'})
   }
 })
+
