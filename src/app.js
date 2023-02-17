@@ -1,18 +1,23 @@
 import 'dotenv/config'
 import express from 'express'
 import path from 'path'
+import * as url from 'url'
 import sessions from 'express-session'
 import cookieParser from 'cookie-parser'
 import mongoose from 'mongoose'
 import {getUser} from './routes/userRoutes.mjs'
-import discord from 'discord.js'
+import discord, { Collection, Events } from 'discord.js'
+import fs from 'fs'
 
 mongoose.set('strictQuery', false)
 const app = express()
-const discordClient = new discord.Client
+const discordClient = new discord.Client({intents: [discord.GatewayIntentBits.Guilds]})
 const port = 3001
 const oneDay = 1000 * 60 * 60 * 24
 var session
+const dirName = url.fileURLToPath(new URL('.', import.meta.url))
+
+discordClient.commands = new Collection()
 
 // const database = new sqlite3.Database('db.sqlite', (error) => {
 //   if (error) {
@@ -21,7 +26,7 @@ var session
 //   } else {
 //     console.log('Connected to database!')
 //   }
-// });
+// })
 
 mongoose.connect(
   `mongodb+srv://deathdealer699:${process.env.DATABASE_PASSWORD}@cluster0.ikypndl.mongodb.net/users`,
@@ -54,13 +59,13 @@ const directoryName = path.dirname('app.js')
 //   (error) => {
 //     if (error) {
 //     } else {
-//       var insert = 'INSERT INTO users (username, password) VALUES (?,?)';
+//       var insert = 'INSERT INTO users (username, password) VALUES (?,?)'
 //       users.map((user) => {
 //         database.run(insert, [
 //           `${user.username}`,
 //           `${user.password}`
-//         ]);
-//       });
+//         ])
+//       })
 //     }
 //   }
 // )
@@ -117,10 +122,35 @@ setInterval(function() {
 
 // app.listen(port, () => console.log(`Server running at port ${port}`))
 
-discordClient.on('message', message => {
-  if (message.content == 'Speak Bot') {
-    message.reply('Hello World')
-  }
+discordClient.once(discord.Events.ClientReady, eventClient => {
+  console.log(`Ready, logged in as ${eventClient.user.tag}`)
 })
 
 discordClient.login(process.env.VENDOR_ALERT_TOKEN)
+
+const commandsPath = path.join(dirName, 'commands')
+const commandsFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'))
+
+for (const file of commandsFiles) {
+  const filePath = path.join(commandsPath, file)
+  const command = await import(`./commands/${file}`)
+
+  if ('data' in command.object && 'execute' in command.object) {
+    discordClient.commands.set(command.object.data.name, command.object)
+  } else {
+    console.log(`The command at ${filePath} is missing "data" or "execute"`)
+  }
+}
+
+
+discordClient.on(Events.InteractionCreate, async interaction => {
+  console.log(interaction)
+  const command = interaction.client.commands.get(interaction.commandName)
+
+  try {
+    await command.execute(interaction)
+  } catch (error) {
+    console.log(error)
+    await interaction.reply({content: 'Something went wrong!'})
+  }
+})
