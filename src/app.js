@@ -31,10 +31,6 @@ app.listen(port, () => {
   console.log('Server is running...')
 })
 
-app.listen(443, () => {
-  console.log('MESSAGED RECIEVED')
-})
-
 const directoryName = path.dirname('app.js')
 // var users = [
 //   {
@@ -84,6 +80,10 @@ app.use(cookieParser())
 //     result.sendFile('views/index.html', { root: directoryName })
 //   }
 // })
+
+app.get('/test', (request, result) => {
+  console.log('MESSAGE RECEIVED')
+})
 
 // app.post('/user', async (request, result) => {
   // const selectQuery = `SELECT * FROM users WHERE username='${request.body.username}'`
