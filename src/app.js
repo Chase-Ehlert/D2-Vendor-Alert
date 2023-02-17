@@ -81,7 +81,7 @@ app.use(cookieParser())
 //   }
 // })
 
-app.get('/test', (request, result) => {
+app.get('/redirect', (request, result) => {
   console.log('MESSAGE RECEIVED')
   result.send('YAY')
 })
