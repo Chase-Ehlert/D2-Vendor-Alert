@@ -83,6 +83,7 @@ app.use(cookieParser())
 
 app.get('/test', (request, result) => {
   console.log('MESSAGE RECEIVED')
+  result.send('YAY')
 })
 
 // app.post('/user', async (request, result) => {
