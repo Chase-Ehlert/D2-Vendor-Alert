@@ -83,7 +83,7 @@ app.use(cookieParser())
 
 app.get('/', (request, result) => {
   console.log('MESSAGE RECEIVED')
-  console.log(request)
+  console.log(request.query.code)
   result.send('YAY')
 })
 
