@@ -138,8 +138,11 @@ for (const file of commandsFiles) {
 
 
 discordClient.on(Events.InteractionCreate, async interaction => {
-  console.log(interaction)
   const command = interaction.client.commands.get(interaction.commandName)
+  console.log('command name')
+  console.log(interaction.commandName)
+  console.log('command')
+  console.log(command)
 
   try {
     await command.execute(interaction)
