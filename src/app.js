@@ -8,6 +8,7 @@ import mongoose from 'mongoose'
 import {getUser} from './routes/userRoutes.mjs'
 import discord, { Collection, Events } from 'discord.js'
 import fs from 'fs'
+import axios from 'axios'
 
 mongoose.set('strictQuery', false)
 const app = express()
@@ -81,9 +82,24 @@ app.use(cookieParser())
 //   }
 // })
 
-app.get('/', (request, result) => {
+app.get('/', async (request, result) => {
   console.log('MESSAGE RECEIVED')
   console.log(request.query.code)
+
+  const accessToken = await axios.post('https://www.bungie.net/platform/app/oauth/token/', {
+    grant_type: 'authorization_code',
+    code: request.query.code,
+    client_secret: process.env.VENDOR_ALERT_OAUTH_SECRET,
+    client_id: process.env.VENDOR_ALERT_OAUTH_CLIENT_ID
+  }, {
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'x-api-key': process.env.VENDOR_ALERT_API_KEY
+    }
+  })
+
+  console.log(accessToken)
+
   result.send('YAY')
 })
 
