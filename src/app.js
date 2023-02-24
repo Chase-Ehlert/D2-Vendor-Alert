@@ -81,8 +81,9 @@ app.use(cookieParser())
 //   }
 // })
 
-app.get('/redirect', (request, result) => {
+app.get('/', (request, result) => {
   console.log('MESSAGE RECEIVED')
+  console.log(request)
   result.send('YAY')
 })
 
@@ -139,12 +140,6 @@ for (const file of commandsFiles) {
 
 discordClient.on(Events.InteractionCreate, async interaction => {
   const command = interaction.client.commands.get(interaction.commandName)
-  console.log('commands')
-  console.log(interaction.client.commands)
-  console.log('command name')
-  console.log(interaction.commandName)
-  console.log('command')
-  console.log(command)
 
   try {
     await command.execute(interaction)
