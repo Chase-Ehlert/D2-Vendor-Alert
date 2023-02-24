@@ -84,7 +84,6 @@ app.use(cookieParser())
 
 app.get('/', async (request, result) => {
   console.log('MESSAGE RECEIVED')
-  console.log(request.query.code)
 
   const accessToken = await axios.post('https://www.bungie.net/platform/app/oauth/token/', {
     grant_type: 'authorization_code',
@@ -98,7 +97,7 @@ app.get('/', async (request, result) => {
     }
   })
 
-  console.log(accessToken)
+  console.log(accessToken.refresh_expires_in)
 
   result.send('YAY')
 })
