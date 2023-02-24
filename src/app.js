@@ -129,8 +129,8 @@ for (const file of commandsFiles) {
   const filePath = path.join(commandsPath, file)
   const command = await import(`./commands/${file}`)
 
-  if ('data' in command.object && 'execute' in command.object) {
-    discordClient.commands.set(command.object.data.name, command.object)
+  if ('data' in command.default && 'execute' in command.default) {
+    discordClient.commands.set(command.default.name, command.default)
   } else {
     console.log(`The command at ${filePath} is missing "data" or "execute"`)
   }

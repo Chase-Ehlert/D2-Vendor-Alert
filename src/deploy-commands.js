@@ -7,13 +7,12 @@ const commandFiles = fs.readdirSync('./src/commands').filter(file => file.endsWi
 
 for (const file of commandFiles) {
 	const command = await import(`./commands/${file}`)
-	commands.push(command.object.data)
+	commands.push(command.default.data)
 }
 
 const rest = new REST({ version: '10' }).setToken(process.env.VENDOR_ALERT_TOKEN)
-console.log(commands)
 
-async function something() {
+async function registerCommands() {
 	try {
 		console.log(`Started refreshing ${commands.length} application (/) commands.`)
 
@@ -28,4 +27,4 @@ async function something() {
 	}
 }
 
-await something()
+await registerCommands()
