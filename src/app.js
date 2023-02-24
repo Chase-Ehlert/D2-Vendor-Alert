@@ -130,7 +130,7 @@ for (const file of commandsFiles) {
   const command = await import(`./commands/${file}`)
 
   if ('data' in command.default && 'execute' in command.default) {
-    discordClient.commands.set(command.default.name, command.default)
+    discordClient.commands.set(command.default.data.name, command.default)
   } else {
     console.log(`The command at ${filePath} is missing "data" or "execute"`)
   }
