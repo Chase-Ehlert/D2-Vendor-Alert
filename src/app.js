@@ -139,6 +139,8 @@ for (const file of commandsFiles) {
 
 discordClient.on(Events.InteractionCreate, async interaction => {
   const command = interaction.client.commands.get(interaction.commandName)
+  console.log('commands')
+  console.log(interaction.client.commands)
   console.log('command name')
   console.log(interaction.commandName)
   console.log('command')
