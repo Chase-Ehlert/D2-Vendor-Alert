@@ -99,6 +99,8 @@ app.get('/', async (request, result) => {
 
   console.log(data.refresh_expires_in)
 
+  // need to save the user's membership id, the current time plus refresh expiration (to know when it'll expire), and the refresh token in the DB
+
   result.send('YAY')
 })
 
