@@ -105,6 +105,7 @@ app.get('/', async (request, result) => {
   console.log('DATE')
   console.log(currentDate)
   console.log(currentDate.getDate)
+  console.log(currentDate.getDate())
   const refreshTokenExpireDate = currentDate.setDate(currentDate.getDate() + daysTillTokenExpires)
   const refreshTokenInfo = {
     refresh_expiration: refreshTokenExpireDate,
