@@ -44,7 +44,8 @@ export async function doesUserExist(membershipId) {
             return error
         } else if (user == null) {
             return false
-        } else if (user.user) {
+        } else if (user) {
+            console.log('RETURNING TRUE')
             return true
         } else {
             return false

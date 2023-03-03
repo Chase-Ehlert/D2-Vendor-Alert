@@ -106,6 +106,7 @@ app.get('/', async (request, result) => {
 }
 
   if (await database.doesUserExist(data.membership_id)) {
+    console.log('USER EXISTS')
     await database.updateUser(data.membership_id, refreshTokenInfo)
   } else {
     await database.addUser(data.membership_id, refreshTokenInfo)
