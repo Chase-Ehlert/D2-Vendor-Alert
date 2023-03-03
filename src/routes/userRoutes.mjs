@@ -26,9 +26,8 @@ export const getUserEndpoint = app.get('/user', jsonParser, async (request, resp
     })
 })
 
-export async function getUser(user) {
-    const userRequest = new User(user)
-    return await User.findOne({ user: userRequest.username }).lean().then((user, error) => {
+export async function getUser(membershipId) {
+    return await User.findOne({ user: membershipId }).lean().then((user, error) => {
         if (error) {
             return error
         } else {
@@ -37,7 +36,29 @@ export async function getUser(user) {
     })
 }
 
-export const addUser = app.post('/save', jsonParser, async (request, response) => {
+export async function doesUserExist(membershipId) {
+    return await User.findOne({ user: membershipId }).lean().then((user, error) => {
+        if (error) {
+            return error
+        } else if (user.user) {
+            return true
+        } else {
+            return false
+        }
+    })
+}
+
+export async function addUser(membershipId, refreshTokenInfo) {
+    const user = new User(membershipId, refreshTokenInfo.refresh_expiration, refreshTokenInfo.refresh_token)
+    try {
+        await user.save()
+    } catch (error) {
+        console.log('Adding user failed')
+        console.log(error)
+    }
+}
+
+export const addUserSomething = app.post('/save', jsonParser, async (request, response) => {
     const user = new User(request.body)
     try {
         await user.save()
@@ -47,7 +68,26 @@ export const addUser = app.post('/save', jsonParser, async (request, response) =
     }
 })
 
-export const updateUser = app.patch('/user/:id', jsonParser, async (request, response) => {
+export async function updateUser(membershipId, refreshTokenInfo) {
+    try {
+        await User.findOneAndUpdate(
+            { membership_id: membershipId },
+            { $set: { refreshTokenInfo } },
+            (error) => {
+                if (error) {
+                    console.log('Updating user record failed')
+                    console.log(error)
+                } else {
+                    console.log('Updated user record')
+                }
+            }
+        )
+    } catch (error) {
+        return error
+    }
+}
+
+export const updateUserSomething = app.patch('/user/:id', jsonParser, async (request, response) => {
     try {
         const something = await User.findByIdAndUpdate(request.params.id, request.body)
         await something.save()

@@ -2,8 +2,9 @@ import mongoose from 'mongoose'
 mongoose.set('strictQuery', false)
 
 const UserSchema = new mongoose.Schema({
-    username: String,
-    password: String
+    membership_id: String,
+    refresh_expiration: String,
+    refresh_token: String
 })
 
-export const User = mongoose.model("d2-vendor-alert-users", UserSchema)
+export const User = mongoose.model("users", UserSchema)

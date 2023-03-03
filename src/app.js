@@ -5,7 +5,7 @@ import * as url from 'url'
 import sessions from 'express-session'
 import cookieParser from 'cookie-parser'
 import mongoose from 'mongoose'
-import {getUser} from './routes/userRoutes.mjs'
+import database from './routes/userRoutes.mjs'
 import discord, { Collection, Events } from 'discord.js'
 import fs from 'fs'
 import axios from 'axios'
@@ -100,6 +100,19 @@ app.get('/', async (request, result) => {
   console.log(data.refresh_expires_in)
 
   // need to save the user's membership id, the current time plus refresh expiration (to know when it'll expire), and the refresh token in the DB
+  const daysTillTokenExpires = data.refresh_expires_in / 60 / 60 / 24
+  const currentDate = Date.now()
+  const refreshTokenExpireDate = currentDate.setDate(currentDate.getDate() + daysTillTokenExpires)
+  const refreshTokenInfo = {
+    refresh_expiration: refreshTokenExpireDate,
+    refresh_token: data.refresh_token
+}
+
+  if (await database.doesUserExist(data.membership_id)) {
+    await database.updateUser(data.membership_id, refreshTokenInfo)
+  } else {
+    await database.addUser(data.membership_id, refreshTokenInfo)
+  }
 
   result.send('YAY')
 })
@@ -128,11 +141,11 @@ app.get('/', async (request, result) => {
 //   result.redirect('/')
 // })
 
-const minutes = 5
-const interval = minutes * 60 * 1000
-setInterval(function() {
-  console.log('here')
-}, interval)
+// const minutes = 5
+// const interval = minutes * 60 * 1000
+// setInterval(function() {
+//   console.log('here')
+// }, interval)
 
 discordClient.once(discord.Events.ClientReady, eventClient => {
   console.log(`Ready, logged in as ${eventClient.user.tag}`)
