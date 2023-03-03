@@ -38,6 +38,8 @@ export async function getUser(membershipId) {
 
 export async function doesUserExist(membershipId) {
     return await User.findOne({ user: membershipId }).lean().then((user, error) => {
+        console.log('USER')
+        console.log(user)
         if (error) {
             return error
         } else if (user.user) {
