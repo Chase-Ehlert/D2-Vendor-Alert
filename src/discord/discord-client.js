@@ -16,7 +16,7 @@ export async function setupDiscordClient() {
 }
 
 async function setupSlashCommands(discordClient) {
-    const commandsPath = path.join(url.fileURLToPath(new URL('.', import.meta.url)), 'commands')
+    const commandsPath = path.join(url.fileURLToPath(new URL('./', import.meta.url)), 'commands')
     const commandsFiles = fileSystem.readdirSync(commandsPath).filter(file => file.endsWith('.js'))
 
     for (const file of commandsFiles) {

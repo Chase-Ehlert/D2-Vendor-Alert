@@ -1,5 +1,5 @@
 import axios from 'axios'
-import * as database from './database/users-operations.js'
+import * as database from './users-operations.js'
 
 export async function handleRefreshToken(request) {
     const { data } = await axios.post('https://www.bungie.net/platform/app/oauth/token/', {
