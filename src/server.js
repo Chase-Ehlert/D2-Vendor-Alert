@@ -1,7 +1,7 @@
 import 'dotenv/config'
 import express from 'express'
 import mongoose from 'mongoose'
-import { getUsers } from './routes/userRoutes.mjs'
+import { getUsers } from './routes/usersOperations.js'
 
 const app = express()
 mongoose.connect(

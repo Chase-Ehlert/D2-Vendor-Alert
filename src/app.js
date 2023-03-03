@@ -5,7 +5,7 @@ import * as url from 'url'
 import sessions from 'express-session'
 import cookieParser from 'cookie-parser'
 import mongoose from 'mongoose'
-import * as database from './routes/userRoutes.mjs'
+import * as database from './routes/usersOperations.js'
 import discord, { Collection, Events } from 'discord.js'
 import fs from 'fs'
 import axios from 'axios'
@@ -106,7 +106,6 @@ app.get('/', async (request, result) => {
 }
 
   if (await database.doesUserExist(data.membership_id)) {
-    console.log('USER EXISTS')
     await database.updateUser(data.membership_id, refreshTokenInfo)
   } else {
     await database.addUser(data.membership_id, refreshTokenInfo)
