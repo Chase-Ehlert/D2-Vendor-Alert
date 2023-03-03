@@ -101,7 +101,8 @@ app.get('/', async (request, result) => {
 
   // need to save the user's membership id, the current time plus refresh expiration (to know when it'll expire), and the refresh token in the DB
   const daysTillTokenExpires = data.refresh_expires_in / 60 / 60 / 24
-  const currentDate = Date.now()
+  // const currentDate = Date.now()
+  const currentDate = new Date(new Date().toUTCString())
   console.log('DATE')
   console.log(currentDate)
   console.log(currentDate.getDate())
