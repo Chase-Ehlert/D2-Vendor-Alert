@@ -1,4 +1,16 @@
-import { User } from '../models/users.js'
+import mongoose from 'mongoose'
+import { User } from './models/users.js'
+
+export function setupDatabaseConnection() {
+    mongoose.set('strictQuery', false)
+    mongoose.connect(
+        `mongodb+srv://deathdealer699:${process.env.DATABASE_PASSWORD}@cluster0.ikypndl.mongodb.net/d2-vendor-alert`,
+        {
+            useNewUrlParser: true,
+            useUnifiedTopology: true
+        }
+    )
+}
 
 export async function doesUserExist(membershipId) {
     return await User.findOne({ membership_id: membershipId }).lean().then((user, error) => {
