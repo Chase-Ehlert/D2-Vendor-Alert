@@ -103,13 +103,9 @@ app.get('/', async (request, result) => {
   const daysTillTokenExpires = data.refresh_expires_in / 60 / 60 / 24
   // const currentDate = Date.now()
   const currentDate = new Date(new Date().toUTCString())
-  console.log('DATE')
-  console.log(currentDate)
   currentDate.setDate(currentDate.getDate() + daysTillTokenExpires)
-  console.log(currentDate)
-  const refreshTokenExpireDate = currentDate.setDate(currentDate.getDate() + daysTillTokenExpires)
   const refreshTokenInfo = {
-    refresh_expiration: refreshTokenExpireDate,
+    refresh_expiration: currentDate,
     refresh_token: data.refresh_token
 }
 

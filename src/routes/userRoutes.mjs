@@ -55,7 +55,13 @@ export async function doesUserExist(membershipId) {
 }
 
 export async function addUser(membershipId, refreshTokenInfo) {
-    const user = new User(membershipId, refreshTokenInfo.refresh_expiration, refreshTokenInfo.refresh_token)
+    const user = new User({
+        membership_id: membershipId,
+        refresh_expiration: refreshTokenInfo.refresh_expiration,
+        refresh_token: refreshTokenInfo.refresh_token
+    })
+    console.log('USER 2')
+    console.log(user)
     try {
         await user.save()
     } catch (error) {
