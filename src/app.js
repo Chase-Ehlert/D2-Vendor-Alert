@@ -21,7 +21,7 @@ const dirName = url.fileURLToPath(new URL('.', import.meta.url))
 discordClient.commands = new Collection()
 
 mongoose.connect(
-  `mongodb+srv://deathdealer699:${process.env.DATABASE_PASSWORD}@cluster0.ikypndl.mongodb.net/users`,
+  `mongodb+srv://deathdealer699:${process.env.DATABASE_PASSWORD}@cluster0.ikypndl.mongodb.net/d2-vendor-alert`,
   {
       useNewUrlParser: true,
       useUnifiedTopology: true
@@ -83,8 +83,6 @@ app.use(cookieParser())
 // })
 
 app.get('/', async (request, result) => {
-  console.log('MESSAGE RECEIVED')
-
   const {data} = await axios.post('https://www.bungie.net/platform/app/oauth/token/', {
     grant_type: 'authorization_code',
     code: request.query.code,
@@ -96,8 +94,6 @@ app.get('/', async (request, result) => {
       'x-api-key': process.env.VENDOR_ALERT_API_KEY
     }
   })
-
-  console.log(data.refresh_expires_in)
 
   // need to save the user's membership id, the current time plus refresh expiration (to know when it'll expire), and the refresh token in the DB
   const daysTillTokenExpires = data.refresh_expires_in / 60 / 60 / 24
