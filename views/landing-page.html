@@ -1,31 +1,44 @@
-<html style="background-color:#36393f;">
+<html style="background-color:#36393f; font-family: Verdana, Geneva, Tahoma, sans-serif;">
 
 <head>
     <style>
+        .header {
+            background: #16191e;
+            font-size: 40px;
+        }
+
         .body {
             text-align: center;
             color: #ffffff;
         }
 
+        .box {
+            display: flex;
+            justify-content: center;
+        }
+
         .description {
-            position: absolute;
-            top: 20%;
-            left: 50%;
-            -moz-transform: translateX(-50%) translateY(-50%);
-            -webkit-transform: translateX(-50%) translateY(-50%);
-            transform: translateX(-50%) translateY(-50%);
+            line-height: 40px;
+            background-color: #54575e;
+            border-radius: 20px;
+            padding: 10px;
+            width: auto;
         }
     </style>
 </head>
 
 <body>
     <div class="body">
-        <h2>D2 Vendor Alert</h2>
+        <div class="header">
+            <h2>D2 Vendor Alert</h2>
+        </div>
+        <div class="box">
         <div class="description">
             <div>You have successfully authorized D2 Vendor Alert.</div>
-            <div>You can safely close this webpage and expect a message after the next reset.</div>
+            <div>You can safely close this webpage and expect a message in Discord after the next reset.</div>
             <div>Stay alert Guardian and good luck!</div>
         </div>
+    </div>
     </div>
 </body>
 
