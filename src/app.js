@@ -18,6 +18,5 @@ app.listen(3001, () => {
 app.get('/', async (request, result) => {
   handleRefreshToken(request)
 
-  // result.send('YAY')
   result.sendFile('views/landing-page.html', { root: directoryName })
 })
