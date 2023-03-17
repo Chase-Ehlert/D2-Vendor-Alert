@@ -7,7 +7,14 @@ import * as database from '../database/users-operations.js'
 database.setupDatabaseConnection()
 
 export async function setupDiscordClient() {
-    const discordClient = new discord.Client({ intents: [discord.GatewayIntentBits.Guilds, discord.GatewayIntentBits.GuildMessages, discord.GatewayIntentBits.GuildMessageReactions] })
+    const discordClient = new discord.Client({
+        intents: [
+            discord.GatewayIntentBits.Guilds,
+            discord.GatewayIntentBits.GuildMessages,
+            discord.GatewayIntentBits.MessageContent,
+            discord.GatewayIntentBits.GuildMessageReactions
+        ]
+    })
 
     discordClient.commands = new Collection()
     discordClient.once(discord.Events.ClientReady, eventClient => {
