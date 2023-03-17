@@ -46,9 +46,10 @@ async function setupSlashCommands(discordClient) {
 
             collector.on('collect', async message => {
                 console.log('WE ARE HERE')
+                console.log(message)
                 console.log(message.content)
-                await database.addUser(message.content, interaction.user.id, interaction.channelId)
-                await command.execute(interaction)
+                // await database.addUser(message.content, interaction.user.id, interaction.channelId)
+                // await command.execute(interaction)
             })
 
             collector.on('end', () => {
