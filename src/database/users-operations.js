@@ -12,8 +12,8 @@ export function setupDatabaseConnection() {
     )
 }
 
-export async function doesUserExist(membershipId) {
-    return await User.findOne({ membership_id: membershipId }).lean().then((user, error) => {
+export async function doesUserExist(destinyId) {
+    return await User.findOne({ destiny_id: destinyId }).lean().then((user, error) => {
         if (error) {
             return error
         } else if (user == null) {
@@ -26,11 +26,11 @@ export async function doesUserExist(membershipId) {
     })
 }
 
-export async function addUser(membershipId, refreshTokenInfo) {
+export async function addUser(bungieNetUsername, discordId, discordChannelId) {
     const user = new User({
-        membership_id: membershipId,
-        refresh_expiration: refreshTokenInfo.refresh_expiration,
-        refresh_token: refreshTokenInfo.refresh_token
+        bungie_username: bungieNetUsername,
+        discord_id: discordId,
+        discord_channel_id: discordChannelId
     })
 
     try {
@@ -42,11 +42,12 @@ export async function addUser(membershipId, refreshTokenInfo) {
     }
 }
 
-export async function updateUser(membershipId, refreshTokenInfo) {
+export async function updateUser(bungieNetUsername, destinyId, refreshTokenInfo) {
     try {
         await User.findOneAndUpdate(
-            { membership_id: membershipId },
+            { bungie_username: bungieNetUsername },
             { $set: { refreshTokenInfo } },
+            { $set: { destinyId } },
             (error) => {
                 if (error) {
                     console.log('Updating user record failed')

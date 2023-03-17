@@ -3,7 +3,10 @@ import mongoose from 'mongoose'
 mongoose.set('strictQuery', false)
 
 const UserSchema = new mongoose.Schema({
-    membership_id: String,
+    bungie_username: String,
+    discord_id: String,
+    discord_channel_id: String,
+    destiny_id: String,
     refresh_expiration: String,
     refresh_token: String
 })
