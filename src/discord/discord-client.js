@@ -40,6 +40,7 @@ async function setupSlashCommands(discordClient) {
         try {
             console.log('TESTING 1')
             await interaction.reply('What is your Bungie Net username? (i.e. "Guardian#1234")')
+            console.log('TESTING 2')
             const filter = message => {
                 console.log('messenger')
                 console.log(interaction.user.id)
