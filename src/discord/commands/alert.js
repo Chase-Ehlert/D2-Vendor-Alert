@@ -11,6 +11,8 @@ export default {
     async execute(interaction) {
         await interaction.reply('What is your Bungie Net username? (i.e. "Guardian#1234")')
         const filter = message => message.author.id === interaction.user.id
+        console.log('filter')
+        console.log(filter)
         const collector = interaction.channel.createMessageCollector({ filter, max: 1, time: 15000 })
 
         collector.on('collect', async message => {
