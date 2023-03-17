@@ -44,11 +44,9 @@ async function setupSlashCommands(discordClient) {
             const collector = interaction.channel.createMessageCollector({ filter, max: 1, time: 15000 })
             console.log('TESTING 2')
 
-            // my messages aren't being collected and the collector is ending
-
             collector.on('collect', async message => {
                 console.log('WE ARE HERE')
-                console.log(message)
+                console.log(message.content)
                 await database.addUser(message.content, interaction.user.id, interaction.channelId)
                 await command.execute(interaction)
             })
