@@ -40,8 +40,14 @@ async function setupSlashCommands(discordClient) {
         try {
             console.log('TESTING 1')
             await interaction.reply('What is your Bungie Net username? (i.e. "Guardian#1234")')
-            const filter = message => message.author.id === interaction.user.id
+            const filter = message => {
+                console.log('messenger')
+                console.log(interaction.user.id)
+                message.author.id === interaction.user.id
+            }
             const collector = interaction.channel.createMessageCollector({ filter, max: 1, time: 15000 })
+
+            // my messages aren't being collected and the collector is ending
 
             collector.on('collect', async message => {
                 console.log('WE ARE HERE')
