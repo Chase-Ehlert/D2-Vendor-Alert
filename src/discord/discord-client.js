@@ -47,12 +47,11 @@ async function setupSlashCommands(discordClient) {
         try {
             await interaction.reply('What is your Bungie Net username? (i.e. "Guardian#1234")')
             const filter = message => message.author.id === interaction.user.id
-            const collector = interaction.channel.createMessageCollector(interaction.channel, filter, { max: 1, time: 15000 })
+            const collector = interaction.channel.createMessageCollector({ filter, max: 1, time: 15000 })
 
             collector.on('collect', async message => {
                 await database.addUser(message.content, interaction.user.id, interaction.channelId)
                 await command.execute(interaction)
-                await interaction.reply({ content: `${interaction.user.id} is now ready for alerts!` })
             })
 
             collector.on('end', () => {
