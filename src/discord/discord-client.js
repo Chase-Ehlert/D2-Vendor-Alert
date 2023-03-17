@@ -52,6 +52,7 @@ async function setupSlashCommands(discordClient) {
             collector.on('collect', async message => {
                 await database.addUser(message.content, interaction.user.id, interaction.channelId)
                 await command.execute(interaction)
+                await interaction.reply({ content: `${interaction.user.id} is now ready for alerts!` })
             })
 
             collector.on('end', () => {
