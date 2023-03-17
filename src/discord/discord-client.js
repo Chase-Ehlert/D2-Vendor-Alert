@@ -34,8 +34,6 @@ async function setupSlashCommands(discordClient) {
     }
 
     discordClient.on(Events.InteractionCreate, async interaction => {
-        console.log('SOMETHING')
-        console.log(interaction)
         if (!interaction.isCommand()) return
         const command = interaction.client.commands.get(interaction.commandName)
         console.log('COMMAND')
@@ -51,6 +49,8 @@ async function setupSlashCommands(discordClient) {
                 message.author.id === interaction.user.id
             }
             const collector = interaction.channel.createMessageCollector({ filter, max: 1, time: 15000 })
+            console.log('COLLECTOR')
+            console.log(collector)
 
             // my messages aren't being collected and the collector is ending
 
