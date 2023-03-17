@@ -49,6 +49,10 @@ async function setupSlashCommands(discordClient) {
                 await database.addUser(message.content, interaction.user.id, interaction.channelId)
                 await command.execute(interaction)
             })
+
+            collector.on('end', () => {
+                console.log('IT IS OVER')
+            })
         } catch (error) {
             console.log(error)
             await interaction.reply({ content: 'Something went wrong!' })
