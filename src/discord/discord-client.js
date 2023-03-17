@@ -34,6 +34,8 @@ async function setupSlashCommands(discordClient) {
     }
 
     discordClient.on(Events.InteractionCreate, async interaction => {
+        console.log('SOMETHING')
+        console.log(interaction)
         if (!interaction.isCommand()) return
         const command = interaction.client.commands.get(interaction.commandName)
         console.log('COMMAND')
