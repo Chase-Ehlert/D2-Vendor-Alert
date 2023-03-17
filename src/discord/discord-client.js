@@ -2,7 +2,7 @@ import discord, { Collection, Events } from 'discord.js'
 import * as url from 'url'
 import path from 'path'
 import fileSystem from 'fs'
-import * as database from '../../database/users-operations.js'
+import * as database from '../database/users-operations.js'
 
 database.setupDatabaseConnection()
 
