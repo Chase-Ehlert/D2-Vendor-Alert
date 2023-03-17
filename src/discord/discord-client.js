@@ -2,6 +2,9 @@ import discord, { Collection, Events } from 'discord.js'
 import * as url from 'url'
 import path from 'path'
 import fileSystem from 'fs'
+import * as database from '../../database/users-operations.js'
+
+database.setupDatabaseConnection()
 
 export async function setupDiscordClient() {
     const discordClient = new discord.Client({ intents: [discord.GatewayIntentBits.Guilds] })
@@ -34,7 +37,16 @@ async function setupSlashCommands(discordClient) {
         const command = interaction.client.commands.get(interaction.commandName)
 
         try {
-            await command.execute(interaction)
+            await interaction.reply('What is your Bungie Net username? (i.e. "Guardian#1234")')
+            const filter = message => message.author.id === interaction.user.id
+            const collector = interaction.channel.createMessageCollector({ filter, max: 1, time: 15000 })
+
+            collector.on('collect', async message => {
+                console.log('WE ARE HERE')
+                console.log(message)
+                await database.addUser(message.content, interaction.user.id, interaction.channelId)
+                await command.execute(interaction)
+            })
         } catch (error) {
             console.log(error)
             await interaction.reply({ content: 'Something went wrong!' })

@@ -9,26 +9,17 @@ export default {
         .setName('alert')
         .setDescription('Invites user to be added to the alert list'),
     async execute(interaction) {
-        await interaction.reply('What is your Bungie Net username? (i.e. "Guardian#1234")')
-        const filter = message => message.author.id === interaction.user.id
-        console.log('filter')
-        console.log(filter)
-        const collector = interaction.channel.createMessageCollector({ filter, max: 1, time: 15000 })
-
-        collector.on('collect', async message => {
-            console.log('WE ARE HERE')
-            console.log(message)
-            await database.addUser(message.content, interaction.user.id, interaction.channelId)
-            interaction.followUp(hyperlink(
-                'Authorize D2 Vendor Alert',
-                `https://www.bungie.net/en/oauth/authorize?client_id=${process.env.VENDOR_ALERT_OAUTH_CLIENT_ID}&response_type=code`
-            ))
-        })
-
-        // collector.on('end', collected => {
-        //     console.log(`Collected ${collected.size} items`)
-        // })
+        interaction.followUp(hyperlink(
+            'Authorize D2 Vendor Alert',
+            `https://www.bungie.net/en/oauth/authorize?client_id=${process.env.VENDOR_ALERT_OAUTH_CLIENT_ID}&response_type=code`
+        ))
     }
+    // )
+
+    // collector.on('end', collected => {
+    //     console.log(`Collected ${collected.size} items`)
+    // })
+    // }
 }
 
 // const { Client } = require('discord.js');
