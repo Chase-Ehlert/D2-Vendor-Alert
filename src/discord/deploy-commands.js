@@ -3,7 +3,7 @@ import 'dotenv/config'
 import fs from 'fs'
 
 const commands = []
-const commandFiles = fs.readdirSync('./src/commands').filter(file => file.endsWith('.js'))
+const commandFiles = fs.readdirSync('./src/discord/commands').filter(file => file.endsWith('.js'))
 
 for (const file of commandFiles) {
 	const command = await import(`./commands/${file}`)

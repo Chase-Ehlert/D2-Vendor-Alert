@@ -14,6 +14,8 @@ export default {
         const collector = interaction.channel.createMessageCollector({ filter, max: 1, time: 15000 })
 
         collector.on('collect', async message => {
+            console.log('WE ARE HERE')
+            console.log(message)
             await database.addUser(message.content, interaction.user.id, interaction.channelId)
             interaction.followUp(hyperlink(
                 'Authorize D2 Vendor Alert',
