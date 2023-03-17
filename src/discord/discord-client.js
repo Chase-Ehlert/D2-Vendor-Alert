@@ -7,7 +7,7 @@ import * as database from '../database/users-operations.js'
 database.setupDatabaseConnection()
 
 export async function setupDiscordClient() {
-    const discordClient = new discord.Client({ intents: [discord.GatewayIntentBits.Guilds, discord.GatewayIntentBits.GuildMessages] })
+    const discordClient = new discord.Client({ intents: [discord.GatewayIntentBits.Guilds, discord.GatewayIntentBits.GuildMessages, discord.GatewayIntentBits.GuildMessageReactions] })
 
     discordClient.commands = new Collection()
     discordClient.once(discord.Events.ClientReady, eventClient => {
@@ -36,19 +36,13 @@ async function setupSlashCommands(discordClient) {
     discordClient.on(Events.InteractionCreate, async interaction => {
         if (!interaction.isCommand()) return
         const command = interaction.client.commands.get(interaction.commandName)
-        console.log('COMMAND')
-        console.log(command)
 
         try {
             console.log('TESTING 1')
             await interaction.reply('What is your Bungie Net username? (i.e. "Guardian#1234")')
-            console.log('TESTING 2')
-            const filter = message => {
-                console.log('messenger')
-                console.log(interaction.user.id)
-                message.author.id === interaction.user.id
-            }
+            const filter = message => message.author.id === interaction.user.id
             const collector = interaction.channel.createMessageCollector({ filter, max: 1, time: 15000 })
+            console.log('TESTING 2')
 
             // my messages aren't being collected and the collector is ending
 
