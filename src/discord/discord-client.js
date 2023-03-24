@@ -47,19 +47,30 @@ async function setupSlashCommands(discordClient) {
         try {
             await interaction.reply('What is your Bungie Net username? (i.e. "Guardian#1234")')
             const filter = message => message.author.id === interaction.user.id
-            const collector = interaction.channel.createMessageCollector({ filter, max: 1, time: 15000 })
+            const collector = interaction.channel.createMessageCollector({ filter, max: 1, time: 20000 })
 
             collector.on('collect', async message => {
-                await database.addUser(message.content, interaction.user.id, interaction.channelId)
-                await command.execute(interaction)
+                await database.doesUserExist(message.content) ?
+                    replyUserExists(interaction) :
+                    addUserToAlertBot(command, message.content, interaction)
             })
 
             collector.on('end', () => {
-                console.log('IT IS OVER')
+                console.log('Handshake finished!')
             })
         } catch (error) {
             console.log(error)
             await interaction.reply({ content: 'Something went wrong!' })
         }
     })
+}
+
+async function replyUserExists(interaction) {
+    console.log('User already exists')
+    await interaction.reply({ content: 'User already exists!' })
+}
+
+async function addUserToAlertBot(command, username, interaction) {
+    await database.addUser(username, interaction.user.id, interaction.channelId)
+    await command.execute(interaction)
 }

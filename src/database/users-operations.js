@@ -12,18 +12,13 @@ export function setupDatabaseConnection() {
     )
 }
 
-export async function doesUserExist(destinyId) {
-    return await User.findOne({ destiny_id: destinyId }).lean().then((user, error) => {
-        if (error) {
-            return error
-        } else if (user == null) {
-            return false
-        } else if (user) {
-            return true
-        } else {
-            return false
+export async function doesUserExist(bungieNetUsername) {
+    return await User.exists(
+        { bungie_username: bungieNetUsername },
+        (error) => {
+            return error ? true : false
         }
-    })
+    )
 }
 
 export async function addUser(bungieNetUsername, discordId, discordChannelId) {
@@ -34,7 +29,6 @@ export async function addUser(bungieNetUsername, discordId, discordChannelId) {
     })
 
     try {
-        console.log('Saving new user record')
         await user.save()
     } catch (error) {
         console.log('Adding user failed')
