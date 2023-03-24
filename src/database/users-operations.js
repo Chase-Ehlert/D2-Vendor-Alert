@@ -20,7 +20,8 @@ export async function doesUserExist(bungieNetUsername) {
             console.log(bungieNetUsername)
             console.log(document)
             console.log(error)
-            return error ? true : false
+            console.log('exist done')
+            return document ? true : false
         }
     )
 }
