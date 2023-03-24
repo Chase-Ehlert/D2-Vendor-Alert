@@ -62,9 +62,11 @@ async function replyToSlashCommands(discordClient) {
                 // }
                 // check if Response is empty
                 const index = message.content.indexOf('#')
+                console.log(message.content.substring(0, index))
+                console.log(message.content.substring(index+1, message.content.length))
                 const { data } = await axios.post('https://www.bungie.net/Platform/Destiny2/SearchDestinyPlayerByBungieName/3/', {
                     displayName: message.content.substring(0, index),
-                    displayNameCode: message.content.substring(index + 1, message.length),
+                    displayNameCode: message.content.substring(index + 1, message.content.length),
                 }, {
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
