@@ -77,6 +77,7 @@ async function replyToSlashCommands(discordClient) {
                 console.log('DATA')
                 console.log(data)
                 console.log('HELLO')
+                console.log(typeof(data))
                 const object = JSON.parse(data)
                 console.log(object.Response)
 
