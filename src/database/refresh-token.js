@@ -24,9 +24,12 @@ export async function handleRefreshToken(request) {
 
     currentDate.setDate(currentDate.getDate() + daysTillTokenExpires)
 
-    console.log('Getting memberships')
-    console.log(data.membership_id)
-    const destinyMemberships = await axios.get(`https://www.bungie.net/platform/User/GetMembershipsById/${data.membership_id}/3/`)
+    const destinyMemberships = await axios.get(
+        `https://www.bungie.net/platform/User/GetMembershipsById/${data.membership_id}/3/`, {
+        headers: {
+            'X-API-Key': `${process.env.DESTINY_API_KEY}`
+        }
+    })
 
     await database.updateUser(destinyMemberships.data.Response.bungieNetUser.uniqueName, destinyMemberships.data.Response.destinyMemberships[0].membershipId, refreshTokenInfo)
 }
