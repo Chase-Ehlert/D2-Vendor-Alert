@@ -13,26 +13,7 @@ export function setupDatabaseConnection() {
 }
 
 export async function doesUserExist(bungieNetUsername) {
-    console.log('2')
     return await User.exists({ bungie_username: bungieNetUsername }).exec() ? true : false
-
-    // (error, document) => {
-    //     // document ? userExists = true : userExists = false
-    //     console.log('database call')
-    //     console.log(error)
-    //     console.log(document)
-    //     if (document) {
-    //         console.log('user is true')
-    //         userExists = true
-    //         console.log(userExists)
-    //         console.log('exit 1')
-    //     } else {
-    //         console.log('user is false')
-    //         userExists = false
-    //         console.log(userExists)
-    //         console.log('exit 2')
-    //     }
-    // }
 }
 
 export async function addUser(bungieNetUsername, discordId, discordChannelId) {
