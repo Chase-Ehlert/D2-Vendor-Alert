@@ -53,9 +53,9 @@ async function setupSlashCommands(discordClient) {
                 const userExists = await database.doesUserExist(message.content)
                 console.log('youyoyouyoy')
                 console.log(userExists)
-                await database.doesUserExist(message.content) ?
-                    replyUserExists(interaction) :
-                    addUserToAlertBot(command, message.content, interaction)
+                // await database.doesUserExist(message.content) ?
+                //     replyUserExists(interaction) :
+                //     addUserToAlertBot(command, message.content, interaction)
             })
 
             collector.on('end', () => {

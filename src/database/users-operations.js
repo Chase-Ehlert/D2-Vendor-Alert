@@ -14,7 +14,7 @@ export function setupDatabaseConnection() {
 
 export async function doesUserExist(bungieNetUsername) {
     let userExists
-    await User.exists(
+    const something = await User.exists(
         { bungie_username: bungieNetUsername },
         (error, document) => {
             // document ? userExists = true : userExists = false
@@ -27,6 +27,7 @@ export async function doesUserExist(bungieNetUsername) {
     )
     console.log('asdfasdf')
     console.log(userExists)
+    console.log(something)
     return userExists
 }
 
