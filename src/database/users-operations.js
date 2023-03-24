@@ -17,6 +17,7 @@ export async function doesUserExist(bungieNetUsername) {
         { bungie_username: bungieNetUsername },
         (error) => {
             console.log('exist section')
+            console.log(bungieNetUsername)
             console.log(error)
             return error ? true : false
         }
