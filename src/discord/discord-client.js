@@ -60,6 +60,7 @@ async function replyToSlashCommands(discordClient) {
 
             collector.on('end', async () => {
                 console.log('start of end')
+                console.log(collector)
                 if (collector.size === 0) {
                     console.log('inside if')
                     await interaction.reply({
