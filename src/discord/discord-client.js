@@ -71,7 +71,7 @@ async function replyToSlashCommands(discordClient) {
                     displayNameCode: "6465"
                 }, {
                     headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Content-Type': 'application/json',
                         'x-api-key': process.env.VENDOR_ALERT_API_KEY
                     }
                 })
