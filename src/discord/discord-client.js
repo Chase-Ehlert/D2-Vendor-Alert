@@ -65,10 +65,8 @@ async function replyToSlashCommands(discordClient) {
                 console.log(message.content.substring(0, index))
                 console.log(message.content.substring(index+1, message.content.length))
                 const { data } = await axios.post('https://www.bungie.net/Platform/Destiny2/SearchDestinyPlayerByBungieName/3/', {
-                    // displayName: message.content.substring(0, index),
-                    // displayNameCode: message.content.substring(index + 1, message.content.length),
-                    displayName: "DeathDealer699",
-                    displayNameCode: "6465"
+                    displayName: message.content.substring(0, index),
+                    displayNameCode: message.content.substring(index + 1, message.content.length)
                 }, {
                     headers: {
                         'Content-Type': 'application/json',
