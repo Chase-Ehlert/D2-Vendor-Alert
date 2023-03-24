@@ -42,7 +42,9 @@ export async function updateUser(bungieNetUsername, destinyId, refreshTokenInfo)
             { $set: { destiny_id: destinyId } },
             { $set: { refresh_expiration: refreshTokenInfo.refresh_expiration } },
             { $set: { refresh_token: refreshTokenInfo.refresh_token } },
-            (error) => {
+            (error, result) => {
+                console.log(error)
+                console.log(result)
                 if (error) {
                     console.log('Updating user record failed')
                     console.log(error)
