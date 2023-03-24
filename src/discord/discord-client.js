@@ -63,7 +63,7 @@ async function replyToSlashCommands(discordClient) {
                 console.log(collected)
                 if (collected.size === 0) {
                     console.log('inside if')
-                    await interaction.reply({
+                    await interaction.followUp({
                         content:
                             'The interaction has timed out. After you have found your Bungie Net username, try again.'
                     })
