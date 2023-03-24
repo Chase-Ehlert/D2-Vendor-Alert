@@ -21,9 +21,6 @@ export async function addUser(bungieNetUsername, discordId, discordChannelId) {
         bungie_username: bungieNetUsername,
         discord_id: discordId,
         discord_channel_id: discordChannelId
-        // destiny_id: '',
-        // refresh_token: '',
-        // refresh_expiration: ''
     })
 
     try {
