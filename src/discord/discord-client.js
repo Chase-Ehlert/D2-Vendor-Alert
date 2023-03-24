@@ -80,8 +80,10 @@ async function replyToSlashCommands(discordClient) {
                 data.Response.size === 0 ? console.log('true') : console.log('false')
 
                 if (data.Response.size === 0) {
+                    console.log('1')
                     interaction.followUp({ content: 'That is not a valid Bungie Net username!' })
                 } else {
+                    console.log('2')
                     await database.doesUserExist(message.content) ?
                         replyUserExists(interaction) :
                         addUserToAlertBot(command, message.content, interaction)
