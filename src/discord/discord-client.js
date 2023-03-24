@@ -58,10 +58,10 @@ async function replyToSlashCommands(discordClient) {
                     addUserToAlertBot(command, message.content, interaction)
             })
 
-            collector.on('end', async () => {
+            collector.on('end', async (collected) => {
                 console.log('start of end')
-                console.log(collector)
-                if (collector.size === 0) {
+                console.log(collected)
+                if (collected.size === 0) {
                     console.log('inside if')
                     await interaction.reply({
                         content:
