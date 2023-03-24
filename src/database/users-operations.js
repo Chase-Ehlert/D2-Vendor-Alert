@@ -18,6 +18,9 @@ export async function doesUserExist(bungieNetUsername) {
         { bungie_username: bungieNetUsername },
         (error, document) => {
             // document ? userExists = true : userExists = false
+            console.log('database call')
+            console.log(error)
+            console.log(document)
             if (document) {
                 userExists = true
             } else {
