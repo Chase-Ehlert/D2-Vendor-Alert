@@ -67,7 +67,7 @@ async function setupSlashCommands(discordClient) {
 
 async function replyUserExists(interaction) {
     console.log('User already exists')
-    await interaction.reply({ content: 'User already exists!' })
+    await interaction.followUp({ content: 'User already exists!' })
 }
 
 async function addUserToAlertBot(command, username, interaction) {
