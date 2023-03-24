@@ -39,9 +39,13 @@ export async function updateUser(bungieNetUsername, destinyId, refreshTokenInfo)
         console.log('trying to update user record')
         await User.findOneAndUpdate(
             { bungie_username: bungieNetUsername },
-            { $set: { destiny_id: destinyId } },
-            { $set: { refresh_expiration: refreshTokenInfo.refresh_expiration } },
-            { $set: { refresh_token: refreshTokenInfo.refresh_token } },
+            {
+                $set: {
+                    destiny_id: destinyId,
+                    refresh_expiration: refreshTokenInfo.refresh_expiration,
+                    refresh_token: refreshTokenInfo.refresh_token
+                }
+            },
             (error, result) => {
                 console.log(error)
                 console.log(result)
