@@ -59,11 +59,14 @@ async function replyToSlashCommands(discordClient) {
             })
 
             collector.on('end', async () => {
-                if (collector.size === 0)
+                console.log('start of end')
+                if (collector.size === 0) {
+                    console.log('inside if')
                     await interaction.reply({
                         content:
                             'The interaction has timed out. After you have found your Bungie Net username, try again.'
                     })
+                }
             })
         } catch (error) {
             console.log(error)
