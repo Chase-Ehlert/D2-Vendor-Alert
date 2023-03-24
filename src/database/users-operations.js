@@ -33,6 +33,7 @@ export async function addUser(bungieNetUsername, discordId, discordChannelId) {
 
 export async function updateUser(bungieNetUsername, destinyId, refreshTokenInfo) {
     try {
+        console.log('trying to update user record')
         await User.findOneAndUpdate(
             { bungie_username: bungieNetUsername },
             { $set: { destiny_id: destinyId } },
