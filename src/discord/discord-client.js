@@ -54,49 +54,13 @@ async function replyToSlashCommands(discordClient) {
             const collector = interaction.channel.createMessageCollector({ filter, max: 1, time: 20000 })
 
             collector.on('collect', async message => {
-                // make post request to https://www.bungie.net/Platform/Destiny2/SearchDestinyPlayerByBungieName/3
-                // body is
-                // {
-                // "displayName": "DeathDealer699",
-                // "displayNameCode": "6465"
-                // }
-                // check if Response is empty
-                const index = message.content.indexOf('#')
-                console.log(message.content.substring(0, index))
-                console.log(message.content.substring(index+1, message.content.length))
-                const { data } = await axios.post('https://www.bungie.net/Platform/Destiny2/SearchDestinyPlayerByBungieName/3/', {
-                    displayName: message.content.substring(0, index),
-                    displayNameCode: message.content.substring(index + 1, message.content.length)
-                }, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'x-api-key': process.env.VENDOR_ALERT_API_KEY
-                    }
-                })
-
-                console.log('DATA')
-                console.log(data)
-                console.log('HELLO')
-                console.log(data.Response.length)
-
-                data.Response.length === 0 ? console.log('true') : console.log('false')
-
-                if (data.Response.length === 0) {
-                    console.log('1')
-                    interaction.followUp({ content: 'That is not a valid Bungie Net username!' })
-                } else {
-                    console.log('2')
-                    await database.doesUserExist(message.content) ?
-                        replyUserExists(interaction) :
-                        addUserToAlertBot(command, message.content, interaction)
-                }
+                await handleIncommingMessage(message, interaction, command)
             })
 
             collector.on('end', async (collected) => {
                 if (collected.size === 0) {
                     await interaction.followUp({
-                        content:
-                            'The interaction has timed out. After you have found your Bungie Net username, try again.'
+                        content: 'The interaction has timed out. After you have found your Bungie Net username, try again.'
                     })
                 }
             })
@@ -105,6 +69,18 @@ async function replyToSlashCommands(discordClient) {
             await interaction.reply({ content: 'Something went wrong!' })
         }
     })
+}
+
+async function handleIncommingMessage(message, interaction, command) {
+    const response = checkIfUsernameExists(message)
+
+    if (response.length === 0) {
+        interaction.followUp({ content: 'That is not a valid Bungie Net username!' })
+    } else {
+        await database.doesUserExist(message.content) ?
+            replyUserExists(interaction) :
+            addUserToAlertBot(command, message.content, interaction)
+    }
 }
 
 async function replyUserExists(interaction) {
@@ -116,4 +92,18 @@ async function addUserToAlertBot(command, username, interaction) {
     console.log('Adding user to database')
     await database.addUser(username, interaction.user.id, interaction.channelId)
     await command.execute(interaction)
+}
+
+async function checkIfUsernameExists(message) {
+    const index = message.content.indexOf('#')
+    const { data } = await axios.post('https://www.bungie.net/Platform/Destiny2/SearchDestinyPlayerByBungieName/3/', {
+        displayName: message.content.substring(0, index),
+        displayNameCode: message.content.substring(index + 1, message.content.length)
+    }, {
+        headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': process.env.VENDOR_ALERT_API_KEY
+        }
+    })
+    return data.Response
 }
