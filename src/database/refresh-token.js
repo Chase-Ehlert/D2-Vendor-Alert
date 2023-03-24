@@ -2,6 +2,7 @@ import axios from 'axios'
 import * as database from './users-operations.js'
 
 export async function handleRefreshToken(request) {
+    console.log('Getting refresh token')
     const { data } = await axios.post('https://www.bungie.net/platform/app/oauth/token/', {
         grant_type: 'authorization_code',
         code: request.query.code,
@@ -23,6 +24,7 @@ export async function handleRefreshToken(request) {
 
     currentDate.setDate(currentDate.getDate() + daysTillTokenExpires)
 
+    console.log('Getting memberships')
     const destinyMemberships = await axios.get(`https://www.bungie.net/platform/User/GetMembershipsById/${data.membership_id}/3/`)
 
     await database.updateUser(destinyMemberships.data.Response.bungieNetUser.uniqueName, destinyMemberships.data.Response.destinyMemberships[0].membershipId, refreshTokenInfo)
