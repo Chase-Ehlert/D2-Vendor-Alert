@@ -23,6 +23,7 @@ export async function setupDiscordClient() {
     discordClient.login(process.env.VENDOR_ALERT_TOKEN)
 
     setupSlashCommands(discordClient)
+    replyToSlashCommands(discordClient)
 }
 
 async function setupSlashCommands(discordClient) {
@@ -39,7 +40,9 @@ async function setupSlashCommands(discordClient) {
             console.log(`The command at ${filePath} is missing "data" or "execute"`)
         }
     }
+}
 
+async function replyToSlashCommands(discordClient) {
     discordClient.on(Events.InteractionCreate, async interaction => {
         if (!interaction.isCommand()) return
         const command = interaction.client.commands.get(interaction.commandName)
@@ -55,8 +58,12 @@ async function setupSlashCommands(discordClient) {
                     addUserToAlertBot(command, message.content, interaction)
             })
 
-            collector.on('end', () => {
-                console.log('Handshake finished!')
+            collector.on('end', async () => {
+                if (collector.size === 0)
+                    await interaction.reply({
+                        content:
+                            'The interaction has timed out. After you have found your Bungie Net username, try again.'
+                    })
             })
         } catch (error) {
             console.log(error)
