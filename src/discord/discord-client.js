@@ -50,12 +50,9 @@ async function setupSlashCommands(discordClient) {
             const collector = interaction.channel.createMessageCollector({ filter, max: 1, time: 20000 })
 
             collector.on('collect', async message => {
-                console.log('1')
-                await database.doesUserExist(message.content) ? console.log('true') : console.log("false")
-                console.log('3')
-                // await database.doesUserExist(message.content) ?
-                //     replyUserExists(interaction) :
-                //     addUserToAlertBot(command, message.content, interaction)
+                await database.doesUserExist(message.content) ?
+                    replyUserExists(interaction) :
+                    addUserToAlertBot(command, message.content, interaction)
             })
 
             collector.on('end', () => {
