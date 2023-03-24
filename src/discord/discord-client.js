@@ -3,6 +3,7 @@ import * as url from 'url'
 import path from 'path'
 import fileSystem from 'fs'
 import * as database from '../database/users-operations.js'
+import axios from 'axios'
 
 database.setupDatabaseConnection()
 
@@ -53,16 +54,37 @@ async function replyToSlashCommands(discordClient) {
             const collector = interaction.channel.createMessageCollector({ filter, max: 1, time: 20000 })
 
             collector.on('collect', async message => {
-                await database.doesUserExist(message.content) ?
-                    replyUserExists(interaction) :
-                    addUserToAlertBot(command, message.content, interaction)
+                // make post request to https://www.bungie.net/Platform/Destiny2/SearchDestinyPlayerByBungieName/3
+                // body is
+                // {
+                // "displayName": "DeathDealer699",
+                // "displayNameCode": "6465"
+                // }
+                // check if Response is empty
+                const index = message.content.indexOf('#')
+                const { data } = await axios.post('https://www.bungie.net/Platform/Destiny2/SearchDestinyPlayerByBungieName/3/', {
+                    displayName: message.content.substring(0, index),
+                    displayNameCode: message.content.substring(index + 1, message.length),
+                }, {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'x-api-key': process.env.VENDOR_ALERT_API_KEY
+                    }
+                })
+
+                data.Response.size === 0 ? console.log('true') : console.log('false')
+
+                if (data.Response.size === 0) {
+                    interaction.followUp({ content: 'That is not a valid Bungie Net username!' })
+                } else {
+                    await database.doesUserExist(message.content) ?
+                        replyUserExists(interaction) :
+                        addUserToAlertBot(command, message.content, interaction)
+                }
             })
 
             collector.on('end', async (collected) => {
-                console.log('start of end')
-                console.log(collected)
                 if (collected.size === 0) {
-                    console.log('inside if')
                     await interaction.followUp({
                         content:
                             'The interaction has timed out. After you have found your Bungie Net username, try again.'
