@@ -20,7 +20,10 @@ export async function addUser(bungieNetUsername, discordId, discordChannelId) {
     const user = new User({
         bungie_username: bungieNetUsername,
         discord_id: discordId,
-        discord_channel_id: discordChannelId
+        discord_channel_id: discordChannelId,
+        destiny_id: '',
+        refresh_expiration: '',
+        refresh_token: ''
     })
 
     try {
