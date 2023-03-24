@@ -51,7 +51,7 @@ async function setupSlashCommands(discordClient) {
 
             collector.on('collect', async message => {
                 console.log('1')
-                await database.doesUserExist(message.content)
+                await database.doesUserExist(message.content) ? console.log('true') : console.log("false")
                 console.log('3')
                 // await database.doesUserExist(message.content) ?
                 //     replyUserExists(interaction) :
