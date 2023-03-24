@@ -13,14 +13,16 @@ export function setupDatabaseConnection() {
 }
 
 export async function doesUserExist(bungieNetUsername) {
+    let userExists
     await User.exists(
         { bungie_username: bungieNetUsername },
         (error, document) => {
             error ? console.log('error true') : console.log('error false')
             document ? console.log('doc true') : console.log('doc false')
-            return document ? true : false
+            document ? userExists = true : userExists = false
         }
     )
+    return userExists
 }
 
 export async function addUser(bungieNetUsername, discordId, discordChannelId) {
