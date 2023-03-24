@@ -16,6 +16,8 @@ export async function doesUserExist(bungieNetUsername) {
     return await User.exists(
         { bungie_username: bungieNetUsername },
         (error) => {
+            console.log('exist section')
+            console.log(error)
             return error ? true : false
         }
     )
