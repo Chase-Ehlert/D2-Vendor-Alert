@@ -77,11 +77,11 @@ async function replyToSlashCommands(discordClient) {
                 console.log('DATA')
                 console.log(data)
                 console.log('HELLO')
-                console.log(data['Response'])
+                console.log(data['Response'].size)
 
-                data.Response.size === 0 ? console.log('true') : console.log('false')
+                data['Response'].size === 0 ? console.log('true') : console.log('false')
 
-                if (data.Response.size === 0) {
+                if (data['Response'].size === 0) {
                     console.log('1')
                     interaction.followUp({ content: 'That is not a valid Bungie Net username!' })
                 } else {
