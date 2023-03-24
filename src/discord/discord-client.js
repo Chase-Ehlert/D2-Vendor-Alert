@@ -77,7 +77,8 @@ async function replyToSlashCommands(discordClient) {
                 console.log('DATA')
                 console.log(data)
                 console.log('HELLO')
-                console.log(data['Response'].size)
+                const object = JSON.parse(data)
+                console.log(object.Response)
 
                 data['Response'].size === 0 ? console.log('true') : console.log('false')
 
