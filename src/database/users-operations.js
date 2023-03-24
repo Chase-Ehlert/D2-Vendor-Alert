@@ -20,10 +20,7 @@ export async function addUser(bungieNetUsername, discordId, discordChannelId) {
     const user = new User({
         bungie_username: bungieNetUsername,
         discord_id: discordId,
-        discord_channel_id: discordChannelId,
-        destiny_id: '',
-        refresh_expiration: '',
-        refresh_token: ''
+        discord_channel_id: discordChannelId
     })
 
     try {
@@ -38,8 +35,9 @@ export async function updateUser(bungieNetUsername, destinyId, refreshTokenInfo)
     try {
         await User.findOneAndUpdate(
             { bungie_username: bungieNetUsername },
-            { $set: { refreshTokenInfo } },
-            { $set: { destinyId } },
+            { $set: { destiny_id: destinyId } },
+            { $set: { refresh_expiration: refreshTokenInfo.refresh_expiration } },
+            { $set: { refresh_token: refreshTokenInfo.refresh_token } },
             (error) => {
                 if (error) {
                     console.log('Updating user record failed')
