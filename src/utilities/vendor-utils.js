@@ -2,6 +2,7 @@ import 'dotenv/config'
 import axios from 'axios'
 import { URLSearchParams } from 'url'
 import { getCollectibleFromManifest, getItemFromManifest } from './manifest-utils.js'
+import { User } from './models/users.js'
 
 export async function getXurInventory() {
   const search = {
@@ -23,10 +24,10 @@ export async function getXurInventory() {
   return inventoryNameList
 }
 
-export async function getVendorModInventory(vendorId, person) {
-  const oauthToken = await refreshOauthToken(person.name)
+export async function getVendorModInventory(vendorId, user) {
+  const oauthToken = await refreshOauthToken(user.refresh_token, user.bungie_username)
   const vendorUrl =
-    new URL(`https://www.bungie.net/Platform/Destiny2/3/Profile/${person.profileId}/Character/${person.characterId}/Vendors/`)
+    new URL(`https://www.bungie.net/Platform/Destiny2/3/Profile/${user.destiny_id}/Character/${user.character_id}/Vendors/`)
   const searchParams = {
     components: 402
   }
@@ -49,32 +50,30 @@ export async function getVendorModInventory(vendorId, person) {
   return await getItemFromManifest(19, vendorInventory)
 }
 
-async function refreshOauthToken(name) {
-  let oauthJson = ''
-  let refreshToken = ''
-  switch (name) {
-    case 'Chase':
-      refreshToken = `${process.env.CHASE_REFRESH_TOKEN}`
-      console.log('refresh token is ' + refreshToken)
-      oauthJson = await getOauthJson(refreshToken)
-      process.env.CHASE_REFRESH_TOKEN = oauthJson['refresh_token']
-      break
-    case 'John':
-      refreshToken = `${process.env.JOHN_REFRESH_TOKEN}`
-      oauthJson = await getOauthJson(refreshToken)
-      process.env.JOHN_REFRESH_TOKEN = oauthJson['refresh_token']
-      break
-    case 'Kyle':
-      refreshToken = `${process.env.KYLE_REFRESH_TOKEN}`
-      oauthJson = await getOauthJson(refreshToken)
-      process.env.KYLE_REFRESH_TOKEN = oauthJson['refresh_token']
-      break
-    case 'Casey':
-      refreshToken = `${process.env.CASEY_REFRESH_TOKEN}`
-      oauthJson = await getOauthJson(refreshToken)
-      process.env.CASEY_REFRESH_TOKEN = oauthJson['refresh_token']
-      break
-  }
+async function refreshOauthToken(refreshToken, bungieUsername) {
+      const oauthJson = await getOauthJson(refreshToken)
+
+      try {
+        await User.findOneAndUpdate(
+            { bungie_username: bungieUsername },
+            {
+                $set: {
+                    refresh_token: oauthJson['refresh_token']
+                }
+            },
+            (error) => {
+                if (error) {
+                    console.log('Updating user refresh token failed')
+                    console.log(error)
+                } else {
+                    console.log('Updated user refresh token')
+                }
+            }
+        )
+    } catch (error) {
+        return error
+    }
+
   return oauthJson['access_token']
 }
 
@@ -94,9 +93,9 @@ async function getOauthJson(refreshToken) {
   return oauthJson
 }
 
-export async function getProfileCollectibles(person) {
-  const oauthToken = await refreshOauthToken(person.name)
-  const profileUrl = new URL(`https://www.bungie.net/Platform/Destiny2/3/Profile/${person.profileId}/`)
+export async function getProfileCollectibles(user) {
+  const oauthToken = await refreshOauthToken(user.refresh_token, user.bungie_username)
+  const profileUrl = new URL(`https://www.bungie.net/Platform/Destiny2/3/Profile/${user.destiny_id}/`)
   profileUrl.search = new URLSearchParams({
     components: 800
   })
@@ -108,8 +107,8 @@ export async function getProfileCollectibles(person) {
     }
   })
   const profileJson = await profileResponse.json()
-  const bansheeMods = await getVendorModInventory('672118013', person)
-  const adaMods = await getVendorModInventory('350061650', person)
+  const bansheeMods = await getVendorModInventory('672118013', user)
+  const adaMods = await getVendorModInventory('350061650', user)
   const modsForSale = bansheeMods.concat(adaMods)
   const list1 = []
   modsForSale.forEach(key => {

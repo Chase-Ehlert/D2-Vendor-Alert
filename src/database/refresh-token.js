@@ -30,5 +30,20 @@ export async function handleRefreshToken(request) {
         }
     })
 
-    await database.updateUser(destinyMemberships.data.Response.bungieNetUser.uniqueName, destinyMemberships.data.Response.destinyMemberships[0].membershipId, refreshTokenInfo)
+    const destinyCharacters = await axios.get(
+        `https://bungie.net/Platform/Destiny2/3/Profile/${data.membership_id}/`, {
+        headers: {
+            'X-API-Key': `${process.env.DESTINY_API_KEY}`
+        },
+        params: {
+            components: 200
+        }
+    })
+
+    await database.updateUser(
+        destinyMemberships.data.Response.bungieNetUser.uniqueName,
+        destinyMemberships.data.Response.destinyMemberships[0].membershipId,
+        destinyCharacters.data.Response.characters.data[0].characterId,
+        refreshTokenInfo
+    )
 }
