@@ -33,8 +33,8 @@ export async function handleRefreshToken(request) {
             }
         })
     } catch (error) {
-        console.log('Retreiving Destiny Memberships failed!')
-        console.log(error)
+        console.log(`Retreiving Destiny Memberships failed for ${data.membership_id}!`)
+        return error
     }
 
     try {
@@ -48,8 +48,8 @@ export async function handleRefreshToken(request) {
             }
         })
     } catch (error) {
-        console.log('Retreving Destiny Characters Failed!')
-        console.log(error)
+        console.log(`Retreving Destiny Characters Failed for ${data.membership_id}!`)
+        return error
     }
 
     await database.updateUser(
