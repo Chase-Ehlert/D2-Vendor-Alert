@@ -14,6 +14,8 @@ export async function handleRefreshToken(request) {
         }
     })
 
+    console.log(data)
+
     const daysTillTokenExpires = data.refresh_expires_in / 60 / 60 / 24
     const currentDate = new Date(new Date().toUTCString())
     const refreshTokenInfo = {
