@@ -2,7 +2,7 @@ import 'dotenv/config'
 import axios from 'axios'
 import { URLSearchParams } from 'url'
 import { getCollectibleFromManifest, getItemFromManifest } from './manifest-utils.js'
-import { User } from './models/users.js'
+import { User } from '../database/models/users.js'
 
 export async function getXurInventory() {
   const search = {
