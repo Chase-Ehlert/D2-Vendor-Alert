@@ -14,8 +14,6 @@ export async function handleRefreshToken(request) {
         }
     })
 
-    console.log(data)
-
     const daysTillTokenExpires = data.refresh_expires_in / 60 / 60 / 24
     const currentDate = new Date(new Date().toUTCString())
     const refreshTokenInfo = {
@@ -25,22 +23,34 @@ export async function handleRefreshToken(request) {
 
     currentDate.setDate(currentDate.getDate() + daysTillTokenExpires)
 
-    const destinyMemberships = await axios.get(
-        `https://www.bungie.net/platform/User/GetMembershipsById/${data.membership_id}/3/`, {
-        headers: {
-            'X-API-Key': `${process.env.DESTINY_API_KEY}`
-        }
-    })
+    let destinyMemberships, destinyCharacters
 
-    const destinyCharacters = await axios.get(
-        `https://bungie.net/Platform/Destiny2/3/Profile/${data.membership_id}/`, {
-        headers: {
-            'X-API-Key': `${process.env.DESTINY_API_KEY}`
-        },
-        params: {
-            components: 200
-        }
-    })
+    try {
+        destinyMemberships = await axios.get(
+            `https://www.bungie.net/platform/User/GetMembershipsById/${data.membership_id}/3/`, {
+            headers: {
+                'X-API-Key': `${process.env.DESTINY_API_KEY}`
+            }
+        })
+    } catch (error) {
+        console.log('Retreiving Destiny Memberships failed!')
+        console.log(error)
+    }
+
+    try {
+        destinyCharacters = await axios.get(
+            `https://bungie.net/Platform/Destiny2/3/Profile/${data.membership_id}/`, {
+            headers: {
+                'X-API-Key': `${process.env.DESTINY_API_KEY}`
+            },
+            params: {
+                components: 200
+            }
+        })
+    } catch (error) {
+        console.log('Retreving Destiny Characters Failed!')
+        console.log(error)
+    }
 
     await database.updateUser(
         destinyMemberships.data.Response.bungieNetUser.uniqueName,
