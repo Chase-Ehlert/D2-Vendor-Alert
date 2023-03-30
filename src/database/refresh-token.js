@@ -25,6 +25,8 @@ export async function handleRefreshToken(request) {
 
     let destinyMemberships, destinyCharacters
 
+    console.log(data)
+
     try {
         destinyMemberships = await axios.get(
             `https://www.bungie.net/platform/User/GetMembershipsById/${data.membership_id}/3/`, {
