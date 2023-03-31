@@ -32,12 +32,14 @@ export async function getVendorModInventory(vendorId, user) {
     components: 402
   }
   vendorUrl.search = new URLSearchParams(searchParams).toString()
+  console.log('TESTING')
   const response = await axios.get(vendorUrl, {
     headers: {
       Authorization: `Bearer ${oauthToken}`,
       'x-api-key': `${process.env.VENDOR_ALERT_API_KEY}`
     }
   })
+  console.log('WOOHOO')
   const destinyVendorInventories = await response.json()
   let vendorInventory
 
