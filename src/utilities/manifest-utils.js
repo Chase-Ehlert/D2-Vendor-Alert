@@ -11,6 +11,7 @@ export async function getItemFromManifest(itemType, itemList) {
   const manifestFileName = await getManifestFile()
   const itemManifestFileName = 'manifest-items.json'
   console.log('ROBOT')
+  console.log(manifestFileName)
 
   await axios.get('https://www.bungie.net' + manifestFileName)
     .then(async data => {
