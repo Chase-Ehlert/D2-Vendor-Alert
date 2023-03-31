@@ -39,6 +39,8 @@ async function readItemsFromManifest(itemType, fileName, inventoryNameList, item
 export async function getCollectibleFromManifest(itemType, itemList) {
   let inventoryNameList = []
   const manifestFileName = await getManifestFile()
+  console.log('ZEBRA')
+  console.log(manifestFileName)
   const itemManifestFileName = 'manifest-collectibles.json'
 
   await axios.get('https://www.bungie.net' + manifestFileName)
@@ -53,6 +55,8 @@ export async function getCollectibleFromManifest(itemType, itemList) {
       )
     }
     )
+    console.log('LION')
+    console.log(inventoryNameList)
 
   return inventoryNameList
 }
@@ -73,7 +77,6 @@ async function getManifestFile() {
       'X-API-Key': `${process.env.DESTINY_API_KEY}`
     }
   })
-  console.log(manifest.data.Response.jsonWorldContentPaths.en)
 
   return manifest.data.Response.jsonWorldContentPaths.en
 }
