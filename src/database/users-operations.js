@@ -32,12 +32,13 @@ export async function addUser(bungieNetUsername, discordId, discordChannelId) {
     }
 }
 
-export async function updateUser(bungieNetUsername, destinyId, characterId, refreshTokenInfo) {
+export async function updateUser(bungieMembershipId, bungieNetUsername, destinyId, characterId, refreshTokenInfo) {
     try {
         await User.findOneAndUpdate(
             { bungie_username: bungieNetUsername },
             {
                 $set: {
+                    bungie_membership_id: bungieMembershipId,
                     destiny_id: destinyId,
                     destiny_character_id: characterId,
                     refresh_expiration: refreshTokenInfo.refresh_expiration,

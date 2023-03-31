@@ -16,12 +16,12 @@ export async function handleRefreshToken(request) {
 
     const daysTillTokenExpires = data.refresh_expires_in / 60 / 60 / 24
     const currentDate = new Date(new Date().toUTCString())
+    currentDate.setDate(currentDate.getDate() + daysTillTokenExpires)
     const refreshTokenInfo = {
         refresh_expiration: currentDate,
         refresh_token: data.refresh_token
     }
 
-    currentDate.setDate(currentDate.getDate() + daysTillTokenExpires)
 
     let destinyMemberships, destinyCharacters
 
@@ -53,6 +53,7 @@ export async function handleRefreshToken(request) {
     }
 
     await database.updateUser(
+        data.membership_id,
         destinyMemberships.data.Response.bungieNetUser.uniqueName,
         destinyMemberships.data.Response.destinyMemberships[0].membershipId,
         destinyCharacters.data.Response.profile.data.characterIds[0],
