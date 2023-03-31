@@ -60,7 +60,7 @@ async function refreshOauthToken(refreshToken, bungieUsername) {
       { bungie_username: bungieUsername },
       {
         $set: {
-          refresh_token: oauthJson
+          refresh_token: oauthJson['refresh_token']
         }
       },
       (error) => {
@@ -114,7 +114,7 @@ async function getOauthJson(refreshToken) {
     }
   ).clone()
 
-  return oauthCredentials.data.access_token
+  return oauthCredentials.data
 }
 
 export async function getProfileCollectibles(user) {
