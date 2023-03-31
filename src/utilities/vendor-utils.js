@@ -92,6 +92,8 @@ async function getOauthJson(refreshToken) {
       'client_secret': `${process.env.VENDOR_ALERT_OAUTH_SECRET}`
     })
   })
+  console.log('GUESSING')
+  console.log(getOauthCredentials)
   const oauthJson = await getOauthCredentials.json()
   return oauthJson
 }
