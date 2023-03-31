@@ -114,7 +114,8 @@ async function getOauthJson(refreshToken) {
         console.log('Updated user record')
       }
     }
-  )
+  ).clone()
+  console.log('SAFE')
 
   return oauthCredentials.data.access_token
 }
