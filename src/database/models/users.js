@@ -7,6 +7,7 @@ const UserSchema = new mongoose.Schema({
     discord_id: String,
     discord_channel_id: String,
     destiny_id: String,
+    destiny_character_id: String,
     refresh_expiration: String,
     refresh_token: String
 })
