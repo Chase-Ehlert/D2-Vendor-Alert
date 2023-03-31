@@ -68,14 +68,14 @@ async function readCollectiblesFromManifest(itemType, fileName, inventoryNameLis
 }
 
 async function getManifestFile() {
-  const manifest = await axios.get(new URL('https://www.bungie.net/Platform/Destiny2/Manifest/'), {
+  const manifest = await axios.get('https://www.bungie.net/Platform/Destiny2/Manifest/', {
     headers: {
       'X-API-Key': `${process.env.DESTINY_API_KEY}`
     }
   })
-  const manifestJson = await manifest.json()
+  console.log(manifest.data.Response.jsonWorldContentPaths.en)
 
-  return manifestJson.Response.jsonWorldContentPaths.en
+  return manifest.data.Response.jsonWorldContentPaths.en
 }
 
 async function readFile(itemType, fileName, itemList, inventoryNameList, collectible) {

@@ -39,7 +39,6 @@ export async function getVendorModInventory(vendorId, user) {
     }
   })
   console.log('WOOHOO')
-  console.log(response)
   let vendorInventory
 
   for (let key in response.data.Response.sales.data) {
