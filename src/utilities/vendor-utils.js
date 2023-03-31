@@ -95,8 +95,6 @@ async function getOauthJson(refreshToken) {
   const daysTillTokenExpires = oauthCredentials.data.refresh_expires_in / 60 / 60 / 24
   const currentDate = new Date(new Date().toUTCString())
   currentDate.setDate(currentDate.getDate() + daysTillTokenExpires)
-  console.log('DATE')
-  console.log(currentDate)
 
   await User.findOneAndUpdate(
     { bungie_membership_id: oauthCredentials.data.membership_id },
@@ -115,7 +113,6 @@ async function getOauthJson(refreshToken) {
       }
     }
   ).clone()
-  console.log('SAFE')
 
   return oauthCredentials.data.access_token
 }
@@ -124,17 +121,19 @@ export async function getProfileCollectibles(user) {
   console.log('1')
   const oauthToken = await refreshOauthToken(user.refresh_token, user.bungie_username)
   console.log('2')
-  const profileUrl = new URL(`https://www.bungie.net/Platform/Destiny2/3/Profile/${user.destiny_id}/`)
-  profileUrl.search = new URLSearchParams({
+  // const profileUrl = new URL(`https://www.bungie.net/Platform/Destiny2/3/Profile/${user.destiny_id}/`)
+  // profileUrl.search = new URLSearchParams({
+  // })
+  const profileResponse = await axios.get(`https://www.bungie.net/Platform/Destiny2/3/Profile/${user.destiny_id}/`, new URLSearchParams({
     components: 800
-  })
-  const profileResponse = await axios.get(profileUrl, {
+  }),{
     headers: {
       'x-api-key': `${process.env.VENDOR_ALERT_API_KEY}`,
       Authorization: `Bearer ${oauthToken}`
-    }
-  })
+    }}
+  )
   console.log('3')
+  console.log(profileResponse)
   const profileJson = await profileResponse.json()
   const bansheeMods = await getVendorModInventory('672118013', user)
   const adaMods = await getVendorModInventory('350061650', user)

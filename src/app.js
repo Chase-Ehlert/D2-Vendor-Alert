@@ -30,8 +30,6 @@ async function sendMessage() {
     const discordEndpoint = `channels/${user.discord_channel_id}/messages`
     let time = new Date()
     const timeOfDay = `${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}`
-    console.log('CURRENT TIME')
-    console.log(timeOfDay)
 
     // Need to understand the refresh token expiration, check it, and then make the necessary call
 
