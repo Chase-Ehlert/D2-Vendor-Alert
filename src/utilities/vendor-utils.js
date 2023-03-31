@@ -139,7 +139,9 @@ export async function getProfileCollectibles(user) {
     // }
     )
   } catch (error) {
-    console.log(error)
+    console.log(error.request)
+    console.log('BREAK')
+    console.log(error.response)
     throw error
   }
   console.log('3')
