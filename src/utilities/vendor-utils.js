@@ -128,11 +128,12 @@ export async function getProfileCollectibles(user) {
     params: new URLSearchParams({
       components: 800
     })
-  }, {
-    headers: {
-      'x-api-key': `${process.env.VENDOR_ALERT_API_KEY}`
-    }
   }
+  // , {
+  //   headers: {
+  //     'x-api-key': `${process.env.VENDOR_ALERT_API_KEY}`
+  //   }
+  // }
   )
   console.log('3')
   console.log(profileResponse)
