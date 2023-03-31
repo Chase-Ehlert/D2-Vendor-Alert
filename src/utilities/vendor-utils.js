@@ -52,8 +52,9 @@ export async function getVendorModInventory(vendorId, user) {
 
 async function refreshOauthToken(refreshToken, bungieUsername) {
   console.log('4')
+  console.log(refreshToken)
   const oauthJson = await getOauthJson(refreshToken)
-  console.log('4')
+  console.log('5')
 
       try {
         await User.findOneAndUpdate(
