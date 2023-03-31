@@ -44,7 +44,7 @@ export async function handleRefreshToken(request) {
                 'X-API-Key': `${process.env.DESTINY_API_KEY}`
             },
             params: {
-                components: 200
+                components: 100
             }
         })
     } catch (error) {
@@ -55,7 +55,7 @@ export async function handleRefreshToken(request) {
     await database.updateUser(
         destinyMemberships.data.Response.bungieNetUser.uniqueName,
         destinyMemberships.data.Response.destinyMemberships[0].membershipId,
-        destinyCharacters.data.Response.characters.data[0].characterId,
+        destinyCharacters.data.Response.profile.data.characterIds[0],
         refreshTokenInfo
     )
 }
