@@ -10,9 +10,12 @@ export async function getItemFromManifest(itemType, itemList) {
   let inventoryNameList = []
   const manifestFileName = await getManifestFile()
   const itemManifestFileName = 'manifest-items.json'
+  console.log('ROBOT')
 
   await axios.get('https://www.bungie.net' + manifestFileName)
     .then(async data => {
+      console.log('DOG')
+      console.log(data)
       inventoryNameList = await readItemsFromManifest(
         itemType,
         itemManifestFileName,
