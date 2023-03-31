@@ -124,12 +124,15 @@ export async function getProfileCollectibles(user) {
   // const profileUrl = new URL(`https://www.bungie.net/Platform/Destiny2/3/Profile/${user.destiny_id}/`)
   // profileUrl.search = new URLSearchParams({
   // })
-  const profileResponse = await axios.get(`https://www.bungie.net/Platform/Destiny2/3/Profile/${user.destiny_id}/`, new URLSearchParams({
-    components: 800
-  }),{
+  const profileResponse = await axios.get(`https://www.bungie.net/Platform/Destiny2/3/Profile/${user.destiny_id}/`, {
+    params: new URLSearchParams({
+      components: 800
+    })
+  }, {
     headers: {
       'x-api-key': `${process.env.VENDOR_ALERT_API_KEY}`
-    }}
+    }
+  }
   )
   console.log('3')
   console.log(profileResponse)
