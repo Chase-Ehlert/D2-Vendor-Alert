@@ -124,18 +124,24 @@ export async function getProfileCollectibles(user) {
   // const profileUrl = new URL(`https://www.bungie.net/Platform/Destiny2/3/Profile/${user.destiny_id}/`)
   // profileUrl.search = new URLSearchParams({
   // })
-  console.log(user.destiny_id)
-  const profileResponse = await axios.get(`https://www.bungie.net/Platform/Destiny2/3/Profile/${user.destiny_id}/`, {
-    params: {
-      components: 800
+  let profileResponse
+  try {
+
+    profileResponse = await axios.get(`https://www.bungie.net/Platform/Destiny2/3/Profile/${user.destiny_id}/`, {
+      params: {
+        components: 800
+      }
     }
+    // , {
+    //   headers: {
+    //     'x-api-key': `${process.env.VENDOR_ALERT_API_KEY}`
+    //   }
+    // }
+    )
+  } catch (error) {
+    console.log(error)
+    throw error
   }
-  // , {
-  //   headers: {
-  //     'x-api-key': `${process.env.VENDOR_ALERT_API_KEY}`
-  //   }
-  // }
-  )
   console.log('3')
   console.log(profileResponse)
   const profileJson = await profileResponse.json()
