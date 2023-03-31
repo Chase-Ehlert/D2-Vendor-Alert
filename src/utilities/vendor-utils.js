@@ -25,7 +25,6 @@ export async function getXurInventory() {
 }
 
 export async function getVendorModInventory(vendorId, user) {
-  console.log(user)
   const oauthToken = await refreshOauthToken(user.refresh_token, user.bungie_username)
   const vendorUrl =
     new URL(`https://www.bungie.net/Platform/Destiny2/3/Profile/${user.destiny_id}/Character/${user.character_id}/Vendors/`)
@@ -33,7 +32,6 @@ export async function getVendorModInventory(vendorId, user) {
     components: 402
   }
   vendorUrl.search = new URLSearchParams(searchParams).toString()
-  console.log('TESTING')
   const response = await axios.get(vendorUrl, {
     headers: {
       Authorization: `Bearer ${oauthToken}`,
@@ -54,11 +52,9 @@ export async function getVendorModInventory(vendorId, user) {
 }
 
 async function refreshOauthToken(refreshToken, bungieUsername) {
-  console.log('4')
-  console.log(refreshToken)
   const oauthJson = await getOauthJson(refreshToken)
   console.log('5')
-  console.log(oauthJson)
+  console.log(oauthJson['refresh_token'])
 
   try {
     await User.findOneAndUpdate(
@@ -114,7 +110,7 @@ async function getOauthJson(refreshToken) {
         console.log(error)
       } else {
         console.log('Updated user record')
-        console.log(document)
+        // console.log(document)
       }
     }
   ).clone()
@@ -123,9 +119,7 @@ async function getOauthJson(refreshToken) {
 }
 
 export async function getProfileCollectibles(user) {
-  console.log('1')
   // const oauthToken = await refreshOauthToken(user.refresh_token, user.bungie_username)
-  console.log('2')
   // const profileUrl = new URL(`https://www.bungie.net/Platform/Destiny2/3/Profile/${user.destiny_id}/`)
   // profileUrl.search = new URLSearchParams({
   // })
@@ -138,7 +132,6 @@ export async function getProfileCollectibles(user) {
       'x-api-key': `${process.env.VENDOR_ALERT_API_KEY}`
     }
   })
-  console.log('3')
 
   // const profileJson = await profileResponse.json()
   const bansheeMods = await getVendorModInventory('672118013', user)
