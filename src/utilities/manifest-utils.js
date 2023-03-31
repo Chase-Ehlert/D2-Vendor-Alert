@@ -22,6 +22,8 @@ export async function getItemFromManifest(itemType, itemList) {
       )
     }
     )
+    console.log('GIRAFFE')
+    console.log(inventoryNameList)
 
   return inventoryNameList
 }

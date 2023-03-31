@@ -44,8 +44,10 @@ export async function getVendorModInventory(vendorId, user) {
   for (let key in response.data.Response.sales.data) {
     if (key === vendorId) {
       vendorInventory = response.data.Response.sales.data[key].saleItems
+      console.log(vendorInventory)
     }
   }
+  console.log('MONKEY')
 
   return await getItemFromManifest(19, vendorInventory)
 }
