@@ -130,11 +130,9 @@ export async function getProfileCollectibles(user) {
     profileResponse = await axios.get(`https://www.bungie.net/Platform/Destiny2/3/Profile/${user.destiny_id}/`, {
       params: {
         'components': 800
-      }
-    }
-    , {
+      },
       headers: {
-        'X-API-Key': `${process.env.VENDOR_ALERT_API_KEY}`
+        'x-api-key': `${process.env.VENDOR_ALERT_API_KEY}`
       }
     }
     )
