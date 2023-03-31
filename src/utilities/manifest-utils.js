@@ -25,7 +25,8 @@ export async function getItemFromManifest(itemType, itemList) {
         itemManifestFileName,
         inventoryNameList,
         itemList,
-        response
+        // CHECKING THIS RESPONSE DATA PASS, RESET SERVER AND CHECK
+        response.data
       )
     // }
     // )
