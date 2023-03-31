@@ -28,12 +28,12 @@ export async function addUser(bungieNetUsername, discordId, discordChannelId) {
     } catch (error) {
         console.log('Adding user failed')
         console.log(error)
+        throw error
     }
 }
 
 export async function updateUser(bungieNetUsername, destinyId, characterId, refreshTokenInfo) {
     try {
-        console.log('trying to update user record')
         await User.findOneAndUpdate(
             { bungie_username: bungieNetUsername },
             {
@@ -44,7 +44,7 @@ export async function updateUser(bungieNetUsername, destinyId, characterId, refr
                     refresh_token: refreshTokenInfo.refresh_token
                 }
             },
-            (error, result) => {
+            (error) => {
                 if (error) {
                     console.log('Updating user record failed')
                     console.log(error)
