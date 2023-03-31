@@ -94,18 +94,20 @@ async function getOauthJson(refreshToken) {
 }
 
 export async function getProfileCollectibles(user) {
+  console.log('1')
   const oauthToken = await refreshOauthToken(user.refresh_token, user.bungie_username)
+  console.log('2')
   const profileUrl = new URL(`https://www.bungie.net/Platform/Destiny2/3/Profile/${user.destiny_id}/`)
   profileUrl.search = new URLSearchParams({
     components: 800
   })
-  console.log('oauthToken is ' + oauthToken)
   const profileResponse = await axios.get(profileUrl, {
     headers: {
       'x-api-key': `${process.env.VENDOR_ALERT_API_KEY}`,
       Authorization: `Bearer ${oauthToken}`
     }
   })
+  console.log('3')
   const profileJson = await profileResponse.json()
   const bansheeMods = await getVendorModInventory('672118013', user)
   const adaMods = await getVendorModInventory('350061650', user)
