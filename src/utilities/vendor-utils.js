@@ -27,6 +27,7 @@ export async function getXurInventory() {
 export async function getVendorModInventory(vendorId, user) {
   const oauthToken = await refreshOauthToken(user.refresh_token, user.bungie_username)
 
+  console.log('HERE WE GO')
   const response = await axios.get(
     `https://www.bungie.net/Platform/Destiny2/3/Profile/${user.destiny_id}/Character/${user.destiny_character_id}/Vendors/`, {
     params: {
@@ -53,14 +54,18 @@ export async function getVendorModInventory(vendorId, user) {
 async function refreshOauthToken(refreshToken, bungieUsername) {
   const oauthJson = await getOauthJson(refreshToken)
   console.log('5')
-  console.log(oauthJson)
+
+  const daysTillTokenExpires = oauthJson.refresh_expires_in / 60 / 60 / 24
+  const currentDate = new Date(new Date().toUTCString())
+  currentDate.setDate(currentDate.getDate() + daysTillTokenExpires)
 
   try {
     await User.findOneAndUpdate(
       { bungie_username: bungieUsername },
       {
         $set: {
-          refresh_token: oauthJson['refresh_token']
+          refresh_token: oauthJson['refresh_token'],
+          refresh_expiration: currentDate
         }
       },
       (error) => {
@@ -71,7 +76,7 @@ async function refreshOauthToken(refreshToken, bungieUsername) {
           console.log('Updated user refresh token')
         }
       }
-    )
+    ).clone()
   } catch (error) {
     return error
   }
