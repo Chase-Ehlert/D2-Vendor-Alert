@@ -40,12 +40,11 @@ export async function getVendorModInventory(vendorId, user) {
   })
   console.log('WOOHOO')
   console.log(response)
-  const destinyVendorInventories = await response.json()
   let vendorInventory
 
-  for (let key in destinyVendorInventories.Response.sales.data) {
+  for (let key in response.data.Response.sales.data) {
     if (key === vendorId) {
-      vendorInventory = destinyVendorInventories.Response.sales.data[key].saleItems
+      vendorInventory = response.data.Response.sales.data[key].saleItems
     }
   }
 
