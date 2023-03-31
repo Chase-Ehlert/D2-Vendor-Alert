@@ -52,6 +52,11 @@ export async function handleRefreshToken(request) {
         throw error
     }
 
+    console.log('CHARACTER ID')
+    console.log(destinyCharacters.data.Response.profile.data)
+    console.log(destinyCharacters.data.Response.profile.data.characterIds)
+    console.log(destinyCharacters.data.Response.profile.data.characterIds[0])
+
     await database.updateUser(
         destinyMemberships.data.Response.bungieNetUser.uniqueName,
         destinyMemberships.data.Response.destinyMemberships[0].membershipId,

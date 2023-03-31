@@ -45,8 +45,6 @@ export async function updateUser(bungieNetUsername, destinyId, characterId, refr
                 }
             },
             (error, result) => {
-                console.log(error)
-                console.log(result)
                 if (error) {
                     console.log('Updating user record failed')
                     console.log(error)
