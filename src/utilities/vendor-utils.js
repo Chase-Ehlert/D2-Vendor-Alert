@@ -39,6 +39,7 @@ export async function getVendorModInventory(vendorId, user) {
     }
   })
   console.log('WOOHOO')
+  console.log(response)
   const destinyVendorInventories = await response.json()
   let vendorInventory
 
