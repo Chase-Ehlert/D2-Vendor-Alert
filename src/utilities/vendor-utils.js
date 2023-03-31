@@ -119,7 +119,7 @@ async function getOauthJson(refreshToken) {
 
 export async function getProfileCollectibles(user) {
   console.log('1')
-  const oauthToken = await refreshOauthToken(user.refresh_token, user.bungie_username)
+  // const oauthToken = await refreshOauthToken(user.refresh_token, user.bungie_username)
   console.log('2')
   // const profileUrl = new URL(`https://www.bungie.net/Platform/Destiny2/3/Profile/${user.destiny_id}/`)
   // profileUrl.search = new URLSearchParams({
@@ -128,8 +128,7 @@ export async function getProfileCollectibles(user) {
     components: 800
   }),{
     headers: {
-      'x-api-key': `${process.env.VENDOR_ALERT_API_KEY}`,
-      Authorization: `Bearer ${oauthToken}`
+      'x-api-key': `${process.env.VENDOR_ALERT_API_KEY}`
     }}
   )
   console.log('3')
