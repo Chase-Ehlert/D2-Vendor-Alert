@@ -54,14 +54,14 @@ export async function getVendorModInventory(vendorId, user) {
 async function refreshOauthToken(refreshToken, bungieUsername) {
   const oauthJson = await getOauthJson(refreshToken)
   console.log('5')
-  console.log(oauthJson['refresh_token'])
+  console.log(oauthJson)
 
   try {
     await User.findOneAndUpdate(
       { bungie_username: bungieUsername },
       {
         $set: {
-          refresh_token: oauthJson['refresh_token']
+          refresh_token: oauthJson
         }
       },
       (error) => {
