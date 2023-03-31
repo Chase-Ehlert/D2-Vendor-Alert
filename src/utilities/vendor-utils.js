@@ -81,10 +81,10 @@ async function refreshOauthToken(refreshToken, bungieUsername) {
 }
 
 async function getOauthJson(refreshToken) {
+  console.log(refreshToken)
   console.log('GUESSING')
 
   // post call is failing
-
   const getOauthCredentials = await axios.post('https://www.bungie.net/platform/app/oauth/token/', {
     grant_type: 'refresh_token',
     refresh_token: refreshToken,
