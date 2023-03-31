@@ -58,6 +58,7 @@ async function refreshOauthToken(refreshToken, bungieUsername) {
   console.log(refreshToken)
   const oauthJson = await getOauthJson(refreshToken)
   console.log('5')
+  console.log(oauthJson)
 
   try {
     await User.findOneAndUpdate(
@@ -107,12 +108,13 @@ async function getOauthJson(refreshToken) {
         refresh_expiration: currentDate
       }
     },
-    (error) => {
+    (error, document) => {
       if (error) {
         console.log('Updating user record failed')
         console.log(error)
       } else {
         console.log('Updated user record')
+        console.log(document)
       }
     }
   ).clone()
