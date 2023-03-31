@@ -88,11 +88,11 @@ async function getOauthJson(refreshToken) {
   const getOauthCredentials = await axios.post('https://www.bungie.net/platform/app/oauth/token/', {
     grant_type: 'refresh_token',
     refresh_token: refreshToken,
-    // client_id: process.env.VENDOR_ALERT_OAUTH_CLIENT_ID,
-    // client_secret: process.env.VENDOR_ALERT_OAUTH_SECRET
+    client_id: process.env.VENDOR_ALERT_OAUTH_CLIENT_ID,
+    client_secret: process.env.VENDOR_ALERT_OAUTH_SECRET
   }, {
     headers: {
-      'x-api-key': `${process.env.VENDOR_ALERT_API_KEY}`
+      'x-api-key': `${process.env.VENDOR_ALERT_OAUTH_CLIENT_ID}`
     }
   })
 
