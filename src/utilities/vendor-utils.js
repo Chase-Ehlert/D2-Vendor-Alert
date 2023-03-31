@@ -26,13 +26,12 @@ export async function getXurInventory() {
 
 export async function getVendorModInventory(vendorId, user) {
   const oauthToken = await refreshOauthToken(user.refresh_token, user.bungie_username)
-  const vendorUrl =
-    new URL(`https://www.bungie.net/Platform/Destiny2/3/Profile/${user.destiny_id}/Character/${user.character_id}/Vendors/`)
-  const searchParams = {
-    components: 402
-  }
-  vendorUrl.search = new URLSearchParams(searchParams).toString()
-  const response = await axios.get(vendorUrl, {
+
+  const response = await axios.get(
+    `https://www.bungie.net/Platform/Destiny2/3/Profile/${user.destiny_id}/Character/${user.destiny_character_id}/Vendors/`, {
+    params: {
+      components: 402
+    },
     headers: {
       Authorization: `Bearer ${oauthToken}`,
       'x-api-key': `${process.env.VENDOR_ALERT_API_KEY}`

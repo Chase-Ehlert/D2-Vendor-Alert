@@ -29,7 +29,7 @@ export async function handleRefreshToken(request) {
         destinyMemberships = await axios.get(
             `https://www.bungie.net/platform/User/GetMembershipsById/${data.membership_id}/3/`, {
             headers: {
-                'X-API-Key': `${process.env.DESTINY_API_KEY}`
+                'X-API-Key': `${process.env.VENDOR_ALERT_API_KEY}`
             }
         })
     } catch (error) {
@@ -41,7 +41,7 @@ export async function handleRefreshToken(request) {
         destinyCharacters = await axios.get(
             `https://bungie.net/Platform/Destiny2/3/Profile/${destinyMemberships.data.Response.destinyMemberships[0].membershipId}/`, {
             headers: {
-                'X-API-Key': `${process.env.DESTINY_API_KEY}`
+                'X-API-Key': `${process.env.VENDOR_ALERT_API_KEY}`
             },
             params: {
                 components: 100
