@@ -134,7 +134,7 @@ export async function getProfileCollectibles(user) {
     }
     , {
       headers: {
-        'x-api-key': `${process.env.VENDOR_ALERT_API_KEY}`
+        'X-API-Key': `${process.env.VENDOR_ALERT_API_KEY}`
       }
     }
     )
