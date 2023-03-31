@@ -13,7 +13,10 @@ export async function getItemFromManifest(itemType, itemList) {
   console.log('ROBOT')
   console.log(manifestFileName)
 
-  const response = await axios.get('https://www.bungie.net' + manifestFileName, {maxBodyLength: Infinity, maxContentLength: Infinity})
+  const response = await axios.get(
+    'https://www.bungie.net' + manifestFileName,
+     {maxBodyLength: Infinity, maxContentLength: Infinity, responseType: 'arraybuffer'}
+     )
     // .then(async data => {
       console.log('DOG')
       console.log(response)
