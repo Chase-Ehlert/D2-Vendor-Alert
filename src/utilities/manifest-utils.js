@@ -13,19 +13,19 @@ export async function getItemFromManifest(itemType, itemList) {
   console.log('ROBOT')
   console.log(manifestFileName)
 
-  await axios.get('https://www.bungie.net' + manifestFileName, {maxBodyLength: Infinity, maxContentLength: Infinity})
-    .then(async data => {
+  const response = await axios.get('https://www.bungie.net' + manifestFileName, {maxBodyLength: Infinity, maxContentLength: Infinity})
+    // .then(async data => {
       console.log('DOG')
-      console.log(data)
+      console.log(response)
       inventoryNameList = await readItemsFromManifest(
         itemType,
         itemManifestFileName,
         inventoryNameList,
         itemList,
-        data
+        response
       )
-    }
-    )
+    // }
+    // )
     console.log('GIRAFFE')
     console.log(inventoryNameList)
 
