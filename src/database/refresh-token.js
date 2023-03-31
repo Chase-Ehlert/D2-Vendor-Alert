@@ -32,7 +32,6 @@ export async function handleRefreshToken(request) {
                 'X-API-Key': `${process.env.DESTINY_API_KEY}`
             }
         })
-        console.log(destinyMemberships)
     } catch (error) {
         console.log(`Retreiving Destiny Memberships failed for ${data.membership_id}!`)
         throw error
@@ -40,7 +39,7 @@ export async function handleRefreshToken(request) {
 
     try {
         destinyCharacters = await axios.get(
-            `https://bungie.net/Platform/Destiny2/3/Profile/${data.membership_id}/`, {
+            `https://bungie.net/Platform/Destiny2/3/Profile/${destinyMemberships.data.Response.destinyMemberships[0].membershipId}/`, {
             headers: {
                 'X-API-Key': `${process.env.DESTINY_API_KEY}`
             },
