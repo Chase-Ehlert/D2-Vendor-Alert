@@ -124,31 +124,24 @@ export async function getProfileCollectibles(user) {
   // const profileUrl = new URL(`https://www.bungie.net/Platform/Destiny2/3/Profile/${user.destiny_id}/`)
   // profileUrl.search = new URLSearchParams({
   // })
-  let profileResponse
-  try {
 
-    profileResponse = await axios.get(`https://www.bungie.net/Platform/Destiny2/3/Profile/${user.destiny_id}/`, {
-      params: {
-        'components': 800
-      },
-      headers: {
-        'x-api-key': `${process.env.VENDOR_ALERT_API_KEY}`
-      }
+  const profileResponse = await axios.get(`https://www.bungie.net/Platform/Destiny2/3/Profile/${user.destiny_id}/`, {
+    params: {
+      'components': 800
+    },
+    headers: {
+      'x-api-key': `${process.env.VENDOR_ALERT_API_KEY}`
     }
-    )
-  } catch (error) {
-    console.log(error.response)
-    throw error
-  }
+  })
   console.log('3')
-  console.log(profileResponse)
-  const profileJson = await profileResponse.json()
+
+  // const profileJson = await profileResponse.json()
   const bansheeMods = await getVendorModInventory('672118013', user)
   const adaMods = await getVendorModInventory('350061650', user)
   const modsForSale = bansheeMods.concat(adaMods)
   const list1 = []
   modsForSale.forEach(key => {
-    if (profileJson.Response.profileCollectibles.data.collectibles[key].state == 65) {
+    if (profileResponse.data.Response.profileCollectibles.data.collectibles[key].state == 65) {
       list1.push(key)
     }
   })
