@@ -33,14 +33,14 @@ async function sendMessage() {
 
     // Need to understand the refresh token expiration, check it, and then make the necessary call
 
-    // if (timeOfDay === '13:2:1') {
+    if (timeOfDay === '13:2:1') {
       const unownedModList = await getProfileCollectibles(user)
       if (unownedModList.length > 0) {
         await shareUnownedModsList(discordEndpoint, user.discord_id, unownedModList)
       } else {
         await shareEmptyModsList(discordEndpoint, user.bungie_username)
       }
-    // }
+    }
   }
 }
 
