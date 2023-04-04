@@ -19,7 +19,7 @@ export async function getItemFromManifest(itemType, itemList) {
      )
     // .then(async data => {
       console.log('DOG')
-      console.log(response)
+      console.log(typeof(response))
       inventoryNameList = await readItemsFromManifest(
         itemType,
         itemManifestFileName,
