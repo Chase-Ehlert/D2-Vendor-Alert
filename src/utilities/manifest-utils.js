@@ -21,7 +21,9 @@ export async function getItemFromManifest(itemType, itemList) {
       console.log('DOG')
       let jsonObject
       try {
-        console.log(response.data.toString().length)
+        const something = response.data.toString()
+        console.log('RED')
+        console.log(something.length)
         jsonObject = JSON.parse(response.data.toString('utf8'))
         console.log(jsonObject)
       } catch (error) {
