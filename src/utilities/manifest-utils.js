@@ -21,6 +21,15 @@ export async function getItemFromManifest(itemType, itemList) {
       try {
         const readStream = fs.createReadStream(response.data)
         console.log(readStream)
+        readStream.on('data', (data) => {
+          console.log(data)
+        })
+        readStream.on('end', () => {
+          console.log('stream has finished')
+        })
+        readStream.on('error', (error) => {
+          console.error('readstream broke', error)
+        })
         console.log('BLUE')
         response.data.toString('utf-8', (error, code) => {
           if (error) {
