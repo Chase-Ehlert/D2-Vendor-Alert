@@ -21,9 +21,14 @@ export async function getItemFromManifest(itemType, itemList) {
       console.log('DOG')
       let jsonObject
       try {
-        const something = response.data.toString()
+        response.data.toString((error, code) => {
+          if (error) {
+            console.error('failed parsing buffer', error)
+          } else {
+            console.log('parsed buffer', code)
+          }
+        })
         console.log('RED')
-        console.log(something.length)
         jsonObject = JSON.parse(response.data.toString('utf8'))
         console.log(jsonObject)
       } catch (error) {
