@@ -19,7 +19,7 @@ export async function getItemFromManifest(itemType, itemList) {
 
   const writeStream = fs.createWriteStream('largeJson.json');
 
-  axios.get('https://www.bungie.net' + manifestFileName,
+  await axios.get('https://www.bungie.net' + manifestFileName,
     { maxBodyLength: Infinity, maxContentLength: Infinity, responseType: 'stream' }
   )
     .then(response => {
