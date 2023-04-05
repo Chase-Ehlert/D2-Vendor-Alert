@@ -37,6 +37,7 @@ export async function getItemFromManifest(itemType, itemList) {
 }
 
 async function readItemsFromManifest(itemType, fileName, inventoryNameList, itemList, data) {
+  console.log('BATMAN')
   try {
     await fsPromises.access(fileName, oldfs.constants.F_OK)
     inventoryNameList = await readFile(itemType, fileName, itemList, inventoryNameList, false)
