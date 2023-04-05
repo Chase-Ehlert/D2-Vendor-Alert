@@ -19,7 +19,7 @@ export async function getItemFromManifest(itemType, itemList) {
      )
     // .then(async data => {
       console.log('DOG')
-      const jsonObject = JSON.parse(response.data.toString())
+      const jsonObject = await JSON.parse(response.data.toString())
       inventoryNameList = await readItemsFromManifest(
         itemType,
         itemManifestFileName,
