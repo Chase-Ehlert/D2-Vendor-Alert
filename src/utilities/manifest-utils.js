@@ -19,8 +19,12 @@ export async function getItemFromManifest(itemType, itemList) {
       console.log('DOG')
       let jsonObject
       try {
-        await fs.createReadStream(response.data).then((text) => {
+        fs.createReadStream(response.data).on('data', (text) => {
           console.log(text)
+        }).on('end', () => {
+          console.log('stream has finished')
+        }).on('error', (error) => {
+          console.error('stream broke', error)
         })
         // readStream.on('data', (data) => {
         //   console.log(data)
