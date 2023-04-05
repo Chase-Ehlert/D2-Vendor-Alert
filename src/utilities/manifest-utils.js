@@ -16,73 +16,32 @@ export async function getItemFromManifest(itemType, itemList) {
   //   { maxBodyLength: Infinity, maxContentLength: Infinity }
   // )
 
+  // const writeStream = fs.createWriteStream('largeJson.json');
 
-  const writeStream = fs.createWriteStream('largeJson.json');
-
-  await axios.get('https://www.bungie.net' + manifestFileName,
-    { maxBodyLength: Infinity, maxContentLength: Infinity, responseType: 'stream' }
-  )
-    .then(response => {
-      response.data.pipe(writeStream);
-    })
-    .catch(error => {
-      console.error(error);
-    });
-
-
-
-
-  // .then(async data => {
-  console.log('DOG')
-  // console.log(response)
-  let jsonObject
   try {
-
-    // fs.createReadStream(response.data).on('data', (text) => {
-    //   console.log(`Received ${text.length} bytes`)
-
-    //   console.log(text)
-    // }).on('end', () => {
-    //   console.log('stream has finished')
-    // }).on('error', (error) => {
-    //   console.error('stream broke', error)
-    // })
-
-
-    // readStream.on('data', (data) => {
-    //   console.log(data)
-    // })
-    // readStream.on('end', () => {
-    //   console.log('stream has finished')
-    // })
-    // readStream.on('error', (error) => {
-    //   console.error('readstream broke', error)
-    // })
-    console.log('BLUE')
-    // response.data.toString('utf-8', (error, code) => {
-    //   if (error) {
-    //     console.error('failed parsing buffer', error)
-    //   } else {
-    //     console.log('parsed buffer', code)
-    //   }
-    // })
-    console.log('RED')
-    // jsonObject = JSON.parse(response.data.toString('utf8'))
-    console.log(jsonObject)
+    const code = await axios.get('https://www.bungie.net' + manifestFileName,
+      { maxBodyLength: Infinity, maxContentLength: Infinity, responseType: 'stream' }
+    )
+    console.log(code.data)
   } catch (error) {
-    console.log(error)
-    throw error
+    console.error('reading json failed', error)
   }
+  // .then(response => {
+  //   response.data.pipe(writeStream);
+  // })
+  // .catch(error => {
+  //   console.error(error);
+  // });
+
+  console.log('DOG')
   inventoryNameList = await readItemsFromManifest(
     itemType,
     itemManifestFileName,
     inventoryNameList,
     itemList,
     // CHECKING THIS RESPONSE DATA PASS, RESET SERVER AND CHECK
-    jsonObject.DestinyInventoryItemDefinition
+    // jsonObject.DestinyInventoryItemDefinition
   )
-  // }
-  // )
   console.log('GIRAFFE')
   console.log(inventoryNameList)
 
