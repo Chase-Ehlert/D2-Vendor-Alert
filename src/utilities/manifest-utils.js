@@ -13,13 +13,17 @@ export async function getItemFromManifest(itemType, itemList) {
 
   const response = await axios.get(
     'https://www.bungie.net' + manifestFileName,
-     {maxBodyLength: Infinity, maxContentLength: Infinity, responseType: 'arraybuffer'}
+     {maxBodyLength: Infinity, maxContentLength: Infinity}
      )
     // .then(async data => {
       console.log('DOG')
+      console.log(response)
       let jsonObject
       try {
+        
         fs.createReadStream(response.data).on('data', (text) => {
+          console.log(`Received ${text.length} bytes`)
+
           console.log(text)
         }).on('end', () => {
           console.log('stream has finished')
