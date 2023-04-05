@@ -22,7 +22,7 @@ export async function getItemFromManifest(itemType, itemList) {
     const code = await axios.get('https://www.bungie.net' + manifestFileName,
       { maxBodyLength: Infinity, maxContentLength: Infinity, responseType: 'stream' }
     )
-    console.log(code.data)
+    console.log(code)
   } catch (error) {
     console.error('reading json failed', error)
   }
