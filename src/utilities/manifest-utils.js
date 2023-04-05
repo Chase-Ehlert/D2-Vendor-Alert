@@ -19,17 +19,18 @@ export async function getItemFromManifest(itemType, itemList) {
       console.log('DOG')
       let jsonObject
       try {
-        const readStream = fs.createReadStream(response.data)
-        console.log(readStream)
-        readStream.on('data', (data) => {
-          console.log(data)
+        await fs.createReadStream(response.data).then((text) => {
+          console.log(text)
         })
-        readStream.on('end', () => {
-          console.log('stream has finished')
-        })
-        readStream.on('error', (error) => {
-          console.error('readstream broke', error)
-        })
+        // readStream.on('data', (data) => {
+        //   console.log(data)
+        // })
+        // readStream.on('end', () => {
+        //   console.log('stream has finished')
+        // })
+        // readStream.on('error', (error) => {
+        //   console.error('readstream broke', error)
+        // })
         console.log('BLUE')
         response.data.toString('utf-8', (error, code) => {
           if (error) {
