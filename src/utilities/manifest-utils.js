@@ -1,9 +1,7 @@
 import * as oldfs from 'fs'
-import { createRequire } from 'module'
 import axios from 'axios'
+import fs from 'fs'
 
-const require = createRequire(import.meta.url)
-const fs = require('fs')
 const fsPromises = fs.promises
 
 export async function getItemFromManifest(itemType, itemList) {
@@ -21,7 +19,8 @@ export async function getItemFromManifest(itemType, itemList) {
       console.log('DOG')
       let jsonObject
       try {
-        new TextDecoder('utf-8', {fatal: true}).decode(response.data)
+        const readStream = fs.createReadStream(response.data)
+        console.log(readStream)
         console.log('BLUE')
         response.data.toString('utf-8', (error, code) => {
           if (error) {
