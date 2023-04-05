@@ -22,6 +22,8 @@ export async function getItemFromManifest(itemType, itemList) {
       let jsonObject
       try {
         console.log(response.data)
+        new TextDecoder('utf-8', {fatal: true}).decode(response.data)
+        console.log('BLUE')
         response.data.toString('utf-8', (error, code) => {
           if (error) {
             console.error('failed parsing buffer', error)
