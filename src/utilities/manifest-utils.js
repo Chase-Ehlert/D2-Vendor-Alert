@@ -16,18 +16,17 @@ export async function getItemFromManifest(itemType, itemList) {
   //   { maxBodyLength: Infinity, maxContentLength: Infinity }
   // )
 
-  // const writeStream = fs.createWriteStream('largeJson.json');
+  const writeStream = fs.createWriteStream('largeJson.json');
 
   try {
     const code = await axios.get('https://www.bungie.net' + manifestFileName,
       { maxBodyLength: Infinity, maxContentLength: Infinity, responseType: 'stream' }
     )
-    console.log(code)
+    code.data.pipe(writeStream);
   } catch (error) {
     console.error('reading json failed', error)
   }
   // .then(response => {
-  //   response.data.pipe(writeStream);
   // })
   // .catch(error => {
   //   console.error(error);
