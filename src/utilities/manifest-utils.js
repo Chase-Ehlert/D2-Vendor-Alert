@@ -19,7 +19,8 @@ export async function getItemFromManifest(itemType, itemList) {
      )
     // .then(async data => {
       console.log('DOG')
-      console.log(JSON.parse(response.data.toString()).DestinyInventoryItemDefinition)
+      const jsonObject = JSON.parse(response.data.toString())
+      console.log(jsonObject.DestinyInventoryItemDefinition)
       inventoryNameList = await readItemsFromManifest(
         itemType,
         itemManifestFileName,
