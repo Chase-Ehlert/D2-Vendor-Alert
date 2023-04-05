@@ -20,14 +20,13 @@ export async function getItemFromManifest(itemType, itemList) {
     // .then(async data => {
       console.log('DOG')
       const jsonObject = JSON.parse(response.data.toString())
-      console.log(jsonObject.DestinyInventoryItemDefinition)
       inventoryNameList = await readItemsFromManifest(
         itemType,
         itemManifestFileName,
         inventoryNameList,
         itemList,
         // CHECKING THIS RESPONSE DATA PASS, RESET SERVER AND CHECK
-        response.data
+        jsonObject.DestinyInventoryItemDefinition
       )
     // }
     // )
@@ -42,7 +41,7 @@ async function readItemsFromManifest(itemType, fileName, inventoryNameList, item
     await fsPromises.access(fileName, oldfs.constants.F_OK)
     inventoryNameList = await readFile(itemType, fileName, itemList, inventoryNameList, false)
   } catch (error) {
-    inventoryNameList = await writeFile(itemType, fileName, data.DestinyInventoryItemDefinition, itemList, inventoryNameList, false)
+    inventoryNameList = await writeFile(itemType, fileName, data, itemList, inventoryNameList, false)
   }
   return inventoryNameList
 }
