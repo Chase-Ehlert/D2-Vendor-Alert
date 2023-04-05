@@ -21,7 +21,7 @@ export async function getItemFromManifest(itemType, itemList) {
       console.log('DOG')
       let jsonObject
       try {
-        response.data.toString((error, code) => {
+        response.data.toString('urf-8', (error, code) => {
           if (error) {
             console.error('failed parsing buffer', error)
           } else {
