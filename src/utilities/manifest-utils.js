@@ -11,29 +11,31 @@ export async function getItemFromManifest(itemType, itemList) {
   console.log('ROBOT')
   console.log(manifestFileName)
 
-  const response = await axios.get(
-    'https://www.bungie.net' + manifestFileName,
-    { maxBodyLength: Infinity, maxContentLength: Infinity }
-  )
-  // console.log(response.DestinyInventoryItemDefinition)
-  
-  // const key = Object.keys(response)[0]
-  // console.log(key)
+  const writeStream = fs.createWriteStream('manifest.json');
 
-  // const writeStream = fs.createWriteStream('largeJson.json');
+  try {
+    writeStream.on('open', async () => {
+      const code = await axios.get('https://www.bungie.net' + manifestFileName,
+        { maxBodyLength: Infinity, maxContentLength: Infinity, responseType: 'stream' }
+      )
+      code.data.pipe(writeStream);
+    }).on('end', () => {
+      writeStream.end()
+    })
+  } catch (error) {
+    console.error('reading json failed', error)
+  }
 
-  // try {
-  //   writeStream.on('open', async () => {
-  //     const code = await axios.get('https://www.bungie.net' + manifestFileName,
-  //       { maxBodyLength: Infinity, maxContentLength: Infinity, responseType: 'stream' }
-  //     )
-  //     code.data.pipe(writeStream);
-  //   }).on('end', () => {
-  //     writeStream.end
-  //   })
-  // } catch (error) {
-  //   console.error('reading json failed', error)
-  // }
+  try {
+    fs.readFile('manifest.json', (error, data) => {
+      if (error) throw error
+      const jsonData = JSON.parse(data)
+      const value = jsonData['DestinyInventoryItemDefinition']
+      console.log(value)
+    })
+  } catch (error) {
+    console.error('reading manifest failed', error)
+  }
 
   console.log('DOG')
   inventoryNameList = await readItemsFromManifest(
