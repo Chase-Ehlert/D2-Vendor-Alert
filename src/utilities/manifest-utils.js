@@ -1,7 +1,6 @@
 import * as oldfs from 'fs'
 import axios from 'axios'
 import fs from 'fs'
-import fetch from 'node-fetch';
 
 const fsPromises = fs.promises
 
@@ -11,24 +10,6 @@ export async function getItemFromManifest(itemType, itemList) {
   const itemManifestFileName = 'manifest-items.json'
   console.log('ROBOT')
   console.log(manifestFileName)
-
-  await fetch('https://www.bungie.net' + manifestFileName)
-  .then(async data => {
-    console.log('HEYOOOOoooooooooooooooooooO')
-    console.log(data.Response)
-    console.log('BOOooooooooooooooooooooooYAH')
-    // inventoryNameList = await readItemsFromManifest(
-    //     itemType,
-    //     itemManifestFileName,
-    //     inventoryNameList,
-    //     itemList,
-    //     data
-    // );
-  });
-
-
-
-
 
   const writeStream = fs.createWriteStream('manifest.json');
 
@@ -46,17 +27,30 @@ export async function getItemFromManifest(itemType, itemList) {
   }
 
   try {
-    fs.readFile('/root/workspaces/D2-Vendor-Alert/manifest.json', async (error, data) => {
-      console.log('READING FILE')
-      if (error) throw error
-      console.log(data)
-      const jsonData = await JSON.parse(data)
-      const value = jsonData['DestinyInventoryItemDefinition']
-      console.log(value)
+    const readStream = fs.createReadStream('/root/workspaces/D2-Vendor-Alert/manifest.json')
+    let incompleteChunk = ''
+
+    readStream.on('data', (chunk) => {
+      const data = incompleteChunk + chunk
+      const lines = data.split('\n')
+      lines.forEach((line) => {
+        try {
+          const object = JSON.parse(line)
+          console.log(object)
+        } catch (error) {
+          console.error('CHUNK FAILED', error)
+        }
+      })
     })
-  } catch (error) {
-    console.error('reading manifest failed', error)
-  }
+    readStream.on('end', () => {
+      console.log('SOMETHINGASGDSGFSAFASDFASDFASFDadfs')
+    })
+
+      // console.log('READING FILE')
+      // if (error) throw error
+      // const jsonData = await JSON.parse(data)
+      // const value = jsonData['DestinyInventoryItemDefinition']
+      // console.log(value)
 
   console.log('DOG')
   inventoryNameList = await readItemsFromManifest(
