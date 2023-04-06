@@ -18,7 +18,7 @@ export async function getItemFromManifest(itemType, itemList) {
       const code = await axios.get('https://www.bungie.net' + manifestFileName,
         { maxBodyLength: Infinity, maxContentLength: Infinity, responseType: 'stream' }
       )
-      code.data.DestinyInventoryItemDefinition.pipe(writeStream);
+      code.data.pipe(writeStream);
     }).on('end', () => {
       writeStream.end()
     })
@@ -27,33 +27,17 @@ export async function getItemFromManifest(itemType, itemList) {
   }
 
   try {
-    const readStream = fs.createReadStream('/root/workspaces/D2-Vendor-Alert/manifest.json')
-    let incompleteChunk = ''
-
-    readStream.on('data', (chunk) => {
-      const data = incompleteChunk + chunk
-      const lines = data.split('\n')
-      lines.forEach((line) => {
-        try {
-          const object = JSON.parse(line)
-          console.log(object)
-        } catch (error) {
-          console.error('CHUNK FAILED', error)
-        }
-      })
-    })
-    readStream.on('end', () => {
-      console.log('SOMETHINGASGDSGFSAFASDFASDFASFDadfs')
+    fs.readFile('/root/workspaces/D2-Vendor-Alert/manifest.json', (error, data) => {
+      console.log('READING FILE')
+      if (error) throw error
+      console.log(data)
+      const jsonData = JSON.parse(data)
+      const value = jsonData['DestinyInventoryItemDefinition']
+      console.log(value)
     })
   } catch (error) {
-    console.error('ASDFASDFASDAFASDF', error)
+    console.error('reading manifest failed', error)
   }
-
-      // console.log('READING FILE')
-      // if (error) throw error
-      // const jsonData = await JSON.parse(data)
-      // const value = jsonData['DestinyInventoryItemDefinition']
-      // console.log(value)
 
   console.log('DOG')
   inventoryNameList = await readItemsFromManifest(
