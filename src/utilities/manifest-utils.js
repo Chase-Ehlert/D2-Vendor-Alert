@@ -19,10 +19,14 @@ export async function getItemFromManifest(itemType, itemList) {
   const writeStream = fs.createWriteStream('largeJson.json');
 
   try {
-    const code = await axios.get('https://www.bungie.net' + manifestFileName,
-      { maxBodyLength: Infinity, maxContentLength: Infinity, responseType: 'stream' }
-    )
-    code.data.pipe(writeStream);
+    writeStream.on('open', async () => {
+      const code = await axios.get('https://www.bungie.net' + manifestFileName,
+        { maxBodyLength: Infinity, maxContentLength: Infinity, responseType: 'stream' }
+      )
+      code.data.pipe(writeStream);
+    }).on('end', () => {
+      writeStream.end()
+    })
   } catch (error) {
     console.error('reading json failed', error)
   }
