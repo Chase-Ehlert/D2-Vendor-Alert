@@ -15,7 +15,7 @@ export async function getItemFromManifest(itemType, itemList) {
   await fetch('https://www.bungie.net' + manifestFileName)
   .then(async data => {
     console.log('HEYOOOOoooooooooooooooooooO')
-    console.log(data)
+    console.log(data.Response)
     console.log('BOOooooooooooooooooooooooYAH')
     // inventoryNameList = await readItemsFromManifest(
     //     itemType,
