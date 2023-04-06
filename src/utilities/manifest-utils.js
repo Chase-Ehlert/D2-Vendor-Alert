@@ -24,7 +24,7 @@ export async function getItemFromManifest(itemType, itemList) {
   })
 
   await fsPromises.readFile('manifest.json').then((contents) => {
-    console.log(JSON.parse(contents).DestinyInventoryItemDefinition)
+    console.log(Object.keys(JSON.parse(contents).DestinyInventoryItemDefinition)[0])
   })
   console.log('YOWZAASADFASDFASDFADS')
 
