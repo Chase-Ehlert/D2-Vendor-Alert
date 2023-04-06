@@ -15,7 +15,8 @@ export async function getItemFromManifest(itemType, itemList) {
     'https://www.bungie.net' + manifestFileName,
     { maxBodyLength: Infinity, maxContentLength: Infinity }
   )
-  console.log(response.DestinyInventoryItemDefinition)
+  // console.log(response.DestinyInventoryItemDefinition)
+  
   // const key = Object.keys(response)[0]
   // console.log(key)
 
