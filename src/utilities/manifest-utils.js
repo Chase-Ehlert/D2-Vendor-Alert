@@ -28,6 +28,7 @@ export async function getItemFromManifest(itemType, itemList) {
   })
   console.log('YOWZAASADFASDFASDFADS')
 
+  throw 'something'
 
 
   // try {
