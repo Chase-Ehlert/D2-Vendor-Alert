@@ -11,30 +11,27 @@ export async function getItemFromManifest(itemType, itemList) {
   console.log('ROBOT')
   console.log(manifestFileName)
 
-  // const response = await axios.get(
-  //   'https://www.bungie.net' + manifestFileName,
-  //   { maxBodyLength: Infinity, maxContentLength: Infinity }
-  // )
+  const response = await axios.get(
+    'https://www.bungie.net' + manifestFileName,
+    { maxBodyLength: Infinity, maxContentLength: Infinity }
+  )
+  const key = Object.keys(response.data)[0]
+  console.log(key)
 
-  const writeStream = fs.createWriteStream('largeJson.json');
+  // const writeStream = fs.createWriteStream('largeJson.json');
 
-  try {
-    writeStream.on('open', async () => {
-      const code = await axios.get('https://www.bungie.net' + manifestFileName,
-        { maxBodyLength: Infinity, maxContentLength: Infinity, responseType: 'stream' }
-      )
-      code.data.pipe(writeStream);
-    }).on('end', () => {
-      writeStream.end()
-    })
-  } catch (error) {
-    console.error('reading json failed', error)
-  }
-  // .then(response => {
-  // })
-  // .catch(error => {
-  //   console.error(error);
-  // });
+  // try {
+  //   writeStream.on('open', async () => {
+  //     const code = await axios.get('https://www.bungie.net' + manifestFileName,
+  //       { maxBodyLength: Infinity, maxContentLength: Infinity, responseType: 'stream' }
+  //     )
+  //     code.data.pipe(writeStream);
+  //   }).on('end', () => {
+  //     writeStream.end
+  //   })
+  // } catch (error) {
+  //   console.error('reading json failed', error)
+  // }
 
   console.log('DOG')
   inventoryNameList = await readItemsFromManifest(
