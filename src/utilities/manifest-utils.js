@@ -11,20 +11,33 @@ export async function getItemFromManifest(itemType, itemList) {
   console.log('ROBOT')
   console.log(manifestFileName)
 
-  const writeStream = fs.createWriteStream('manifest.json');
+  // const writeStream = fs.createWriteStream('manifest.json');
+  
+  const code = await axios.get('https://www.bungie.net' + manifestFileName,
+    { maxBodyLength: Infinity, maxContentLength: Infinity, responseType: 'stream' }
+  )
+  // code.data.pipe(writeStream);
+  await fsPromises.writeFile('manifest.json',
+     code.data)
+     .catch((error) => {
+    console.error('OH NO NO NONO', error)
+  })
 
-  try {
-    writeStream.on('open', async () => {
-      const code = await axios.get('https://www.bungie.net' + manifestFileName,
-        { maxBodyLength: Infinity, maxContentLength: Infinity, responseType: 'stream' }
-      )
-      code.data.pipe(writeStream);
-    }).on('end', () => {
-      writeStream.end()
-    })
-  } catch (error) {
-    console.error('writing json failed', error)
-  }
+  await fsPromises.readFile('manifest.json').then((contents) => {
+    console.log(JSON.parse(contents).DestinyInventoryItemDefinition)
+  })
+  console.log('YOWZAASADFASDFASDFADS')
+
+
+
+  // try {
+  //   writeStream.on('open', async () => {
+  //   }).on('end', () => {
+  //     writeStream.end()
+  //   })
+  // } catch (error) {
+  //   console.error('writing json failed', error)
+  // }
 
   // try {
   //   fs.readFile('/root/workspaces/D2-Vendor-Alert/manifest.json', (error, data) => {
@@ -39,14 +52,14 @@ export async function getItemFromManifest(itemType, itemList) {
   // }
 
   console.log('DOG')
-  inventoryNameList = await readItemsFromManifest(
-    itemType,
-    itemManifestFileName,
-    inventoryNameList,
-    itemList,
+  // inventoryNameList = await readItemsFromManifest(
+  //   itemType,
+  //   itemManifestFileName,
+  //   inventoryNameList,
+  //   itemList,
     // CHECKING THIS RESPONSE DATA PASS, RESET SERVER AND CHECK
     // jsonObject.DestinyInventoryItemDefinition
-  )
+  // )
   console.log('GIRAFFE')
   console.log(inventoryNameList)
 
