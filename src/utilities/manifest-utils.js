@@ -15,8 +15,8 @@ export async function getItemFromManifest(itemType, itemList) {
     'https://www.bungie.net' + manifestFileName,
     { maxBodyLength: Infinity, maxContentLength: Infinity }
   )
-  const key = Object.keys(response)[0]
-  console.log(key)
+  // const key = Object.keys(response)[0]
+  // console.log(key)
 
   // const writeStream = fs.createWriteStream('largeJson.json');
 
