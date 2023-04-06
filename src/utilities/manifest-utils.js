@@ -23,21 +23,20 @@ export async function getItemFromManifest(itemType, itemList) {
       writeStream.end()
     })
   } catch (error) {
-    console.error('reading json failed', error)
+    console.error('writing json failed', error)
   }
 
-  try {
-    fs.readFile('/root/workspaces/D2-Vendor-Alert/manifest.json', (error, data) => {
-      console.log('READING FILE')
-      if (error) throw error
-      console.log(data)
-      const jsonData = JSON.parse(data)
-      const value = jsonData['DestinyInventoryItemDefinition']
-      console.log(value)
-    })
-  } catch (error) {
-    console.error('reading manifest failed', error)
-  }
+  // try {
+  //   fs.readFile('/root/workspaces/D2-Vendor-Alert/manifest.json', (error, data) => {
+  //     console.log('READING FILE')
+  //     if (error) throw error
+  //     const jsonData = JSON.parse(data)
+  //     const value = jsonData['DestinyInventoryItemDefinition']
+  //     console.log(value)
+  //   })
+  // } catch (error) {
+  //   console.error('reading manifest failed', error)
+  // }
 
   console.log('DOG')
   inventoryNameList = await readItemsFromManifest(
