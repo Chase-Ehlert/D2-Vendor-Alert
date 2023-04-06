@@ -1,6 +1,7 @@
 import * as oldfs from 'fs'
 import axios from 'axios'
 import fs from 'fs'
+import { ERROR } from 'sqlite3'
 
 const fsPromises = fs.promises
 
@@ -45,6 +46,9 @@ export async function getItemFromManifest(itemType, itemList) {
     readStream.on('end', () => {
       console.log('SOMETHINGASGDSGFSAFASDFASDFASFDadfs')
     })
+  } catch (error) {
+    console.error('ASDFASDFASDAFASDF', error)
+  }
 
       // console.log('READING FILE')
       // if (error) throw error
