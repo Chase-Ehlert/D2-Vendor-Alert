@@ -18,7 +18,7 @@ export async function getItemFromManifest(itemType, itemList) {
       const code = await axios.get('https://www.bungie.net' + manifestFileName,
         { maxBodyLength: Infinity, maxContentLength: Infinity, responseType: 'stream' }
       )
-      code.data.pipe(writeStream);
+      code.data.DestinyInventoryItemDefinition.pipe(writeStream);
     }).on('end', () => {
       writeStream.end()
     })
