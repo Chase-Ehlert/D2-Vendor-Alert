@@ -1,6 +1,7 @@
 import * as oldfs from 'fs'
 import axios from 'axios'
 import fs from 'fs'
+import fetch from 'node-fetch';
 
 const fsPromises = fs.promises
 
@@ -10,6 +11,24 @@ export async function getItemFromManifest(itemType, itemList) {
   const itemManifestFileName = 'manifest-items.json'
   console.log('ROBOT')
   console.log(manifestFileName)
+
+  await fetch('https://www.bungie.net' + manifestFileName)
+  .then(async data => {
+    console.log('HEYOOOOoooooooooooooooooooO')
+    console.log(data.DestinyInventoryItemDefinition)
+    console.log('BOOooooooooooooooooooooooYAH')
+    // inventoryNameList = await readItemsFromManifest(
+    //     itemType,
+    //     itemManifestFileName,
+    //     inventoryNameList,
+    //     itemList,
+    //     data
+    // );
+  });
+
+
+
+
 
   const writeStream = fs.createWriteStream('manifest.json');
 
