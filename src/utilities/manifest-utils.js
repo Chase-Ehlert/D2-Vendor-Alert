@@ -30,7 +30,7 @@ export async function getItemFromManifest(itemType, itemList) {
     fs.readFile('/root/workspaces/D2-Vendor-Alert/manifest.json', async (error, data) => {
       console.log('READING FILE')
       if (error) throw error
-      console.log(data.DestinyInventoryItemDefinition)
+      console.log(data)
       const jsonData = await JSON.parse(data)
       const value = jsonData['DestinyInventoryItemDefinition']
       console.log(value)
