@@ -14,9 +14,9 @@ export async function getItemFromManifest(itemType, itemList) {
   const writeStream = fs.createWriteStream('manifest.json');
 
   const code1 = await axios.get('https://www.bungie.net' + manifestFileName,
-  { maxBodyLength: Infinity, maxContentLength: Infinity, responseType: 'text' }
+  { maxBodyLength: Infinity, maxContentLength: Infinity, responseType: 'json' }
 )
-console.log(code1.substring(0,10))
+console.log(Object.keys(code1)[0])
 console.log('BANG')
 
 
