@@ -15,7 +15,7 @@ export async function getItemFromManifest(itemType, itemList) {
   await fetch('https://www.bungie.net' + manifestFileName)
   .then(async data => {
     console.log('HEYOOOOoooooooooooooooooooO')
-    console.log(data.DestinyInventoryItemDefinition)
+    console.log(data)
     console.log('BOOooooooooooooooooooooooYAH')
     // inventoryNameList = await readItemsFromManifest(
     //     itemType,
