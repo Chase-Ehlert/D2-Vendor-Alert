@@ -1,7 +1,6 @@
 import * as oldfs from 'fs'
 import axios from 'axios'
 import fs from 'fs'
-import { ERROR } from 'sqlite3'
 
 const fsPromises = fs.promises
 
