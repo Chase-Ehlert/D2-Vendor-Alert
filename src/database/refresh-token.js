@@ -22,7 +22,7 @@ export async function handleRefreshToken(request) {
     console.log(currentDate)
     
     const refreshTokenInfo = {
-        refresh_expiration: currentDate,
+        refresh_expiration: currentDate.toISOString(),
         refresh_token: tokenInfo.data.refresh_token
     }
     let destinyMemberships, destinyCharacters
