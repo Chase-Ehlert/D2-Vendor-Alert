@@ -77,7 +77,7 @@ async function refreshOauthToken(refreshToken, bungieUsername) {
 }
 
 async function getOauthJson(refreshToken) {
-  const oauthCredentials = await axios.post('https://www.bungie.net/platform/app/oauth/token/', new URLSearchParams({
+  const { data } = await axios.post('https://www.bungie.net/platform/app/oauth/token/', new URLSearchParams({
     grant_type: 'refresh_token',
     refresh_token: refreshToken,
     client_id: process.env.VENDOR_ALERT_OAUTH_CLIENT_ID,
@@ -88,15 +88,17 @@ async function getOauthJson(refreshToken) {
     }
   })
 
-  const daysTillTokenExpires = oauthCredentials.data.refresh_expires_in / 60 / 60 / 24
+  const daysTillTokenExpires = data.refresh_expires_in / 60 / 60 / 24
+  console.log('1. The token expires in')
+  console.log(daysTillTokenExpires)
   const currentDate = new Date()
   currentDate.setDate(currentDate.getDate() + daysTillTokenExpires)
 
   await User.findOneAndUpdate(
-    { bungie_membership_id: oauthCredentials.data.membership_id },
+    { bungie_membership_id: data.membership_id },
     {
       $set: {
-        refresh_token: oauthCredentials.data.refresh_token,
+        refresh_token: data.refresh_token,
         refresh_expiration: currentDate
       }
     },
@@ -105,12 +107,12 @@ async function getOauthJson(refreshToken) {
         console.log('Updating user record failed')
         console.log(error)
       } else {
-        console.log('Updated user record')
+        console.log('Updated user record after reset')
       }
     }
   ).clone()
 
-  return oauthCredentials.data
+  return data
 }
 
 export async function getProfileCollectibles(user) {
