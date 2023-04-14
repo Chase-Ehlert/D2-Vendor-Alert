@@ -47,7 +47,7 @@ export async function getVendorModInventory(vendorId, user) {
 async function refreshOauthToken(refreshToken, bungieUsername) {
   const oauthJson = await getOauthJson(refreshToken)
   const daysTillTokenExpires = oauthJson.refresh_expires_in / 60 / 60 / 24
-  const currentDate = new Date(new Date().toUTCString())
+  const currentDate = new Date()
 
   currentDate.setDate(currentDate.getDate() + daysTillTokenExpires)
 
