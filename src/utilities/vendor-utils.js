@@ -89,7 +89,7 @@ async function getOauthJson(refreshToken) {
   })
 
   const daysTillTokenExpires = oauthCredentials.data.refresh_expires_in / 60 / 60 / 24
-  const currentDate = new Date(new Date().toUTCString())
+  const currentDate = new Date()
   currentDate.setDate(currentDate.getDate() + daysTillTokenExpires)
 
   await User.findOneAndUpdate(
