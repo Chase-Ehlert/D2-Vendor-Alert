@@ -22,12 +22,10 @@ export async function addUser(bungieNetUsername, discordId, discordChannelId) {
         discord_id: discordId,
         discord_channel_id: discordChannelId
     })
-
     try {
         await user.save()
     } catch (error) {
         console.log('Adding user failed')
-        console.log(error)
         throw error
     }
 }
@@ -48,7 +46,7 @@ export async function updateUser(bungieMembershipId, bungieNetUsername, destinyI
             (error) => {
                 if (error) {
                     console.log('Updating user record failed')
-                    console.log(error)
+                    throw error
                 } else {
                     console.log('Updated user record')
                 }

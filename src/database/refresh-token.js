@@ -2,7 +2,7 @@ import axios from 'axios'
 import * as database from './users-operations.js'
 
 export async function handleRefreshToken(request) {
-    const { data } = await axios.post('https://www.bungie.net/platform/app/oauth/token/', {
+    const tokenInfo = await axios.post('https://www.bungie.net/platform/app/oauth/token/', {
         grant_type: 'authorization_code',
         code: request.query.code,
         client_secret: process.env.VENDOR_ALERT_OAUTH_SECRET,
@@ -13,28 +13,25 @@ export async function handleRefreshToken(request) {
             'x-api-key': process.env.VENDOR_ALERT_API_KEY
         }
     })
-    console.log(data)
-    const daysTillTokenExpires = data.refresh_expires_in / 60 / 60 / 24
+    const daysTillTokenExpires = tokenInfo.data.refresh_expires_in / 60 / 60 / 24
     const currentDate = new Date(new Date().toUTCString())
     currentDate.setDate(currentDate.getDate() + daysTillTokenExpires)
-
+    
     const refreshTokenInfo = {
         refresh_expiration: currentDate,
-        refresh_token: data.refresh_token
+        refresh_token: tokenInfo.data.refresh_token
     }
-
-
     let destinyMemberships, destinyCharacters
 
     try {
         destinyMemberships = await axios.get(
-            `https://www.bungie.net/platform/User/GetMembershipsById/${data.membership_id}/3/`, {
+            `https://www.bungie.net/platform/User/GetMembershipsById/${tokenInfo.data.membership_id}/3/`, {
             headers: {
                 'X-API-Key': `${process.env.VENDOR_ALERT_API_KEY}`
             }
         })
     } catch (error) {
-        console.log(`Retreiving Destiny Memberships failed for ${data.membership_id}!`)
+        console.log(`Retreiving Destiny Memberships failed for ${tokenInfo.data.membership_id}!`)
         throw error
     }
 
@@ -49,12 +46,12 @@ export async function handleRefreshToken(request) {
             }
         })
     } catch (error) {
-        console.log(`Retreving Destiny Characters Failed for ${data.membership_id}!`)
+        console.log(`Retreving Destiny Characters Failed for ${tokenInfo.data.membership_id}!`)
         throw error
     }
 
     await database.updateUser(
-        data.membership_id,
+        tokenInfo.data.membership_id,
         destinyMemberships.data.Response.bungieNetUser.uniqueName,
         destinyMemberships.data.Response.destinyMemberships[0].membershipId,
         destinyCharacters.data.Response.profile.data.characterIds[0],

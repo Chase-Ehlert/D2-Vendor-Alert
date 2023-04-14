@@ -136,7 +136,7 @@ export async function getProfileCollectibles(user) {
   const collectibleList = []
 
   bansheeMods.concat(adaMods).forEach(key => {
-    if (profileResponse.data.Response.profileCollectibles.data.collectibles[key].state == 65) {
+    if (profileResponse.data.Response.profileCollectibles.data.collectibles[key].state === 65) {
       collectibleList.push(key)
     }
   })

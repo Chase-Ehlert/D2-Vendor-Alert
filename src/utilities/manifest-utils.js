@@ -123,7 +123,7 @@ function getCollectibleName(inventoryItemList, manifest) {
 
   for (let i = 0; i < manifestKeys.length; i++) {
     for (const item of inventoryItemList) {
-      if (manifestKeys[i] == item) {
+      if (manifestKeys[i] === item) {
         itemNameList.push(manifest[manifestKeys[i]].displayProperties.name)
       }
     }
@@ -134,7 +134,7 @@ function getCollectibleName(inventoryItemList, manifest) {
 
 function canManifestItemBeAdded(itemType, itemHashList, manifest, manifestKeys, index, itemNameList) {
   return itemHashList.includes(manifest[manifestKeys[index]].hash) &&
-    manifest[manifestKeys[index]].itemType == itemType &&
+    manifest[manifestKeys[index]].itemType === itemType &&
     !itemNameList.includes(manifest[manifestKeys[index]].collectibleHash)
 }
 
