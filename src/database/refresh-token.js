@@ -2,7 +2,7 @@ import axios from 'axios'
 import * as database from './users-operations.js'
 
 export async function handleRefreshToken(request) {
-    const data = await axios.post('https://www.bungie.net/platform/app/oauth/token/', {
+    const { data } = await axios.post('https://www.bungie.net/platform/app/oauth/token/', {
         grant_type: 'authorization_code',
         code: request.query.code,
         client_secret: process.env.VENDOR_ALERT_OAUTH_SECRET,
