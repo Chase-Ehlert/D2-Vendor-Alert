@@ -13,6 +13,7 @@ export async function handleRefreshToken(request) {
             'x-api-key': process.env.VENDOR_ALERT_API_KEY
         }
     })
+    console.log(data)
     const daysTillTokenExpires = data.refresh_expires_in / 60 / 60 / 24
     const currentDate = new Date(new Date().toUTCString())
     currentDate.setDate(currentDate.getDate() + daysTillTokenExpires)
