@@ -92,7 +92,7 @@ function replyUserExists(interaction) {
 async function addUserToAlertBot(command, username, interaction) {
     console.log('Adding user to database')
     await database.addUser(username, interaction.user.id, interaction.channelId)
-    await command.execute(interaction)
+    command.execute(interaction)
 }
 
 async function checkIfUsernameExists(message) {
