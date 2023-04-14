@@ -65,12 +65,7 @@ async function shareUnownedModsList(discordEndpoint, discordId, unownedModList) 
 async function shareEmptyModsList(discordEndpoint, bungieNetUsername) {
   let message = `${bungieNetUsername} does not have any unowned mods for sale today.`
 
-  await DiscordRequest(discordEndpoint, {
-    method: 'POST',
-    body: {
-      content: message,
-    }
-  })
+  await DiscordRequest(discordEndpoint, message)
 }
 
 async function xur() {

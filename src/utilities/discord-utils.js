@@ -1,11 +1,9 @@
 import 'dotenv/config'
 import axios from 'axios'
 
-export async function DiscordRequest(endpoint, options) {
-  console.log(endpoint)
-  console.log(options)
+export async function DiscordRequest(endpoint, message) {
   const result = await axios.post('https://discord.com/api/v10/' + endpoint, {
-      "content": `${options}`
+      "content": message
 },{
     headers: {
       Authorization: `Bot ${process.env.VENDOR_ALERT_TOKEN}`,
