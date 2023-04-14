@@ -47,21 +47,34 @@ export async function getCollectibleFromManifest(itemType, itemList) {
 async function readCollectiblesFromManifest(itemType, inventoryNameList, itemList, data) {
   try {
     await fsPromises.access('manifest-collectibles.json', oldfs.constants.F_OK)
-    inventoryNameList = await readFile(itemType, 'manifest-collectibles.json', itemList, inventoryNameList, true)
+    inventoryNameList = await readFile(
+      itemType,
+      'manifest-collectibles.json',
+      itemList,
+      inventoryNameList,
+      true
+    )
   } catch (error) {
-    inventoryNameList = await writeFile(itemType, 'manifest-collectibles.json', data.data.DestinyCollectibleDefinition, itemList, inventoryNameList, true)
+    inventoryNameList = await writeFile(
+      itemType,
+      'manifest-collectibles.json',
+      data.data.DestinyCollectibleDefinition,
+      itemList,
+      inventoryNameList,
+      true
+    )
   }
   return inventoryNameList
 }
 
 async function getManifestFile() {
-  const manifest = await axios.get('https://www.bungie.net/Platform/Destiny2/Manifest/', {
+  const { data } = await axios.get('https://www.bungie.net/Platform/Destiny2/Manifest/', {
     headers: {
       'X-API-Key': `${process.env.DESTINY_API_KEY}`
     }
   })
 
-  return manifest.data.Response.jsonWorldContentPaths.en
+  return data.Response.jsonWorldContentPaths.en
 }
 
 async function readFile(itemType, fileName, itemList, inventoryNameList, collectible) {
@@ -75,7 +88,7 @@ async function readFile(itemType, fileName, itemList, inventoryNameList, collect
     })
     .catch((error) => {
       console.log('Error reading file!')
-      throw (error)
+      throw error
     })
 
   return inventoryNameList
@@ -92,7 +105,7 @@ async function writeFile(itemType, fileName, manifestData, itemList, inventoryNa
     })
     .catch((error) => {
       console.log('Error while writing!')
-      throw (error)
+      throw error
     })
 
   return inventoryNameList
@@ -148,7 +161,7 @@ export async function getAggregatedManifestFile() {
       await fsPromises.writeFile(aggregateFileName, JSON.stringify(data))
         .catch((error) => {
           console.log('Error while writing the aggregated manifest file!')
-          throw (error)
+          throw error
         })
     })
 }

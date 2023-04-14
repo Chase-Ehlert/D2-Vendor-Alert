@@ -5,21 +5,17 @@ import { getCollectibleFromManifest, getItemFromManifest } from './manifest-util
 import { User } from '../database/models/users.js'
 
 export async function getXurInventory() {
-  const search = {
-    method: 'GET',
-    components: '402'
-  }
-  const url = new URL('https://www.bungie.net/Platform/Destiny2/Vendors/')
-  url.search = new URLSearchParams(search).toString()
-  const response = await axios.get(url, {
+  const response = await axios.get('https://www.bungie.net/Platform/Destiny2/Vendors/', {
+    params: {
+      components: 402
+    },
     headers: {
       'X-API-Key': `${process.env.DESTINY_API_KEY}`
     }
   })
-  const xurManifest = await response.json()
   const inventoryNameList = await getItemFromManifest(
     3,
-    Object.values(Object.values(xurManifest.Response.sales.data)[0].saleItems)
+    Object.values(Object.values(response.Response.sales.data)[0].saleItems)
   )
   return inventoryNameList
 }

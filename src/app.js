@@ -30,6 +30,10 @@ async function sendMessage() {
     const discordEndpoint = `channels/${user.discord_channel_id}/messages`
     let time = new Date()
     const timeOfDay = `${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}`
+    console.log('THE TIME OF DAY IS')
+    console.log(timeOfDay)
+    console.log('THE REFRESH TOKEN EXPIRES ON')
+    console.log(user.refresh_expiration)
 
     // Need to understand the refresh token expiration, check it, and then make the necessary call
 
@@ -43,9 +47,9 @@ async function sendMessage() {
     }
   }
 
-// while (true) {
-//   await sendMessage()
-// }
+while (true) {
+  await sendMessage()
+}
 
 async function shareUnownedModsList(discordEndpoint, discordId, unownedModList) {
   let message = `<@${discordId}>\r\nYou have these unowned mods for sale, grab them!`
@@ -65,7 +69,7 @@ async function shareEmptyModsList(discordEndpoint, bungieNetUsername) {
 
 async function xur() {
   let xurInventoryMessage = "Xur is selling:\r\n"
-  let xurItems = await getXurInventory()
+  const xurItems = await getXurInventory()
   xurItems.forEach(item => {
     xurInventoryMessage = xurInventoryMessage + item + "\r\n"
   })
