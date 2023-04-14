@@ -84,9 +84,9 @@ async function handleIncommingMessage(message, interaction, command) {
     }
 }
 
-async function replyUserExists(interaction) {
+function replyUserExists(interaction) {
     console.log('User already exists')
-    await interaction.followUp({ content: 'User already exists!' })
+    interaction.followUp({ content: 'User already exists!' })
 }
 
 async function addUserToAlertBot(command, username, interaction) {
