@@ -47,9 +47,9 @@ async function sendMessage() {
     }
   }
 
-while (true) {
-  await sendMessage()
-}
+// while (true) {
+//   await sendMessage()
+// }
 
 async function shareUnownedModsList(discordEndpoint, discordId, unownedModList) {
   let message = `<@${discordId}>\r\nYou have these unowned mods for sale, grab them!`
