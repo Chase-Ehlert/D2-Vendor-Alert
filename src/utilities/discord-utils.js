@@ -11,8 +11,7 @@ export async function DiscordRequest(endpoint, message) {
     }, 
   })
 
-  if (!result.ok) {
-    console.log(result.status)
+  if (result.status != 200) {
     throw new Error(result.status)
   }
   
