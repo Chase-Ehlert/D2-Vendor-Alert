@@ -17,9 +17,9 @@ export async function handleRefreshToken(request) {
     console.log('2. The token expires in')
     console.log(daysTillTokenExpires)
     const currentDate = new Date()
-    console.log(currentDate.getDate())
+    console.log(currentDate)
     currentDate.setDate(currentDate.getDate() + daysTillTokenExpires)
-    console.log(currentDate.getDate())
+    console.log(currentDate)
     
     const refreshTokenInfo = {
         refresh_expiration: currentDate,
