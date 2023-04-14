@@ -12,9 +12,8 @@ export async function DiscordRequest(endpoint, message) {
   })
 
   if (!result.ok) {
-    const data = await result.json()
     console.log(result.status)
-    throw new Error(JSON.stringify(data))
+    throw new Error(result.status)
   }
   
   return result
