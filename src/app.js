@@ -35,6 +35,8 @@ async function sendMessage() {
 
     // if (timeOfDay === '13:2:1') {
       const unownedModList = await getProfileCollectibles(user)
+      console.log('YYYYOOOOOOOOOYYYYYYYYYYYOOOOOOOOOOOOOOOOOO')
+      console.log(unownedModList.length)
       if (unownedModList.length > 0) {
         await shareUnownedModsList(discordEndpoint, user.discord_id, unownedModList)
       } else {
@@ -57,12 +59,7 @@ async function shareUnownedModsList(discordEndpoint, discordId, unownedModList) 
     message = message + `\r\n${mod}`
   })
 
-  await DiscordRequest(discordEndpoint, {
-    method: 'POST',
-    body: {
-      content: message,
-    }
-  })
+  await DiscordRequest(discordEndpoint, message)
 }
 
 async function shareEmptyModsList(discordEndpoint, bungieNetUsername) {

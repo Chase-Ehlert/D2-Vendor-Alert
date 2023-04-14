@@ -11,24 +11,33 @@ export async function getItemFromManifest(itemType, itemList) {
   console.log('ROBOT')
   console.log(manifestFileName)
 
-  // const writeStream = fs.createWriteStream('manifest.json');
-  
-  const code = await axios.get('https://www.bungie.net' + manifestFileName,
-    { maxBodyLength: Infinity, maxContentLength: Infinity, responseType: 'stream' }
-  )
-  // code.data.pipe(writeStream);
-  await fsPromises.writeFile('manifest.json',
-     code.data)
-     .catch((error) => {
-    console.error('OH NO NO NONO', error)
-  })
 
-  await fsPromises.readFile('manifest.json').then((contents) => {
-    console.log(Object.keys(JSON.parse(contents).DestinyInventoryItemDefinition)[0])
-  })
+
+
+  // const code = await axios.get('https://www.bungie.net' + manifestFileName,
+  //   { maxBodyLength: Infinity, maxContentLength: Infinity, responseType: 'stream' }
+  // )
+  // await fsPromises.writeFile(itemManifestFileName,
+  //    code.data)
+  //    .catch((error) => {
+  //   console.error('OH NO NO NO NO', error)
+  // })
+
+  // await fsPromises.readFile('manifest.json').then((contents) => {
+  //   console.log(Object.keys(JSON.parse(contents).DestinyInventoryItemDefinition)[0])
+  // })
+
+  const code = await axios.get('https://www.bungie.net' + manifestFileName
+  )
+  // console.log(Object.keys(code.data.DestinyInventoryItemDefinition))
+  // console.log(Object.keys(code.data.DestinyInventoryItemDefinition)[0])
+
+
+
+
+
   console.log('YOWZAASADFASDFASDFADS')
 
-  throw 'something'
 
 
   // try {
@@ -53,14 +62,13 @@ export async function getItemFromManifest(itemType, itemList) {
   // }
 
   console.log('DOG')
-  // inventoryNameList = await readItemsFromManifest(
-  //   itemType,
-  //   itemManifestFileName,
-  //   inventoryNameList,
-  //   itemList,
-    // CHECKING THIS RESPONSE DATA PASS, RESET SERVER AND CHECK
-    // jsonObject.DestinyInventoryItemDefinition
-  // )
+  inventoryNameList = await readItemsFromManifest(
+    itemType,
+    itemManifestFileName,
+    inventoryNameList,
+    itemList,
+    code.data.DestinyInventoryItemDefinition
+  )
   console.log('GIRAFFE')
   console.log(inventoryNameList)
 
@@ -85,18 +93,14 @@ export async function getCollectibleFromManifest(itemType, itemList) {
   console.log(manifestFileName)
   const itemManifestFileName = 'manifest-collectibles.json'
 
-  await axios.get('https://www.bungie.net' + manifestFileName)
-    .then(async data => {
-      const newData = await data.json()
-      inventoryNameList = await readCollectiblesFromManifest(
-        itemType,
-        itemManifestFileName,
-        inventoryNameList,
-        itemList,
-        newData
-      )
-    }
-    )
+  const newData = await axios.get('https://www.bungie.net' + manifestFileName)
+  inventoryNameList = await readCollectiblesFromManifest(
+    itemType,
+    itemManifestFileName,
+    inventoryNameList,
+    itemList,
+    newData
+  )
   console.log('LION')
   console.log(inventoryNameList)
 
@@ -108,7 +112,7 @@ async function readCollectiblesFromManifest(itemType, fileName, inventoryNameLis
     await fsPromises.access(fileName, oldfs.constants.F_OK)
     inventoryNameList = await readFile(itemType, fileName, itemList, inventoryNameList, true)
   } catch (error) {
-    inventoryNameList = await writeFile(itemType, fileName, data.DestinyCollectibleDefinition, itemList, inventoryNameList, true)
+    inventoryNameList = await writeFile(itemType, fileName, data.data.DestinyCollectibleDefinition, itemList, inventoryNameList, true)
   }
   return inventoryNameList
 }
