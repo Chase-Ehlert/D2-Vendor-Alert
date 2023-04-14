@@ -35,8 +35,6 @@ async function sendMessage() {
 
     // if (timeOfDay === '13:2:1') {
       const unownedModList = await getProfileCollectibles(user)
-      console.log('YYYYOOOOOOOOOYYYYYYYYYYYOOOOOOOOOOOOOOOOOO')
-      console.log(unownedModList.length)
       if (unownedModList.length > 0) {
         await shareUnownedModsList(discordEndpoint, user.discord_id, unownedModList)
       } else {
@@ -44,13 +42,10 @@ async function sendMessage() {
       }
     }
   }
+
+// while (true) {
+//   await sendMessage()
 // }
-
-while (true) {
-  await sendMessage()
-}
-
-// await sendMessage()
 
 async function shareUnownedModsList(discordEndpoint, discordId, unownedModList) {
   let message = `<@${discordId}>\r\nYou have these unowned mods for sale, grab them!`

@@ -26,8 +26,6 @@ export async function getXurInventory() {
 
 export async function getVendorModInventory(vendorId, user) {
   const oauthToken = await refreshOauthToken(user.refresh_token, user.bungie_username)
-
-  console.log('HERE WE GO')
   const response = await axios.get(
     `https://www.bungie.net/Platform/Destiny2/3/Profile/${user.destiny_id}/Character/${user.destiny_character_id}/Vendors/`, {
     params: {
@@ -38,7 +36,7 @@ export async function getVendorModInventory(vendorId, user) {
       'x-api-key': `${process.env.VENDOR_ALERT_API_KEY}`
     }
   })
-  console.log('WOOHOO')
+
   let vendorInventory
 
   for (let key in response.data.Response.sales.data) {
@@ -46,17 +44,15 @@ export async function getVendorModInventory(vendorId, user) {
       vendorInventory = response.data.Response.sales.data[key].saleItems
     }
   }
-  console.log('MONKEY')
 
   return await getItemFromManifest(19, vendorInventory)
 }
 
 async function refreshOauthToken(refreshToken, bungieUsername) {
   const oauthJson = await getOauthJson(refreshToken)
-  console.log('5')
-
   const daysTillTokenExpires = oauthJson.refresh_expires_in / 60 / 60 / 24
   const currentDate = new Date(new Date().toUTCString())
+
   currentDate.setDate(currentDate.getDate() + daysTillTokenExpires)
 
   try {
@@ -108,13 +104,12 @@ async function getOauthJson(refreshToken) {
         refresh_expiration: currentDate
       }
     },
-    (error, document) => {
+    (error) => {
       if (error) {
         console.log('Updating user record failed')
         console.log(error)
       } else {
         console.log('Updated user record')
-        // console.log(document)
       }
     }
   ).clone()
@@ -123,11 +118,6 @@ async function getOauthJson(refreshToken) {
 }
 
 export async function getProfileCollectibles(user) {
-  // const oauthToken = await refreshOauthToken(user.refresh_token, user.bungie_username)
-  // const profileUrl = new URL(`https://www.bungie.net/Platform/Destiny2/3/Profile/${user.destiny_id}/`)
-  // profileUrl.search = new URLSearchParams({
-  // })
-
   const profileResponse = await axios.get(`https://www.bungie.net/Platform/Destiny2/3/Profile/${user.destiny_id}/`, {
     params: {
       'components': 800
@@ -137,16 +127,19 @@ export async function getProfileCollectibles(user) {
     }
   })
 
-  // const profileJson = await profileResponse.json()
   const bansheeMods = await getVendorModInventory('672118013', user)
+  console.log(`Banshee has these mods for sale: ${bansheeMods}`)
+
   const adaMods = await getVendorModInventory('350061650', user)
-  const modsForSale = bansheeMods.concat(adaMods)
-  const list1 = []
-  modsForSale.forEach(key => {
+  console.log(`Ada has these mods for sale: ${adaMods}`)
+
+  const collectibleList = []
+
+  bansheeMods.concat(adaMods).forEach(key => {
     if (profileResponse.data.Response.profileCollectibles.data.collectibles[key].state == 65) {
-      list1.push(key)
+      collectibleList.push(key)
     }
   })
 
-  return await getCollectibleFromManifest(19, list1)
+  return await getCollectibleFromManifest(19, collectibleList)
 }
