@@ -8,6 +8,7 @@ import { getXurInventory, getProfileCollectibles } from './utilities/vendor-util
 import { getAggregatedManifestFile } from './utilities/manifest-utils.js'
 import { DiscordRequest } from './utilities/discord-utils.js'
 import { User } from './database/models/users.js'
+import { refreshOauthToken } from './utilities/vendor-utils'
 
 const app = express()
 const directoryName = path.dirname('app.js')
@@ -25,31 +26,40 @@ app.get('/', async (request, result) => {
   result.sendFile('src/views/landing-page.html', { root: directoryName })
 })
 
+while (true) {
+  await sendMessage()
+}
+
 async function sendMessage() {
   for await (const user of User.find()) {
     const discordEndpoint = `channels/${user.discord_channel_id}/messages`
-    let time = new Date()
-    const timeOfDay = `${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}`
-    console.log('THE TIME OF DAY IS')
-    console.log(timeOfDay)
-    console.log('THE REFRESH TOKEN EXPIRES ON')
-    console.log(user.refresh_expiration)
+    const currentDate = new Date()
+    const expirationDate = new Date(user.refresh_expiration)
+    expirationDate.setDate(expirationDate.getDate() - 1)
 
-    // Need to understand the refresh token expiration, check it, and then make the necessary call
+    //test the expiration in the db record, manipulate it to be ready to expire, clean up functions in file
 
-    // if (timeOfDay === '13:2:1') {
-      const unownedModList = await getProfileCollectibles(user)
-      if (unownedModList.length > 0) {
-        await shareUnownedModsList(discordEndpoint, user.discord_id, unownedModList)
-      } else {
-        await shareEmptyModsList(discordEndpoint, user.bungie_username)
-      }
+    if (currentDate.getTime() < expirationDate.getTime()) {
+      console.log('THE TOKEN DOES NOT NEED TO BE REFRESHED')
+      await compareModListWithUserInventory(currentDate, user, discordEndpoint)
+    } else {
+      console.log('THE TOKEN DOES NEED TO BE REFRESHED')
+      await refreshOauthToken(user.refresh_token)
+      await compareModListWithUserInventory(currentDate, user, discordEndpoint)
     }
   }
+}
 
-// while (true) {
-//   await sendMessage()
-// }
+async function compareModListWithUserInventory(currentDate, user, discordEndpoint) {
+  if (currentDate.getUTCHours() > 17) {
+    const unownedModList = await getProfileCollectibles(user)
+    if (unownedModList.length > 0) {
+      await shareUnownedModsList(discordEndpoint, user.discord_id, unownedModList)
+    } else {
+      await shareEmptyModsList(discordEndpoint, user.bungie_username)
+    }
+  }
+}
 
 async function shareUnownedModsList(discordEndpoint, discordId, unownedModList) {
   let message = `<@${discordId}>\r\nYou have these unowned mods for sale, grab them!`

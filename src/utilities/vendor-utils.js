@@ -21,7 +21,7 @@ export async function getXurInventory() {
 }
 
 export async function getVendorModInventory(vendorId, user) {
-  const oauthToken = await refreshOauthToken(user.refresh_token, user.bungie_username)
+  const oauthToken = await refreshOauthToken(user.refresh_token)
   const response = await axios.get(
     `https://www.bungie.net/Platform/Destiny2/3/Profile/${user.destiny_id}/Character/${user.destiny_character_id}/Vendors/`, {
     params: {
@@ -44,39 +44,7 @@ export async function getVendorModInventory(vendorId, user) {
   return await getItemFromManifest(19, vendorInventory)
 }
 
-async function refreshOauthToken(refreshToken, bungieUsername) {
-  const oauthJson = await getOauthJson(refreshToken)
-  const daysTillTokenExpires = oauthJson.refresh_expires_in / 60 / 60 / 24
-  const currentDate = new Date()
-
-  currentDate.setDate(currentDate.getDate() + daysTillTokenExpires)
-
-  try {
-    await User.findOneAndUpdate(
-      { bungie_username: bungieUsername },
-      {
-        $set: {
-          refresh_token: oauthJson['refresh_token'],
-          refresh_expiration: currentDate
-        }
-      },
-      (error) => {
-        if (error) {
-          console.log('Updating user refresh token failed')
-          console.log(error)
-        } else {
-          console.log('Updated user refresh token')
-        }
-      }
-    ).clone()
-  } catch (error) {
-    return error
-  }
-
-  return oauthJson['access_token']
-}
-
-async function getOauthJson(refreshToken) {
+async function refreshOauthToken(refreshToken) {
   const { data } = await axios.post('https://www.bungie.net/platform/app/oauth/token/', new URLSearchParams({
     grant_type: 'refresh_token',
     refresh_token: refreshToken,
@@ -89,8 +57,6 @@ async function getOauthJson(refreshToken) {
   })
 
   const daysTillTokenExpires = data.refresh_expires_in / 60 / 60 / 24
-  console.log('1. The token expires in')
-  console.log(daysTillTokenExpires)
   const currentDate = new Date()
   currentDate.setDate(currentDate.getDate() + daysTillTokenExpires)
 
@@ -99,7 +65,7 @@ async function getOauthJson(refreshToken) {
     {
       $set: {
         refresh_token: data.refresh_token,
-        refresh_expiration: currentDate
+        refresh_expiration: currentDate.toISOString()
       }
     },
     (error) => {
@@ -112,7 +78,7 @@ async function getOauthJson(refreshToken) {
     }
   ).clone()
 
-  return data
+  return data.access_token
 }
 
 export async function getProfileCollectibles(user) {
