@@ -46,7 +46,7 @@ async function setupSlashCommands(discordClient) {
 async function replyToSlashCommands(discordClient) {
     discordClient.on(Events.InteractionCreate, async interaction => {
         if (!interaction.isCommand()) return
-
+        
         const command = interaction.client.commands.get(interaction.commandName)
 
         try {
@@ -72,27 +72,27 @@ async function replyToSlashCommands(discordClient) {
     })
 }
 
-function handleIncommingMessage(message, interaction, command) {
+async function handleIncommingMessage(message, interaction, command) {
     const response = checkIfUsernameExists(message)
 
     if (response.length === 0) {
         interaction.followUp({ content: 'That is not a valid Bungie Net username!' })
     } else {
-        database.doesUserExist(message.content) ?
+        await database.doesUserExist(message.content) ?
             replyUserExists(interaction) :
             addUserToAlertBot(command, message.content, interaction)
     }
 }
 
-function replyUserExists(interaction) {
+async function replyUserExists(interaction) {
     console.log('User already exists')
-    interaction.followUp({ content: 'User already exists!' })
+    await interaction.followUp({ content: 'User already exists!' })
 }
 
 async function addUserToAlertBot(command, username, interaction) {
     console.log('Adding user to database')
-    database.addUser(username, interaction.user.id, interaction.channelId)
-    command.execute(interaction)
+    await database.addUser(username, interaction.user.id, interaction.channelId)
+    await command.execute(interaction)
 }
 
 async function checkIfUsernameExists(message) {
