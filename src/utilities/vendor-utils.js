@@ -44,7 +44,7 @@ export async function getVendorModInventory(vendorId, user) {
   return await getItemFromManifest(19, vendorInventory)
 }
 
-async function refreshOauthToken(refreshToken) {
+export async function refreshOauthToken(refreshToken) {
   const { data } = await axios.post('https://www.bungie.net/platform/app/oauth/token/', new URLSearchParams({
     grant_type: 'refresh_token',
     refresh_token: refreshToken,

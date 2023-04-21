@@ -4,11 +4,10 @@ import * as database from './database/users-operations.js'
 import { setupDiscordClient } from './discord/discord-client.js'
 import { handleRefreshToken } from './database/refresh-token.js'
 import path from 'path'
-import { getXurInventory, getProfileCollectibles } from './utilities/vendor-utils.js'
+import { refreshOauthToken, getXurInventory, getProfileCollectibles } from './utilities/vendor-utils.js'
 import { getAggregatedManifestFile } from './utilities/manifest-utils.js'
 import { DiscordRequest } from './utilities/discord-utils.js'
 import { User } from './database/models/users.js'
-import { refreshOauthToken } from './utilities/vendor-utils'
 
 const app = express()
 const directoryName = path.dirname('app.js')
@@ -36,8 +35,6 @@ async function sendMessage() {
     const currentDate = new Date()
     const expirationDate = new Date(user.refresh_expiration)
     expirationDate.setDate(expirationDate.getDate() - 1)
-
-    //test the expiration in the db record, manipulate it to be ready to expire, clean up functions in file
 
     if (currentDate.getTime() < expirationDate.getTime()) {
       console.log('THE TOKEN DOES NOT NEED TO BE REFRESHED')
