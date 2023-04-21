@@ -22,6 +22,18 @@ app.get('/', async (request, result) => {
   result.sendFile('src/views/landing-page.html', { root: directoryName })
 })
 
-while (true) {
+const targetTime = new Date();
+targetTime.setDate(targetTime.getDate() + 1)
+targetTime.setUTCHours(17, 2, 0, 0)
+
+const waitTime = targetTime - Date.now();
+
+if (waitTime > 0) {
+  setTimeout(startServer, waitTime);
+} else {
+  startServer();
+}
+
+async function startServer() {
   await sendMessage()
 }
