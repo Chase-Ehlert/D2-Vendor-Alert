@@ -22,8 +22,8 @@ export async function handleRefreshToken(request) {
         refresh_token: tokenInfo.data.refresh_token
     }
 
-    const destinyMemberships = await getDestinyMemberships(destinyMemberships, tokenInfo)
-    const destinyCharacters = await getDestinyCharacters(destinyCharacters, destinyMemberships, tokenInfo)
+    const destinyMemberships = await getDestinyMemberships(tokenInfo)
+    const destinyCharacters = await getDestinyCharacters(destinyMemberships, tokenInfo)
 
     await database.updateUser(
         tokenInfo.data.membership_id,
@@ -34,9 +34,23 @@ export async function handleRefreshToken(request) {
     )
 }
 
-async function getDestinyCharacters(destinyCharacters, destinyMemberships, tokenInfo) {
+async function getDestinyMemberships(tokenInfo) {
     try {
-        destinyCharacters = await axios.get(
+        return await axios.get(
+            `https://www.bungie.net/platform/User/GetMembershipsById/${tokenInfo.data.membership_id}/3/`, {
+            headers: {
+                'X-API-Key': `${process.env.VENDOR_ALERT_API_KEY}`
+            }
+        })
+    } catch (error) {
+        console.log(`Retreiving Destiny Memberships failed for ${tokenInfo.data.membership_id}!`)
+        throw error
+    }
+}
+
+async function getDestinyCharacters(destinyMemberships, tokenInfo) {
+    try {
+        return await axios.get(
             `https://bungie.net/Platform/Destiny2/3/Profile/${destinyMemberships.data.Response.destinyMemberships[0].membershipId}/`, {
             headers: {
                 'X-API-Key': `${process.env.VENDOR_ALERT_API_KEY}`
@@ -49,21 +63,4 @@ async function getDestinyCharacters(destinyCharacters, destinyMemberships, token
         console.log(`Retreving Destiny Characters Failed for ${tokenInfo.data.membership_id}!`)
         throw error
     }
-    return destinyCharacters
 }
-
-async function getDestinyMemberships(destinyMemberships, tokenInfo) {
-    try {
-        destinyMemberships = await axios.get(
-            `https://www.bungie.net/platform/User/GetMembershipsById/${tokenInfo.data.membership_id}/3/`, {
-            headers: {
-                'X-API-Key': `${process.env.VENDOR_ALERT_API_KEY}`
-            }
-        })
-    } catch (error) {
-        console.log(`Retreiving Destiny Memberships failed for ${tokenInfo.data.membership_id}!`)
-        throw error
-    }
-    return destinyMemberships
-}
-
