@@ -1,8 +1,7 @@
 import 'dotenv/config'
 import axios from 'axios'
-import { URLSearchParams } from 'url'
-import { getCollectibleFromManifest, getItemFromManifest } from './manifest-utils.js'
 import { User } from '../database/models/users.js'
+import { getCollectibleFromManifest, getItemFromManifest, getAggregatedManifestFile } from './manifest-utils.js'
 
 export async function getXurInventory() {
   const response = await axios.get('https://www.bungie.net/Platform/Destiny2/Vendors/', {
@@ -45,12 +44,12 @@ export async function getVendorModInventory(vendorId, user) {
 }
 
 export async function refreshOauthToken(refreshToken) {
-  const { data } = await axios.post('https://www.bungie.net/platform/app/oauth/token/', new URLSearchParams({
+  const { data } = await axios.post('https://www.bungie.net/platform/app/oauth/token/', {
     grant_type: 'refresh_token',
     refresh_token: refreshToken,
     client_id: process.env.VENDOR_ALERT_OAUTH_CLIENT_ID,
     client_secret: process.env.VENDOR_ALERT_OAUTH_SECRET
-  }), {
+  }, {
     headers: {
       'x-api-key': `${process.env.VENDOR_ALERT_API_KEY}`
     }
@@ -106,4 +105,17 @@ export async function getProfileCollectibles(user) {
   })
 
   return await getCollectibleFromManifest(19, collectibleList)
+}
+
+async function xur() {
+  let xurInventoryMessage = "Xur is selling:\r\n"
+  const xurItems = await getXurInventory()
+  xurItems.forEach(item => {
+    xurInventoryMessage = xurInventoryMessage + item + "\r\n"
+  })
+  return xurInventoryMessage
+}
+
+async function aggregateFile() {
+  return await getAggregatedManifestFile()
 }
