@@ -22,20 +22,27 @@ app.get('/', async (request, result) => {
   result.sendFile('src/views/landing-page.html', { root: directoryName })
 })
 
-let today = new Date()
-const targetTime = new Date();
-targetTime.setDate(today.getDate() + 1)
-targetTime.setUTCHours(17, 2, 0, 0)
+dailyReset()
 
-const waitTime = targetTime - Date.now();
-
-if (waitTime > 0) {
-  setTimeout(startServer, waitTime);
-} else {
-  today = new Date()
-  startServer();
+function dailyReset() {
+  let today = new Date()
+  const tomorrowResetTime = new Date();
+  tomorrowResetTime.setDate(today.getDate() + 1)
+  tomorrowResetTime.setUTCHours(17, 2, 0, 0)
+  
+  const waitTime = tomorrowResetTime - Date.now()
+  
+  if (waitTime > 0) {
+    console.log('Starting timeout')
+    setTimeout(startServer, waitTime)
+  } else {
+    console.log('Timeout not required')
+    today = new Date()
+    startServer()
+  }
 }
 
 async function startServer() {
   await sendMessage()
+  dailyReset()
 }
