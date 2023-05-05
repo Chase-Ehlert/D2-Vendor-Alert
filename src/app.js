@@ -29,8 +29,8 @@ dailyReset()
 function dailyReset() {
   let today = new Date()
   const tomorrowResetTime = new Date();
-  // tomorrowResetTime.setDate(today.getDate() + 1)
-  tomorrowResetTime.setUTCHours(19, 30, 0, 0)
+  tomorrowResetTime.setDate(today.getDate() + 1)
+  tomorrowResetTime.setUTCHours(17, 2, 0, 0)
 
   const waitTime = tomorrowResetTime - Date.now()
   console.log(waitTime)
@@ -40,7 +40,7 @@ function dailyReset() {
     setTimeout(startServer, waitTime)
   } else {
     console.log('Timeout not required')
-    // today = new Date()
+    today = new Date()
     startServer()
   }
 }
