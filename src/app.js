@@ -33,7 +33,6 @@ function dailyReset() {
   tomorrowResetTime.setUTCHours(17, 2, 0, 0)
 
   const waitTime = tomorrowResetTime - Date.now()
-  console.log(waitTime)
 
   if (waitTime > 0) {
     console.log('Starting timeout')
