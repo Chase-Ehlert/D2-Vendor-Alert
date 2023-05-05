@@ -1,7 +1,7 @@
 import 'dotenv/config'
 import axios from 'axios'
 import { User } from '../database/models/users.js'
-import { refreshOauthToken, getProfileCollectibles } from './vendor-utils.js'
+import { getAccessToken, getProfileCollectibles } from './vendor-utils.js'
 
 export async function DiscordRequest(endpoint, message) {
   const result = await axios.post('https://discord.com/api/v10/' + endpoint,
@@ -35,7 +35,7 @@ export async function sendMessage() {
       await compareModListWithUserInventory(currentDate, user, discordEndpoint)
     } else {
       console.log('THE TOKEN DOES NEED TO BE REFRESHED')
-      await refreshOauthToken(user.refresh_token)
+      await getAccessToken(user.refresh_token)
       await compareModListWithUserInventory(currentDate, user, discordEndpoint)
     }
   }

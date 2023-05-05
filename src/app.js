@@ -34,14 +34,16 @@ function dailyReset() {
 
   const waitTime = tomorrowResetTime - Date.now()
 
-  if (waitTime > 0) {
-    console.log('Starting timeout')
-    setTimeout(startServer, waitTime)
-  } else {
-    console.log('Timeout not required')
-    today = new Date()
-    startServer()
-  }
+  // if (waitTime > 0) {
+  //   console.log('Starting timeout')
+  //   setTimeout(startServer, waitTime)
+  // } else {
+  //   console.log('Timeout not required')
+  //   today = new Date()
+  //   startServer()
+  // }
+
+  startServer()
 }
 
 async function startServer() {

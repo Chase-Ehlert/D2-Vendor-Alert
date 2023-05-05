@@ -1,7 +1,6 @@
 import axios from 'axios'
 import * as database from './users-operations.js'
 
-// BROKEN HERE
 export async function handleRefreshToken(request) {
     const tokenInfo = await axios.post('https://www.bungie.net/platform/app/oauth/token/', {
         grant_type: 'authorization_code',

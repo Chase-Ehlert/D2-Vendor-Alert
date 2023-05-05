@@ -20,7 +20,7 @@ export async function getXurInventory() {
 }
 
 export async function getVendorModInventory(vendorId, user) {
-  const oauthToken = await refreshOauthToken(user.refresh_token)
+  const oauthToken = await getAccessToken(user.refresh_token)
   const response = await axios.get(
     `https://www.bungie.net/Platform/Destiny2/3/Profile/${user.destiny_id}/Character/${user.destiny_character_id}/Vendors/`, {
     params: {
@@ -43,7 +43,7 @@ export async function getVendorModInventory(vendorId, user) {
   return await getItemFromManifest(19, vendorInventory)
 }
 
-export async function refreshOauthToken(refreshToken) {
+export async function getAccessToken(refreshToken) {
   const { data } = await axios.post('https://www.bungie.net/platform/app/oauth/token/', {
     grant_type: 'refresh_token',
     refresh_token: refreshToken,
@@ -51,7 +51,8 @@ export async function refreshOauthToken(refreshToken) {
     client_secret: process.env.VENDOR_ALERT_OAUTH_SECRET
   }, {
     headers: {
-      'x-api-key': `${process.env.VENDOR_ALERT_API_KEY}`
+      'x-api-key': `${process.env.VENDOR_ALERT_API_KEY}`,
+      'Content-Type': 'application/x-www-form-urlencoded'
     }
   })
 
