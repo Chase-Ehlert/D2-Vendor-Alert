@@ -17,9 +17,11 @@ app.listen(3001, () => {
 })
 
 app.get('/', async (request, result) => {
-  await handleRefreshToken(request)
+  if (request.query.code) {
+    await handleRefreshToken(request)
 
-  result.sendFile('src/views/landing-page.html', { root: directoryName })
+    result.sendFile('src/views/landing-page.html', { root: directoryName })
+  }
 })
 
 dailyReset()
@@ -29,9 +31,9 @@ function dailyReset() {
   const tomorrowResetTime = new Date();
   tomorrowResetTime.setDate(today.getDate() + 1)
   tomorrowResetTime.setUTCHours(17, 2, 0, 0)
-  
+
   const waitTime = tomorrowResetTime - Date.now()
-  
+
   if (waitTime > 0) {
     console.log('Starting timeout')
     setTimeout(startServer, waitTime)
