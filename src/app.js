@@ -30,7 +30,7 @@ function dailyReset() {
   let today = new Date()
   const tomorrowResetTime = new Date();
   tomorrowResetTime.setDate(today.getDate() + 1)
-  tomorrowResetTime.setUTCHours(17, 20, 0, 0)
+  tomorrowResetTime.setUTCHours(17, 22, 0, 0)
 
   const waitTime = tomorrowResetTime - Date.now()
 
@@ -42,8 +42,6 @@ function dailyReset() {
     today = new Date()
     startServer()
   }
-
-  startServer()
 }
 
 async function startServer() {
