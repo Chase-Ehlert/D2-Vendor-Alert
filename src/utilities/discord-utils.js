@@ -1,7 +1,8 @@
 import 'dotenv/config'
 import axios from 'axios'
 import { User } from '../database/models/users.js'
-import { getAccessToken, getProfileCollectibles } from './vendor-utils.js'
+import { getProfileCollectibles } from './vendor-utils.js'
+import { updateRefreshToken } from './token-utils.js'
 
 export async function DiscordRequest(endpoint, message) {
   const result = await axios.post('https://discord.com/api/v10/' + endpoint,
@@ -31,25 +32,21 @@ export async function sendMessage() {
     expirationDate.setDate(expirationDate.getDate() - 1)
 
     if (currentDate.getTime() < expirationDate.getTime()) {
-      console.log('THE TOKEN DOES NOT NEED TO BE REFRESHED')
-      await compareModListWithUserInventory(currentDate, user, discordEndpoint)
+      await compareModListWithUserInventory(user, discordEndpoint)
     } else {
-      console.log('THE TOKEN DOES NEED TO BE REFRESHED')
-      await getAccessToken(user.refresh_token)
-      await compareModListWithUserInventory(currentDate, user, discordEndpoint)
+      await updateRefreshToken(user.refresh_token)
+      await compareModListWithUserInventory(user, discordEndpoint)
     }
   }
 }
 
-async function compareModListWithUserInventory(currentDate, user, discordEndpoint) {
-  if (currentDate.getUTCHours() > 17) {
+async function compareModListWithUserInventory(user, discordEndpoint) {
     const unownedModList = await getProfileCollectibles(user)
     if (unownedModList.length > 0) {
       await shareUnownedModsList(discordEndpoint, user.discord_id, unownedModList)
     } else {
       await shareEmptyModsList(discordEndpoint, user.discord_id)
     }
-  }
 }
 
 async function shareUnownedModsList(discordEndpoint, discordId, unownedModList) {

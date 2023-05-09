@@ -30,7 +30,11 @@ export async function addUser(bungieNetUsername, discordId, discordChannelId) {
     }
 }
 
-export async function updateUser(bungieMembershipId, bungieNetUsername, destinyId, characterId, refreshTokenInfo) {
+export async function updateUser(bungieMembershipId, refreshExpiration, refreshToken, bungieNetUsername, destinyId, characterId) {
+    const daysTillTokenExpires = refreshExpiration / 60 / 60 / 24
+    const expirationDate = new Date()
+    expirationDate.setDate(expirationDate.getDate() + daysTillTokenExpires)
+
     try {
         await User.findOneAndUpdate(
             { bungie_username: bungieNetUsername },
@@ -39,8 +43,8 @@ export async function updateUser(bungieMembershipId, bungieNetUsername, destinyI
                     bungie_membership_id: bungieMembershipId,
                     destiny_id: destinyId,
                     destiny_character_id: characterId,
-                    refresh_expiration: refreshTokenInfo.refresh_expiration,
-                    refresh_token: refreshTokenInfo.refresh_token
+                    refresh_expiration: expirationDate.toISOString(),
+                    refresh_token: refreshToken
                 }
             },
             (error) => {

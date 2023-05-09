@@ -3,7 +3,7 @@ import express from 'express'
 import path from 'path'
 import * as database from './database/users-operations.js'
 import { setupDiscordClient } from './discord/discord-client.js'
-import { handleRefreshToken } from './database/refresh-token.js'
+import { handleAuthorizationCode } from './utilities/token-utils.js'
 import { sendMessage } from './utilities/discord-utils.js'
 
 const app = express()
@@ -18,7 +18,7 @@ app.listen(3001, () => {
 
 app.get('/', async (request, result) => {
   if (request.query.code) {
-    await handleRefreshToken(request)
+    await handleAuthorizationCode(request)
 
     result.sendFile('src/views/landing-page.html', { root: directoryName })
   }

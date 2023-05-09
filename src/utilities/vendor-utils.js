@@ -1,7 +1,7 @@
 import 'dotenv/config'
 import axios from 'axios'
-import { User } from '../database/models/users.js'
 import { getCollectibleFromManifest, getItemFromManifest, getAggregatedManifestFile } from './manifest-utils.js'
+import { updateRefreshToken } from './token-utils.js'
 
 export async function getXurInventory() {
   const response = await axios.get('https://www.bungie.net/Platform/Destiny2/Vendors/', {
@@ -20,7 +20,7 @@ export async function getXurInventory() {
 }
 
 export async function getVendorModInventory(vendorId, user) {
-  const oauthToken = await getAccessToken(user.refresh_token)
+  const oauthToken = await updateRefreshToken(user.refresh_token)
   const response = await axios.get(
     `https://www.bungie.net/Platform/Destiny2/3/Profile/${user.destiny_id}/Character/${user.destiny_character_id}/Vendors/`, {
     params: {
@@ -41,44 +41,6 @@ export async function getVendorModInventory(vendorId, user) {
   }
 
   return await getItemFromManifest(19, vendorInventory)
-}
-
-export async function getAccessToken(refreshToken) {
-  const { data } = await axios.post('https://www.bungie.net/platform/app/oauth/token/', {
-    grant_type: 'refresh_token',
-    refresh_token: refreshToken,
-    client_id: process.env.VENDOR_ALERT_OAUTH_CLIENT_ID,
-    client_secret: process.env.VENDOR_ALERT_OAUTH_SECRET
-  }, {
-    headers: {
-      'x-api-key': `${process.env.VENDOR_ALERT_API_KEY}`,
-      'Content-Type': 'application/x-www-form-urlencoded'
-    }
-  })
-
-  const daysTillTokenExpires = data.refresh_expires_in / 60 / 60 / 24
-  const currentDate = new Date()
-  currentDate.setDate(currentDate.getDate() + daysTillTokenExpires)
-
-  await User.findOneAndUpdate(
-    { bungie_membership_id: data.membership_id },
-    {
-      $set: {
-        refresh_token: data.refresh_token,
-        refresh_expiration: currentDate.toISOString()
-      }
-    },
-    (error) => {
-      if (error) {
-        console.log('Updating user record failed')
-        console.log(error)
-      } else {
-        console.log('Updated user record after reset')
-      }
-    }
-  ).clone()
-
-  return data.access_token
 }
 
 export async function getProfileCollectibles(user) {
