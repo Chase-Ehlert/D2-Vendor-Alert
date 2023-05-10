@@ -38,6 +38,7 @@ function dailyReset() {
     console.log('Starting timeout')
     const now = new Date(Date.now())
     const options = {
+      timeZone: 'America/New_York',
       year: 'numeric', month: 'numeric', day: 'numeric',
       hour: 'numeric', minute: 'numeric', second: 'numeric',
       hour12: false
@@ -55,6 +56,7 @@ function dailyReset() {
 async function startServer() {
   const now = new Date(Date.now())
   const options = {
+    timeZone: 'America/New_York',
     year: 'numeric', month: 'numeric', day: 'numeric',
     hour: 'numeric', minute: 'numeric', second: 'numeric',
     hour12: false
