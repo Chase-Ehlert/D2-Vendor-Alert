@@ -32,8 +32,10 @@ export async function sendMessage() {
     expirationDate.setDate(expirationDate.getDate() - 1)
 
     if (currentDate.getTime() < expirationDate.getTime()) {
+      console.log('Token does not need to be refreshed')
       await compareModListWithUserInventory(user, discordEndpoint)
     } else {
+      console.log('Token does need to be refreshed')
       await updateRefreshToken(user.refresh_token)
       await compareModListWithUserInventory(user, discordEndpoint)
     }

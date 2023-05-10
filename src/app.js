@@ -36,6 +36,14 @@ function dailyReset() {
 
   if (waitTime > 0) {
     console.log('Starting timeout')
+    const now = new Date(Date.now())
+    const options = {
+      year: 'numeric', month: 'numeric', day: 'numeric',
+      hour: 'numeric', minute: 'numeric', second: 'numeric',
+      hour12: false
+    }
+    console.log(now.toLocaleString('en-US', options))
+
     setTimeout(startServer, waitTime)
   } else {
     console.log('Timeout not required')
@@ -45,6 +53,13 @@ function dailyReset() {
 }
 
 async function startServer() {
+  const now = new Date(Date.now())
+  const options = {
+    year: 'numeric', month: 'numeric', day: 'numeric',
+    hour: 'numeric', minute: 'numeric', second: 'numeric',
+    hour12: false
+  }
+  console.log(now.toLocaleString('en-US', options))
   await sendMessage()
   dailyReset()
 }
