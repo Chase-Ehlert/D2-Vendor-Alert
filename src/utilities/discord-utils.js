@@ -4,26 +4,6 @@ import { User } from '../database/models/users.js'
 import { getProfileCollectibles } from './vendor-utils.js'
 import { updateRefreshToken } from './token-utils.js'
 
-export async function DiscordRequest(endpoint, message) {
-  const result = await axios.post('https://discord.com/api/v10/' + endpoint,
-    {
-      "content": message
-    },
-    {
-      headers: {
-        Authorization: `Bot ${process.env.VENDOR_ALERT_TOKEN}`,
-        'Content-Type': 'application/json',
-      },
-    }
-  )
-
-  if (result.status != 200) {
-    throw new Error(result.status)
-  }
-
-  return result
-}
-
 export async function sendMessage() {
   for await (const user of User.find()) {
     const discordEndpoint = `channels/${user.discord_channel_id}/messages`
@@ -33,12 +13,11 @@ export async function sendMessage() {
 
     if (currentDate.getTime() < expirationDate.getTime()) {
       console.log('Token does not need to be refreshed')
-      await compareModListWithUserInventory(user, discordEndpoint)
     } else {
       console.log('Token does need to be refreshed')
       await updateRefreshToken(user.refresh_token)
-      await compareModListWithUserInventory(user, discordEndpoint)
     }
+    await compareModListWithUserInventory(user, discordEndpoint)
   }
 }
 
@@ -65,4 +44,24 @@ async function shareEmptyModsList(discordEndpoint, discordId) {
   let message = `<@${discordId}> does not have any unowned mods for sale today.`
 
   await DiscordRequest(discordEndpoint, message)
+}
+
+export async function DiscordRequest(endpoint, message) {
+  const result = await axios.post('https://discord.com/api/v10/' + endpoint,
+    {
+      "content": message
+    },
+    {
+      headers: {
+        Authorization: `Bot ${process.env.VENDOR_ALERT_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+    }
+  )
+
+  if (result.status != 200) {
+    throw new Error(result.status)
+  }
+
+  return result
 }
