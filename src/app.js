@@ -24,26 +24,29 @@ app.get('/', async (request, result) => {
   }
 })
 
+const options = {
+  timeZone: 'America/New_York',
+  year: 'numeric', month: 'numeric', day: 'numeric',
+  hour: 'numeric', minute: 'numeric', second: 'numeric',
+  hour12: false
+}
+
 dailyReset()
 
 function dailyReset() {
   let today = new Date()
+
   const tomorrowResetTime = new Date();
+  tomorrowResetTime.setHours(17, 2, 0, 0)
   tomorrowResetTime.setDate(today.getDate() + 1)
-  tomorrowResetTime.setUTCHours(17, 2, 0, 0)
 
   const waitTime = tomorrowResetTime - Date.now()
 
   if (waitTime > 0) {
     console.log('Starting timeout')
     const now = new Date(Date.now())
-    const options = {
-      timeZone: 'America/New_York',
-      year: 'numeric', month: 'numeric', day: 'numeric',
-      hour: 'numeric', minute: 'numeric', second: 'numeric',
-      hour12: false
-    }
     console.log(now.toLocaleString('en-US', options))
+    console.log(`Wait time is: ${waitTime/1000/60/60}`)
 
     setTimeout(startServer, waitTime)
   } else {
@@ -55,12 +58,6 @@ function dailyReset() {
 
 async function startServer() {
   const now = new Date(Date.now())
-  const options = {
-    timeZone: 'America/New_York',
-    year: 'numeric', month: 'numeric', day: 'numeric',
-    hour: 'numeric', minute: 'numeric', second: 'numeric',
-    hour12: false
-  }
   console.log(now.toLocaleString('en-US', options))
   await sendMessage()
   dailyReset()
