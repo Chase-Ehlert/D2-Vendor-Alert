@@ -39,6 +39,7 @@ function dailyReset() {
   const tomorrowResetTime = new Date();
   tomorrowResetTime.setHours(17, 2, 0, 0)
   tomorrowResetTime.setDate(today.getDate() + 1)
+  console.log(tomorrowResetTime.toLocaleString('en-US', options))
 
   const waitTime = tomorrowResetTime - Date.now()
 
