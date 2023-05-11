@@ -34,12 +34,14 @@ const options = {
 dailyReset()
 
 function dailyReset() {
-  let today = new Date()
+  let today = new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate()))
+  console.log(today)
 
   const tomorrowResetTime = new Date();
-  tomorrowResetTime.setHours(17, 2, 0, 0)
+  tomorrowResetTime.setUTCHours(17, 2, 0, 0)
   tomorrowResetTime.setDate(today.getDate() + 1)
-  console.log(tomorrowResetTime.toLocaleString('en-US', options))
+  console.log('Tomorrows reset time is:')
+  console.log(tomorrowResetTime)
 
   const waitTime = tomorrowResetTime - Date.now()
 
