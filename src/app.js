@@ -35,11 +35,13 @@ dailyReset()
 
 function dailyReset() {
   let today = new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate()))
-  console.log(today)
+  console.log(`Today is ${today}`)
 
   const tomorrowResetTime = new Date();
+  if (today.getDate() !== 11) {
+    tomorrowResetTime.setDate(today.getDate() + 1)
+  }
   tomorrowResetTime.setUTCHours(17, 2, 0, 0)
-  tomorrowResetTime.setDate(today.getDate() + 1)
   console.log('Tomorrows reset time is:')
   console.log(tomorrowResetTime)
 
