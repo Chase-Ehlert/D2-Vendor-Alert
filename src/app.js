@@ -24,14 +24,14 @@ app.get('/', async (request, result) => {
   }
 })
 
-const options = {
+dailyReset()
+
+const timeFormatOptions = {
   timeZone: 'America/New_York',
   year: 'numeric', month: 'numeric', day: 'numeric',
   hour: 'numeric', minute: 'numeric', second: 'numeric',
   hour12: false
 }
-
-dailyReset()
 
 function dailyReset() {
   let today = new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate()))
@@ -40,15 +40,13 @@ function dailyReset() {
   const tomorrowResetTime = new Date();
   tomorrowResetTime.setDate(today.getDate() + 1)
   tomorrowResetTime.setUTCHours(17, 2, 0, 0)
-  console.log('Tomorrows reset time is:')
-  console.log(tomorrowResetTime)
+  console.log(`Tomorrows reset time is: ${tomorrowResetTime}`)
 
   const waitTime = tomorrowResetTime - Date.now()
 
   if (waitTime > 0) {
-    console.log('Starting timeout')
     const now = new Date(Date.now())
-    console.log(now.toLocaleString('en-US', options))
+    console.log(`Starting timeout at ${now.toLocaleString('en-US', timeFormatOptions)}`)
     console.log(`Wait time is: ${waitTime/1000/60/60}`)
 
     setTimeout(startServer, waitTime)
@@ -61,7 +59,7 @@ function dailyReset() {
 
 async function startServer() {
   const now = new Date(Date.now())
-  console.log(now.toLocaleString('en-US', options))
+  console.log(now.toLocaleString('en-US', timeFormatOptions))
   await sendMessage()
   dailyReset()
 }
