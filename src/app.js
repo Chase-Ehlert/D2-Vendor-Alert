@@ -24,14 +24,14 @@ app.get('/', async (request, result) => {
   }
 })
 
-dailyReset()
-
 const timeFormatOptions = {
   timeZone: 'America/New_York',
   year: 'numeric', month: 'numeric', day: 'numeric',
   hour: 'numeric', minute: 'numeric', second: 'numeric',
   hour12: false
 }
+
+dailyReset()
 
 function dailyReset() {
   let today = new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate()))
