@@ -41,7 +41,7 @@ async function shareUnownedModsList(discordEndpoint, discordId, unownedModList) 
 }
 
 async function shareEmptyModsList(discordEndpoint, discordId) {
-  let message = `<@${discordId}> does not have any unowned mods for sale today.`
+  let message = `${discordId} does not have any unowned mods for sale today.`
 
   await DiscordRequest(discordEndpoint, message)
 }
