@@ -17,7 +17,7 @@ async function registerCommands() {
 		console.log(`Started refreshing ${commands.length} application (/) commands.`)
 
 		const data = await rest.put(
-			Routes.applicationGuildCommands(process.env.VENDOR_ALERT_CLIENT_ID, process.env.VENDOR_ALERT_GUILD_ID),
+			Routes.applicationCommands(process.env.VENDOR_ALERT_CLIENT_ID),
 			{ body: commands }
 		)
 
