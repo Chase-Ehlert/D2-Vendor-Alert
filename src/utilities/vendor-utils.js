@@ -3,22 +3,6 @@ import axios from 'axios'
 import { getCollectibleFromManifest, getItemFromManifest, getAggregatedManifestFile } from './manifest-utils.js'
 import { updateRefreshToken } from './token-utils.js'
 
-export async function getXurInventory() {
-  const response = await axios.get('https://www.bungie.net/Platform/Destiny2/Vendors/', {
-    params: {
-      components: 402
-    },
-    headers: {
-      'X-API-Key': `${process.env.DESTINY_API_KEY}`
-    }
-  })
-  const inventoryNameList = await getItemFromManifest(
-    3,
-    Object.values(Object.values(response.Response.sales.data)[0].saleItems)
-  )
-  return inventoryNameList
-}
-
 export async function getVendorModInventory(vendorId, user) {
   const oauthToken = await updateRefreshToken(user.refresh_token)
   const response = await axios.get(
@@ -68,6 +52,22 @@ export async function getProfileCollectibles(user) {
   })
 
   return await getCollectibleFromManifest(19, collectibleList)
+}
+
+export async function getXurInventory() {
+  const response = await axios.get('https://www.bungie.net/Platform/Destiny2/Vendors/', {
+    params: {
+      components: 402
+    },
+    headers: {
+      'X-API-Key': `${process.env.DESTINY_API_KEY}`
+    }
+  })
+  const inventoryNameList = await getItemFromManifest(
+    3,
+    Object.values(Object.values(response.Response.sales.data)[0].saleItems)
+  )
+  return inventoryNameList
 }
 
 async function xur() {
