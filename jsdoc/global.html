@@ -629,6 +629,326 @@
     
 
     
+    <h4 class="name" id="compareModListWithUserInventory"><span class="type-signature">(async) </span>compareModListWithUserInventory<span class="signature">(user, discordEndpoint)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Check whether any mods for sale are owned by the user
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>user</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#User">User</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">User's profile information</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>discordEndpoint</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Endpoint for user's desired alert Discord channel</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="utilities_discord-utils.js.html">utilities/discord-utils.js</a>, <a href="utilities_discord-utils.js.html#line32">line 32</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="discordRequest"><span class="type-signature"></span>discordRequest<span class="signature">(endpoint, message)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Send off message to user's desired Discord alert channel
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>endpoint</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Endpoint for user's desired alert Discord channel</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>message</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Message to send to user</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="utilities_discord-utils.js.html">utilities/discord-utils.js</a>, <a href="utilities_discord-utils.js.html#line73">line 73</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
     <h4 class="name" id="doesUserExist"><span class="type-signature"></span>doesUserExist<span class="signature">(bungieNetUsername)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
     
 
@@ -1674,6 +1994,94 @@
     
 
     
+    <h4 class="name" id="sendMessage"><span class="type-signature"></span>sendMessage<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Alert registered users about today's vendor inventory
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="utilities_discord-utils.js.html">utilities/discord-utils.js</a>, <a href="utilities_discord-utils.js.html#line10">line 10</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
     <h4 class="name" id="setupDatabaseConnection"><span class="type-signature"></span>setupDatabaseConnection<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
@@ -1952,6 +2360,349 @@
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
         <a href="discord_discord-client.js.html">discord/discord-client.js</a>, <a href="discord_discord-client.js.html#line37">line 37</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="shareEmptyModsList"><span class="type-signature">(async) </span>shareEmptyModsList<span class="signature">(discordEndpoint, username)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Send update message for no alert required
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>discordEndpoint</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Endpoint for user's desired alert Discord channel</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>username</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">User's Bungie username</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="utilities_discord-utils.js.html">utilities/discord-utils.js</a>, <a href="utilities_discord-utils.js.html#line62">line 62</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="shareUnownedModsList"><span class="type-signature">(async) </span>shareUnownedModsList<span class="signature">(discordEndpoint, discordId, unownedModList)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Send alert message for unowned mods
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>discordEndpoint</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Endpoint for user's desired alert Discord channel</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>discordId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">User's Discord id</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>unownedModList</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;string></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">List of mods unowned by the user</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="utilities_discord-utils.js.html">utilities/discord-utils.js</a>, <a href="utilities_discord-utils.js.html#line47">line 47</a>
     </li></ul></dd>
     
 
@@ -2538,13 +3289,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addUser">addUser</a></li><li><a href="global.html#addUserToAlertBot">addUserToAlertBot</a></li><li><a href="global.html#checkIfUsernameExists">checkIfUsernameExists</a></li><li><a href="global.html#doesUserExist">doesUserExist</a></li><li><a href="global.html#getProfileCollectibles">getProfileCollectibles</a></li><li><a href="global.html#getVendorModInventory">getVendorModInventory</a></li><li><a href="global.html#handleIncommingMessage">handleIncommingMessage</a></li><li><a href="global.html#registerCommands">registerCommands</a></li><li><a href="global.html#replyToSlashCommands">replyToSlashCommands</a></li><li><a href="global.html#replyUserExists">replyUserExists</a></li><li><a href="global.html#setupDatabaseConnection">setupDatabaseConnection</a></li><li><a href="global.html#setupDiscordClient">setupDiscordClient</a></li><li><a href="global.html#setupSlashCommands">setupSlashCommands</a></li><li><a href="global.html#updateUser">updateUser</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addUser">addUser</a></li><li><a href="global.html#addUserToAlertBot">addUserToAlertBot</a></li><li><a href="global.html#checkIfUsernameExists">checkIfUsernameExists</a></li><li><a href="global.html#compareModListWithUserInventory">compareModListWithUserInventory</a></li><li><a href="global.html#discordRequest">discordRequest</a></li><li><a href="global.html#doesUserExist">doesUserExist</a></li><li><a href="global.html#getProfileCollectibles">getProfileCollectibles</a></li><li><a href="global.html#getVendorModInventory">getVendorModInventory</a></li><li><a href="global.html#handleIncommingMessage">handleIncommingMessage</a></li><li><a href="global.html#registerCommands">registerCommands</a></li><li><a href="global.html#replyToSlashCommands">replyToSlashCommands</a></li><li><a href="global.html#replyUserExists">replyUserExists</a></li><li><a href="global.html#sendMessage">sendMessage</a></li><li><a href="global.html#setupDatabaseConnection">setupDatabaseConnection</a></li><li><a href="global.html#setupDiscordClient">setupDiscordClient</a></li><li><a href="global.html#setupSlashCommands">setupSlashCommands</a></li><li><a href="global.html#shareEmptyModsList">shareEmptyModsList</a></li><li><a href="global.html#shareUnownedModsList">shareUnownedModsList</a></li><li><a href="global.html#updateUser">updateUser</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Fri May 19 2023 15:15:17 GMT-0400 (Eastern Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Fri May 19 2023 15:24:37 GMT-0400 (Eastern Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>
