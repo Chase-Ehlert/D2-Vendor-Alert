@@ -26,7 +26,7 @@ async function compareModListWithUserInventory(user, discordEndpoint) {
     if (unownedModList.length > 0) {
       await shareUnownedModsList(discordEndpoint, user.discord_id, unownedModList)
     } else {
-      await shareEmptyModsList(discordEndpoint, user.discord_id)
+      await shareEmptyModsList(discordEndpoint, user.bungie_username)
     }
 }
 
@@ -40,8 +40,8 @@ async function shareUnownedModsList(discordEndpoint, discordId, unownedModList) 
   await DiscordRequest(discordEndpoint, message)
 }
 
-async function shareEmptyModsList(discordEndpoint, discordId) {
-  let message = `${discordId} does not have any unowned mods for sale today.`
+async function shareEmptyModsList(discordEndpoint, username) {
+  let message = `${username} does not have any unowned mods for sale today.`
 
   await DiscordRequest(discordEndpoint, message)
 }
