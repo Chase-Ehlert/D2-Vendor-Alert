@@ -12,6 +12,9 @@ for (const file of commandFiles) {
 
 const rest = new REST({ version: '10' }).setToken(process.env.VENDOR_ALERT_TOKEN)
 
+/**
+ * Update registered slash commands
+ */
 async function registerCommands() {
 	try {
 		console.log(`Started refreshing ${commands.length} application (/) commands.`)
