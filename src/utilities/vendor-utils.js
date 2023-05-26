@@ -1,6 +1,6 @@
 import 'dotenv/config'
 import axios from 'axios'
-import { getCollectibleFromManifest, getItemFromManifest, getAggregatedManifestFile } from './manifest-utils.js'
+import { getCollectibleFromManifest, getItemFromManifest } from './manifest-utils.js'
 import { updateRefreshToken } from './token-utils.js'
 
 /**
