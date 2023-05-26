@@ -34,8 +34,6 @@ async function compareModListWithUserInventory(user, discordEndpoint) {
     if (unownedModList.length > 0) {
       await shareUnownedModsList(discordEndpoint, user.discord_id, unownedModList)
     } else {
-      console.log(`EMPTY MOD LIST USERNAME ${user.bungie_username}`)
-      console.log(user)
       await shareEmptyModsList(discordEndpoint, user.bungie_username)
     }
 }
