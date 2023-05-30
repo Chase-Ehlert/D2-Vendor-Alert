@@ -33,6 +33,9 @@ const timeFormatOptions = {
 
 dailyReset()
 
+/**
+ * Calculates the time till the next Destiny daily reset and waits till then to alert users of vendor inventory
+ */
 function dailyReset() {
   let today = new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate()))
   console.log(`Today is ${today}`)
@@ -57,6 +60,9 @@ function dailyReset() {
   }
 }
 
+/**
+ * Begin the alert workflow for users and then set the time till the next daily reset
+ */
 async function startServer() {
   const now = new Date(Date.now())
   console.log(now.toLocaleString('en-US', timeFormatOptions))
