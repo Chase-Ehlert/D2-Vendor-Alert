@@ -1,6 +1,10 @@
 import axios from 'axios'
 import * as database from '../database/users-operations.js'
 
+/**
+ * Takes the authorization code and saves token information to database
+ * @param {string} request Authorization code received by authenticated user
+ */
 export async function handleAuthorizationCode(request) {
     const { data } = await axios.post('https://www.bungie.net/platform/app/oauth/token/', {
         grant_type: 'authorization_code',
@@ -27,6 +31,11 @@ export async function handleAuthorizationCode(request) {
     )
 }
 
+/**
+ * Updates the refresh token for a user
+ * @param {string} refreshToken Previous saved refresh token for user
+ * @returns Access token used for making protected Destiny API calls for a user
+ */
 export async function updateRefreshToken(refreshToken) {
   const { data } = await axios.post('https://www.bungie.net/platform/app/oauth/token/', {
     grant_type: 'refresh_token',
@@ -49,6 +58,11 @@ export async function updateRefreshToken(refreshToken) {
   return data.access_token
 }
 
+/**
+ * Retrieves Destiny membership information for a user
+ * @param {JSON} tokenInfo Destiny API token information for a user
+ * @returns A JSON object containing the Destiny membership info for a user
+ */
 async function getDestinyMemberships(tokenInfo) {
     try {
         return await axios.get(
@@ -63,6 +77,12 @@ async function getDestinyMemberships(tokenInfo) {
     }
 }
 
+/**
+ * Retrieves Destiny character information for a user
+ * @param {JSON} destinyMemberships A JSON object containing the Destiny membership info for a user
+ * @param {JSON} tokenInfo Destiny API token information for a user
+ * @returns A JSON object containing the Destiny character info for a user
+ */
 async function getDestinyCharacters(destinyMemberships, tokenInfo) {
     try {
         return await axios.get(

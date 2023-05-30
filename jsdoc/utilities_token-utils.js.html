@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: database/users-operations.js</title>
+    <title>JSDoc: Source: utilities/token-utils.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: database/users-operations.js</h1>
+    <h1 class="page-title">Source: utilities/token-utils.js</h1>
 
     
 
@@ -26,89 +26,105 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import mongoose from 'mongoose'
-import { User } from './models/users.js'
+            <pre class="prettyprint source linenums"><code>import axios from 'axios'
+import * as database from '../database/users-operations.js'
 
 /**
- * Connects to the mongoose database
+ * Takes the authorization code and saves token information to database
+ * @param {string} request Authorization code received by authenticated user
  */
-export function setupDatabaseConnection() {
-    mongoose.set('strictQuery', false)
-    mongoose.connect(
-        `mongodb+srv://deathdealer699:${process.env.DATABASE_PASSWORD}@cluster0.ikypndl.mongodb.net/d2-vendor-alert`,
-        {
-            useNewUrlParser: true,
-            useUnifiedTopology: true
+export async function handleAuthorizationCode(request) {
+    const { data } = await axios.post('https://www.bungie.net/platform/app/oauth/token/', {
+        grant_type: 'authorization_code',
+        code: request.query.code,
+        client_secret: process.env.VENDOR_ALERT_OAUTH_SECRET,
+        client_id: process.env.VENDOR_ALERT_OAUTH_CLIENT_ID
+    }, {
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'x-api-key': process.env.VENDOR_ALERT_API_KEY
         }
+    })
+    
+    const destinyMemberships = await getDestinyMemberships(data)
+    const destinyCharacters = await getDestinyCharacters(destinyMemberships, data)
+
+    await database.updateUser(
+        data.membership_id,
+        data.refresh_expires_in,
+        data.refresh_token,
+        destinyMemberships.data.Response.bungieNetUser.uniqueName,
+        destinyMemberships.data.Response.destinyMemberships[0].membershipId,
+        destinyCharacters.data.Response.profile.data.characterIds[0]
     )
 }
 
 /**
- * Checks if user exists in database
- * @param {string} bungieNetUsername User's Bungie Net username 
- * @returns {boolean} true/false
+ * Updates the refresh token for a user
+ * @param {string} refreshToken Previous saved refresh token for user
+ * @returns Access token used for making protected Destiny API calls for a user
  */
-export async function doesUserExist(bungieNetUsername) {
-    return await User.exists({ bungie_username: bungieNetUsername }).exec() ? true : false
+export async function updateRefreshToken(refreshToken) {
+  const { data } = await axios.post('https://www.bungie.net/platform/app/oauth/token/', {
+    grant_type: 'refresh_token',
+    refresh_token: refreshToken,
+    client_id: process.env.VENDOR_ALERT_OAUTH_CLIENT_ID,
+    client_secret: process.env.VENDOR_ALERT_OAUTH_SECRET
+  }, {
+    headers: {
+      'x-api-key': `${process.env.VENDOR_ALERT_API_KEY}`,
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  })
+
+  await database.updateUser(
+    data.membership_id,
+    data.refresh_expires_in,
+    data.refresh_token
+  )
+
+  return data.access_token
 }
 
 /**
- * Adds the specified user's information to the database
- * @param {string} bungieNetUsername User's Bungie Net username
- * @param {string} discordId User's Discord id
- * @param {string} discordChannelId Id of Discord channel user initialized the alert from
+ * Retrieves Destiny membership information for a user
+ * @param {JSON} tokenInfo Destiny API token information for a user
+ * @returns A JSON object containing the Destiny membership info for a user
  */
-export async function addUser(bungieNetUsername, discordId, discordChannelId) {
-    const user = new User({
-        bungie_username: bungieNetUsername,
-        discord_id: discordId,
-        discord_channel_id: discordChannelId
-    })
+async function getDestinyMemberships(tokenInfo) {
     try {
-        await user.save()
+        return await axios.get(
+            `https://www.bungie.net/platform/User/GetMembershipsById/${tokenInfo.membership_id}/3/`, {
+            headers: {
+                'X-API-Key': `${process.env.VENDOR_ALERT_API_KEY}`
+            }
+        })
     } catch (error) {
-        console.log('Adding user failed')
+        console.log(`Retreiving Destiny Memberships failed for ${tokenInfo.membership_id}!`)
         throw error
     }
 }
 
 /**
- * Updates the database information for a specific user
- * @param {string} bungieMembershipId User's membership id on Bungie
- * @param {string} refreshExpiration Date of expiration for user's refresh token
- * @param {string} refreshToken User's refresh token
- * @param {string} bungieNetUsername User's Bungie username
- * @param {string} destinyId User's id in Destiny 2
- * @param {string} characterId User's character (Hunter, Titan, Warlock) id
+ * Retrieves Destiny character information for a user
+ * @param {JSON} destinyMemberships A JSON object containing the Destiny membership info for a user
+ * @param {JSON} tokenInfo Destiny API token information for a user
+ * @returns A JSON object containing the Destiny character info for a user
  */
-export async function updateUser(bungieMembershipId, refreshExpiration, refreshToken, bungieNetUsername, destinyId, characterId) {
-    const daysTillTokenExpires = refreshExpiration / 60 / 60 / 24
-    const expirationDate = new Date()
-    expirationDate.setDate(expirationDate.getDate() + daysTillTokenExpires)
-
+async function getDestinyCharacters(destinyMemberships, tokenInfo) {
     try {
-        await User.findOneAndUpdate(
-            { bungie_username: bungieNetUsername },
-            {
-                $set: {
-                    bungie_membership_id: bungieMembershipId,
-                    destiny_id: destinyId,
-                    destiny_character_id: characterId,
-                    refresh_expiration: expirationDate.toISOString(),
-                    refresh_token: refreshToken
-                }
+        return await axios.get(
+            `https://bungie.net/Platform/Destiny2/3/Profile/${destinyMemberships.data.Response.destinyMemberships[0].membershipId}/`, {
+            headers: {
+                'X-API-Key': `${process.env.VENDOR_ALERT_API_KEY}`
             },
-            (error) => {
-                if (error) {
-                    console.log('Updating user record failed')
-                    throw error
-                } else {
-                    console.log('Updated user record')
-                }
+            params: {
+                components: 100
             }
-        )
+        })
     } catch (error) {
-        return error
+        console.log(`Retreving Destiny Characters Failed for ${tokenInfo.membership_id}!`)
+        throw error
     }
 }
 </code></pre>
