@@ -47,9 +47,9 @@ export async function addUser(bungieNetUsername, discordId, discordChannelId) {
  * @param {string} bungieMembershipId User's membership id on Bungie
  * @param {number} refreshExpiration Date of expiration for user's refresh token
  * @param {string} refreshToken User's refresh token
- * @param {string} bungieNetUsername User's Bungie username
- * @param {string} destinyId User's id in Destiny 2
- * @param {string} characterId User's character (Hunter, Titan, Warlock) id
+ * @param {string} [bungieNetUsername] User's Bungie username
+ * @param {string} [destinyId] User's id in Destiny 2
+ * @param {string} [characterId] User's character (Hunter, Titan, Warlock) id
  */
 export async function updateUser(bungieMembershipId, refreshExpiration, refreshToken, bungieNetUsername, destinyId, characterId) {
     const daysTillTokenExpires = refreshExpiration / 60 / 60 / 24

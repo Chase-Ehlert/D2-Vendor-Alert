@@ -1,9 +1,11 @@
+// @ts-check
+
 import axios from 'axios'
 import * as database from '../database/users-operations.js'
 
 /**
  * Takes the authorization code and saves token information to database
- * @param {string} request Authorization code received by authenticated user
+ * @param {Object} request Authorization code received by authenticated user
  */
 export async function handleAuthorizationCode(request) {
     const { data } = await axios.post('https://www.bungie.net/platform/app/oauth/token/', {
@@ -60,7 +62,7 @@ export async function updateRefreshToken(refreshToken) {
 
 /**
  * Retrieves Destiny membership information for a user
- * @param {JSON} tokenInfo Destiny API token information for a user
+ * @param {Object} tokenInfo Destiny API token information for a user
  * @returns A JSON object containing the Destiny membership info for a user
  */
 async function getDestinyMemberships(tokenInfo) {
@@ -79,8 +81,8 @@ async function getDestinyMemberships(tokenInfo) {
 
 /**
  * Retrieves Destiny character information for a user
- * @param {JSON} destinyMemberships A JSON object containing the Destiny membership info for a user
- * @param {JSON} tokenInfo Destiny API token information for a user
+ * @param {Object} destinyMemberships A JSON object containing the Destiny membership info for a user
+ * @param {Object} tokenInfo Destiny API token information for a user
  * @returns A JSON object containing the Destiny character info for a user
  */
 async function getDestinyCharacters(destinyMemberships, tokenInfo) {
