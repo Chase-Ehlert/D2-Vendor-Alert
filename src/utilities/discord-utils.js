@@ -1,3 +1,5 @@
+// @ts-check
+
 import 'dotenv/config'
 import axios from 'axios'
 import { User } from '../database/models/users.js'
@@ -11,14 +13,14 @@ export async function sendMessage() {
   for await (const user of User.find()) {
     const discordEndpoint = `channels/${user.discord_channel_id}/messages`
     const currentDate = new Date()
-    const expirationDate = new Date(user.refresh_expiration)
+    const expirationDate = new Date(String(user.refresh_expiration))
     expirationDate.setDate(expirationDate.getDate() - 1)
 
     if (currentDate.getTime() < expirationDate.getTime()) {
       console.log('Token does not need to be refreshed')
     } else {
       console.log('Token does need to be refreshed')
-      await updateRefreshToken(user.refresh_token)
+      await updateRefreshToken(String(user.refresh_token))
     }
     await compareModListWithUserInventory(user, discordEndpoint)
   }
@@ -26,16 +28,16 @@ export async function sendMessage() {
 
 /**
  * Check whether any mods for sale are owned by the user
- * @param {User} user User's profile information
+ * @param {Object} user User's profile information
  * @param {string} discordEndpoint Endpoint for user's desired alert Discord channel
  */
 async function compareModListWithUserInventory(user, discordEndpoint) {
-    const unownedModList = await getProfileCollectibles(user)
-    if (unownedModList.length > 0) {
-      await shareUnownedModsList(discordEndpoint, user.discord_id, unownedModList)
-    } else {
-      await shareEmptyModsList(discordEndpoint, user.bungie_username)
-    }
+  const unownedModList = await getProfileCollectibles(user)
+  if (unownedModList.length > 0) {
+    await shareUnownedModsList(discordEndpoint, user.discord_id, unownedModList)
+  } else {
+    await shareEmptyModsList(discordEndpoint, user.bungie_username)
+  }
 }
 
 /**
@@ -84,6 +86,6 @@ export async function discordRequest(endpoint, message) {
   )
 
   if (result.status != 200) {
-    throw new Error(result.status)
+    throw new Error(String(result.status))
   }
 }
