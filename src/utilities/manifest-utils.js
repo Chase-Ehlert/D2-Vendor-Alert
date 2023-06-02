@@ -1,7 +1,4 @@
-/**
- * Define JSON
- * @typedef {string} JSON
- */
+// @ts-check
 
 import * as oldfs from 'fs'
 import axios from 'axios'
@@ -74,7 +71,7 @@ export async function getCollectibleFromManifest(itemType, itemList) {
  * @param {number} itemType Number denomination for type of item in Destiny
  * @param {Array<string>} inventoryNameList List of mod names
  * @param {Array<string>} itemList List of items for sale
- * @param {JSON} data Complete list of every type of item from Destiny
+ * @param {Object} data Complete list of every type of item from Destiny
  * @returns List of collectible names
  */
 async function readCollectiblesFromManifest(itemType, inventoryNameList, itemList, data) {
@@ -127,9 +124,9 @@ async function readFile(itemType, fileName, itemList, inventoryNameList, collect
   await fsPromises.readFile(fileName)
     .then((fileContents) => {
       if (collectible) {
-        inventoryNameList = getCollectibleName(itemList, JSON.parse(fileContents))
+        inventoryNameList = getCollectibleName(itemList, JSON.parse(String(fileContents)))
       } else {
-        inventoryNameList = getItemName(itemType, itemList, JSON.parse(fileContents))
+        inventoryNameList = getItemName(itemType, itemList, JSON.parse(String(fileContents)))
       }
     })
     .catch((error) => {
@@ -171,7 +168,7 @@ async function writeFile(itemType, fileName, manifestData, itemList, inventoryNa
  * Compile list of names for items on sale
  * @param {number} itemType Number denomination for type of item in Destiny
  * @param {Array<string>} inventoryItemList List of mod names
- * @param {JSON} manifest Manifest information from Destiny
+ * @param {Object} manifest Manifest information from Destiny
  * @returns List of names for associated items
  */
 function getItemName(itemType, inventoryItemList, manifest) {
@@ -181,7 +178,7 @@ function getItemName(itemType, inventoryItemList, manifest) {
   let itemNameList = []
 
   itemListValues.forEach(item => {
-    itemHashList.push(item.itemHash)
+    itemHashList.push(Object(item).itemHash)
   })
 
   for (let i = 0; i < manifestKeys.length; i++) {
@@ -221,7 +218,7 @@ function getCollectibleName(inventoryItemList, manifest) {
  * @param {number} itemType Number denomination for type of item in Destiny
  * @param {Array<string>} itemHashList List of hash numbers for items from the manifest
  * @param {JSON} manifest Manifest information from Destiny
- * @param {Array<number>} manifestKeys List of keys from the manifest
+ * @param {Array<string>} manifestKeys List of keys from the manifest
  * @param {number} index Number to track place in list of manifest keys
  * @param {Array<string>} itemNameList List of names for items on sale
  * @returns True or False depending if the item is up for sale
@@ -230,22 +227,4 @@ function canManifestItemBeAdded(itemType, itemHashList, manifest, manifestKeys, 
   return itemHashList.includes(manifest[manifestKeys[index]].hash) &&
     manifest[manifestKeys[index]].itemType === itemType &&
     !itemNameList.includes(manifest[manifestKeys[index]].collectibleHash)
-}
-
-/**
- * Call the Destiny API to retrieve the aggregated manifest file and write the file to the project
- */
-export async function getAggregatedManifestFile() {
-  const manifestFileName = await getManifestFile()
-  const aggregateFileName = manifestFileName.split('/')[5]
-
-  await axios.get('https://www.bungie.net' + manifestFileName)
-    .then(response => response.json())
-    .then(async data => {
-      await fsPromises.writeFile(aggregateFileName, JSON.stringify(data))
-        .catch((error) => {
-          console.log('Error while writing the aggregated manifest file!')
-          throw error
-        })
-    })
 }
