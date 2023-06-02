@@ -31,7 +31,6 @@ const timeFormatOptions = {
   hour12: false
 }
 
-startServer()
 dailyReset()
 
 /**
