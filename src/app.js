@@ -31,6 +31,7 @@ const timeFormatOptions = {
   hour12: false
 }
 
+startServer()
 dailyReset()
 
 /**
@@ -64,8 +65,6 @@ function dailyReset() {
  * Begin the alert workflow for users and then set the time till the next daily reset
  */
 async function startServer() {
-  const now = new Date(Date.now())
-  console.log(now.toLocaleString('en-US', timeFormatOptions))
   await sendMessage()
   dailyReset()
 }

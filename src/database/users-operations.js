@@ -1,3 +1,5 @@
+// @ts-check
+
 import mongoose from 'mongoose'
 import { User } from './models/users.js'
 
@@ -7,18 +9,14 @@ import { User } from './models/users.js'
 export function setupDatabaseConnection() {
     mongoose.set('strictQuery', false)
     mongoose.connect(
-        `mongodb+srv://deathdealer699:${process.env.DATABASE_PASSWORD}@cluster0.ikypndl.mongodb.net/d2-vendor-alert`,
-        {
-            useNewUrlParser: true,
-            useUnifiedTopology: true
-        }
+        `mongodb+srv://deathdealer699:${process.env.DATABASE_PASSWORD}@cluster0.ikypndl.mongodb.net/d2-vendor-alert`
     )
 }
 
 /**
  * Checks if user exists in database
  * @param {string} bungieNetUsername User's Bungie Net username 
- * @returns {boolean} true/false
+ * @returns {Promise<boolean>} true/false
  */
 export async function doesUserExist(bungieNetUsername) {
     return await User.exists({ bungie_username: bungieNetUsername }).exec() ? true : false
@@ -47,7 +45,7 @@ export async function addUser(bungieNetUsername, discordId, discordChannelId) {
 /**
  * Updates the database information for a specific user
  * @param {string} bungieMembershipId User's membership id on Bungie
- * @param {string} refreshExpiration Date of expiration for user's refresh token
+ * @param {number} refreshExpiration Date of expiration for user's refresh token
  * @param {string} refreshToken User's refresh token
  * @param {string} bungieNetUsername User's Bungie username
  * @param {string} destinyId User's id in Destiny 2

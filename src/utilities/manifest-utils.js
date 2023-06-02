@@ -186,7 +186,9 @@ function getItemName(itemType, inventoryItemList, manifest) {
 
   for (let i = 0; i < manifestKeys.length; i++) {
     if (canManifestItemBeAdded(itemType, itemHashList, manifest, manifestKeys, i, itemNameList)) {
-      itemNameList.push(manifest[manifestKeys[i]].collectibleHash)
+      if (manifest[manifestKeys[i]].collectibleHash) {
+        itemNameList.push(manifest[manifestKeys[i]].collectibleHash)
+      }
     }
   }
 
