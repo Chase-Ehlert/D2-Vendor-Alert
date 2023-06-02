@@ -1,3 +1,5 @@
+// @ts-check
+
 import 'dotenv/config'
 import axios from 'axios'
 import { getCollectibleFromManifest, getItemFromManifest } from './manifest-utils.js'
@@ -6,7 +8,7 @@ import { updateRefreshToken } from './token-utils.js'
 /**
  * Collect mods for a specific vendor
  * @param {string} vendorId id of vendor
- * @param {string} user user profile information
+ * @param {Object} user user profile information
  * @returns {Promise<Array<string>>} list of mods for sale
  */
 export async function getVendorModInventory(vendorId, user) {
