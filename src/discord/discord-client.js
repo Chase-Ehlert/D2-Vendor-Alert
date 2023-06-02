@@ -1,3 +1,5 @@
+// @ts-check
+
 import discord, { Collection, Events } from 'discord.js'
 import * as url from 'url'
 import path from 'path'
@@ -92,7 +94,7 @@ async function replyToSlashCommands(discordClient) {
 async function handleIncommingMessage(message, interaction, command) {
     const response = checkIfUsernameExists(message)
 
-    if (response.length === 0) {
+    if (Object(response).length === 0) {
         interaction.followUp({ content: 'That is not a valid Bungie Net username!' })
     } else {
         await database.doesUserExist(message.content) ?
@@ -123,7 +125,7 @@ async function addUserToAlertBot(command, username, interaction) {
 /**
  * Validate the user's submitted username exists in Destiny 2
  * @param {Object} message Message sent by user
- * @returns {Map<string, Object>} Response from Destiny 2 API for Bungie name
+ * @returns {Promise<Object>} Response from Destiny 2 API for Bungie name
  */
 async function checkIfUsernameExists(message) {
     const index = message.content.indexOf('#')
