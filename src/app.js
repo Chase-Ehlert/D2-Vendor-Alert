@@ -1,3 +1,5 @@
+// @ts-check
+
 import 'dotenv/config'
 import express from 'express'
 import path from 'path'
@@ -24,13 +26,7 @@ app.get('/', async (request, result) => {
   }
 })
 
-const timeFormatOptions = {
-  timeZone: 'America/New_York',
-  year: 'numeric', month: 'numeric', day: 'numeric',
-  hour: 'numeric', minute: 'numeric', second: 'numeric',
-  hour12: false
-}
-
+await startServer()
 dailyReset()
 
 /**
@@ -45,11 +41,10 @@ function dailyReset() {
   tomorrowResetTime.setUTCHours(17, 2, 0, 0)
   console.log(`Tomorrows reset time is: ${tomorrowResetTime}`)
 
-  const waitTime = tomorrowResetTime - Date.now()
+  const waitTime = Number(tomorrowResetTime) - Date.now()
 
   if (waitTime > 0) {
     const now = new Date(Date.now())
-    console.log(`Starting timeout at ${now.toLocaleString('en-US', timeFormatOptions)}`)
     console.log(`Wait time is: ${waitTime/1000/60/60}`)
 
     setTimeout(startServer, waitTime)
