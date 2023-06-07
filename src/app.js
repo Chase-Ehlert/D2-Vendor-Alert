@@ -44,7 +44,6 @@ function dailyReset() {
   const waitTime = Number(tomorrowResetTime) - Date.now()
 
   if (waitTime > 0) {
-    const now = new Date(Date.now())
     console.log(`Wait time is: ${waitTime/1000/60/60}`)
 
     setTimeout(startServer, waitTime)
