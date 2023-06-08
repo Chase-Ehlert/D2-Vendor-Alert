@@ -1,5 +1,6 @@
 // @ts-check
 
+import { config } from './../../config/config.js'
 import mongoose from 'mongoose'
 import { User } from './models/users.js'
 
@@ -9,7 +10,7 @@ import { User } from './models/users.js'
 export function setupDatabaseConnection() {
     mongoose.set('strictQuery', false)
     mongoose.connect(
-        `mongodb+srv://${process.env.DATABASE_USER}:${process.env.DATABASE_PASSWORD}@${process.env.DATABASE_CLUSTER}.mongodb.net/${process.env.DATABASE_NAME}`
+        `mongodb+srv://${config.databaseUser}:${config.databasePassword}@${config.databaseCluster}.mongodb.net/${config.databaseName}`
     )
 }
 

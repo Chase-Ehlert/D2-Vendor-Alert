@@ -1,6 +1,6 @@
 // @ts-check
 
-import 'dotenv/config'
+import { config } from './../../config/config.js'
 import axios from 'axios'
 import { getCollectibleFromManifest, getItemFromManifest } from './manifest-utils.js'
 import { updateRefreshToken } from './token-utils.js'
@@ -20,7 +20,7 @@ export async function getVendorModInventory(vendorId, user) {
     },
     headers: {
       Authorization: `Bearer ${oauthToken}`,
-      'x-api-key': `${process.env.VENDOR_ALERT_API_KEY}`
+      'x-api-key': `${config.apiKey}`
     }
   })
 
@@ -46,7 +46,7 @@ export async function getProfileCollectibles(user) {
       'components': 800
     },
     headers: {
-      'x-api-key': `${process.env.VENDOR_ALERT_API_KEY}`
+      'x-api-key': `${config.apiKey}`
     }
   })
 

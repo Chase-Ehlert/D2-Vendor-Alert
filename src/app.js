@@ -1,6 +1,6 @@
 // @ts-check
 
-import 'dotenv/config'
+import { config } from './../config/config.js'
 import express from 'express'
 import path from 'path'
 import * as database from './database/users-operations.js'
@@ -36,7 +36,7 @@ function dailyReset() {
   let today = new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate()))
   console.log(`Today is ${today}`)
 
-  const tomorrowResetTime = new Date();
+  const tomorrowResetTime = new Date()
   tomorrowResetTime.setDate(today.getDate() + 1)
   tomorrowResetTime.setUTCHours(17, 2, 0, 0)
   console.log(`Tomorrows reset time is: ${tomorrowResetTime}`)
@@ -70,12 +70,12 @@ async function handleAuthorizationCode(request) {
   const { data } = await axios.post('https://www.bungie.net/platform/app/oauth/token/', {
       grant_type: 'authorization_code',
       code: request.query.code,
-      client_secret: process.env.VENDOR_ALERT_OAUTH_SECRET,
-      client_id: process.env.VENDOR_ALERT_OAUTH_CLIENT_ID
+      client_secret: config.oauthSecret,
+      client_id: config.oauthClientId
   }, {
       headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
-          'x-api-key': process.env.VENDOR_ALERT_API_KEY
+          'x-api-key': config.apiKey
       }
   })
   
@@ -98,11 +98,12 @@ async function handleAuthorizationCode(request) {
  * @returns A JSON object containing the Destiny membership info for a user
  */
 async function getDestinyMemberships(tokenInfo) {
+  console.log('HEYYYEYEYEYE')
   try {
       return await axios.get(
           `https://www.bungie.net/platform/User/GetMembershipsById/${tokenInfo.membership_id}/3/`, {
           headers: {
-              'X-API-Key': `${process.env.VENDOR_ALERT_API_KEY}`
+              'X-API-Key': `${config.apiKey}`
           }
       })
   } catch (error) {
@@ -122,7 +123,7 @@ async function getDestinyCharacters(destinyMemberships, tokenInfo) {
       return await axios.get(
           `https://bungie.net/Platform/Destiny2/3/Profile/${destinyMemberships.data.Response.destinyMemberships[0].membershipId}/`, {
           headers: {
-              'X-API-Key': `${process.env.VENDOR_ALERT_API_KEY}`
+              'X-API-Key': `${config.apiKey}`
           },
           params: {
               components: 100

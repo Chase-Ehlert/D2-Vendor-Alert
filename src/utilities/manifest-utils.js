@@ -1,5 +1,6 @@
 // @ts-check
 
+import { config } from './../../config/config.js'
 import * as oldfs from 'fs'
 import axios from 'axios'
 import fs from 'fs'
@@ -104,7 +105,7 @@ async function readCollectiblesFromManifest(itemType, inventoryNameList, itemLis
 async function getManifestFile() {
   const { data } = await axios.get('https://www.bungie.net/Platform/Destiny2/Manifest/', {
     headers: {
-      'X-API-Key': `${process.env.DESTINY_API_KEY}`
+      'X-API-Key': `${config.apiKey}`
     }
   })
 

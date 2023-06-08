@@ -1,6 +1,6 @@
 // @ts-check
 
-import 'dotenv/config'
+import { config } from './../../config/config.js'
 import axios from 'axios'
 import { User } from '../database/models/users.js'
 import { getProfileCollectibles } from './vendor-utils.js'
@@ -79,7 +79,7 @@ export async function discordRequest(endpoint, message) {
     },
     {
       headers: {
-        Authorization: `Bot ${process.env.VENDOR_ALERT_TOKEN}`,
+        Authorization: `Bot ${config.token}`,
         'Content-Type': 'application/json',
       },
     }

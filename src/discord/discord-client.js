@@ -1,5 +1,6 @@
 // @ts-check
 
+import { config } from './../../config/config.js'
 import discord, { Collection, Events } from 'discord.js'
 import * as url from 'url'
 import path from 'path'
@@ -26,7 +27,7 @@ export async function setupDiscordClient() {
     discordClient.once(discord.Events.ClientReady, eventClient => {
         console.log(`Ready, logged in as ${eventClient.user.tag}`)
     })
-    discordClient.login(process.env.VENDOR_ALERT_TOKEN)
+    discordClient.login(config.token)
 
     setupSlashCommands(discordClient)
     replyToSlashCommands(discordClient)
@@ -135,7 +136,7 @@ async function checkIfUsernameExists(message) {
     }, {
         headers: {
             'Content-Type': 'application/json',
-            'x-api-key': process.env.VENDOR_ALERT_API_KEY
+            'x-api-key': config.apiKey
         }
     })
     return data.Response
