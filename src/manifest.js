@@ -1,6 +1,6 @@
 // @ts-check
 
-import { config } from './../../config/config.js'
+import { config } from './../config/config.js'
 import * as oldfs from 'fs'
 import axios from 'axios'
 import fs from 'fs'

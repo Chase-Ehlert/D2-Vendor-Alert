@@ -1,8 +1,8 @@
 // @ts-check
 
-import { config } from './../../config/config.js'
+import { config } from './../config/config.js'
 import axios from 'axios'
-import * as database from '../database/users-operations.js'
+import * as database from './database/users-operations.js'
 
 /**
  * Updates the refresh token for a user

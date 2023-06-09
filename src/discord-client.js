@@ -1,10 +1,10 @@
 // @ts-check
 
-import { config } from './../../config/config.js'
+import { config } from '../config/config.js'
 import axios from 'axios'
-import { User } from '../database/models/users.js'
-import { getProfileCollectibles } from './vendor-utils.js'
-import { updateRefreshToken } from './token-utils.js'
+import { User } from './database/models/users.js'
+import { getProfileCollectibles } from './vendor.js'
+import { updateRefreshToken } from './token.js'
 
 /**
  * Alert registered users about today's vendor inventory

@@ -1,9 +1,9 @@
 // @ts-check
 
-import { config } from './../../config/config.js'
+import { config } from './../config/config.js'
 import axios from 'axios'
-import { getCollectibleFromManifest, getItemFromManifest } from './manifest-utils.js'
-import { updateRefreshToken } from './token-utils.js'
+import { getCollectibleFromManifest, getItemFromManifest } from './manifest.js'
+import { updateRefreshToken } from './token.js'
 
 /**
  * Collect mods for a specific vendor

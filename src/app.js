@@ -5,7 +5,7 @@ import express from 'express'
 import path from 'path'
 import * as database from './database/users-operations.js'
 import { setupDiscordClient } from './discord/discord-client.js'
-import { sendMessage } from './utilities/discord-utils.js'
+import { sendMessage } from './discord-client.js'
 import axios from 'axios'
 
 const app = express()
