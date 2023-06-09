@@ -12,11 +12,12 @@ import { updateRefreshToken } from './token-utils.js'
  * @returns {Promise<Array<string>>} List of mods for sale
  */
 export async function getVendorModInventory(vendorId, user) {
+  const getVendorSales = 402
   const oauthToken = await updateRefreshToken(user.refresh_token)
   const response = await axios.get(
     `https://www.bungie.net/Platform/Destiny2/3/Profile/${user.destiny_id}/Character/${user.destiny_character_id}/Vendors/`, {
     params: {
-      components: 402
+      components: getVendorSales
     },
     headers: {
       Authorization: `Bearer ${oauthToken}`,
@@ -41,9 +42,10 @@ export async function getVendorModInventory(vendorId, user) {
  * @returns {Promise<Array>} List of mods
  */
 export async function getProfileCollectibles(user) {
+  const getCollectibles = 800
   const profileResponse = await axios.get(`https://www.bungie.net/Platform/Destiny2/3/Profile/${user.destiny_id}/`, {
     params: {
-      'components': 800
+      'components': getCollectibles
     },
     headers: {
       'x-api-key': `${config.apiKey}`

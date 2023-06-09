@@ -119,6 +119,7 @@ async function getDestinyMemberships(tokenInfo) {
 * @returns A JSON object containing the Destiny character info for a user
 */
 async function getDestinyCharacters(destinyMemberships, tokenInfo) {
+  const getProfiles = 100
   try {
       return await axios.get(
           `https://bungie.net/Platform/Destiny2/3/Profile/${destinyMemberships.data.Response.destinyMemberships[0].membershipId}/`, {
@@ -126,7 +127,7 @@ async function getDestinyCharacters(destinyMemberships, tokenInfo) {
               'X-API-Key': `${config.apiKey}`
           },
           params: {
-              components: 100
+              components: getProfiles
           }
       })
   } catch (error) {
