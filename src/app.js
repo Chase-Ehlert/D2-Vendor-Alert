@@ -3,15 +3,20 @@
 import { config } from './../config/config.js'
 import express from 'express'
 import path from 'path'
-import * as database from './database/users-operations.js'
+import * as database from './database/database-service.js'
 import { setupDiscordClient } from './discord/discord-client.js'
-import { sendMessage } from './discord-client.js'
+import { sendMessage } from './discord-service.js'
 import axios from 'axios'
+import mongoose from 'mongoose'
 
 const app = express()
 const directoryName = path.dirname('app.js')
 
-database.setupDatabaseConnection()
+mongoose.set('strictQuery', false)
+mongoose.connect(
+  `mongodb+srv://${config.databaseUser}:${config.databasePassword}@${config.databaseCluster}.mongodb.net/${config.databaseName}`
+)
+
 setupDiscordClient()
 
 app.listen(3001, () => {
@@ -44,7 +49,7 @@ function dailyReset() {
   const waitTime = Number(tomorrowResetTime) - Date.now()
 
   if (waitTime > 0) {
-    console.log(`Wait time is: ${waitTime/1000/60/60}`)
+    console.log(`Wait time is: ${waitTime / 1000 / 60 / 60}`)
 
     setTimeout(startServer, waitTime)
   } else {
@@ -68,27 +73,27 @@ async function startServer() {
  */
 async function handleAuthorizationCode(request) {
   const { data } = await axios.post('https://www.bungie.net/platform/app/oauth/token/', {
-      grant_type: 'authorization_code',
-      code: request.query.code,
-      client_secret: config.oauthSecret,
-      client_id: config.oauthClientId
+    grant_type: 'authorization_code',
+    code: request.query.code,
+    client_secret: config.oauthSecret,
+    client_id: config.oauthClientId
   }, {
-      headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'x-api-key': config.apiKey
-      }
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'x-api-key': config.apiKey
+    }
   })
-  
+
   const destinyMemberships = await getDestinyMemberships(data)
   const destinyCharacters = await getDestinyCharacters(destinyMemberships, data)
 
   await database.updateUser(
-      data.membership_id,
-      data.refresh_expires_in,
-      data.refresh_token,
-      destinyMemberships.data.Response.bungieNetUser.uniqueName,
-      destinyMemberships.data.Response.destinyMemberships[0].membershipId,
-      destinyCharacters.data.Response.profile.data.characterIds[0]
+    data.membership_id,
+    data.refresh_expires_in,
+    data.refresh_token,
+    destinyMemberships.data.Response.bungieNetUser.uniqueName,
+    destinyMemberships.data.Response.destinyMemberships[0].membershipId,
+    destinyCharacters.data.Response.profile.data.characterIds[0]
   )
 }
 
@@ -99,15 +104,15 @@ async function handleAuthorizationCode(request) {
  */
 async function getDestinyMemberships(tokenInfo) {
   try {
-      return await axios.get(
-          `https://www.bungie.net/platform/User/GetMembershipsById/${tokenInfo.membership_id}/3/`, {
-          headers: {
-              'X-API-Key': `${config.apiKey}`
-          }
-      })
+    return await axios.get(
+      `https://www.bungie.net/platform/User/GetMembershipsById/${tokenInfo.membership_id}/3/`, {
+      headers: {
+        'X-API-Key': `${config.apiKey}`
+      }
+    })
   } catch (error) {
-      console.log(`Retreiving Destiny Memberships failed for ${tokenInfo.membership_id}!`)
-      throw error
+    console.log(`Retreiving Destiny Memberships failed for ${tokenInfo.membership_id}!`)
+    throw error
   }
 }
 
@@ -120,17 +125,17 @@ async function getDestinyMemberships(tokenInfo) {
 async function getDestinyCharacters(destinyMemberships, tokenInfo) {
   const getProfiles = 100
   try {
-      return await axios.get(
-          `https://bungie.net/Platform/Destiny2/3/Profile/${destinyMemberships.data.Response.destinyMemberships[0].membershipId}/`, {
-          headers: {
-              'X-API-Key': `${config.apiKey}`
-          },
-          params: {
-              components: getProfiles
-          }
-      })
+    return await axios.get(
+      `https://bungie.net/Platform/Destiny2/3/Profile/${destinyMemberships.data.Response.destinyMemberships[0].membershipId}/`, {
+      headers: {
+        'X-API-Key': `${config.apiKey}`
+      },
+      params: {
+        components: getProfiles
+      }
+    })
   } catch (error) {
-      console.log(`Retreving Destiny Characters Failed for ${tokenInfo.membership_id}!`)
-      throw error
+    console.log(`Retreving Destiny Characters Failed for ${tokenInfo.membership_id}!`)
+    throw error
   }
 }

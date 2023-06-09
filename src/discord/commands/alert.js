@@ -1,8 +1,11 @@
 import { config } from './../../../config/config.js'
 import { hyperlink, SlashCommandBuilder } from "discord.js"
-import * as database from '../../database/users-operations.js'
+import mongoose from 'mongoose'
 
-database.setupDatabaseConnection()
+mongoose.set('strictQuery', false)
+mongoose.connect(
+  `mongodb+srv://${config.databaseUser}:${config.databasePassword}@${config.databaseCluster}.mongodb.net/${config.databaseName}`
+)
 
 export default {
     data: new SlashCommandBuilder()

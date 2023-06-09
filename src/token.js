@@ -2,7 +2,7 @@
 
 import { config } from './../config/config.js'
 import axios from 'axios'
-import * as database from './database/users-operations.js'
+import * as database from './database/database-service.js'
 
 /**
  * Updates the refresh token for a user

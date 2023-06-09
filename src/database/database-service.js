@@ -1,18 +1,6 @@
 // @ts-check
 
-import { config } from './../../config/config.js'
-import mongoose from 'mongoose'
 import { User } from './models/users.js'
-
-/**
- * Connects to the mongoose database
- */
-export function setupDatabaseConnection() {
-    mongoose.set('strictQuery', false)
-    mongoose.connect(
-        `mongodb+srv://${config.databaseUser}:${config.databasePassword}@${config.databaseCluster}.mongodb.net/${config.databaseName}`
-    )
-}
 
 /**
  * Checks if user exists in database

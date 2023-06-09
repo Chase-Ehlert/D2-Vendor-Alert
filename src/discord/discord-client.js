@@ -5,10 +5,14 @@ import discord, { Collection, Events } from 'discord.js'
 import * as url from 'url'
 import path from 'path'
 import fileSystem from 'fs'
-import * as database from '../database/users-operations.js'
+import * as database from '../database/database-service.js'
 import axios from 'axios'
+import mongoose from 'mongoose'
 
-database.setupDatabaseConnection()
+mongoose.set('strictQuery', false)
+mongoose.connect(
+  `mongodb+srv://${config.databaseUser}:${config.databasePassword}@${config.databaseCluster}.mongodb.net/${config.databaseName}`
+)
 
 /**
  * Connect to the Discord Client
