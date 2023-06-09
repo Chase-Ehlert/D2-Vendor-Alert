@@ -98,7 +98,6 @@ async function handleAuthorizationCode(request) {
  * @returns A JSON object containing the Destiny membership info for a user
  */
 async function getDestinyMemberships(tokenInfo) {
-  console.log('HEYYYEYEYEYE')
   try {
       return await axios.get(
           `https://www.bungie.net/platform/User/GetMembershipsById/${tokenInfo.membership_id}/3/`, {
