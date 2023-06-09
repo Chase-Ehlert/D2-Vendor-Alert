@@ -52,15 +52,12 @@ export async function getProfileCollectibles(user) {
     }
   })
 
-  const bansheeMods = await getVendorModInventory('672118013', user)
-  console.log(`Banshee has these mods for sale: ${bansheeMods}`)
-
   const adaMods = await getVendorModInventory('350061650', user)
   console.log(`Ada has these mods for sale: ${adaMods}`)
 
   const collectibleList = []
 
-  bansheeMods.concat(adaMods).forEach(key => {
+  adaMods.forEach(key => {
     if (profileResponse.data.Response.profileCollectibles.data.collectibles[key].state === 65) {
       collectibleList.push(key)
     }
