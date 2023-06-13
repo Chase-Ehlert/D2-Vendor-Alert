@@ -8,6 +8,7 @@ import { setupDiscordClient } from './discord/discord-client.js'
 import { sendMessage } from './discord-service.js'
 import axios from 'axios'
 import mongoose from 'mongoose'
+import { getRefreshToken } from './destiny-service.js'
 
 const app = express()
 const directoryName = path.dirname('app.js')
@@ -25,13 +26,13 @@ app.listen(3001, () => {
 
 app.get('/', async (request, result) => {
   if (request.query.code) {
-    await handleAuthorizationCode(request)
+    await handleAuthorizationCode(String(request.query.code))
 
     result.sendFile('src/views/landing-page.html', { root: directoryName })
   }
 })
 
-await startServer()
+dailyReset()
 
 /**
  * Calculates the time till the next Destiny daily reset and waits till then to alert users of vendor inventory
@@ -68,28 +69,17 @@ async function startServer() {
 
 /**
  * Takes the authorization code and saves token information to database
- * @param {Object} request Authorization code received by authenticated user
+ * @param {string} authorizationCode Authorization code received by authenticated user
  */
-async function handleAuthorizationCode(request) {
-  const { data } = await axios.post('https://www.bungie.net/platform/app/oauth/token/', {
-    grant_type: 'authorization_code',
-    code: request.query.code,
-    client_secret: config.oauthSecret,
-    client_id: config.oauthClientId
-  }, {
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'x-api-key': config.apiKey
-    }
-  })
-
-  const destinyMemberships = await getDestinyMemberships(data)
-  const destinyCharacters = await getDestinyCharacters(destinyMemberships, data)
+async function handleAuthorizationCode(authorizationCode) {
+  const tokenInfo = await getRefreshToken(authorizationCode)
+  const destinyMemberships = await getDestinyMemberships(tokenInfo.membershipId)
+  const destinyCharacters = await getDestinyCharacters(destinyMemberships, tokenInfo.membershipId)
 
   await databaseService.updateUser(
-    data.membership_id,
-    data.refresh_expires_in,
-    data.refresh_token,
+    tokenInfo.membershipId,
+    tokenInfo.refreshTokenExpirationTime,
+    tokenInfo.refreshToken,
     destinyMemberships.data.Response.bungieNetUser.uniqueName,
     destinyMemberships.data.Response.destinyMemberships[0].membershipId,
     destinyCharacters.data.Response.profile.data.characterIds[0]
@@ -98,19 +88,19 @@ async function handleAuthorizationCode(request) {
 
 /**
  * Retrieves Destiny membership information for a user
- * @param {Object} tokenInfo Destiny API token information for a user
+ * @param {string} membershipId Destiny membership ID of user
  * @returns A JSON object containing the Destiny membership info for a user
  */
-async function getDestinyMemberships(tokenInfo) {
+async function getDestinyMemberships(membershipId) {
   try {
     return await axios.get(
-      `https://www.bungie.net/platform/User/GetMembershipsById/${tokenInfo.membership_id}/3/`, {
+      `https://www.bungie.net/platform/User/GetMembershipsById/${membershipId}/3/`, {
       headers: {
         'X-API-Key': `${config.apiKey}`
       }
     })
   } catch (error) {
-    console.log(`Retreiving Destiny Memberships failed for ${tokenInfo.membership_id}!`)
+    console.log(`Retreiving Destiny Memberships failed for ${membershipId}!`)
     throw error
   }
 }
@@ -118,10 +108,10 @@ async function getDestinyMemberships(tokenInfo) {
 /**
 * Retrieves Destiny character information for a user
 * @param {Object} destinyMemberships A JSON object containing the Destiny membership info for a user
-* @param {Object} tokenInfo Destiny API token information for a user
+* @param {string} membershipId Destiny membership ID of user
 * @returns A JSON object containing the Destiny character info for a user
 */
-async function getDestinyCharacters(destinyMemberships, tokenInfo) {
+async function getDestinyCharacters(destinyMemberships, membershipId) {
   const getProfiles = 100
   try {
     return await axios.get(
@@ -134,7 +124,7 @@ async function getDestinyCharacters(destinyMemberships, tokenInfo) {
       }
     })
   } catch (error) {
-    console.log(`Retreving Destiny Characters Failed for ${tokenInfo.membership_id}!`)
+    console.log(`Retreving Destiny Characters Failed for ${membershipId}!`)
     throw error
   }
 }

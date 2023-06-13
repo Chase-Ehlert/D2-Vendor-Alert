@@ -28,14 +28,19 @@
         <article>
             <pre class="prettyprint source linenums"><code>// @ts-check
 
+import { config } from './../../config/config.js'
 import discord, { Collection, Events } from 'discord.js'
 import * as url from 'url'
 import path from 'path'
 import fileSystem from 'fs'
-import * as database from '../database/users-operations.js'
+import * as databaseService from '../database/database-service.js'
 import axios from 'axios'
+import mongoose from 'mongoose'
 
-database.setupDatabaseConnection()
+mongoose.set('strictQuery', false)
+mongoose.connect(
+  `mongodb+srv://${config.databaseUser}:${config.databasePassword}@${config.databaseCluster}.mongodb.net/${config.databaseName}`
+)
 
 /**
  * Connect to the Discord Client
@@ -54,7 +59,7 @@ export async function setupDiscordClient() {
     discordClient.once(discord.Events.ClientReady, eventClient => {
         console.log(`Ready, logged in as ${eventClient.user.tag}`)
     })
-    discordClient.login(process.env.VENDOR_ALERT_TOKEN)
+    discordClient.login(config.token)
 
     setupSlashCommands(discordClient)
     replyToSlashCommands(discordClient)
@@ -125,7 +130,7 @@ async function handleIncommingMessage(message, interaction, command) {
     if (Object(response).length === 0) {
         interaction.followUp({ content: 'That is not a valid Bungie Net username!' })
     } else {
-        await database.doesUserExist(message.content) ?
+        await databaseService.doesUserExist(message.content) ?
             replyUserExists(interaction) :
             addUserToAlertBot(command, message.content, interaction)
     }
@@ -146,7 +151,7 @@ function replyUserExists(interaction) {
  * @param {Object} interaction Reference to Discord Interaction
  */
 async function addUserToAlertBot(command, username, interaction) {
-    await database.addUser(username, interaction.user.id, interaction.channelId)
+    await databaseService.addUser(username, interaction.user.id, interaction.channelId)
     command.execute(interaction)
 }
 
@@ -163,7 +168,7 @@ async function checkIfUsernameExists(message) {
     }, {
         headers: {
             'Content-Type': 'application/json',
-            'x-api-key': process.env.VENDOR_ALERT_API_KEY
+            'x-api-key': config.apiKey
         }
     })
     return data.Response
@@ -178,13 +183,13 @@ async function checkIfUsernameExists(message) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addUser">addUser</a></li><li><a href="global.html#addUserToAlertBot">addUserToAlertBot</a></li><li><a href="global.html#canManifestItemBeAdded">canManifestItemBeAdded</a></li><li><a href="global.html#checkIfUsernameExists">checkIfUsernameExists</a></li><li><a href="global.html#compareModListWithUserInventory">compareModListWithUserInventory</a></li><li><a href="global.html#dailyReset">dailyReset</a></li><li><a href="global.html#discordRequest">discordRequest</a></li><li><a href="global.html#doesUserExist">doesUserExist</a></li><li><a href="global.html#getCollectibleFromManifest">getCollectibleFromManifest</a></li><li><a href="global.html#getCollectibleName">getCollectibleName</a></li><li><a href="global.html#getDestinyCharacters">getDestinyCharacters</a></li><li><a href="global.html#getDestinyMemberships">getDestinyMemberships</a></li><li><a href="global.html#getItemFromManifest">getItemFromManifest</a></li><li><a href="global.html#getItemName">getItemName</a></li><li><a href="global.html#getManifestFile">getManifestFile</a></li><li><a href="global.html#getProfileCollectibles">getProfileCollectibles</a></li><li><a href="global.html#getVendorModInventory">getVendorModInventory</a></li><li><a href="global.html#handleAuthorizationCode">handleAuthorizationCode</a></li><li><a href="global.html#handleIncommingMessage">handleIncommingMessage</a></li><li><a href="global.html#readCollectiblesFromManifest">readCollectiblesFromManifest</a></li><li><a href="global.html#readFile">readFile</a></li><li><a href="global.html#readItemsFromManifest">readItemsFromManifest</a></li><li><a href="global.html#registerCommands">registerCommands</a></li><li><a href="global.html#replyToSlashCommands">replyToSlashCommands</a></li><li><a href="global.html#replyUserExists">replyUserExists</a></li><li><a href="global.html#sendMessage">sendMessage</a></li><li><a href="global.html#setupDatabaseConnection">setupDatabaseConnection</a></li><li><a href="global.html#setupDiscordClient">setupDiscordClient</a></li><li><a href="global.html#setupSlashCommands">setupSlashCommands</a></li><li><a href="global.html#shareEmptyModsList">shareEmptyModsList</a></li><li><a href="global.html#shareUnownedModsList">shareUnownedModsList</a></li><li><a href="global.html#startServer">startServer</a></li><li><a href="global.html#updateRefreshToken">updateRefreshToken</a></li><li><a href="global.html#updateUser">updateUser</a></li><li><a href="global.html#writeFile">writeFile</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addUser">addUser</a></li><li><a href="global.html#addUserToAlertBot">addUserToAlertBot</a></li><li><a href="global.html#canManifestItemBeAdded">canManifestItemBeAdded</a></li><li><a href="global.html#checkIfUsernameExists">checkIfUsernameExists</a></li><li><a href="global.html#compareModListWithUserInventory">compareModListWithUserInventory</a></li><li><a href="global.html#dailyReset">dailyReset</a></li><li><a href="global.html#discordRequest">discordRequest</a></li><li><a href="global.html#doesUserExist">doesUserExist</a></li><li><a href="global.html#getCollectibleFromManifest">getCollectibleFromManifest</a></li><li><a href="global.html#getCollectibleName">getCollectibleName</a></li><li><a href="global.html#getDestinyCharacters">getDestinyCharacters</a></li><li><a href="global.html#getDestinyMemberships">getDestinyMemberships</a></li><li><a href="global.html#getItemFromManifest">getItemFromManifest</a></li><li><a href="global.html#getItemName">getItemName</a></li><li><a href="global.html#getManifestFile">getManifestFile</a></li><li><a href="global.html#getProfileCollectibles">getProfileCollectibles</a></li><li><a href="global.html#getRefreshToken">getRefreshToken</a></li><li><a href="global.html#getVendorModInventory">getVendorModInventory</a></li><li><a href="global.html#handleAuthorizationCode">handleAuthorizationCode</a></li><li><a href="global.html#handleIncommingMessage">handleIncommingMessage</a></li><li><a href="global.html#readCollectiblesFromManifest">readCollectiblesFromManifest</a></li><li><a href="global.html#readFile">readFile</a></li><li><a href="global.html#readItemsFromManifest">readItemsFromManifest</a></li><li><a href="global.html#registerCommands">registerCommands</a></li><li><a href="global.html#replyToSlashCommands">replyToSlashCommands</a></li><li><a href="global.html#replyUserExists">replyUserExists</a></li><li><a href="global.html#sendMessage">sendMessage</a></li><li><a href="global.html#setupDiscordClient">setupDiscordClient</a></li><li><a href="global.html#setupSlashCommands">setupSlashCommands</a></li><li><a href="global.html#shareEmptyModsList">shareEmptyModsList</a></li><li><a href="global.html#shareUnownedModsList">shareUnownedModsList</a></li><li><a href="global.html#startServer">startServer</a></li><li><a href="global.html#updateRefreshToken">updateRefreshToken</a></li><li><a href="global.html#updateUser">updateUser</a></li><li><a href="global.html#writeFile">writeFile</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Fri Jun 02 2023 16:15:45 GMT-0400 (Eastern Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue Jun 13 2023 16:18:44 GMT-0400 (Eastern Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>

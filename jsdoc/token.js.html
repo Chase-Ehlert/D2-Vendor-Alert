@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: discord/deploy-commands.js</title>
+    <title>JSDoc: Source: token.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: discord/deploy-commands.js</h1>
+    <h1 class="page-title">Source: token.js</h1>
 
     
 
@@ -28,39 +28,36 @@
         <article>
             <pre class="prettyprint source linenums"><code>// @ts-check
 
-import { config } from './../../config/config.js'
-import { REST, Routes } from 'discord.js'
-import fs from 'fs'
-
-const commands = []
-const commandFiles = fs.readdirSync('./src/discord/commands').filter(file => file.endsWith('.js'))
-
-for (const file of commandFiles) {
-	const command = await import(`./commands/${file}`)
-	commands.push(command.default.data)
-}
-
-const rest = new REST({ version: '10' }).setToken(String(config.token))
+import { config } from './../config/config.js'
+import axios from 'axios'
+import * as databaseService from './database/database-service.js'
 
 /**
- * Update registered slash commands
+ * Updates the refresh token for a user
+ * @param {string} refreshToken Previous saved refresh token for user
+ * @returns Access token used for making protected Destiny API calls for a user
  */
-async function registerCommands() {
-	try {
-		console.log(`Started refreshing ${commands.length} application (/) commands.`)
+export async function updateRefreshToken(refreshToken) {
+  const { data } = await axios.post('https://www.bungie.net/platform/app/oauth/token/', {
+    grant_type: 'refresh_token',
+    refresh_token: refreshToken,
+    client_id: config.oauthClientId,
+    client_secret: config.oauthSecret
+  }, {
+    headers: {
+      'x-api-key': `${config.apiKey}`,
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  })
 
-		const data = await rest.put(
-			Routes.applicationCommands(String(config.clientId)),
-			{ body: commands }
-		)
+  await databaseService.updateUser(
+    data.membership_id,
+    data.refresh_expires_in,
+    data.refresh_token
+  )
 
-		console.log(`Successfully reloaded ${Object(data).length} application (/) commands.`)
-	} catch (error) {
-		console.error(error)
-	}
+  return data.access_token
 }
-
-await registerCommands()
 </code></pre>
         </article>
     </section>

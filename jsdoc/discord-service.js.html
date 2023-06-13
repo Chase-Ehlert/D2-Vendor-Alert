@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: discord/deploy-commands.js</title>
+    <title>JSDoc: Source: discord-service.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: discord/deploy-commands.js</h1>
+    <h1 class="page-title">Source: discord-service.js</h1>
 
     
 
@@ -28,39 +28,95 @@
         <article>
             <pre class="prettyprint source linenums"><code>// @ts-check
 
-import { config } from './../../config/config.js'
-import { REST, Routes } from 'discord.js'
-import fs from 'fs'
-
-const commands = []
-const commandFiles = fs.readdirSync('./src/discord/commands').filter(file => file.endsWith('.js'))
-
-for (const file of commandFiles) {
-	const command = await import(`./commands/${file}`)
-	commands.push(command.default.data)
-}
-
-const rest = new REST({ version: '10' }).setToken(String(config.token))
+import { config } from '../config/config.js'
+import axios from 'axios'
+import { User } from './database/models/users.js'
+import { getProfileCollectibles } from './vendor.js'
+import { updateRefreshToken } from './token.js'
 
 /**
- * Update registered slash commands
+ * Alert registered users about today's vendor inventory
  */
-async function registerCommands() {
-	try {
-		console.log(`Started refreshing ${commands.length} application (/) commands.`)
+export async function sendMessage() {
+  for await (const user of User.find()) {
+    const discordEndpoint = `channels/${user.discord_channel_id}/messages`
+    const currentDate = new Date()
+    const expirationDate = new Date(String(user.refresh_expiration))
+    expirationDate.setDate(expirationDate.getDate() - 1)
 
-		const data = await rest.put(
-			Routes.applicationCommands(String(config.clientId)),
-			{ body: commands }
-		)
-
-		console.log(`Successfully reloaded ${Object(data).length} application (/) commands.`)
-	} catch (error) {
-		console.error(error)
-	}
+    if (currentDate.getTime() &lt; expirationDate.getTime()) {
+      console.log('Token does not need to be refreshed')
+    } else {
+      console.log('Token does need to be refreshed')
+      await updateRefreshToken(String(user.refresh_token))
+    }
+    await compareModListWithUserInventory(user, discordEndpoint)
+  }
 }
 
-await registerCommands()
+/**
+ * Check whether any mods for sale are owned by the user
+ * @param {Object} user User's profile information
+ * @param {string} discordEndpoint Endpoint for user's desired alert Discord channel
+ */
+async function compareModListWithUserInventory(user, discordEndpoint) {
+  const unownedModList = await getProfileCollectibles(user)
+  if (unownedModList.length > 0) {
+    await shareUnownedModsList(discordEndpoint, user.discord_id, unownedModList)
+  } else {
+    await shareEmptyModsList(discordEndpoint, user.bungie_username)
+  }
+}
+
+/**
+ * Send alert message for unowned mods
+ * @param {string} discordEndpoint Endpoint for user's desired alert Discord channel
+ * @param {string} discordId User's Discord id
+ * @param {Array&lt;string>} unownedModList List of mods unowned by the user
+ */
+async function shareUnownedModsList(discordEndpoint, discordId, unownedModList) {
+  let message = `&lt;@${discordId}>\r\nYou have these unowned mods for sale, grab them!`
+
+  unownedModList.forEach(mod => {
+    message = message + `\r\n${mod}`
+  })
+
+  await discordRequest(discordEndpoint, message)
+}
+
+/**
+ * Send update message for no alert required
+ * @param {string} discordEndpoint Endpoint for user's desired alert Discord channel
+ * @param {string} username User's Bungie username
+ */
+async function shareEmptyModsList(discordEndpoint, username) {
+  let message = `${username} does not have any unowned mods for sale today.`
+
+  await discordRequest(discordEndpoint, message)
+}
+
+/**
+ * Send off message to user's desired Discord alert channel
+ * @param {string} endpoint Endpoint for user's desired alert Discord channel
+ * @param {string} message Message to send to user
+ */
+export async function discordRequest(endpoint, message) {
+  const result = await axios.post('https://discord.com/api/v10/' + endpoint,
+    {
+      "content": message
+    },
+    {
+      headers: {
+        Authorization: `Bot ${config.token}`,
+        'Content-Type': 'application/json',
+      },
+    }
+  )
+
+  if (result.status != 200) {
+    throw new Error(String(result.status))
+  }
+}
 </code></pre>
         </article>
     </section>

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: discord/deploy-commands.js</title>
+    <title>JSDoc: Source: vendor.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: discord/deploy-commands.js</h1>
+    <h1 class="page-title">Source: vendor.js</h1>
 
     
 
@@ -28,39 +28,71 @@
         <article>
             <pre class="prettyprint source linenums"><code>// @ts-check
 
-import { config } from './../../config/config.js'
-import { REST, Routes } from 'discord.js'
-import fs from 'fs'
-
-const commands = []
-const commandFiles = fs.readdirSync('./src/discord/commands').filter(file => file.endsWith('.js'))
-
-for (const file of commandFiles) {
-	const command = await import(`./commands/${file}`)
-	commands.push(command.default.data)
-}
-
-const rest = new REST({ version: '10' }).setToken(String(config.token))
+import { config } from './../config/config.js'
+import axios from 'axios'
+import { getCollectibleFromManifest, getItemFromManifest } from './manifest.js'
+import { updateRefreshToken } from './token.js'
 
 /**
- * Update registered slash commands
+ * Collect mods for a specific vendor
+ * @param {string} vendorId Id of vendor
+ * @param {Object} user User profile information
+ * @returns {Promise&lt;Array&lt;string>>} List of mods for sale
  */
-async function registerCommands() {
-	try {
-		console.log(`Started refreshing ${commands.length} application (/) commands.`)
+export async function getVendorModInventory(vendorId, user) {
+  const getVendorSales = 402
+  const oauthToken = await updateRefreshToken(user.refresh_token)
+  const response = await axios.get(
+    `https://www.bungie.net/Platform/Destiny2/3/Profile/${user.destiny_id}/Character/${user.destiny_character_id}/Vendors/`, {
+    params: {
+      components: getVendorSales
+    },
+    headers: {
+      Authorization: `Bearer ${oauthToken}`,
+      'x-api-key': `${config.apiKey}`
+    }
+  })
 
-		const data = await rest.put(
-			Routes.applicationCommands(String(config.clientId)),
-			{ body: commands }
-		)
+  let vendorInventory
 
-		console.log(`Successfully reloaded ${Object(data).length} application (/) commands.`)
-	} catch (error) {
-		console.error(error)
-	}
+  for (let key in response.data.Response.sales.data) {
+    if (key === vendorId) {
+      vendorInventory = response.data.Response.sales.data[key].saleItems
+    }
+  }
+
+  return await getItemFromManifest(19, vendorInventory)
 }
 
-await registerCommands()
+/**
+ * Collect mods for sale by Banshee-44 and Ada-1
+ * @param {Object} user User information
+ * @returns {Promise&lt;Array>} List of mods
+ */
+export async function getProfileCollectibles(user) {
+  const getCollectibles = 800
+  const profileResponse = await axios.get(`https://www.bungie.net/Platform/Destiny2/3/Profile/${user.destiny_id}/`, {
+    params: {
+      'components': getCollectibles
+    },
+    headers: {
+      'x-api-key': `${config.apiKey}`
+    }
+  })
+
+  const adaMods = await getVendorModInventory('350061650', user)
+  console.log(`Ada has these mods for sale: ${adaMods}`)
+
+  const collectibleList = []
+
+  adaMods.forEach(key => {
+    if (profileResponse.data.Response.profileCollectibles.data.collectibles[key].state === 65) {
+      collectibleList.push(key)
+    }
+  })
+
+  return await getCollectibleFromManifest(19, collectibleList)
+}
 </code></pre>
         </article>
     </section>

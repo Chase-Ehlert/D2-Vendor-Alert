@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: discord/deploy-commands.js</title>
+    <title>JSDoc: Source: destiny-service.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: discord/deploy-commands.js</h1>
+    <h1 class="page-title">Source: destiny-service.js</h1>
 
     
 
@@ -28,39 +28,38 @@
         <article>
             <pre class="prettyprint source linenums"><code>// @ts-check
 
-import { config } from './../../config/config.js'
-import { REST, Routes } from 'discord.js'
-import fs from 'fs'
-
-const commands = []
-const commandFiles = fs.readdirSync('./src/discord/commands').filter(file => file.endsWith('.js'))
-
-for (const file of commandFiles) {
-	const command = await import(`./commands/${file}`)
-	commands.push(command.default.data)
-}
-
-const rest = new REST({ version: '10' }).setToken(String(config.token))
+// eslint-disable-next-line no-unused-vars
+import * as types from './../typedefs.js'
+import axios from 'axios'
+import { config } from './../config/config.js'
 
 /**
- * Update registered slash commands
+ * Retrieves refresh token for a user
+ * @param {string} authorizationCode Temporary code given by Destiny after user authorizes bot
+ * @returns A TokenInfo object with the membership ID and important refresh token information
  */
-async function registerCommands() {
-	try {
-		console.log(`Started refreshing ${commands.length} application (/) commands.`)
+export async function getRefreshToken(authorizationCode) {
+    const { data } = await axios.post('https://www.bungie.net/platform/app/oauth/token/', {
+        grant_type: 'authorization_code',
+        code: authorizationCode,
+        client_secret: config.oauthSecret,
+        client_id: config.oauthClientId
+    }, {
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'x-api-key': config.apiKey
+        }
+    })
 
-		const data = await rest.put(
-			Routes.applicationCommands(String(config.clientId)),
-			{ body: commands }
-		)
-
-		console.log(`Successfully reloaded ${Object(data).length} application (/) commands.`)
-	} catch (error) {
-		console.error(error)
-	}
+    /**
+     * @type {types.TokenInfo}
+     */
+    return {
+        membershipId: data.membership_id,
+        refreshTokenExpirationTime: data.refresh_expires_in,
+        refreshToken: data.refresh_token
+    }
 }
-
-await registerCommands()
 </code></pre>
         </article>
     </section>

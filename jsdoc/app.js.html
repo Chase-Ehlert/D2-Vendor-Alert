@@ -28,18 +28,24 @@
         <article>
             <pre class="prettyprint source linenums"><code>// @ts-check
 
-import 'dotenv/config'
+import { config } from './../config/config.js'
 import express from 'express'
 import path from 'path'
-import * as database from './database/users-operations.js'
+import * as databaseService from './database/database-service.js'
 import { setupDiscordClient } from './discord/discord-client.js'
-import { handleAuthorizationCode } from './utilities/token-utils.js'
-import { sendMessage } from './utilities/discord-utils.js'
+import { sendMessage } from './discord-service.js'
+import axios from 'axios'
+import mongoose from 'mongoose'
+import { getRefreshToken } from './destiny-service.js'
 
 const app = express()
 const directoryName = path.dirname('app.js')
 
-database.setupDatabaseConnection()
+mongoose.set('strictQuery', false)
+mongoose.connect(
+  `mongodb+srv://${config.databaseUser}:${config.databasePassword}@${config.databaseCluster}.mongodb.net/${config.databaseName}`
+)
+
 setupDiscordClient()
 
 app.listen(3001, () => {
@@ -48,13 +54,12 @@ app.listen(3001, () => {
 
 app.get('/', async (request, result) => {
   if (request.query.code) {
-    await handleAuthorizationCode(request)
+    await handleAuthorizationCode(String(request.query.code))
 
     result.sendFile('src/views/landing-page.html', { root: directoryName })
   }
 })
 
-await startServer()
 dailyReset()
 
 /**
@@ -64,7 +69,7 @@ function dailyReset() {
   let today = new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate()))
   console.log(`Today is ${today}`)
 
-  const tomorrowResetTime = new Date();
+  const tomorrowResetTime = new Date()
   tomorrowResetTime.setDate(today.getDate() + 1)
   tomorrowResetTime.setUTCHours(17, 2, 0, 0)
   console.log(`Tomorrows reset time is: ${tomorrowResetTime}`)
@@ -72,8 +77,7 @@ function dailyReset() {
   const waitTime = Number(tomorrowResetTime) - Date.now()
 
   if (waitTime > 0) {
-    const now = new Date(Date.now())
-    console.log(`Wait time is: ${waitTime/1000/60/60}`)
+    console.log(`Wait time is: ${waitTime / 1000 / 60 / 60}`)
 
     setTimeout(startServer, waitTime)
   } else {
@@ -90,6 +94,68 @@ async function startServer() {
   await sendMessage()
   dailyReset()
 }
+
+/**
+ * Takes the authorization code and saves token information to database
+ * @param {string} authorizationCode Authorization code received by authenticated user
+ */
+async function handleAuthorizationCode(authorizationCode) {
+  const tokenInfo = await getRefreshToken(authorizationCode)
+  const destinyMemberships = await getDestinyMemberships(tokenInfo.membershipId)
+  const destinyCharacters = await getDestinyCharacters(destinyMemberships, tokenInfo.membershipId)
+
+  await databaseService.updateUser(
+    tokenInfo.membershipId,
+    tokenInfo.refreshTokenExpirationTime,
+    tokenInfo.refreshToken,
+    destinyMemberships.data.Response.bungieNetUser.uniqueName,
+    destinyMemberships.data.Response.destinyMemberships[0].membershipId,
+    destinyCharacters.data.Response.profile.data.characterIds[0]
+  )
+}
+
+/**
+ * Retrieves Destiny membership information for a user
+ * @param {string} membershipId Destiny membership ID of user
+ * @returns A JSON object containing the Destiny membership info for a user
+ */
+async function getDestinyMemberships(membershipId) {
+  try {
+    return await axios.get(
+      `https://www.bungie.net/platform/User/GetMembershipsById/${membershipId}/3/`, {
+      headers: {
+        'X-API-Key': `${config.apiKey}`
+      }
+    })
+  } catch (error) {
+    console.log(`Retreiving Destiny Memberships failed for ${membershipId}!`)
+    throw error
+  }
+}
+
+/**
+* Retrieves Destiny character information for a user
+* @param {Object} destinyMemberships A JSON object containing the Destiny membership info for a user
+* @param {string} membershipId Destiny membership ID of user
+* @returns A JSON object containing the Destiny character info for a user
+*/
+async function getDestinyCharacters(destinyMemberships, membershipId) {
+  const getProfiles = 100
+  try {
+    return await axios.get(
+      `https://bungie.net/Platform/Destiny2/3/Profile/${destinyMemberships.data.Response.destinyMemberships[0].membershipId}/`, {
+      headers: {
+        'X-API-Key': `${config.apiKey}`
+      },
+      params: {
+        components: getProfiles
+      }
+    })
+  } catch (error) {
+    console.log(`Retreving Destiny Characters Failed for ${membershipId}!`)
+    throw error
+  }
+}
 </code></pre>
         </article>
     </section>
@@ -100,13 +166,13 @@ async function startServer() {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addUser">addUser</a></li><li><a href="global.html#addUserToAlertBot">addUserToAlertBot</a></li><li><a href="global.html#canManifestItemBeAdded">canManifestItemBeAdded</a></li><li><a href="global.html#checkIfUsernameExists">checkIfUsernameExists</a></li><li><a href="global.html#compareModListWithUserInventory">compareModListWithUserInventory</a></li><li><a href="global.html#dailyReset">dailyReset</a></li><li><a href="global.html#discordRequest">discordRequest</a></li><li><a href="global.html#doesUserExist">doesUserExist</a></li><li><a href="global.html#getCollectibleFromManifest">getCollectibleFromManifest</a></li><li><a href="global.html#getCollectibleName">getCollectibleName</a></li><li><a href="global.html#getDestinyCharacters">getDestinyCharacters</a></li><li><a href="global.html#getDestinyMemberships">getDestinyMemberships</a></li><li><a href="global.html#getItemFromManifest">getItemFromManifest</a></li><li><a href="global.html#getItemName">getItemName</a></li><li><a href="global.html#getManifestFile">getManifestFile</a></li><li><a href="global.html#getProfileCollectibles">getProfileCollectibles</a></li><li><a href="global.html#getVendorModInventory">getVendorModInventory</a></li><li><a href="global.html#handleAuthorizationCode">handleAuthorizationCode</a></li><li><a href="global.html#handleIncommingMessage">handleIncommingMessage</a></li><li><a href="global.html#readCollectiblesFromManifest">readCollectiblesFromManifest</a></li><li><a href="global.html#readFile">readFile</a></li><li><a href="global.html#readItemsFromManifest">readItemsFromManifest</a></li><li><a href="global.html#registerCommands">registerCommands</a></li><li><a href="global.html#replyToSlashCommands">replyToSlashCommands</a></li><li><a href="global.html#replyUserExists">replyUserExists</a></li><li><a href="global.html#sendMessage">sendMessage</a></li><li><a href="global.html#setupDatabaseConnection">setupDatabaseConnection</a></li><li><a href="global.html#setupDiscordClient">setupDiscordClient</a></li><li><a href="global.html#setupSlashCommands">setupSlashCommands</a></li><li><a href="global.html#shareEmptyModsList">shareEmptyModsList</a></li><li><a href="global.html#shareUnownedModsList">shareUnownedModsList</a></li><li><a href="global.html#startServer">startServer</a></li><li><a href="global.html#updateRefreshToken">updateRefreshToken</a></li><li><a href="global.html#updateUser">updateUser</a></li><li><a href="global.html#writeFile">writeFile</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addUser">addUser</a></li><li><a href="global.html#addUserToAlertBot">addUserToAlertBot</a></li><li><a href="global.html#canManifestItemBeAdded">canManifestItemBeAdded</a></li><li><a href="global.html#checkIfUsernameExists">checkIfUsernameExists</a></li><li><a href="global.html#compareModListWithUserInventory">compareModListWithUserInventory</a></li><li><a href="global.html#dailyReset">dailyReset</a></li><li><a href="global.html#discordRequest">discordRequest</a></li><li><a href="global.html#doesUserExist">doesUserExist</a></li><li><a href="global.html#getCollectibleFromManifest">getCollectibleFromManifest</a></li><li><a href="global.html#getCollectibleName">getCollectibleName</a></li><li><a href="global.html#getDestinyCharacters">getDestinyCharacters</a></li><li><a href="global.html#getDestinyMemberships">getDestinyMemberships</a></li><li><a href="global.html#getItemFromManifest">getItemFromManifest</a></li><li><a href="global.html#getItemName">getItemName</a></li><li><a href="global.html#getManifestFile">getManifestFile</a></li><li><a href="global.html#getProfileCollectibles">getProfileCollectibles</a></li><li><a href="global.html#getRefreshToken">getRefreshToken</a></li><li><a href="global.html#getVendorModInventory">getVendorModInventory</a></li><li><a href="global.html#handleAuthorizationCode">handleAuthorizationCode</a></li><li><a href="global.html#handleIncommingMessage">handleIncommingMessage</a></li><li><a href="global.html#readCollectiblesFromManifest">readCollectiblesFromManifest</a></li><li><a href="global.html#readFile">readFile</a></li><li><a href="global.html#readItemsFromManifest">readItemsFromManifest</a></li><li><a href="global.html#registerCommands">registerCommands</a></li><li><a href="global.html#replyToSlashCommands">replyToSlashCommands</a></li><li><a href="global.html#replyUserExists">replyUserExists</a></li><li><a href="global.html#sendMessage">sendMessage</a></li><li><a href="global.html#setupDiscordClient">setupDiscordClient</a></li><li><a href="global.html#setupSlashCommands">setupSlashCommands</a></li><li><a href="global.html#shareEmptyModsList">shareEmptyModsList</a></li><li><a href="global.html#shareUnownedModsList">shareUnownedModsList</a></li><li><a href="global.html#startServer">startServer</a></li><li><a href="global.html#updateRefreshToken">updateRefreshToken</a></li><li><a href="global.html#updateUser">updateUser</a></li><li><a href="global.html#writeFile">writeFile</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Fri Jun 02 2023 16:15:45 GMT-0400 (Eastern Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue Jun 13 2023 16:18:44 GMT-0400 (Eastern Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>
