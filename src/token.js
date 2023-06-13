@@ -2,7 +2,7 @@
 
 import { config } from './../config/config.js'
 import axios from 'axios'
-import * as database from './database/database-service.js'
+import * as databaseService from './database/database-service.js'
 
 /**
  * Updates the refresh token for a user
@@ -22,7 +22,7 @@ export async function updateRefreshToken(refreshToken) {
     }
   })
 
-  await database.updateUser(
+  await databaseService.updateUser(
     data.membership_id,
     data.refresh_expires_in,
     data.refresh_token

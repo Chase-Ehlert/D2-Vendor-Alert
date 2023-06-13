@@ -3,7 +3,7 @@
 import { config } from './../config/config.js'
 import express from 'express'
 import path from 'path'
-import * as database from './database/database-service.js'
+import * as databaseService from './database/database-service.js'
 import { setupDiscordClient } from './discord/discord-client.js'
 import { sendMessage } from './discord-service.js'
 import axios from 'axios'
@@ -32,7 +32,6 @@ app.get('/', async (request, result) => {
 })
 
 await startServer()
-dailyReset()
 
 /**
  * Calculates the time till the next Destiny daily reset and waits till then to alert users of vendor inventory
@@ -87,7 +86,7 @@ async function handleAuthorizationCode(request) {
   const destinyMemberships = await getDestinyMemberships(data)
   const destinyCharacters = await getDestinyCharacters(destinyMemberships, data)
 
-  await database.updateUser(
+  await databaseService.updateUser(
     data.membership_id,
     data.refresh_expires_in,
     data.refresh_token,

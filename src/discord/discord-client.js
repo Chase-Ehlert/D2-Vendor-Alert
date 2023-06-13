@@ -5,7 +5,7 @@ import discord, { Collection, Events } from 'discord.js'
 import * as url from 'url'
 import path from 'path'
 import fileSystem from 'fs'
-import * as database from '../database/database-service.js'
+import * as databaseService from '../database/database-service.js'
 import axios from 'axios'
 import mongoose from 'mongoose'
 
@@ -102,7 +102,7 @@ async function handleIncommingMessage(message, interaction, command) {
     if (Object(response).length === 0) {
         interaction.followUp({ content: 'That is not a valid Bungie Net username!' })
     } else {
-        await database.doesUserExist(message.content) ?
+        await databaseService.doesUserExist(message.content) ?
             replyUserExists(interaction) :
             addUserToAlertBot(command, message.content, interaction)
     }
@@ -123,7 +123,7 @@ function replyUserExists(interaction) {
  * @param {Object} interaction Reference to Discord Interaction
  */
 async function addUserToAlertBot(command, username, interaction) {
-    await database.addUser(username, interaction.user.id, interaction.channelId)
+    await databaseService.addUser(username, interaction.user.id, interaction.channelId)
     command.execute(interaction)
 }
 
