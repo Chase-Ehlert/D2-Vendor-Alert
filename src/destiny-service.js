@@ -87,3 +87,46 @@ export async function getDestinyInventoryItemDefinition(manifestFileName) {
 
     return data.DestinyInventoryItemDefinition
 }
+
+/**
+ * Call the Destiny API to retreive the manifest
+ * @returns Manifest file from Destiny
+ */
+export async function getManifestFile() {
+    const { data } = await axios.get('https://www.bungie.net/Platform/Destiny2/Manifest/', {
+        headers: {
+            'X-API-Key': `${config.apiKey}`
+        }
+    })
+
+    return data.Response.jsonWorldContentPaths.en
+}
+
+/**
+ * Retrieve the user's access token by calling the Destiny API with their refresh token
+ * @param {string} refreshToken User's refresh token
+ * @returns A TokenInfo object with the user's access token and new refresh token
+ */
+export async function getAccessToken(refreshToken) {
+    const { data } = await axios.post('https://www.bungie.net/platform/app/oauth/token/', {
+        grant_type: 'refresh_token',
+        refresh_token: refreshToken,
+        client_id: config.oauthClientId,
+        client_secret: config.oauthSecret
+    }, {
+        headers: {
+            'x-api-key': `${config.apiKey}`,
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    })
+
+    /**
+     * @type {types.TokenInfo}
+     */
+    return {
+        bungieMembershipId: data.membership_id,
+        refreshTokenExpirationTime: data.refresh_expires_in,
+        refreshToken: data.refresh_token,
+        accessToken: data.access_token
+    }
+}

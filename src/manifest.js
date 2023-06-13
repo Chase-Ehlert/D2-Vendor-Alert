@@ -4,7 +4,6 @@ import axios from 'axios'
 import fs from 'fs'
 import * as oldfs from 'fs'
 import * as destinyService from './destiny-service.js'
-import { config } from './../config/config.js'
 
 const fsPromises = fs.promises
 
@@ -16,7 +15,7 @@ const fsPromises = fs.promises
  */
 export async function getItemFromManifest(itemType, itemList) {
   let inventoryNameList = []
-  const manifestFileName = await getManifestFile()
+  const manifestFileName = await destinyService.getManifestFile()
   const destinyInventoryItemDefinition = await destinyService.getDestinyInventoryItemDefinition(manifestFileName)
 
   inventoryNameList = await readItemsFromManifest(
@@ -55,9 +54,9 @@ async function readItemsFromManifest(itemType, inventoryNameList, itemList, dest
  */
 export async function getCollectibleFromManifest(itemType, itemList) {
   let inventoryNameList = []
-  const manifestFileName = await getManifestFile()
+  const manifestFileName = await destinyService.getManifestFile()
 
-  const newData = await axios.get('https://www.bungie.net' + manifestFileName)
+  const newData = await destinyService.getDestinyInventoryItemDefinition(manifestFileName)
   inventoryNameList = await readCollectiblesFromManifest(
     itemType,
     inventoryNameList,
@@ -97,20 +96,6 @@ async function readCollectiblesFromManifest(itemType, inventoryNameList, itemLis
     )
   }
   return inventoryNameList
-}
-
-/**
- * Call the Destiny API to retreive the manifest
- * @returns Manifest file from Destiny
- */
-async function getManifestFile() {
-  const { data } = await axios.get('https://www.bungie.net/Platform/Destiny2/Manifest/', {
-    headers: {
-      'X-API-Key': `${config.apiKey}`
-    }
-  })
-
-  return data.Response.jsonWorldContentPaths.en
 }
 
 /**
