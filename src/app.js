@@ -8,7 +8,7 @@ import { setupDiscordClient } from './discord/discord-client.js'
 import { sendMessage } from './discord-service.js'
 import axios from 'axios'
 import mongoose from 'mongoose'
-import { getRefreshToken } from './destiny-service.js'
+import { getRefreshToken, getDestinyMembershipInfo } from './destiny-service.js'
 
 const app = express()
 const directoryName = path.dirname('app.js')
@@ -68,54 +68,35 @@ async function startServer() {
 }
 
 /**
- * Takes the authorization code and saves token information to database
+ * Uses the authorization code to save the user's token information to the database
  * @param {string} authorizationCode Authorization code received by authenticated user
  */
 async function handleAuthorizationCode(authorizationCode) {
   const tokenInfo = await getRefreshToken(authorizationCode)
-  const destinyMemberships = await getDestinyMemberships(tokenInfo.membershipId)
-  const destinyCharacters = await getDestinyCharacters(destinyMemberships, tokenInfo.membershipId)
+  const membershipInfo = await getDestinyMembershipInfo(tokenInfo.bungieMembershipId)
+  const destinyCharacters = await getDestinyCharacters(membershipInfo.destinyMembershipId, tokenInfo.bungieMembershipId)
 
   await databaseService.updateUser(
-    tokenInfo.membershipId,
+    tokenInfo.bungieMembershipId,
     tokenInfo.refreshTokenExpirationTime,
     tokenInfo.refreshToken,
-    destinyMemberships.data.Response.bungieNetUser.uniqueName,
-    destinyMemberships.data.Response.destinyMemberships[0].membershipId,
+    membershipInfo.uniqueName,
+    membershipInfo.destinyMembershipId,
     destinyCharacters.data.Response.profile.data.characterIds[0]
   )
 }
 
 /**
- * Retrieves Destiny membership information for a user
- * @param {string} membershipId Destiny membership ID of user
- * @returns A JSON object containing the Destiny membership info for a user
- */
-async function getDestinyMemberships(membershipId) {
-  try {
-    return await axios.get(
-      `https://www.bungie.net/platform/User/GetMembershipsById/${membershipId}/3/`, {
-      headers: {
-        'X-API-Key': `${config.apiKey}`
-      }
-    })
-  } catch (error) {
-    console.log(`Retreiving Destiny Memberships failed for ${membershipId}!`)
-    throw error
-  }
-}
-
-/**
 * Retrieves Destiny character information for a user
-* @param {Object} destinyMemberships A JSON object containing the Destiny membership info for a user
-* @param {string} membershipId Destiny membership ID of user
+* @param {string} destinyMembershipId Membership ID of a Destiny character belonging to the user
+* @param {string} bungieMembershipId Bungie membership ID of user
 * @returns A JSON object containing the Destiny character info for a user
 */
-async function getDestinyCharacters(destinyMemberships, membershipId) {
+async function getDestinyCharacters(destinyMembershipId, bungieMembershipId) {
   const getProfiles = 100
   try {
     return await axios.get(
-      `https://bungie.net/Platform/Destiny2/3/Profile/${destinyMemberships.data.Response.destinyMemberships[0].membershipId}/`, {
+      `https://bungie.net/Platform/Destiny2/3/Profile/${destinyMembershipId}/`, {
       headers: {
         'X-API-Key': `${config.apiKey}`
       },
@@ -124,7 +105,7 @@ async function getDestinyCharacters(destinyMemberships, membershipId) {
       }
     })
   } catch (error) {
-    console.log(`Retreving Destiny Characters Failed for ${membershipId}!`)
+    console.log(`Retreving Destiny Characters Failed for ${bungieMembershipId}!`)
     throw error
   }
 }

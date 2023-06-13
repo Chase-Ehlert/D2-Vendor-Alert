@@ -27,8 +27,31 @@ export async function getRefreshToken(authorizationCode) {
      * @type {types.TokenInfo}
      */
     return {
-        membershipId: data.membership_id,
+        bungieMembershipId: data.membership_id,
         refreshTokenExpirationTime: data.refresh_expires_in,
         refreshToken: data.refresh_token
     }
 }
+
+/**
+ * Retrieves Destiny membership information for a user
+ * @param {string} membershipId Destiny membership ID of user
+ * @returns A MembershipInfo object containing the Destiny membership info for a user
+ */
+export async function getDestinyMembershipInfo(membershipId) {
+    const { data } = await axios.get(
+        `https://www.bungie.net/platform/User/GetMembershipsById/${membershipId}/3/`, {
+        headers: {
+          'X-API-Key': `${config.apiKey}`
+        }
+      })
+
+      /**
+       * @type {types.MembershipInfo}
+       */
+      return {
+        destinyMembershipId: data.Response.destinyMemberships[0].membershipId,
+        uniqueName: data.Response.bungieNetUser.uniqueName,
+        characterId: data.Response.profile.data.characterIds[0]
+      }
+  }
