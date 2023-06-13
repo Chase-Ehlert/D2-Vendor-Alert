@@ -1103,7 +1103,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="app.js.html">app.js</a>, <a href="app.js.html#line40">line 40</a>
+        <a href="app.js.html">app.js</a>, <a href="app.js.html#line39">line 39</a>
     </li></ul></dd>
     
 
@@ -1798,7 +1798,7 @@
     
 
     
-    <h4 class="name" id="getDestinyCharacters"><span class="type-signature">(async) </span>getDestinyCharacters<span class="signature">(destinyMembershipId, bungieMembershipId)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="getDestinyCharacterId"><span class="type-signature"></span>getDestinyCharacterId<span class="signature">(destinyMembershipId)</span><span class="type-signature"></span></h4>
     
 
     
@@ -1862,29 +1862,6 @@
         </tr>
 
     
-
-        <tr>
-            
-                <td class="name"><code>bungieMembershipId</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Bungie membership ID of user</td>
-        </tr>
-
-    
     </tbody>
 </table>
 
@@ -1922,7 +1899,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="app.js.html">app.js</a>, <a href="app.js.html#line95">line 95</a>
+        <a href="destiny-service.js.html">destiny-service.js</a>, <a href="destiny-service.js.html#line64">line 64</a>
     </li></ul></dd>
     
 
@@ -1951,7 +1928,7 @@
 
         
 <div class="param-desc">
-    A JSON object containing the Destiny character info for a user
+    One of the Destiny character ID's for a user
 </div>
 
 
@@ -3072,7 +3049,7 @@
 
 
 <div class="description">
-    Uses the authorization code to save the user's token information to the database
+    Uses the authorization code to retreive the user's token information and then save it to the database
 </div>
 
 
@@ -3165,7 +3142,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="app.js.html">app.js</a>, <a href="app.js.html#line74">line 74</a>
+        <a href="app.js.html">app.js</a>, <a href="app.js.html#line73">line 73</a>
     </li></ul></dd>
     
 
@@ -5125,7 +5102,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="app.js.html">app.js</a>, <a href="app.js.html#line65">line 65</a>
+        <a href="app.js.html">app.js</a>, <a href="app.js.html#line64">line 64</a>
     </li></ul></dd>
     
 
@@ -5888,13 +5865,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addUser">addUser</a></li><li><a href="global.html#addUserToAlertBot">addUserToAlertBot</a></li><li><a href="global.html#canManifestItemBeAdded">canManifestItemBeAdded</a></li><li><a href="global.html#checkIfUsernameExists">checkIfUsernameExists</a></li><li><a href="global.html#compareModListWithUserInventory">compareModListWithUserInventory</a></li><li><a href="global.html#dailyReset">dailyReset</a></li><li><a href="global.html#discordRequest">discordRequest</a></li><li><a href="global.html#doesUserExist">doesUserExist</a></li><li><a href="global.html#getCollectibleFromManifest">getCollectibleFromManifest</a></li><li><a href="global.html#getCollectibleName">getCollectibleName</a></li><li><a href="global.html#getDestinyCharacters">getDestinyCharacters</a></li><li><a href="global.html#getDestinyMembershipInfo">getDestinyMembershipInfo</a></li><li><a href="global.html#getItemFromManifest">getItemFromManifest</a></li><li><a href="global.html#getItemName">getItemName</a></li><li><a href="global.html#getManifestFile">getManifestFile</a></li><li><a href="global.html#getProfileCollectibles">getProfileCollectibles</a></li><li><a href="global.html#getRefreshToken">getRefreshToken</a></li><li><a href="global.html#getVendorModInventory">getVendorModInventory</a></li><li><a href="global.html#handleAuthorizationCode">handleAuthorizationCode</a></li><li><a href="global.html#handleIncommingMessage">handleIncommingMessage</a></li><li><a href="global.html#readCollectiblesFromManifest">readCollectiblesFromManifest</a></li><li><a href="global.html#readFile">readFile</a></li><li><a href="global.html#readItemsFromManifest">readItemsFromManifest</a></li><li><a href="global.html#registerCommands">registerCommands</a></li><li><a href="global.html#replyToSlashCommands">replyToSlashCommands</a></li><li><a href="global.html#replyUserExists">replyUserExists</a></li><li><a href="global.html#sendMessage">sendMessage</a></li><li><a href="global.html#setupDiscordClient">setupDiscordClient</a></li><li><a href="global.html#setupSlashCommands">setupSlashCommands</a></li><li><a href="global.html#shareEmptyModsList">shareEmptyModsList</a></li><li><a href="global.html#shareUnownedModsList">shareUnownedModsList</a></li><li><a href="global.html#startServer">startServer</a></li><li><a href="global.html#updateRefreshToken">updateRefreshToken</a></li><li><a href="global.html#updateUser">updateUser</a></li><li><a href="global.html#writeFile">writeFile</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addUser">addUser</a></li><li><a href="global.html#addUserToAlertBot">addUserToAlertBot</a></li><li><a href="global.html#canManifestItemBeAdded">canManifestItemBeAdded</a></li><li><a href="global.html#checkIfUsernameExists">checkIfUsernameExists</a></li><li><a href="global.html#compareModListWithUserInventory">compareModListWithUserInventory</a></li><li><a href="global.html#dailyReset">dailyReset</a></li><li><a href="global.html#discordRequest">discordRequest</a></li><li><a href="global.html#doesUserExist">doesUserExist</a></li><li><a href="global.html#getCollectibleFromManifest">getCollectibleFromManifest</a></li><li><a href="global.html#getCollectibleName">getCollectibleName</a></li><li><a href="global.html#getDestinyCharacterId">getDestinyCharacterId</a></li><li><a href="global.html#getDestinyMembershipInfo">getDestinyMembershipInfo</a></li><li><a href="global.html#getItemFromManifest">getItemFromManifest</a></li><li><a href="global.html#getItemName">getItemName</a></li><li><a href="global.html#getManifestFile">getManifestFile</a></li><li><a href="global.html#getProfileCollectibles">getProfileCollectibles</a></li><li><a href="global.html#getRefreshToken">getRefreshToken</a></li><li><a href="global.html#getVendorModInventory">getVendorModInventory</a></li><li><a href="global.html#handleAuthorizationCode">handleAuthorizationCode</a></li><li><a href="global.html#handleIncommingMessage">handleIncommingMessage</a></li><li><a href="global.html#readCollectiblesFromManifest">readCollectiblesFromManifest</a></li><li><a href="global.html#readFile">readFile</a></li><li><a href="global.html#readItemsFromManifest">readItemsFromManifest</a></li><li><a href="global.html#registerCommands">registerCommands</a></li><li><a href="global.html#replyToSlashCommands">replyToSlashCommands</a></li><li><a href="global.html#replyUserExists">replyUserExists</a></li><li><a href="global.html#sendMessage">sendMessage</a></li><li><a href="global.html#setupDiscordClient">setupDiscordClient</a></li><li><a href="global.html#setupSlashCommands">setupSlashCommands</a></li><li><a href="global.html#shareEmptyModsList">shareEmptyModsList</a></li><li><a href="global.html#shareUnownedModsList">shareUnownedModsList</a></li><li><a href="global.html#startServer">startServer</a></li><li><a href="global.html#updateRefreshToken">updateRefreshToken</a></li><li><a href="global.html#updateUser">updateUser</a></li><li><a href="global.html#writeFile">writeFile</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue Jun 13 2023 16:40:49 GMT-0400 (Eastern Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue Jun 13 2023 16:50:29 GMT-0400 (Eastern Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>

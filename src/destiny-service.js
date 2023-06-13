@@ -42,16 +42,36 @@ export async function getDestinyMembershipInfo(membershipId) {
     const { data } = await axios.get(
         `https://www.bungie.net/platform/User/GetMembershipsById/${membershipId}/3/`, {
         headers: {
-          'X-API-Key': `${config.apiKey}`
+            'X-API-Key': `${config.apiKey}`
         }
-      })
+    })
 
-      /**
-       * @type {types.MembershipInfo}
-       */
-      return {
+    /**
+     * @type {types.MembershipInfo}
+     */
+    return {
         destinyMembershipId: data.Response.destinyMemberships[0].membershipId,
         uniqueName: data.Response.bungieNetUser.uniqueName,
         characterId: data.Response.profile.data.characterIds[0]
-      }
-  }
+    }
+}
+
+/**
+* Retrieves Destiny character information for a user
+* @param {string} destinyMembershipId Membership ID of a Destiny character belonging to the user
+* @returns One of the Destiny character ID's for a user 
+*/
+export async function getDestinyCharacterId(destinyMembershipId) {
+    const getProfiles = 100
+    const { data } = await axios.get(
+        `https://bungie.net/Platform/Destiny2/3/Profile/${destinyMembershipId}/`, {
+        headers: {
+            'X-API-Key': `${config.apiKey}`
+        },
+        params: {
+            components: getProfiles
+        }
+    })
+
+    return data.Response.profile.data.characterIds[0]
+}

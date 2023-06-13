@@ -28,15 +28,14 @@
         <article>
             <pre class="prettyprint source linenums"><code>// @ts-check
 
-import { config } from './../config/config.js'
 import express from 'express'
 import path from 'path'
 import * as databaseService from './database/database-service.js'
+import mongoose from 'mongoose'
+import { config } from './../config/config.js'
 import { setupDiscordClient } from './discord/discord-client.js'
 import { sendMessage } from './discord-service.js'
-import axios from 'axios'
-import mongoose from 'mongoose'
-import { getRefreshToken, getDestinyMembershipInfo } from './destiny-service.js'
+import { getRefreshToken, getDestinyMembershipInfo, getDestinyCharacterId } from './destiny-service.js'
 
 const app = express()
 const directoryName = path.dirname('app.js')
@@ -96,13 +95,13 @@ async function startServer() {
 }
 
 /**
- * Uses the authorization code to save the user's token information to the database
+ * Uses the authorization code to retreive the user's token information and then save it to the database
  * @param {string} authorizationCode Authorization code received by authenticated user
  */
 async function handleAuthorizationCode(authorizationCode) {
   const tokenInfo = await getRefreshToken(authorizationCode)
   const membershipInfo = await getDestinyMembershipInfo(tokenInfo.bungieMembershipId)
-  const destinyCharacters = await getDestinyCharacters(membershipInfo.destinyMembershipId, tokenInfo.bungieMembershipId)
+  const destinyCharacterId = await getDestinyCharacterId(membershipInfo.destinyMembershipId)
 
   await databaseService.updateUser(
     tokenInfo.bungieMembershipId,
@@ -110,32 +109,8 @@ async function handleAuthorizationCode(authorizationCode) {
     tokenInfo.refreshToken,
     membershipInfo.uniqueName,
     membershipInfo.destinyMembershipId,
-    destinyCharacters.data.Response.profile.data.characterIds[0]
+    destinyCharacterId
   )
-}
-
-/**
-* Retrieves Destiny character information for a user
-* @param {string} destinyMembershipId Membership ID of a Destiny character belonging to the user
-* @param {string} bungieMembershipId Bungie membership ID of user
-* @returns A JSON object containing the Destiny character info for a user
-*/
-async function getDestinyCharacters(destinyMembershipId, bungieMembershipId) {
-  const getProfiles = 100
-  try {
-    return await axios.get(
-      `https://bungie.net/Platform/Destiny2/3/Profile/${destinyMembershipId}/`, {
-      headers: {
-        'X-API-Key': `${config.apiKey}`
-      },
-      params: {
-        components: getProfiles
-      }
-    })
-  } catch (error) {
-    console.log(`Retreving Destiny Characters Failed for ${bungieMembershipId}!`)
-    throw error
-  }
 }
 </code></pre>
         </article>
@@ -147,13 +122,13 @@ async function getDestinyCharacters(destinyMembershipId, bungieMembershipId) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addUser">addUser</a></li><li><a href="global.html#addUserToAlertBot">addUserToAlertBot</a></li><li><a href="global.html#canManifestItemBeAdded">canManifestItemBeAdded</a></li><li><a href="global.html#checkIfUsernameExists">checkIfUsernameExists</a></li><li><a href="global.html#compareModListWithUserInventory">compareModListWithUserInventory</a></li><li><a href="global.html#dailyReset">dailyReset</a></li><li><a href="global.html#discordRequest">discordRequest</a></li><li><a href="global.html#doesUserExist">doesUserExist</a></li><li><a href="global.html#getCollectibleFromManifest">getCollectibleFromManifest</a></li><li><a href="global.html#getCollectibleName">getCollectibleName</a></li><li><a href="global.html#getDestinyCharacters">getDestinyCharacters</a></li><li><a href="global.html#getDestinyMembershipInfo">getDestinyMembershipInfo</a></li><li><a href="global.html#getItemFromManifest">getItemFromManifest</a></li><li><a href="global.html#getItemName">getItemName</a></li><li><a href="global.html#getManifestFile">getManifestFile</a></li><li><a href="global.html#getProfileCollectibles">getProfileCollectibles</a></li><li><a href="global.html#getRefreshToken">getRefreshToken</a></li><li><a href="global.html#getVendorModInventory">getVendorModInventory</a></li><li><a href="global.html#handleAuthorizationCode">handleAuthorizationCode</a></li><li><a href="global.html#handleIncommingMessage">handleIncommingMessage</a></li><li><a href="global.html#readCollectiblesFromManifest">readCollectiblesFromManifest</a></li><li><a href="global.html#readFile">readFile</a></li><li><a href="global.html#readItemsFromManifest">readItemsFromManifest</a></li><li><a href="global.html#registerCommands">registerCommands</a></li><li><a href="global.html#replyToSlashCommands">replyToSlashCommands</a></li><li><a href="global.html#replyUserExists">replyUserExists</a></li><li><a href="global.html#sendMessage">sendMessage</a></li><li><a href="global.html#setupDiscordClient">setupDiscordClient</a></li><li><a href="global.html#setupSlashCommands">setupSlashCommands</a></li><li><a href="global.html#shareEmptyModsList">shareEmptyModsList</a></li><li><a href="global.html#shareUnownedModsList">shareUnownedModsList</a></li><li><a href="global.html#startServer">startServer</a></li><li><a href="global.html#updateRefreshToken">updateRefreshToken</a></li><li><a href="global.html#updateUser">updateUser</a></li><li><a href="global.html#writeFile">writeFile</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addUser">addUser</a></li><li><a href="global.html#addUserToAlertBot">addUserToAlertBot</a></li><li><a href="global.html#canManifestItemBeAdded">canManifestItemBeAdded</a></li><li><a href="global.html#checkIfUsernameExists">checkIfUsernameExists</a></li><li><a href="global.html#compareModListWithUserInventory">compareModListWithUserInventory</a></li><li><a href="global.html#dailyReset">dailyReset</a></li><li><a href="global.html#discordRequest">discordRequest</a></li><li><a href="global.html#doesUserExist">doesUserExist</a></li><li><a href="global.html#getCollectibleFromManifest">getCollectibleFromManifest</a></li><li><a href="global.html#getCollectibleName">getCollectibleName</a></li><li><a href="global.html#getDestinyCharacterId">getDestinyCharacterId</a></li><li><a href="global.html#getDestinyMembershipInfo">getDestinyMembershipInfo</a></li><li><a href="global.html#getItemFromManifest">getItemFromManifest</a></li><li><a href="global.html#getItemName">getItemName</a></li><li><a href="global.html#getManifestFile">getManifestFile</a></li><li><a href="global.html#getProfileCollectibles">getProfileCollectibles</a></li><li><a href="global.html#getRefreshToken">getRefreshToken</a></li><li><a href="global.html#getVendorModInventory">getVendorModInventory</a></li><li><a href="global.html#handleAuthorizationCode">handleAuthorizationCode</a></li><li><a href="global.html#handleIncommingMessage">handleIncommingMessage</a></li><li><a href="global.html#readCollectiblesFromManifest">readCollectiblesFromManifest</a></li><li><a href="global.html#readFile">readFile</a></li><li><a href="global.html#readItemsFromManifest">readItemsFromManifest</a></li><li><a href="global.html#registerCommands">registerCommands</a></li><li><a href="global.html#replyToSlashCommands">replyToSlashCommands</a></li><li><a href="global.html#replyUserExists">replyUserExists</a></li><li><a href="global.html#sendMessage">sendMessage</a></li><li><a href="global.html#setupDiscordClient">setupDiscordClient</a></li><li><a href="global.html#setupSlashCommands">setupSlashCommands</a></li><li><a href="global.html#shareEmptyModsList">shareEmptyModsList</a></li><li><a href="global.html#shareUnownedModsList">shareUnownedModsList</a></li><li><a href="global.html#startServer">startServer</a></li><li><a href="global.html#updateRefreshToken">updateRefreshToken</a></li><li><a href="global.html#updateUser">updateUser</a></li><li><a href="global.html#writeFile">writeFile</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue Jun 13 2023 16:40:49 GMT-0400 (Eastern Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue Jun 13 2023 16:50:29 GMT-0400 (Eastern Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>
