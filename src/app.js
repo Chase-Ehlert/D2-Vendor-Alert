@@ -2,12 +2,12 @@
 
 import express from 'express'
 import path from 'path'
-import * as databaseService from './database/database-service.js'
 import mongoose from 'mongoose'
+import * as databaseService from './database/database-service.js'
+import * as destinyService from './destiny-service.js'
 import { config } from './../config/config.js'
 import { setupDiscordClient } from './discord/discord-client.js'
 import { sendMessage } from './discord-service.js'
-import { getRefreshToken, getDestinyMembershipInfo, getDestinyCharacterId } from './destiny-service.js'
 
 const app = express()
 const directoryName = path.dirname('app.js')
@@ -71,9 +71,9 @@ async function startServer() {
  * @param {string} authorizationCode Authorization code received by authenticated user
  */
 async function handleAuthorizationCode(authorizationCode) {
-  const tokenInfo = await getRefreshToken(authorizationCode)
-  const membershipInfo = await getDestinyMembershipInfo(tokenInfo.bungieMembershipId)
-  const destinyCharacterId = await getDestinyCharacterId(membershipInfo.destinyMembershipId)
+  const tokenInfo = await destinyService.getRefreshToken(authorizationCode)
+  const membershipInfo = await destinyService.getDestinyMembershipInfo(tokenInfo.bungieMembershipId)
+  const destinyCharacterId = await destinyService.getDestinyCharacterId(membershipInfo.destinyMembershipId)
 
   await databaseService.updateUser(
     tokenInfo.bungieMembershipId,

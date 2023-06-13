@@ -1,9 +1,10 @@
 // @ts-check
 
-import { config } from './../config/config.js'
-import * as oldfs from 'fs'
 import axios from 'axios'
 import fs from 'fs'
+import * as oldfs from 'fs'
+import * as destinyService from './destiny-service.js'
+import { config } from './../config/config.js'
 
 const fsPromises = fs.promises
 
@@ -16,13 +17,13 @@ const fsPromises = fs.promises
 export async function getItemFromManifest(itemType, itemList) {
   let inventoryNameList = []
   const manifestFileName = await getManifestFile()
-  const code = await axios.get('https://www.bungie.net' + manifestFileName)
+  const destinyInventoryItemDefinition = await destinyService.getDestinyInventoryItemDefinition(manifestFileName)
 
   inventoryNameList = await readItemsFromManifest(
     itemType,
     inventoryNameList,
     itemList,
-    code.data.DestinyInventoryItemDefinition
+    destinyInventoryItemDefinition
   )
 
   return inventoryNameList
@@ -33,15 +34,15 @@ export async function getItemFromManifest(itemType, itemList) {
  * @param {number} itemType Number denomination for type of item in Destiny
  * @param {Array<string>} inventoryNameList List of mod names
  * @param {Array<string>} itemList List of items for sale
- * @param {JSON} data Complete list of every type of item from Destiny
+ * @param {Object} destinyInventoryItemDefinition Complete list of every type of item from Destiny
  * @returns List of names for mods on sale
  */
-async function readItemsFromManifest(itemType, inventoryNameList, itemList, data) {
+async function readItemsFromManifest(itemType, inventoryNameList, itemList, destinyInventoryItemDefinition) {
   try {
     await fsPromises.access('manifest-items.json', oldfs.constants.F_OK)
     inventoryNameList = await readFile(itemType, 'manifest-items.json', itemList, inventoryNameList, false)
   } catch (error) {
-    inventoryNameList = await writeFile(itemType, 'manifest-items.json', data, itemList, inventoryNameList, false)
+    inventoryNameList = await writeFile(itemType, 'manifest-items.json', destinyInventoryItemDefinition, itemList, inventoryNameList, false)
   }
   return inventoryNameList
 }

@@ -28,10 +28,11 @@
         <article>
             <pre class="prettyprint source linenums"><code>// @ts-check
 
-import { config } from './../config/config.js'
-import * as oldfs from 'fs'
 import axios from 'axios'
 import fs from 'fs'
+import * as oldfs from 'fs'
+import * as destinyService from './destiny-service.js'
+import { config } from './../config/config.js'
 
 const fsPromises = fs.promises
 
@@ -44,13 +45,13 @@ const fsPromises = fs.promises
 export async function getItemFromManifest(itemType, itemList) {
   let inventoryNameList = []
   const manifestFileName = await getManifestFile()
-  const code = await axios.get('https://www.bungie.net' + manifestFileName)
+  const destinyInventoryItemDefinition = await destinyService.getDestinyInventoryItemDefinition(manifestFileName)
 
   inventoryNameList = await readItemsFromManifest(
     itemType,
     inventoryNameList,
     itemList,
-    code.data.DestinyInventoryItemDefinition
+    destinyInventoryItemDefinition
   )
 
   return inventoryNameList
@@ -61,15 +62,15 @@ export async function getItemFromManifest(itemType, itemList) {
  * @param {number} itemType Number denomination for type of item in Destiny
  * @param {Array&lt;string>} inventoryNameList List of mod names
  * @param {Array&lt;string>} itemList List of items for sale
- * @param {JSON} data Complete list of every type of item from Destiny
+ * @param {Object} destinyInventoryItemDefinition Complete list of every type of item from Destiny
  * @returns List of names for mods on sale
  */
-async function readItemsFromManifest(itemType, inventoryNameList, itemList, data) {
+async function readItemsFromManifest(itemType, inventoryNameList, itemList, destinyInventoryItemDefinition) {
   try {
     await fsPromises.access('manifest-items.json', oldfs.constants.F_OK)
     inventoryNameList = await readFile(itemType, 'manifest-items.json', itemList, inventoryNameList, false)
   } catch (error) {
-    inventoryNameList = await writeFile(itemType, 'manifest-items.json', data, itemList, inventoryNameList, false)
+    inventoryNameList = await writeFile(itemType, 'manifest-items.json', destinyInventoryItemDefinition, itemList, inventoryNameList, false)
   }
   return inventoryNameList
 }
@@ -267,13 +268,13 @@ function canManifestItemBeAdded(itemType, itemHashList, manifest, manifestKeys, 
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addUser">addUser</a></li><li><a href="global.html#addUserToAlertBot">addUserToAlertBot</a></li><li><a href="global.html#canManifestItemBeAdded">canManifestItemBeAdded</a></li><li><a href="global.html#checkIfUsernameExists">checkIfUsernameExists</a></li><li><a href="global.html#compareModListWithUserInventory">compareModListWithUserInventory</a></li><li><a href="global.html#dailyReset">dailyReset</a></li><li><a href="global.html#discordRequest">discordRequest</a></li><li><a href="global.html#doesUserExist">doesUserExist</a></li><li><a href="global.html#getCollectibleFromManifest">getCollectibleFromManifest</a></li><li><a href="global.html#getCollectibleName">getCollectibleName</a></li><li><a href="global.html#getDestinyCharacterId">getDestinyCharacterId</a></li><li><a href="global.html#getDestinyMembershipInfo">getDestinyMembershipInfo</a></li><li><a href="global.html#getItemFromManifest">getItemFromManifest</a></li><li><a href="global.html#getItemName">getItemName</a></li><li><a href="global.html#getManifestFile">getManifestFile</a></li><li><a href="global.html#getProfileCollectibles">getProfileCollectibles</a></li><li><a href="global.html#getRefreshToken">getRefreshToken</a></li><li><a href="global.html#getVendorModInventory">getVendorModInventory</a></li><li><a href="global.html#handleAuthorizationCode">handleAuthorizationCode</a></li><li><a href="global.html#handleIncommingMessage">handleIncommingMessage</a></li><li><a href="global.html#readCollectiblesFromManifest">readCollectiblesFromManifest</a></li><li><a href="global.html#readFile">readFile</a></li><li><a href="global.html#readItemsFromManifest">readItemsFromManifest</a></li><li><a href="global.html#registerCommands">registerCommands</a></li><li><a href="global.html#replyToSlashCommands">replyToSlashCommands</a></li><li><a href="global.html#replyUserExists">replyUserExists</a></li><li><a href="global.html#sendMessage">sendMessage</a></li><li><a href="global.html#setupDiscordClient">setupDiscordClient</a></li><li><a href="global.html#setupSlashCommands">setupSlashCommands</a></li><li><a href="global.html#shareEmptyModsList">shareEmptyModsList</a></li><li><a href="global.html#shareUnownedModsList">shareUnownedModsList</a></li><li><a href="global.html#startServer">startServer</a></li><li><a href="global.html#updateRefreshToken">updateRefreshToken</a></li><li><a href="global.html#updateUser">updateUser</a></li><li><a href="global.html#writeFile">writeFile</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addUser">addUser</a></li><li><a href="global.html#addUserToAlertBot">addUserToAlertBot</a></li><li><a href="global.html#canManifestItemBeAdded">canManifestItemBeAdded</a></li><li><a href="global.html#checkIfUsernameExists">checkIfUsernameExists</a></li><li><a href="global.html#compareModListWithUserInventory">compareModListWithUserInventory</a></li><li><a href="global.html#dailyReset">dailyReset</a></li><li><a href="global.html#discordRequest">discordRequest</a></li><li><a href="global.html#doesUserExist">doesUserExist</a></li><li><a href="global.html#getCollectibleFromManifest">getCollectibleFromManifest</a></li><li><a href="global.html#getCollectibleName">getCollectibleName</a></li><li><a href="global.html#getDestinyCharacterId">getDestinyCharacterId</a></li><li><a href="global.html#getDestinyInventoryItemDefinition">getDestinyInventoryItemDefinition</a></li><li><a href="global.html#getDestinyMembershipInfo">getDestinyMembershipInfo</a></li><li><a href="global.html#getItemFromManifest">getItemFromManifest</a></li><li><a href="global.html#getItemName">getItemName</a></li><li><a href="global.html#getManifestFile">getManifestFile</a></li><li><a href="global.html#getProfileCollectibles">getProfileCollectibles</a></li><li><a href="global.html#getRefreshToken">getRefreshToken</a></li><li><a href="global.html#getVendorModInventory">getVendorModInventory</a></li><li><a href="global.html#handleAuthorizationCode">handleAuthorizationCode</a></li><li><a href="global.html#handleIncommingMessage">handleIncommingMessage</a></li><li><a href="global.html#readCollectiblesFromManifest">readCollectiblesFromManifest</a></li><li><a href="global.html#readFile">readFile</a></li><li><a href="global.html#readItemsFromManifest">readItemsFromManifest</a></li><li><a href="global.html#registerCommands">registerCommands</a></li><li><a href="global.html#replyToSlashCommands">replyToSlashCommands</a></li><li><a href="global.html#replyUserExists">replyUserExists</a></li><li><a href="global.html#sendMessage">sendMessage</a></li><li><a href="global.html#setupDiscordClient">setupDiscordClient</a></li><li><a href="global.html#setupSlashCommands">setupSlashCommands</a></li><li><a href="global.html#shareEmptyModsList">shareEmptyModsList</a></li><li><a href="global.html#shareUnownedModsList">shareUnownedModsList</a></li><li><a href="global.html#startServer">startServer</a></li><li><a href="global.html#updateRefreshToken">updateRefreshToken</a></li><li><a href="global.html#updateUser">updateUser</a></li><li><a href="global.html#writeFile">writeFile</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue Jun 13 2023 16:50:29 GMT-0400 (Eastern Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue Jun 13 2023 17:08:26 GMT-0400 (Eastern Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>

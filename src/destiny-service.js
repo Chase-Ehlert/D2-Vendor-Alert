@@ -75,3 +75,15 @@ export async function getDestinyCharacterId(destinyMembershipId) {
 
     return data.Response.profile.data.characterIds[0]
 }
+
+
+/**
+ * Retrieves the list of definitions of Destiny items for a specified manifest file
+ * @param {string} manifestFileName Name of the manifest file to retrieve
+ * @returns A JSON object of the list of definitions for Destiny items
+ */
+export async function getDestinyInventoryItemDefinition(manifestFileName) {
+    const { data } = await axios.get('https://www.bungie.net' + manifestFileName)
+
+    return data.DestinyInventoryItemDefinition
+}
