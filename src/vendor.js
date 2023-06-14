@@ -32,16 +32,18 @@ export async function getVendorModInventory(user, vendorId) {
 export async function getProfileCollectibles(user) {
   const adaVendorId = '350061650'
   const collectibleId = 65
-  const collectibleInfo = await destinyService.getDestinyCollectibleInfo(user.destiny_id)
-  const adaMods = await getVendorModInventory(user, adaVendorId)
   const collectibleList = []
 
-  console.log(`Ada has these mods for sale: ${adaMods}`)
-
-  adaMods.forEach(key => {
-    if (collectibleInfo[key].state === collectibleId) {
-      collectibleList.push(key)
-    }
+  await Promise.all([
+    destinyService.getDestinyCollectibleInfo(user.destiny_id),
+    getVendorModInventory(user, adaVendorId)
+  ]).then((values) => {
+    console.log(`Ada has these mods for sale: ${values[1]}`)
+    values[1].forEach(key => {
+      if (values[0][key].state === collectibleId) {
+        collectibleList.push(key)
+      }
+    })
   })
 
   return await getCollectibleFromManifest(19, collectibleList)
