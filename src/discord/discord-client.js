@@ -8,10 +8,11 @@ import fileSystem from 'fs'
 import * as databaseService from '../database/database-service.js'
 import axios from 'axios'
 import mongoose from 'mongoose'
+import * as destinyService from './../destiny-service.js'
 
 mongoose.set('strictQuery', false)
 mongoose.connect(
-  `mongodb+srv://${config.databaseUser}:${config.databasePassword}@${config.databaseCluster}.mongodb.net/${config.databaseName}`
+    `mongodb+srv://${config.databaseUser}:${config.databasePassword}@${config.databaseCluster}.mongodb.net/${config.databaseName}`
 )
 
 /**
@@ -97,14 +98,12 @@ async function replyToSlashCommands(discordClient) {
  * @param {Object} command Reference to current Command
  */
 async function handleIncommingMessage(message, interaction, command) {
-    const response = checkIfUsernameExists(message)
-
-    if (Object(response).length === 0) {
-        interaction.followUp({ content: 'That is not a valid Bungie Net username!' })
-    } else {
+    if (await doesBungieUsernameExistInDestiny(message)) {
         await databaseService.doesUserExist(message.content) ?
             replyUserExists(interaction) :
             addUserToAlertBot(command, message.content, interaction)
+    } else {
+        interaction.followUp({ content: 'That is not a valid Bungie Net username!' })
     }
 }
 
@@ -130,18 +129,13 @@ async function addUserToAlertBot(command, username, interaction) {
 /**
  * Validate the user's submitted username exists in Destiny 2
  * @param {Object} message Message sent by user
- * @returns {Promise<Object>} Response from Destiny 2 API for Bungie name
+ * @returns {Promise<boolean>} Response from Destiny 2 API for Bungie name
  */
-async function checkIfUsernameExists(message) {
+async function doesBungieUsernameExistInDestiny(message) {
     const index = message.content.indexOf('#')
-    const { data } = await axios.post('https://www.bungie.net/Platform/Destiny2/SearchDestinyPlayerByBungieName/3/', {
-        displayName: message.content.substring(0, index),
-        displayNameCode: message.content.substring(index + 1, message.content.length)
-    }, {
-        headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': config.apiKey
-        }
-    })
-    return data.Response
+    const bungieUsername = message.content.substring(0, index)
+    const bungieUsernameCode = message.content.substring(index + 1, message.content.length)
+    const response = destinyService.getDestinyUsername(bungieUsername, bungieUsernameCode)
+
+    return Object(response).length !== 0
 }

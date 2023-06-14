@@ -130,3 +130,23 @@ export async function getAccessToken(refreshToken) {
         accessToken: data.access_token
     }
 }
+
+/**
+ * Looks for a Destiny username that belongs to a user's Bungie username
+ * @param {string} bungieUsername
+ * @param {string} bungieUsernameCode
+ * @returns A JSON object returned from Bungie's directory containing the record (if it exists) for a Destiny username
+ */
+export async function getDestinyUsername(bungieUsername, bungieUsernameCode) {
+    const { data } = await axios.post('https://www.bungie.net/Platform/Destiny2/SearchDestinyPlayerByBungieName/3/', {
+        displayName: bungieUsername,
+        displayNameCode: bungieUsernameCode
+    }, {
+        headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': config.apiKey
+        }
+    })
+
+    return data.Response
+}
