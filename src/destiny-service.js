@@ -172,3 +172,22 @@ export async function getDestinyVendorInfo(user, accessToken) {
 
     return data.Response.sales.data
 }
+
+/**
+ * Retrieves the list of collectibles that exist in Destiny
+ * @param {string} destinyId User's Destiny ID
+ * @returns A JSON object containing the list of collectibles across all of Destiny
+ */
+export async function getDestinyCollectibleInfo(destinyId) {
+    const getCollectibles = 800
+    const { data } = await axios.get(`https://www.bungie.net/Platform/Destiny2/3/Profile/${destinyId}/`, {
+        params: {
+            'components': getCollectibles
+        },
+        headers: {
+            'x-api-key': `${config.apiKey}`
+        }
+    })
+
+    return data.Response.profileCollectibles.data.collectibles
+}

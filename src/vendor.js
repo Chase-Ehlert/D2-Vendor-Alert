@@ -32,23 +32,16 @@ export async function getVendorModInventory(user, vendorId) {
  * @returns {Promise<Array>} List of mods
  */
 export async function getProfileCollectibles(user) {
-  const getCollectibles = 800
-  const profileResponse = await axios.get(`https://www.bungie.net/Platform/Destiny2/3/Profile/${user.destiny_id}/`, {
-    params: {
-      'components': getCollectibles
-    },
-    headers: {
-      'x-api-key': `${config.apiKey}`
-    }
-  })
-
-  const adaMods = await getVendorModInventory(user, '350061650')
-  console.log(`Ada has these mods for sale: ${adaMods}`)
-
+  const adaVendorId = '350061650'
+  const collectibleId = 65
+  const collectibleInfo = await destinyService.getDestinyCollectibleInfo(user.destiny_id)
+  const adaMods = await getVendorModInventory(user, adaVendorId)
   const collectibleList = []
 
+  console.log(`Ada has these mods for sale: ${adaMods}`)
+
   adaMods.forEach(key => {
-    if (profileResponse.data.Response.profileCollectibles.data.collectibles[key].state === 65) {
+    if (collectibleInfo[key].state === collectibleId) {
       collectibleList.push(key)
     }
   })
