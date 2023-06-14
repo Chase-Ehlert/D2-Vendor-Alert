@@ -1,35 +1,25 @@
 // @ts-check
 
-import { config } from './../config/config.js'
 import axios from 'axios'
+import * as destinyService from './destiny-service.js'
+import { config } from './../config/config.js'
 import { getCollectibleFromManifest, getItemFromManifest } from './manifest.js'
 import { updateRefreshToken } from './token.js'
 
 /**
  * Collect mods for a specific vendor
- * @param {string} vendorId Id of vendor
  * @param {Object} user User profile information
+ * @param {string} vendorId Id of vendor
  * @returns {Promise<Array<string>>} List of mods for sale
  */
-export async function getVendorModInventory(vendorId, user) {
-  const getVendorSales = 402
-  const oauthToken = await updateRefreshToken(user.refresh_token)
-  const response = await axios.get(
-    `https://www.bungie.net/Platform/Destiny2/3/Profile/${user.destiny_id}/Character/${user.destiny_character_id}/Vendors/`, {
-    params: {
-      components: getVendorSales
-    },
-    headers: {
-      Authorization: `Bearer ${oauthToken}`,
-      'x-api-key': `${config.apiKey}`
-    }
-  })
-
+export async function getVendorModInventory(user, vendorId) {
+  const accessToken = await updateRefreshToken(user.refresh_token)
+  const vendorInfo = await destinyService.getDestinyVendorInfo(user, accessToken)
   let vendorInventory
 
-  for (let key in response.data.Response.sales.data) {
+  for (let key in vendorInfo) {
     if (key === vendorId) {
-      vendorInventory = response.data.Response.sales.data[key].saleItems
+      vendorInventory = vendorInfo[key].saleItems
     }
   }
 
@@ -52,7 +42,7 @@ export async function getProfileCollectibles(user) {
     }
   })
 
-  const adaMods = await getVendorModInventory('350061650', user)
+  const adaMods = await getVendorModInventory(user, '350061650')
   console.log(`Ada has these mods for sale: ${adaMods}`)
 
   const collectibleList = []

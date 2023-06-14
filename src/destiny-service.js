@@ -150,3 +150,25 @@ export async function getDestinyUsername(bungieUsername, bungieUsernameCode) {
 
     return data.Response
 }
+
+/**
+ * Retrieves the list of vendors and their inventory
+ * @param {Object} user User's profile information
+ * @param {string} accessToken User's oauth access token
+ * @returns A JSON object containing the list of vendors and their inventory
+ */
+export async function getDestinyVendorInfo(user, accessToken) {
+    const getVendorSales = 402
+    const { data } = await axios.get(
+        `https://www.bungie.net/Platform/Destiny2/3/Profile/${user.destiny_id}/Character/${user.destiny_character_id}/Vendors/`, {
+        params: {
+            components: getVendorSales
+        },
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'x-api-key': `${config.apiKey}`
+        }
+    })
+
+    return data.Response.sales.data
+}
