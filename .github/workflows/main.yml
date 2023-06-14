@@ -1,0 +1,31 @@
+name: Install & Lint & Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.11.x
+          cache: npm
+      - name: Install
+        run: npm ci
+      - name: Gather files changed
+        uses: trilom/file-changes-action@a6ca26c14274c33b15e6499323aac178af06ad4b
+        with:
+          fileOutput: 'json'
+      - name: Show files changed
+        run: cat $HOME/files.json
