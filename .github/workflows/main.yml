@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lint:
+  setup:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -29,3 +29,5 @@ jobs:
           fileOutput: 'json'
       - name: Show files changed
         run: cat $HOME/files.json
+      - name: Lint
+        run: npm run lint
