@@ -1,8 +1,8 @@
 // @ts-check
 
-import * as destinyService from './destiny-service.js'
-import { getCollectibleFromManifest, getItemFromManifest } from './manifest.js'
-import { updateRefreshToken } from './token.js'
+import * as destinyService from './services/destiny-service.js'
+import * as databaseService from './services/database-service.js'
+import { getCollectibleFromManifest, getItemFromManifest } from './services/manifest-service.js'
 
 /**
  * Collect mods for a specific vendor
@@ -11,8 +11,14 @@ import { updateRefreshToken } from './token.js'
  * @returns {Promise<Array<string>>} List of mods for sale
  */
 export async function getVendorModInventory(user, vendorId) {
-  const accessToken = await updateRefreshToken(user.refresh_token)
-  const vendorInfo = await destinyService.getDestinyVendorInfo(user, accessToken)
+  const tokenInfo = await destinyService.getAccessToken(Object(user).refresh_token)
+  await databaseService.updateUser(
+    tokenInfo.bungieMembershipId,
+    tokenInfo.refreshTokenExpirationTime,
+    tokenInfo.refreshToken
+  )
+
+  const vendorInfo = await destinyService.getDestinyVendorInfo(user, tokenInfo.accessToken)
   let vendorInventory
 
   for (let key in vendorInfo) {

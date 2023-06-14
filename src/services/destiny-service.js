@@ -1,9 +1,9 @@
 // @ts-check
 
 // eslint-disable-next-line no-unused-vars
-import * as types from './../typedefs.js'
+import * as types from '../../typedefs.js'
 import axios from 'axios'
-import { config } from './../config/config.js'
+import { config } from '../../config/config.js'
 
 /**
  * Retrieves refresh token for a user

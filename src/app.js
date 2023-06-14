@@ -3,11 +3,11 @@
 import express from 'express'
 import path from 'path'
 import mongoose from 'mongoose'
-import * as databaseService from './database/database-service.js'
-import * as destinyService from './destiny-service.js'
+import * as databaseService from './services/database-service.js'
+import * as destinyService from './services/destiny-service.js'
 import { config } from './../config/config.js'
 import { setupDiscordClient } from './discord/discord-client.js'
-import { sendMessage } from './discord-service.js'
+import { sendMessage } from './services/discord-service.js'
 
 const app = express()
 const directoryName = path.dirname('app.js')

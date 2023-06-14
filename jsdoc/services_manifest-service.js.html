@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: services/manifest-service.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: services/manifest-service.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>// @ts-check
+
+import fs from 'fs'
+import * as oldfs from 'fs'
+import * as destinyService from './destiny-service.js'
+
+const fsPromises = fs.promises
+
+/**
+ * Collect names of mods for sale from the manifest
+ * @param {number} itemType Number denomination for type of item in Destiny
+ * @param {Array&lt;string>} itemList List of items on sale
+ * @returns List of names for mods on sale
+ */
+export async function getItemFromManifest(itemType, itemList) {
+  let inventoryNameList = []
+  const manifestFileName = await destinyService.getManifestFile()
+  const destinyInventoryItemDefinition = await destinyService.getDestinyInventoryItemDefinition(manifestFileName)
+
+  inventoryNameList = await readItemsFromManifest(
+    itemType,
+    inventoryNameList,
+    itemList,
+    destinyInventoryItemDefinition
+  )
+
+  return inventoryNameList
+}
+
+/**
+ * Compile list of mod names from manifest or create the manifest and then compile the list
+ * @param {number} itemType Number denomination for type of item in Destiny
+ * @param {Array&lt;string>} inventoryNameList List of mod names
+ * @param {Array&lt;string>} itemList List of items for sale
+ * @param {Object} destinyInventoryItemDefinition Complete list of every type of item from Destiny
+ * @returns List of names for mods on sale
+ */
+async function readItemsFromManifest(itemType, inventoryNameList, itemList, destinyInventoryItemDefinition) {
+  try {
+    await fsPromises.access('manifest-items.json', oldfs.constants.F_OK)
+    inventoryNameList = await readFile(itemType, 'manifest-items.json', itemList, inventoryNameList, false)
+  } catch (error) {
+    inventoryNameList = await writeFile(itemType, 'manifest-items.json', destinyInventoryItemDefinition, itemList, inventoryNameList, false)
+  }
+  return inventoryNameList
+}
+
+/**
+ * Get the manifest file and read the list of collectibles from it
+ * @param {number} itemType Number denomination for type of item in Destiny
+ * @param {Array&lt;string>} itemList List of items for sale
+ * @returns List of collectible names for sale
+ */
+export async function getCollectibleFromManifest(itemType, itemList) {
+  let inventoryNameList = []
+  const manifestFileName = await destinyService.getManifestFile()
+
+  const newData = await destinyService.getDestinyInventoryItemDefinition(manifestFileName)
+  inventoryNameList = await readCollectiblesFromManifest(
+    itemType,
+    inventoryNameList,
+    itemList,
+    newData
+  )
+
+  return inventoryNameList
+}
+
+/**
+ * Compile list of collectibles from Destiny's manifest or create the manifest and then compile the list
+ * @param {number} itemType Number denomination for type of item in Destiny
+ * @param {Array&lt;string>} inventoryNameList List of mod names
+ * @param {Array&lt;string>} itemList List of items for sale
+ * @param {Object} data Complete list of every type of item from Destiny
+ * @returns List of collectible names
+ */
+async function readCollectiblesFromManifest(itemType, inventoryNameList, itemList, data) {
+  try {
+    await fsPromises.access('manifest-collectibles.json', oldfs.constants.F_OK)
+    inventoryNameList = await readFile(
+      itemType,
+      'manifest-collectibles.json',
+      itemList,
+      inventoryNameList,
+      true
+    )
+  } catch (error) {
+    inventoryNameList = await writeFile(
+      itemType,
+      'manifest-collectibles.json',
+      data.data.DestinyCollectibleDefinition,
+      itemList,
+      inventoryNameList,
+      true
+    )
+  }
+  return inventoryNameList
+}
+
+/**
+ * Read manifest file for a list of names of collectibles or items
+ * @param {number} itemType Number denomination for type of item in Destiny
+ * @param {string} fileName Name of file to read
+ * @param {Array&lt;string>} itemList List of items for sale
+ * @param {Array&lt;string>} inventoryNameList List of mod names
+ * @param {boolean} collectible Flag for type of item
+ * @returns List of names for either collectibles or items
+ */
+async function readFile(itemType, fileName, itemList, inventoryNameList, collectible) {
+  await fsPromises.readFile(fileName)
+    .then((fileContents) => {
+      if (collectible) {
+        inventoryNameList = getCollectibleName(itemList, JSON.parse(String(fileContents)))
+      } else {
+        inventoryNameList = getItemName(itemType, itemList, JSON.parse(String(fileContents)))
+      }
+    })
+    .catch((error) => {
+      console.log('Error reading file!')
+      throw error
+    })
+
+  return inventoryNameList
+}
+
+/**
+ * Write manifest file and then read it for a list of names of collectibles or items
+ * @param {number} itemType Number denomination for type of item in Destiny
+ * @param {string} fileName Name of file to read
+ * @param {JSON} manifestData Manifest information from Destiny
+ * @param {Array&lt;string>} itemList List of items for sale
+ * @param {Array&lt;string>} inventoryNameList List of mod names
+ * @param {boolean} collectible Flag for type of item
+ * @returns List of names for either collectibles or items
+ */
+async function writeFile(itemType, fileName, manifestData, itemList, inventoryNameList, collectible) {
+  await fsPromises.writeFile(fileName, JSON.stringify(manifestData))
+    .then(() => {
+      if (collectible) {
+        inventoryNameList = getCollectibleName(itemList, manifestData)
+      } else {
+        inventoryNameList = getItemName(itemType, itemList, manifestData)
+      }
+    })
+    .catch((error) => {
+      console.log('Error while writing!')
+      throw error
+    })
+
+  return inventoryNameList
+}
+
+/**
+ * Compile list of names for items on sale
+ * @param {number} itemType Number denomination for type of item in Destiny
+ * @param {Array&lt;string>} inventoryItemList List of mod names
+ * @param {Object} manifest Manifest information from Destiny
+ * @returns List of names for associated items
+ */
+function getItemName(itemType, inventoryItemList, manifest) {
+  const manifestKeys = Object.keys(manifest)
+  const itemListValues = Object.values(inventoryItemList)
+  const itemHashList = []
+  let itemNameList = []
+
+  itemListValues.forEach(item => {
+    itemHashList.push(Object(item).itemHash)
+  })
+
+  for (let i = 0; i &lt; manifestKeys.length; i++) {
+    if (canManifestItemBeAdded(itemType, itemHashList, manifest, manifestKeys, i, itemNameList)) {
+      if (manifest[manifestKeys[i]].collectibleHash) {
+        itemNameList.push(manifest[manifestKeys[i]].collectibleHash)
+      }
+    }
+  }
+
+  return itemNameList
+}
+
+/**
+ * Compile list of names for collectibles on sale
+ * @param {Array&lt;string>} inventoryItemList List of items for sale
+ * @param {JSON} manifest Manifest information from Destiny
+ * @returns List of names for collectibles on sale
+ */
+function getCollectibleName(inventoryItemList, manifest) {
+  let itemNameList = []
+  const manifestKeys = Object.keys(manifest)
+
+  for (let i = 0; i &lt; manifestKeys.length; i++) {
+    for (const item of inventoryItemList) {
+      if (manifestKeys[i] === item) {
+        itemNameList.push(manifest[manifestKeys[i]].displayProperties.name)
+      }
+    }
+  }
+
+  return itemNameList
+}
+
+/**
+ * Check whether an item from the manifest is for sale or not
+ * @param {number} itemType Number denomination for type of item in Destiny
+ * @param {Array&lt;string>} itemHashList List of hash numbers for items from the manifest
+ * @param {JSON} manifest Manifest information from Destiny
+ * @param {Array&lt;string>} manifestKeys List of keys from the manifest
+ * @param {number} index Number to track place in list of manifest keys
+ * @param {Array&lt;string>} itemNameList List of names for items on sale
+ * @returns True or False depending if the item is up for sale
+ */
+function canManifestItemBeAdded(itemType, itemHashList, manifest, manifestKeys, index, itemNameList) {
+  return itemHashList.includes(manifest[manifestKeys[index]].hash) &amp;&amp;
+    manifest[manifestKeys[index]].itemType === itemType &amp;&amp;
+    !itemNameList.includes(manifest[manifestKeys[index]].collectibleHash)
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addUser">addUser</a></li><li><a href="global.html#addUserToAlertBot">addUserToAlertBot</a></li><li><a href="global.html#canManifestItemBeAdded">canManifestItemBeAdded</a></li><li><a href="global.html#compareModListWithUserInventory">compareModListWithUserInventory</a></li><li><a href="global.html#dailyReset">dailyReset</a></li><li><a href="global.html#discordRequest">discordRequest</a></li><li><a href="global.html#doesBungieUsernameExistInDestiny">doesBungieUsernameExistInDestiny</a></li><li><a href="global.html#doesUserExist">doesUserExist</a></li><li><a href="global.html#getAccessToken">getAccessToken</a></li><li><a href="global.html#getCollectibleFromManifest">getCollectibleFromManifest</a></li><li><a href="global.html#getCollectibleName">getCollectibleName</a></li><li><a href="global.html#getDestinyCharacterId">getDestinyCharacterId</a></li><li><a href="global.html#getDestinyCollectibleInfo">getDestinyCollectibleInfo</a></li><li><a href="global.html#getDestinyInventoryItemDefinition">getDestinyInventoryItemDefinition</a></li><li><a href="global.html#getDestinyMembershipInfo">getDestinyMembershipInfo</a></li><li><a href="global.html#getDestinyUsername">getDestinyUsername</a></li><li><a href="global.html#getDestinyVendorInfo">getDestinyVendorInfo</a></li><li><a href="global.html#getItemFromManifest">getItemFromManifest</a></li><li><a href="global.html#getItemName">getItemName</a></li><li><a href="global.html#getManifestFile">getManifestFile</a></li><li><a href="global.html#getProfileCollectibles">getProfileCollectibles</a></li><li><a href="global.html#getRefreshToken">getRefreshToken</a></li><li><a href="global.html#getVendorModInventory">getVendorModInventory</a></li><li><a href="global.html#handleAuthorizationCode">handleAuthorizationCode</a></li><li><a href="global.html#handleIncommingMessage">handleIncommingMessage</a></li><li><a href="global.html#readCollectiblesFromManifest">readCollectiblesFromManifest</a></li><li><a href="global.html#readFile">readFile</a></li><li><a href="global.html#readItemsFromManifest">readItemsFromManifest</a></li><li><a href="global.html#registerCommands">registerCommands</a></li><li><a href="global.html#replyToSlashCommands">replyToSlashCommands</a></li><li><a href="global.html#replyUserExists">replyUserExists</a></li><li><a href="global.html#sendMessage">sendMessage</a></li><li><a href="global.html#setupDiscordClient">setupDiscordClient</a></li><li><a href="global.html#setupSlashCommands">setupSlashCommands</a></li><li><a href="global.html#shareEmptyModsList">shareEmptyModsList</a></li><li><a href="global.html#shareUnownedModsList">shareUnownedModsList</a></li><li><a href="global.html#startServer">startServer</a></li><li><a href="global.html#updateUser">updateUser</a></li><li><a href="global.html#writeFile">writeFile</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue Jun 13 2023 21:37:06 GMT-0400 (Eastern Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

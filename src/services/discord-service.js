@@ -1,10 +1,11 @@
 // @ts-check
 
 import axios from 'axios'
-import { config } from '../config/config.js'
-import { User } from './database/models/users.js'
-import { getProfileCollectibles } from './vendor.js'
-import { updateRefreshToken } from './token.js'
+import { config } from '../../config/config.js'
+import { User } from '../database/models/users.js'
+import { getProfileCollectibles } from '../vendor.js'
+import * as destinyService from './destiny-service.js'
+import * as databaseService from './database-service.js'
 
 /**
  * Alert registered users about today's vendor inventory
@@ -20,7 +21,13 @@ export async function sendMessage() {
       console.log('Token does not need to be refreshed')
     } else {
       console.log('Token does need to be refreshed')
-      await updateRefreshToken(String(user.refresh_token))
+      // await updateRefreshToken(String(user.refresh_token))
+      const tokenInfo = await destinyService.getAccessToken(Object(user).refresh_token)
+      await databaseService.updateUser(
+        tokenInfo.bungieMembershipId,
+        tokenInfo.refreshTokenExpirationTime,
+        tokenInfo.refreshToken
+      )
     }
     await compareModListWithUserInventory(user, discordEndpoint)
   }

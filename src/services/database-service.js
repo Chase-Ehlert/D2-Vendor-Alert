@@ -1,6 +1,6 @@
 // @ts-check
 
-import { User } from './models/users.js'
+import { User } from '../database/models/users.js'
 
 /**
  * Checks if user exists in database
@@ -34,23 +34,22 @@ export async function addUser(bungieNetUsername, discordId, discordChannelId) {
 /**
  * Updates the database information for a specific user
  * @param {string} bungieMembershipId User's membership id on Bungie
- * @param {number} refreshExpiration Date of expiration for user's refresh token
+ * @param {number} refreshExpirationTime Date of expiration for user's refresh token
  * @param {string} refreshToken User's refresh token
  * @param {string} [bungieNetUsername] User's Bungie username
  * @param {string} [destinyId] User's id in Destiny 2
  * @param {string} [characterId] User's character (Hunter, Titan, Warlock) id
  */
-export async function updateUser(bungieMembershipId, refreshExpiration, refreshToken, bungieNetUsername, destinyId, characterId) {
-    const daysTillTokenExpires = refreshExpiration / 60 / 60 / 24
+export async function updateUser(bungieMembershipId, refreshExpirationTime, refreshToken, bungieNetUsername, destinyId, characterId) {
+    const daysTillTokenExpires = refreshExpirationTime / 60 / 60 / 24
     const expirationDate = new Date()
     expirationDate.setDate(expirationDate.getDate() + daysTillTokenExpires)
 
     try {
-        await User.findOneAndUpdate(
-            { bungie_username: bungieNetUsername },
+        await User.updateOne(
+            { bungie_membership_id: bungieMembershipId },
             {
                 $set: {
-                    bungie_membership_id: bungieMembershipId,
                     destiny_id: destinyId,
                     destiny_character_id: characterId,
                     refresh_expiration: expirationDate.toISOString(),
