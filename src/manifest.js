@@ -1,6 +1,5 @@
 // @ts-check
 
-import axios from 'axios'
 import fs from 'fs'
 import * as oldfs from 'fs'
 import * as destinyService from './destiny-service.js'

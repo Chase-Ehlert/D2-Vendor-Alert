@@ -1,8 +1,6 @@
 // @ts-check
 
-import axios from 'axios'
 import * as destinyService from './destiny-service.js'
-import { config } from './../config/config.js'
 import { getCollectibleFromManifest, getItemFromManifest } from './manifest.js'
 import { updateRefreshToken } from './token.js'
 

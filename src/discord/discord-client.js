@@ -1,13 +1,12 @@
 // @ts-check
 
-import { config } from './../../config/config.js'
-import discord, { Collection, Events } from 'discord.js'
-import * as url from 'url'
 import path from 'path'
 import fileSystem from 'fs'
-import * as databaseService from '../database/database-service.js'
-import axios from 'axios'
 import mongoose from 'mongoose'
+import discord, { Collection, Events } from 'discord.js'
+import { config } from './../../config/config.js'
+import * as url from 'url'
+import * as databaseService from '../database/database-service.js'
 import * as destinyService from './../destiny-service.js'
 
 mongoose.set('strictQuery', false)
