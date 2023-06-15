@@ -16,7 +16,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  setup:
+  update-deployment:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -36,3 +36,13 @@ jobs:
         run: cat $HOME/files.json
       - name: Lint
         run: npm run lint
+      - name: SSH into Droplet
+        uses: appleboy/ssh-action@master
+        with:
+          host: 167.71.254.50
+          username: root
+          key: ${{ secrets.DEPLOY_SECRET }}
+          script: |
+            cd workspaces/D2-Vendor-Alert/
+            git pull
+            pm2 restart 0
