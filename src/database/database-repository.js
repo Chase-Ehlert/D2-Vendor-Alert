@@ -1,6 +1,6 @@
 // @ts-check
 
-import { User } from '../database/models/users.js'
+import { User } from './models/users.js'
 
 /**
  * Checks if user exists in database

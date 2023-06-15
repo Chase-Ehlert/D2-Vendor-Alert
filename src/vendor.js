@@ -1,7 +1,7 @@
 // @ts-check
 
 import * as destinyService from './services/destiny-service.js'
-import * as databaseService from './services/database-service.js'
+import * as databaseService from './database/database-repository.js'
 import { getCollectibleFromManifest, getItemFromManifest } from './services/manifest-service.js'
 
 /**

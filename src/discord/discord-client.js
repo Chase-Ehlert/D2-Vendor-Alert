@@ -6,7 +6,7 @@ import mongoose from 'mongoose'
 import discord, { Collection, Events } from 'discord.js'
 import { config } from './../../config/config.js'
 import * as url from 'url'
-import * as databaseService from '../services/database-service.js'
+import * as databaseService from '../database/database-repository.js'
 import * as destinyService from '../services/destiny-service.js'
 
 mongoose.set('strictQuery', false)

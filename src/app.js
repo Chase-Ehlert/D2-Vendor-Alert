@@ -3,7 +3,7 @@
 import express from 'express'
 import path from 'path'
 import mongoose from 'mongoose'
-import * as databaseService from './services/database-service.js'
+import * as databaseService from './database/database-repository.js'
 import * as destinyService from './services/destiny-service.js'
 import { config } from './../config/config.js'
 import { setupDiscordClient } from './discord/discord-client.js'

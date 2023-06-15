@@ -5,7 +5,7 @@ import { config } from '../../config/config.js'
 import { User } from '../database/models/users.js'
 import { getProfileCollectibles } from '../vendor.js'
 import * as destinyService from './destiny-service.js'
-import * as databaseService from './database-service.js'
+import * as databaseService from '../database/database-repository.js'
 
 /**
  * Alert registered users about today's vendor inventory
