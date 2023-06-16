@@ -11,9 +11,9 @@ const databaseService = new DatabaseService()
  * @returns {Promise<boolean>} true/false
  */
 export async function doesUserExist(bungieNetUsername) {
-    databaseService.connectToDatabase()
+    await databaseService.connectToDatabase()
     const doesUserExist = await User.exists({ bungie_username: bungieNetUsername }).exec() ? true : false
-    databaseService.disconnectToDatabase()
+    await databaseService.disconnectToDatabase()
 
     return doesUserExist
 }
@@ -30,12 +30,10 @@ export async function addUser(bungieNetUsername, discordId, discordChannelId) {
         discord_id: discordId,
         discord_channel_id: discordChannelId
     })
-    try {
-        await user.save()
-    } catch (error) {
-        console.log('Adding user failed')
-        throw error
-    }
+
+    await databaseService.connectToDatabase()
+    await user.save()
+    await databaseService.disconnectToDatabase()
 }
 
 /**
@@ -51,27 +49,16 @@ export async function updateUser(bungieMembershipId, refreshExpirationTime, refr
     const expirationDate = new Date()
     expirationDate.setDate(expirationDate.getDate() + daysTillTokenExpires)
 
-    try {
-        await User.updateOne(
-            { bungie_membership_id: bungieMembershipId },
-            {
-                $set: {
-                    destiny_id: destinyId,
-                    destiny_character_id: characterId,
-                    refresh_expiration: expirationDate.toISOString(),
-                    refresh_token: refreshToken
-                }
-            },
-            (error) => {
-                if (error) {
-                    console.log('Updating user record failed')
-                    throw error
-                } else {
-                    console.log('Updated user record')
-                }
+    await databaseService.connectToDatabase()
+    await User.updateOne(
+        { bungie_membership_id: bungieMembershipId },
+        {
+            $set: {
+                destiny_id: destinyId,
+                destiny_character_id: characterId,
+                refresh_expiration: expirationDate.toISOString(),
+                refresh_token: refreshToken
             }
-        )
-    } catch (error) {
-        return error
-    }
+        })
+    await databaseService.disconnectToDatabase()
 }
