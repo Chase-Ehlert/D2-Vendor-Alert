@@ -128,7 +128,7 @@ async function doesBungieUsernameExistInDestiny(message) {
     const index = message.content.indexOf('#')
     const bungieUsername = message.content.substring(0, index)
     const bungieUsernameCode = message.content.substring(index + 1, message.content.length)
-    const response = destinyService.getDestinyUsername(bungieUsername, bungieUsernameCode)
+    const response = await destinyService.getDestinyUsername(bungieUsername, bungieUsernameCode)
     console.log(response)
 
     return Object(response).length !== 0
