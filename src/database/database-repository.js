@@ -1,6 +1,9 @@
 // @ts-check
 
 import { User } from './models/users.js'
+import DatabaseService from './../services/database-service.js'
+
+const databaseService = new DatabaseService()
 
 /**
  * Checks if user exists in database
@@ -8,7 +11,11 @@ import { User } from './models/users.js'
  * @returns {Promise<boolean>} true/false
  */
 export async function doesUserExist(bungieNetUsername) {
-    return await User.exists({ bungie_username: bungieNetUsername }).exec() ? true : false
+    databaseService.connectToDatabase()
+    const doesUserExist = await User.exists({ bungie_username: bungieNetUsername }).exec() ? true : false
+    databaseService.disconnectToDatabase()
+
+    return doesUserExist
 }
 
 /**
@@ -36,11 +43,10 @@ export async function addUser(bungieNetUsername, discordId, discordChannelId) {
  * @param {string} bungieMembershipId User's membership id on Bungie
  * @param {number} refreshExpirationTime Date of expiration for user's refresh token
  * @param {string} refreshToken User's refresh token
- * @param {string} [bungieNetUsername] User's Bungie username
  * @param {string} [destinyId] User's id in Destiny 2
  * @param {string} [characterId] User's character (Hunter, Titan, Warlock) id
  */
-export async function updateUser(bungieMembershipId, refreshExpirationTime, refreshToken, bungieNetUsername, destinyId, characterId) {
+export async function updateUser(bungieMembershipId, refreshExpirationTime, refreshToken, destinyId, characterId) {
     const daysTillTokenExpires = refreshExpirationTime / 60 / 60 / 24
     const expirationDate = new Date()
     expirationDate.setDate(expirationDate.getDate() + daysTillTokenExpires)

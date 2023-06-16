@@ -2,20 +2,13 @@
 
 import express from 'express'
 import path from 'path'
-import mongoose from 'mongoose'
 import * as databaseService from './database/database-repository.js'
 import * as destinyService from './services/destiny-service.js'
-import { config } from './../config/config.js'
 import { setupDiscordClient } from './discord/discord-client.js'
 import { sendMessage } from './services/discord-service.js'
 
 const app = express()
 const directoryName = path.dirname('app.js')
-
-mongoose.set('strictQuery', false)
-mongoose.connect(
-  `mongodb+srv://${config.databaseUser}:${config.databasePassword}@${config.databaseCluster}.mongodb.net/${config.databaseName}`
-)
 
 setupDiscordClient()
 

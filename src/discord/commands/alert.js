@@ -1,11 +1,7 @@
+// @ts-check
+
 import { config } from './../../../config/config.js'
 import { hyperlink, SlashCommandBuilder } from "discord.js"
-import mongoose from 'mongoose'
-
-mongoose.set('strictQuery', false)
-mongoose.connect(
-  `mongodb+srv://${config.databaseUser}:${config.databasePassword}@${config.databaseCluster}.mongodb.net/${config.databaseName}`
-)
 
 export default {
     data: new SlashCommandBuilder()

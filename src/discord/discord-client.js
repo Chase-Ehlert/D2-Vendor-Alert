@@ -2,17 +2,11 @@
 
 import path from 'path'
 import fileSystem from 'fs'
-import mongoose from 'mongoose'
 import discord, { Collection, Events } from 'discord.js'
 import { config } from './../../config/config.js'
 import * as url from 'url'
 import * as databaseService from '../database/database-repository.js'
 import * as destinyService from '../services/destiny-service.js'
-
-mongoose.set('strictQuery', false)
-mongoose.connect(
-    `mongodb+srv://${config.databaseUser}:${config.databasePassword}@${config.databaseCluster}.mongodb.net/${config.databaseName}`
-)
 
 /**
  * Connect to the Discord Client
