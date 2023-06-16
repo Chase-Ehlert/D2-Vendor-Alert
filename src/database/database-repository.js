@@ -11,9 +11,9 @@ const databaseService = new DatabaseService()
  * @returns {Promise<boolean>} true/false
  */
 export async function doesUserExist(bungieNetUsername) {
-    await databaseService.connectToDatabase()
+    databaseService.connectToDatabase()
     const doesUserExist = await User.exists({ bungie_username: bungieNetUsername }).exec() ? true : false
-    await databaseService.disconnectToDatabase()
+    databaseService.disconnectToDatabase()
 
     return doesUserExist
 }
@@ -31,9 +31,9 @@ export async function addUser(bungieNetUsername, discordId, discordChannelId) {
         discord_channel_id: discordChannelId
     })
 
-    await databaseService.connectToDatabase()
+    databaseService.connectToDatabase()
     await user.save()
-    await databaseService.disconnectToDatabase()
+    databaseService.disconnectToDatabase()
 }
 
 /**
@@ -49,7 +49,7 @@ export async function updateUser(bungieMembershipId, refreshExpirationTime, refr
     const expirationDate = new Date()
     expirationDate.setDate(expirationDate.getDate() + daysTillTokenExpires)
 
-    await databaseService.connectToDatabase()
+    databaseService.connectToDatabase()
     await User.updateOne(
         { bungie_membership_id: bungieMembershipId },
         {
@@ -60,5 +60,5 @@ export async function updateUser(bungieMembershipId, refreshExpirationTime, refr
                 refresh_token: refreshToken
             }
         })
-    await databaseService.disconnectToDatabase()
+    databaseService.disconnectToDatabase()
 }
