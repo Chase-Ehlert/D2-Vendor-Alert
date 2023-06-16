@@ -11,11 +11,4 @@
  * @memberof typedefs
  */
 
-/**
- * @typedef {Object} MembershipInfo
- * @property {string} destinyMembershipId
- * @property {string} uniqueName
- * @property {string} characterId
- */
-
 export default {}

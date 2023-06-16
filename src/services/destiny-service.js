@@ -36,7 +36,7 @@ export async function getRefreshToken(authorizationCode) {
 /**
  * Retrieves Destiny membership information for a user
  * @param {string} membershipId Destiny membership ID of user
- * @returns A MembershipInfo object containing the Destiny membership info for a user
+ * @returns The Destiny membership info for a user
  */
 export async function getDestinyMembershipInfo(membershipId) {
     const { data } = await axios.get(
@@ -46,14 +46,7 @@ export async function getDestinyMembershipInfo(membershipId) {
         }
     })
 
-    /**
-     * @type {types.MembershipInfo}
-     */
-    return {
-        destinyMembershipId: data.Response.destinyMemberships[0].membershipId,
-        uniqueName: data.Response.bungieNetUser.uniqueName,
-        characterId: data.Response.profile.data.characterIds[0]
-    }
+    return data.Response.destinyMemberships[0].membershipId
 }
 
 /**

@@ -65,15 +65,14 @@ async function startServer() {
  */
 async function handleAuthorizationCode(authorizationCode) {
   const tokenInfo = await destinyService.getRefreshToken(authorizationCode)
-  const membershipInfo = await destinyService.getDestinyMembershipInfo(tokenInfo.bungieMembershipId)
-  const destinyCharacterId = await destinyService.getDestinyCharacterId(membershipInfo.destinyMembershipId)
+  const destinyMembershipId = await destinyService.getDestinyMembershipInfo(tokenInfo.bungieMembershipId)
+  const destinyCharacterId = await destinyService.getDestinyCharacterId(destinyMembershipId)
 
   await databaseService.updateUser(
     tokenInfo.bungieMembershipId,
     tokenInfo.refreshTokenExpirationTime,
     tokenInfo.refreshToken,
-    membershipInfo.uniqueName,
-    membershipInfo.destinyMembershipId,
+    destinyMembershipId,
     destinyCharacterId
   )
 }
