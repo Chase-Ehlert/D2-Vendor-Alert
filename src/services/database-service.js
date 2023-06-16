@@ -6,9 +6,9 @@ import { config } from './../../config/config.js'
 class DatabaseService {
     constructor() {}
     
-    connectToDatabase() {
+    async connectToDatabase() {
         mongoose.set('strictQuery', false)
-        mongoose.connect(
+        await mongoose.connect(
           `mongodb+srv://${config.databaseUser}:${config.databasePassword}@${config.databaseCluster}.mongodb.net/${config.databaseName}`
         )
         console.log('Successfully connected to the database!')
