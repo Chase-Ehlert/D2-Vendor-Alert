@@ -3,11 +3,12 @@
 import axios from 'axios'
 import { config } from '../../config/config.js'
 import { User } from '../database/models/user.js'
-import { getProfileCollectibles } from '../vendor.js'
+import Vendor from '../vendor.js'
 import DatabaseRepository from '../database/database-repository.js'
 import DestinyService from './destiny-service.js'
 import DatabaseService from './database-service.js'
 
+const vendor = new Vendor()
 const databaseRepo = new DatabaseRepository()
 const destinyService = new DestinyService()
 const databaseService = new DatabaseService()
@@ -48,7 +49,7 @@ class DiscordService {
    * @param {string} discordEndpoint Endpoint for user's desired alert Discord channel
    */
   async compareModListWithUserInventory(user, discordEndpoint) {
-    const unownedModList = await getProfileCollectibles(user)
+    const unownedModList = await vendor.getProfileCollectibles(user)
     if (unownedModList.length > 0) {
       await this.shareUnownedModsList(discordEndpoint, user.discord_id, unownedModList)
     } else {
