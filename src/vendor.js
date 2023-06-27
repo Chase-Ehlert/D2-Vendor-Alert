@@ -1,10 +1,11 @@
 // @ts-check
 
 import DestinyService from './services/destiny-service.js'
-import * as databaseRepo from './database/database-repository.js'
+import DatabaseRepository from './database/database-repository.js'
 import ManifestService from './services/manifest-service.js'
 
 const destinyService = new DestinyService()
+const databaseRepo = new DatabaseRepository()
 const manifestService = new ManifestService()
 
 /**

@@ -5,9 +5,10 @@ import fileSystem from 'fs'
 import discord, { Collection, Events } from 'discord.js'
 import { config } from './../../config/config.js'
 import * as url from 'url'
-import * as databaseRepo from '../database/database-repository.js'
+import DatabaseRepository from '../database/database-repository.js'
 import DestinyService from '../services/destiny-service.js'
 
+const databaseRepo = new DatabaseRepository()
 const destinyService = new DestinyService()
 
 class DiscordClient {

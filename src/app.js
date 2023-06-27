@@ -3,13 +3,14 @@
 import express from 'express'
 import path from 'path'
 import DestinyService from './services/destiny-service.js'
-import * as databaseRepo from './database/database-repository.js'
+import DatabaseRepository from './database/database-repository.js'
 import DiscordClient from './discord/discord-client.js'
 import DiscordService from './services/discord-service.js'
 
 const app = express()
 const directoryName = path.dirname('app.js')
 const destinyService = new DestinyService()
+const databaseRepo = new DatabaseRepository()
 const discordClient = new DiscordClient()
 const discordService = new DiscordService()
 
