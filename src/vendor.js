@@ -2,9 +2,10 @@
 
 import DestinyService from './services/destiny-service.js'
 import * as databaseRepo from './database/database-repository.js'
-import { getCollectibleFromManifest, getItemFromManifest } from './services/manifest-service.js'
+import ManifestService from './services/manifest-service.js'
 
 const destinyService = new DestinyService()
+const manifestService = new ManifestService()
 
 /**
  * Collect mods for a specific vendor
@@ -29,7 +30,7 @@ export async function getVendorModInventory(user, vendorId) {
     }
   }
 
-  return await getItemFromManifest(19, vendorInventory)
+  return await manifestService.getItemFromManifest(19, vendorInventory)
 }
 
 /**
@@ -54,5 +55,5 @@ export async function getProfileCollectibles(user) {
     })
   })
 
-  return await getCollectibleFromManifest(19, collectibleList)
+  return await manifestService.getCollectibleFromManifest(19, collectibleList)
 }
