@@ -5,11 +5,12 @@ import path from 'path'
 import DestinyService from './services/destiny-service.js'
 import * as databaseRepo from './database/database-repository.js'
 import { setupDiscordClient } from './discord/discord-client.js'
-import { sendMessage } from './services/discord-service.js'
+import DiscordService from './services/discord-service.js'
 
 const app = express()
 const directoryName = path.dirname('app.js')
 const destinyService = new DestinyService()
+const discordService = new DiscordService()
 
 setupDiscordClient()
 
@@ -53,7 +54,7 @@ function dailyReset() {
  * Begin the alert workflow for users and then set the time till the next daily reset
  */
 async function startServer() {
-  await sendMessage()
+  await discordService.sendMessage()
   dailyReset()
 }
 
