@@ -5,7 +5,7 @@ import fileSystem from 'fs'
 import discord, { Collection, Events } from 'discord.js'
 import { config } from './../../config/config.js'
 import * as url from 'url'
-import * as databaseService from '../database/database-repository.js'
+import * as databaseRepo from '../database/database-repository.js'
 import * as destinyService from '../services/destiny-service.js'
 
 /**
@@ -92,7 +92,7 @@ async function replyToSlashCommands(discordClient) {
  */
 async function handleIncommingMessage(message, interaction, command) {
     if (await doesBungieUsernameExistInDestiny(message)) {
-        await databaseService.doesUserExist(message.content) ?
+        await databaseRepo.doesUserExist(message.content) ?
             replyUserExists(interaction) :
             addUserToAlertBot(command, message.content, interaction)
     } else {
@@ -115,7 +115,7 @@ function replyUserExists(interaction) {
  * @param {Object} interaction Reference to Discord Interaction
  */
 async function addUserToAlertBot(command, username, interaction) {
-    await databaseService.addUser(username, interaction.user.id, interaction.channelId)
+    await databaseRepo.addUser(username, interaction.user.id, interaction.channelId)
     command.execute(interaction)
 }
 

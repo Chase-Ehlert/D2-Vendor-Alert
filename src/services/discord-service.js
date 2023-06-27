@@ -5,12 +5,16 @@ import { config } from '../../config/config.js'
 import { User } from '../database/models/user.js'
 import { getProfileCollectibles } from '../vendor.js'
 import * as destinyService from './destiny-service.js'
-import * as databaseService from '../database/database-repository.js'
+import * as databaseRepo from '../database/database-repository.js'
+import DatabaseService from './database-service.js'
+
+const databaseService = new DatabaseService()
 
 /**
  * Alert registered users about today's vendor inventory
  */
 export async function sendMessage() {
+  await databaseService.connectToDatabase()
   for await (const user of User.find()) {
     const discordEndpoint = `channels/${user.discord_channel_id}/messages`
     const currentDate = new Date()
@@ -21,9 +25,8 @@ export async function sendMessage() {
       console.log('Token does not need to be refreshed')
     } else {
       console.log('Token does need to be refreshed')
-      // await updateRefreshToken(String(user.refresh_token))
       const tokenInfo = await destinyService.getAccessToken(Object(user).refresh_token)
-      await databaseService.updateUser(
+      await databaseRepo.updateUser(
         tokenInfo.bungieMembershipId,
         tokenInfo.refreshTokenExpirationTime,
         tokenInfo.refreshToken
@@ -31,6 +34,7 @@ export async function sendMessage() {
     }
     await compareModListWithUserInventory(user, discordEndpoint)
   }
+  databaseService.disconnectToDatabase()
 }
 
 /**

@@ -1,7 +1,7 @@
 // @ts-check
 
 import * as destinyService from './services/destiny-service.js'
-import * as databaseService from './database/database-repository.js'
+import * as databaseRepo from './database/database-repository.js'
 import { getCollectibleFromManifest, getItemFromManifest } from './services/manifest-service.js'
 
 /**
@@ -12,7 +12,7 @@ import { getCollectibleFromManifest, getItemFromManifest } from './services/mani
  */
 export async function getVendorModInventory(user, vendorId) {
   const tokenInfo = await destinyService.getAccessToken(Object(user).refresh_token)
-  await databaseService.updateUser(
+  await databaseRepo.updateUser(
     tokenInfo.bungieMembershipId,
     tokenInfo.refreshTokenExpirationTime,
     tokenInfo.refreshToken

@@ -11,12 +11,10 @@ class DatabaseService {
         await mongoose.connect(
           `mongodb+srv://${config.databaseUser}:${config.databasePassword}@${config.databaseCluster}.mongodb.net/${config.databaseName}`
         )
-        console.log('Successfully connected to the database!')
     }
     
     disconnectToDatabase() {
         mongoose.disconnect()
-        console.log('Successfully disconnected to the database!')
     }
 }
 

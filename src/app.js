@@ -2,7 +2,7 @@
 
 import express from 'express'
 import path from 'path'
-import * as databaseService from './database/database-repository.js'
+import * as databaseRepo from './database/database-repository.js'
 import * as destinyService from './services/destiny-service.js'
 import { setupDiscordClient } from './discord/discord-client.js'
 import { sendMessage } from './services/discord-service.js'
@@ -24,6 +24,7 @@ app.get('/', async (request, result) => {
   }
 })
 
+await startServer()
 dailyReset()
 
 /**
@@ -31,12 +32,9 @@ dailyReset()
  */
 function dailyReset() {
   let today = new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate()))
-  console.log(`Today is ${today}`)
-
   const tomorrowResetTime = new Date()
   tomorrowResetTime.setDate(today.getDate() + 1)
   tomorrowResetTime.setUTCHours(17, 2, 0, 0)
-  console.log(`Tomorrows reset time is: ${tomorrowResetTime}`)
 
   const waitTime = Number(tomorrowResetTime) - Date.now()
 
@@ -68,7 +66,7 @@ async function handleAuthorizationCode(authorizationCode) {
   const destinyMembershipId = await destinyService.getDestinyMembershipInfo(tokenInfo.bungieMembershipId)
   const destinyCharacterId = await destinyService.getDestinyCharacterId(destinyMembershipId)
 
-  await databaseService.updateUser(
+  await databaseRepo.updateUser(
     tokenInfo.bungieMembershipId,
     tokenInfo.refreshTokenExpirationTime,
     tokenInfo.refreshToken,
