@@ -4,15 +4,16 @@ import express from 'express'
 import path from 'path'
 import DestinyService from './services/destiny-service.js'
 import * as databaseRepo from './database/database-repository.js'
-import { setupDiscordClient } from './discord/discord-client.js'
+import DiscordClient from './discord/discord-client.js'
 import DiscordService from './services/discord-service.js'
 
 const app = express()
 const directoryName = path.dirname('app.js')
 const destinyService = new DestinyService()
+const discordClient = new DiscordClient()
 const discordService = new DiscordService()
 
-setupDiscordClient()
+discordClient.setupDiscordClient()
 
 app.listen(3001, () => {
   console.log('Server is running...')
