@@ -1,9 +1,10 @@
 // @ts-check
 
 import fs from 'fs'
+import DestinyService from './destiny-service.js'
 import * as oldfs from 'fs'
-import * as destinyService from './destiny-service.js'
 
+const destinyService = new DestinyService()
 const fsPromises = fs.promises
 
 /**

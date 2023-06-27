@@ -4,10 +4,11 @@ import axios from 'axios'
 import { config } from '../../config/config.js'
 import { User } from '../database/models/user.js'
 import { getProfileCollectibles } from '../vendor.js'
-import * as destinyService from './destiny-service.js'
 import * as databaseRepo from '../database/database-repository.js'
+import DestinyService from './destiny-service.js'
 import DatabaseService from './database-service.js'
 
+const destinyService = new DestinyService()
 const databaseService = new DatabaseService()
 
 /**

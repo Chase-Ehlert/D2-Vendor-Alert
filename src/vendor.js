@@ -1,8 +1,10 @@
 // @ts-check
 
-import * as destinyService from './services/destiny-service.js'
+import DestinyService from './services/destiny-service.js'
 import * as databaseRepo from './database/database-repository.js'
 import { getCollectibleFromManifest, getItemFromManifest } from './services/manifest-service.js'
+
+const destinyService = new DestinyService()
 
 /**
  * Collect mods for a specific vendor
