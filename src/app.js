@@ -24,7 +24,6 @@ app.get('/', async (request, result) => {
   }
 })
 
-await startServer()
 dailyReset()
 
 /**
