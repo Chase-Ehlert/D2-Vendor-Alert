@@ -1,5 +1,3 @@
-// @ts-check
-
 import express from 'express'
 import path from 'path'
 import DestinyService from './services/destiny-service.js'

@@ -1,7 +1,7 @@
 // @ts-check
 
 import { User } from './models/user.js'
-import DatabaseService from './../services/database-service.js'
+import DatabaseService from '../services/database-service.js'
 
 const databaseService = new DatabaseService()
 

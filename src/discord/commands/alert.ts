@@ -1,6 +1,6 @@
 // @ts-check
 
-import { config } from './../../../config/config.js'
+import { config } from '../../../config/config.js'
 import { hyperlink, SlashCommandBuilder } from "discord.js"
 
 export default {

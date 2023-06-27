@@ -1,7 +1,7 @@
 // @ts-check
 
 import mongoose from 'mongoose'
-import { config } from './../../config/config.js'
+import { config } from '../../config/config.js'
 
 class DatabaseService {
     constructor() {}
