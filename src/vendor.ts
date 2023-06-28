@@ -1,36 +1,32 @@
-// @ts-check
-
-import DestinyService from './services/destiny-service.js'
-import DatabaseRepository from './database/database-repository.js'
-import ManifestService from './services/manifest-service.js'
+import { DatabaseRepository } from './database/database-repository.js'
+import { ManifestService } from './services/manifest-service.js'
+import { DestinyService } from './services/destiny-service.js'
+import { User } from './database/models/user.js'
 
 const destinyService = new DestinyService()
 const databaseRepo = new DatabaseRepository()
 const manifestService = new ManifestService()
 
-class Vendor {
-  constructor(){}
-
+export class Vendor {
   /**
    * Collect mods for a specific vendor
-   * @param {Object} user User profile information
-   * @param {string} vendorId Id of vendor
-   * @returns {Promise<Array<string>>} List of mods for sale
    */
-  async getVendorModInventory(user, vendorId) {
-    const tokenInfo = await destinyService.getAccessToken(Object(user).refresh_token)
+  async getVendorModInventory (user: User, vendorId: string): Promise<string[]> {
+    const tokenInfo = await destinyService.getAccessToken(user.refreshToken)
     await databaseRepo.updateUser(
       tokenInfo.bungieMembershipId,
       tokenInfo.refreshTokenExpirationTime,
       tokenInfo.refreshToken
     )
-
-    const vendorInfo = await destinyService.getDestinyVendorInfo(user, tokenInfo.accessToken)
     let vendorInventory
 
-    for (let key in vendorInfo) {
-      if (key === vendorId) {
-        vendorInventory = vendorInfo[key].saleItems
+    if (tokenInfo.accessToken !== undefined) {
+      const vendorInfo = await destinyService.getDestinyVendorInfo(user, tokenInfo.accessToken)
+
+      for (const key in vendorInfo) {
+        if (key === vendorId) {
+          vendorInventory = vendorInfo[key].saleItems
+        }
       }
     }
 
@@ -39,20 +35,20 @@ class Vendor {
 
   /**
    * Collect mods for sale by Banshee-44 and Ada-1
-   * @param {Object} user User information
-   * @returns {Promise<Array>} List of mods
    */
-  async getProfileCollectibles(user) {
+  async getProfileCollectibles (user: User): Promise<string[]> {
     const adaVendorId = '350061650'
     const collectibleId = 65
-    const collectibleList = []
+    const collectibleList: string[] = []
 
     await Promise.all([
-      destinyService.getDestinyCollectibleInfo(user.destiny_id),
+      destinyService.getDestinyCollectibleInfo(user.destinyId),
       this.getVendorModInventory(user, adaVendorId)
     ]).then((values) => {
-      console.log(`Ada has these mods for sale: ${values[1]}`)
-      values[1].forEach(key => {
+      let modsForSale = ''
+      values.map((mod: string) => { modsForSale += mod })
+      console.log(`Ada has these mods for sale: ${modsForSale}`)
+      values[1].forEach((key: string) => {
         if (values[0][key].state === collectibleId) {
           collectibleList.push(key)
         }
@@ -62,5 +58,3 @@ class Vendor {
     return await manifestService.getCollectibleFromManifest(19, collectibleList)
   }
 }
-
-export default Vendor

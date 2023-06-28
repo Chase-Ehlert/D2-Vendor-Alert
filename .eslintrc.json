@@ -1,15 +1,18 @@
 {
     "env": {
-        "es2021": true,
-        "node": true
+        "browser": true,
+        "es2021": true
     },
-    "extends": "eslint:recommended",
+    "extends": "standard-with-typescript",
     "overrides": [
     ],
     "parserOptions": {
+        "project": "tsconfig.eslint.json",
         "ecmaVersion": "latest",
         "sourceType": "module"
     },
     "rules": {
+        "@typescript-eslint/strict-boolean-expressions": "warn",
+        "@typescript-eslint/prefer-nullish-coalescing": "warn"
     }
 }

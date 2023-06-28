@@ -1,9 +1,9 @@
-import express from 'express'
-import path from 'path'
-import DestinyService from './services/destiny-service.js'
-import DatabaseRepository from './database/database-repository.js'
-import DiscordClient from './discord/discord-client.js'
-import DiscordService from './services/discord-service.js'
+import * as express from 'express'
+import * as path from 'path'
+import { DestinyService } from './services/destiny-service.js'
+import { DatabaseRepository } from './database/database-repository.js'
+import { DiscordClient } from './discord/discord-client.js'
+import { DiscordService } from './services/discord-service.js'
 
 const app = express()
 const directoryName = path.dirname('app.js')
@@ -12,26 +12,26 @@ const databaseRepo = new DatabaseRepository()
 const discordClient = new DiscordClient()
 const discordService = new DiscordService()
 
-discordClient.setupDiscordClient()
+await discordClient.setupDiscordClient()
 
 app.listen(3001, () => {
   console.log('Server is running...')
 })
 
-app.get('/', async (request, result) => {
-  if (request.query.code) {
+app.get('/', (async (request, result) => {
+  if (request.query.code !== undefined) {
     await handleAuthorizationCode(String(request.query.code))
 
     result.sendFile('src/views/landing-page.html', { root: directoryName })
   }
-})
+}) as express.RequestHandler)
 
-dailyReset()
+await dailyReset()
 
 /**
  * Calculates the time till the next Destiny daily reset and waits till then to alert users of vendor inventory
  */
-function dailyReset() {
+async function dailyReset (): Promise<void> {
   let today = new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate()))
   const tomorrowResetTime = new Date()
   tomorrowResetTime.setDate(today.getDate() + 1)
@@ -42,27 +42,26 @@ function dailyReset() {
   if (waitTime > 0) {
     console.log(`Wait time is: ${waitTime / 1000 / 60 / 60}`)
 
-    setTimeout(startServer, waitTime)
+    setTimeout(() => startServer, waitTime)
   } else {
     console.log('Timeout not required')
     today = new Date()
-    startServer()
+    await startServer()
   }
 }
 
 /**
  * Begin the alert workflow for users and then set the time till the next daily reset
  */
-async function startServer() {
+async function startServer (): Promise<void> {
   await discordService.sendMessage()
-  dailyReset()
+  await dailyReset()
 }
 
 /**
  * Uses the authorization code to retreive the user's token information and then save it to the database
- * @param {string} authorizationCode Authorization code received by authenticated user
  */
-async function handleAuthorizationCode(authorizationCode) {
+async function handleAuthorizationCode (authorizationCode: string): Promise<void> {
   const tokenInfo = await destinyService.getRefreshToken(authorizationCode)
   const destinyMembershipId = await destinyService.getDestinyMembershipInfo(tokenInfo.bungieMembershipId)
   const destinyCharacterId = await destinyService.getDestinyCharacterId(destinyMembershipId)

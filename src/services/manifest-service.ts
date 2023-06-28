@@ -1,23 +1,15 @@
-// @ts-check
-
-import fs from 'fs'
-import DestinyService from './destiny-service.js'
-import * as oldfs from 'fs'
+import * as fs from 'fs'
+import { DestinyService } from './destiny-service.js'
 
 const destinyService = new DestinyService()
 const fsPromises = fs.promises
 
-class ManifestService {
-  constructor() {}
-
+export class ManifestService {
   /**
    * Collect names of mods for sale from the manifest
-   * @param {number} itemType Number denomination for type of item in Destiny
-   * @param {Array<string>} itemList List of items on sale
-   * @returns List of names for mods on sale
    */
-  async getItemFromManifest(itemType, itemList) {
-    let inventoryNameList = []
+  async getItemFromManifest (itemType: number, itemList: string[]): Promise<string[]> {
+    let inventoryNameList: string[] = []
     const manifestFileName = await destinyService.getManifestFile()
     const destinyInventoryItemDefinition = await destinyService.getDestinyInventoryItemDefinition(manifestFileName)
 
@@ -33,15 +25,15 @@ class ManifestService {
 
   /**
    * Compile list of mod names from manifest or create the manifest and then compile the list
-   * @param {number} itemType Number denomination for type of item in Destiny
-   * @param {Array<string>} inventoryNameList List of mod names
-   * @param {Array<string>} itemList List of items for sale
-   * @param {Object} destinyInventoryItemDefinition Complete list of every type of item from Destiny
-   * @returns List of names for mods on sale
    */
-  async readItemsFromManifest(itemType, inventoryNameList, itemList, destinyInventoryItemDefinition) {
+  async readItemsFromManifest (
+    itemType: number,
+    inventoryNameList: string[],
+    itemList: string[],
+    destinyInventoryItemDefinition: any
+  ): Promise<string[]> {
     try {
-      await fsPromises.access('manifest-items.json', oldfs.constants.F_OK)
+      await fsPromises.access('manifest-items.json', fs.constants.F_OK)
       inventoryNameList = await this.readFile(itemType, 'manifest-items.json', itemList, inventoryNameList, false)
     } catch (error) {
       inventoryNameList = await this.writeFile(itemType, 'manifest-items.json', destinyInventoryItemDefinition, itemList, inventoryNameList, false)
@@ -51,12 +43,9 @@ class ManifestService {
 
   /**
    * Get the manifest file and read the list of collectibles from it
-   * @param {number} itemType Number denomination for type of item in Destiny
-   * @param {Array<string>} itemList List of items for sale
-   * @returns List of collectible names for sale
    */
-  async getCollectibleFromManifest(itemType, itemList) {
-    let inventoryNameList = []
+  async getCollectibleFromManifest (itemType: number, itemList: string[]): Promise<string[]> {
+    let inventoryNameList: string[] = []
     const manifestFileName = await destinyService.getManifestFile()
 
     const newData = await destinyService.getDestinyInventoryItemDefinition(manifestFileName)
@@ -72,15 +61,10 @@ class ManifestService {
 
   /**
    * Compile list of collectibles from Destiny's manifest or create the manifest and then compile the list
-   * @param {number} itemType Number denomination for type of item in Destiny
-   * @param {Array<string>} inventoryNameList List of mod names
-   * @param {Array<string>} itemList List of items for sale
-   * @param {Object} data Complete list of every type of item from Destiny
-   * @returns List of collectible names
    */
-  async readCollectiblesFromManifest(itemType, inventoryNameList, itemList, data) {
+  async readCollectiblesFromManifest (itemType: number, inventoryNameList: string[], itemList: string[], data: any): Promise<string[]> {
     try {
-      await fsPromises.access('manifest-collectibles.json', oldfs.constants.F_OK)
+      await fsPromises.access('manifest-collectibles.json', fs.constants.F_OK)
       inventoryNameList = await this.readFile(
         itemType,
         'manifest-collectibles.json',
@@ -103,14 +87,8 @@ class ManifestService {
 
   /**
    * Read manifest file for a list of names of collectibles or items
-   * @param {number} itemType Number denomination for type of item in Destiny
-   * @param {string} fileName Name of file to read
-   * @param {Array<string>} itemList List of items for sale
-   * @param {Array<string>} inventoryNameList List of mod names
-   * @param {boolean} collectible Flag for type of item
-   * @returns List of names for either collectibles or items
    */
-  async readFile(itemType, fileName, itemList, inventoryNameList, collectible) {
+  async readFile (itemType: number, fileName: string, itemList: string[], inventoryNameList: string[], collectible: boolean): Promise<string[]> {
     await fsPromises.readFile(fileName)
       .then((fileContents) => {
         if (collectible) {
@@ -129,15 +107,8 @@ class ManifestService {
 
   /**
    * Write manifest file and then read it for a list of names of collectibles or items
-   * @param {number} itemType Number denomination for type of item in Destiny
-   * @param {string} fileName Name of file to read
-   * @param {JSON} manifestData Manifest information from Destiny
-   * @param {Array<string>} itemList List of items for sale
-   * @param {Array<string>} inventoryNameList List of mod names
-   * @param {boolean} collectible Flag for type of item
-   * @returns List of names for either collectibles or items
    */
-  async writeFile(itemType, fileName, manifestData, itemList, inventoryNameList, collectible) {
+  async writeFile (itemType: number, fileName: string, manifestData: Object, itemList: string[], inventoryNameList: string[], collectible: boolean): Promise<string[]> {
     await fsPromises.writeFile(fileName, JSON.stringify(manifestData))
       .then(() => {
         if (collectible) {
@@ -156,16 +127,12 @@ class ManifestService {
 
   /**
    * Compile list of names for items on sale
-   * @param {number} itemType Number denomination for type of item in Destiny
-   * @param {Array<string>} inventoryItemList List of mod names
-   * @param {Object} manifest Manifest information from Destiny
-   * @returns List of names for associated items
    */
-  getItemName(itemType, inventoryItemList, manifest) {
+  getItemName (itemType: number, inventoryItemList: string[], manifest: any): string[] {
     const manifestKeys = Object.keys(manifest)
     const itemListValues = Object.values(inventoryItemList)
-    const itemHashList = []
-    let itemNameList = []
+    const itemHashList: string[] = []
+    const itemNameList = []
 
     itemListValues.forEach(item => {
       itemHashList.push(Object(item).itemHash)
@@ -173,7 +140,7 @@ class ManifestService {
 
     for (let i = 0; i < manifestKeys.length; i++) {
       if (this.canManifestItemBeAdded(itemType, itemHashList, manifest, manifestKeys, i, itemNameList)) {
-        if (manifest[manifestKeys[i]].collectibleHash) {
+        if (manifest[manifestKeys[i]].collectibleHash !== undefined) {
           itemNameList.push(manifest[manifestKeys[i]].collectibleHash)
         }
       }
@@ -184,12 +151,9 @@ class ManifestService {
 
   /**
    * Compile list of names for collectibles on sale
-   * @param {Array<string>} inventoryItemList List of items for sale
-   * @param {JSON} manifest Manifest information from Destiny
-   * @returns List of names for collectibles on sale
    */
-  getCollectibleName(inventoryItemList, manifest) {
-    let itemNameList = []
+  getCollectibleName (inventoryItemList: string[], manifest: any): string[] {
+    const itemNameList = []
     const manifestKeys = Object.keys(manifest)
 
     for (let i = 0; i < manifestKeys.length; i++) {
@@ -205,19 +169,10 @@ class ManifestService {
 
   /**
    * Check whether an item from the manifest is for sale or not
-   * @param {number} itemType Number denomination for type of item in Destiny
-   * @param {Array<string>} itemHashList List of hash numbers for items from the manifest
-   * @param {JSON} manifest Manifest information from Destiny
-   * @param {Array<string>} manifestKeys List of keys from the manifest
-   * @param {number} index Number to track place in list of manifest keys
-   * @param {Array<string>} itemNameList List of names for items on sale
-   * @returns True or False depending if the item is up for sale
    */
-  canManifestItemBeAdded(itemType, itemHashList, manifest, manifestKeys, index, itemNameList) {
+  canManifestItemBeAdded (itemType: number, itemHashList: string[], manifest: any, manifestKeys: string[], index: number, itemNameList: string[]): boolean {
     return itemHashList.includes(manifest[manifestKeys[index]].hash) &&
       manifest[manifestKeys[index]].itemType === itemType &&
       !itemNameList.includes(manifest[manifestKeys[index]].collectibleHash)
   }
 }
-
-export default ManifestService
