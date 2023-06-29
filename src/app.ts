@@ -10,10 +10,10 @@ import { DiscordService } from './services/discord-service.js'
 const app = express()
 app.engine('mustache', mustacheExpress())
 app.set('view engine', 'mustache')
+
 const langinPagePath = path.join(url.fileURLToPath(new URL('./', import.meta.url)), 'views')
 app.set('views', langinPagePath)
 
-const directoryName = path.dirname('app.ts')
 const destinyService = new DestinyService()
 const databaseRepo = new DatabaseRepository()
 const discordClient = new DiscordClient()
