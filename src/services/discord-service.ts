@@ -25,7 +25,6 @@ export class DiscordService {
         userRecord.bungie_username_code !== undefined &&
         userRecord.discord_id !== undefined &&
         userRecord.discord_channel_id !== undefined &&
-        userRecord.bungie_membership_id !== undefined &&
         userRecord.destiny_id !== undefined &&
         userRecord.destiny_character_id !== undefined &&
         userRecord.refresh_expiration !== undefined &&
@@ -36,7 +35,6 @@ export class DiscordService {
           userRecord.bungie_username_code,
           userRecord.discord_id,
           userRecord.discord_channel_id,
-          userRecord.bungie_membership_id,
           userRecord.destiny_id,
           userRecord.destiny_character_id,
           userRecord.refresh_expiration,
