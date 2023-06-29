@@ -13,7 +13,7 @@ export class Vendor {
    */
   async getVendorModInventory (user: User, vendorId: string): Promise<string[]> {
     const tokenInfo = await destinyService.getAccessToken(user.refreshToken)
-    await databaseRepo.updateUser(
+    await databaseRepo.updateUserByMembershipId(
       tokenInfo.bungieMembershipId,
       tokenInfo.refreshTokenExpirationTime,
       tokenInfo.refreshToken

@@ -38,7 +38,7 @@ await dailyReset()
 /**
  * Calculates the time till the next Destiny daily reset and waits till then to alert users of vendor inventory
  */
-async function dailyReset (): Promise<void> {
+async function dailyReset(): Promise<void> {
   let today = new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate()))
   const tomorrowResetTime = new Date()
   tomorrowResetTime.setDate(today.getDate() + 1)
@@ -60,7 +60,7 @@ async function dailyReset (): Promise<void> {
 /**
  * Begin the alert workflow for users and then set the time till the next daily reset
  */
-async function startServer (): Promise<void> {
+async function startServer(): Promise<void> {
   await discordService.sendMessage()
   await dailyReset()
 }
@@ -68,12 +68,14 @@ async function startServer (): Promise<void> {
 /**
  * Uses the authorization code to retreive the user's token information and then save it to the database
  */
-async function handleAuthorizationCode (authorizationCode: string): Promise<string> {
+async function handleAuthorizationCode(authorizationCode: string): Promise<string> {
   const tokenInfo = await destinyService.getRefreshToken(authorizationCode)
   const destinyMembershipInfo = await destinyService.getDestinyMembershipInfo(tokenInfo.bungieMembershipId)
   const destinyCharacterId = await destinyService.getDestinyCharacterId(destinyMembershipInfo[0])
 
-  await databaseRepo.updateUser(
+  console.log(destinyMembershipInfo[1])
+
+  await databaseRepo.updateUserByUsername(
     destinyMembershipInfo[1],
     tokenInfo.refreshTokenExpirationTime,
     tokenInfo.refreshToken,

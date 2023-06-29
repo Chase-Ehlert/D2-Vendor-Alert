@@ -52,7 +52,7 @@ export class DiscordService {
         } else {
           console.log('Token does need to be refreshed')
           const tokenInfo = await destinyService.getAccessToken(Object(user).refresh_token)
-          await databaseRepo.updateUser(
+          await databaseRepo.updateUserByMembershipId(
             tokenInfo.bungieMembershipId,
             tokenInfo.refreshTokenExpirationTime,
             tokenInfo.refreshToken
