@@ -1,6 +1,4 @@
-import { Configuration } from 'pm2';
-
-const config: Configuration = {
+module.exports = {
   apps: [
     {
       name: 'D2-Vendor-Alert',
@@ -9,6 +7,4 @@ const config: Configuration = {
     },
   ],
 };
-
-export default config;
 
