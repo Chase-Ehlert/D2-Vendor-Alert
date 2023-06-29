@@ -20,7 +20,6 @@ app.get('/', (async (request, result) => {
         result.sendFile('src/views/landing-page.html', { root: directoryName });
     }
 }));
-await startServer();
 await dailyReset();
 /**
  * Calculates the time till the next Destiny daily reset and waits till then to alert users of vendor inventory

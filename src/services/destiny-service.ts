@@ -18,6 +18,9 @@ export class DestinyService {
         'Content-Type': 'application/x-www-form-urlencoded',
         'x-api-key': config.apiKey
       }
+    }).catch((error) => {
+      console.log('Retreiving refresh token with authorization code failed')
+      throw error
     })
 
     return new RefreshTokenInfo(data.membership_id, data.refresh_expires_in, data.refresh_token)
@@ -32,7 +35,10 @@ export class DestinyService {
         headers: {
           'x-api-key': config.apiKey
         }
-      })
+      }).catch((error) => {
+      console.log('Retreiving Destiny membership info with membership id failed')
+      throw error
+    })
 
     return data.Response.destinyMemberships[0].membershipId
   }
@@ -50,7 +56,10 @@ export class DestinyService {
         params: {
           components: getProfiles
         }
-      })
+      }).catch((error) => {
+      console.log('Retreiving Destiny character info failed')
+      throw error
+    })
 
     return data.Response.profile.data.characterIds[0]
   }
@@ -59,7 +68,12 @@ export class DestinyService {
      * Retrieves the list of definitions of Destiny items for a specified manifest file
      */
   async getDestinyInventoryItemDefinition (manifestFileName: string): Promise<any> {
-    const { data } = await axios.get('https://www.bungie.net' + manifestFileName)
+    const { data } = await axios.get(
+      'https://www.bungie.net' + manifestFileName
+    ).catch((error) => {
+      console.log('Retreiving Destiny inventory item definition failed')
+      throw error
+    })
 
     return data.DestinyInventoryItemDefinition
   }
@@ -72,6 +86,9 @@ export class DestinyService {
       headers: {
         'x-api-key': config.apiKey
       }
+    }).catch((error) => {
+      console.log('Retreiving the Destiny manifest failed')
+      throw error
     })
 
     return data.Response.jsonWorldContentPaths.en
@@ -91,6 +108,9 @@ export class DestinyService {
         'x-api-key': config.apiKey,
         'Content-Type': 'application/x-www-form-urlencoded'
       }
+    }).catch((error) => {
+      console.log('Retreiving a Destiny access token failed')
+      throw error
     })
 
     return new RefreshTokenInfo(data.membership_id, data.refresh_expires_in, data.refresh_token, data.access_token)
@@ -108,6 +128,9 @@ export class DestinyService {
         'Content-Type': 'application/json',
         'x-api-key': config.apiKey
       }
+    }).catch((error) => {
+      console.log('Checking for a Destiny username failed')
+      throw error
     })
 
     return data.Response
@@ -127,7 +150,10 @@ export class DestinyService {
           Authorization: `Bearer ${accessToken}`,
           'x-api-key': config.apiKey
         }
-      })
+      }).catch((error) => {
+      console.log('Retreiving list of vendors from Destiny failed')
+      throw error
+    })
 
     return data.Response.sales.data
   }
@@ -144,6 +170,9 @@ export class DestinyService {
       headers: {
         'x-api-key': config.apiKey
       }
+    }).catch((error) => {
+      console.log('Retreiving the list of collectibles in Destiny failed')
+      throw error
     })
 
     return data.Response.profileCollectibles.data.collectibles
