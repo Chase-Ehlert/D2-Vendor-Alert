@@ -1,11 +1,18 @@
 import express from 'express'
+import mustacheExpress from 'mustache-express'
 import * as path from 'path'
+import * as url from 'url'
 import { DestinyService } from './services/destiny-service.js'
 import { DatabaseRepository } from './database/database-repository.js'
 import { DiscordClient } from './discord/discord-client.js'
 import { DiscordService } from './services/discord-service.js'
 
 const app = express()
+app.engine('mustache', mustacheExpress())
+app.set('view engine', 'mustache')
+const langinPagePath = path.join(url.fileURLToPath(new URL('./', import.meta.url)), 'views')
+app.set('views', langinPagePath)
+
 const directoryName = path.dirname('app.js')
 const destinyService = new DestinyService()
 const databaseRepo = new DatabaseRepository()
@@ -20,8 +27,11 @@ app.listen(3001, () => {
 
 app.get('/', (async (request, result) => {
   if (request.query.code !== undefined) {
+    // const guardian = 
+    console.log(request)
     await handleAuthorizationCode(String(request.query.code))
 
+    // result.render('src/views/landing-page.html', { guardian })
     result.sendFile('src/views/landing-page.html', { root: directoryName })
   }
 }) as express.RequestHandler)
