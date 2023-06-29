@@ -31,7 +31,7 @@ app.get('/', (async (request, result) => {
     console.log(request)
     const guardian = await handleAuthorizationCode(String(request.query.code))
 
-    result.render('src/views/landing-page.html', { guardian })
+    result.render('landing-page.mustache', { guardian })
     // result.sendFile('src/views/landing-page.html', { root: directoryName })
   }
 }) as express.RequestHandler)
