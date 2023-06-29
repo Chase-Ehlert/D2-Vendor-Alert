@@ -60,6 +60,10 @@ export class DiscordClient {
       if (!(interaction as discord.Interaction).isCommand()) return
 
       const command = interaction.client.commands.get(interaction.commandName)
+      console.log('INTERACTION IS')
+      console.log(interaction)
+      console.log('COMMAND IS')
+      console.log(command)
 
       try {
         await interaction.reply('What is your Bungie Net username? (i.e. "Guardian#1234")')
