@@ -18,9 +18,10 @@ export class DatabaseRepository {
   /**
      * Adds the specified user's information to the database
      */
-  async addUser (bungieNetUsername: string, discordId: string, discordChannelId: string): Promise<void> {
+  async addUser (bungieNetUsername: string, bungieNetUsernameCode: string, discordId: string, discordChannelId: string): Promise<void> {
     const user = new UserSchema({
       bungie_username: bungieNetUsername,
+      bungie_username_code: bungieNetUsernameCode,
       discord_id: discordId,
       discord_channel_id: discordChannelId
     })

@@ -73,10 +73,6 @@ async function handleAuthorizationCode (authorizationCode: string): Promise<stri
   const destinyMembershipInfo = await destinyService.getDestinyMembershipInfo(tokenInfo.bungieMembershipId)
   const destinyCharacterId = await destinyService.getDestinyCharacterId(destinyMembershipInfo[0])
 
-  console.log(tokenInfo)
-  console.log(destinyMembershipInfo)
-  console.log(destinyCharacterId)
-
   await databaseRepo.updateUser(
     tokenInfo.bungieMembershipId,
     tokenInfo.refreshTokenExpirationTime,

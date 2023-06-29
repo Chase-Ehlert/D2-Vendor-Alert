@@ -22,6 +22,7 @@ export class DiscordService {
       let user
       if (
         userRecord.bungie_username !== undefined &&
+        userRecord.bungie_username_code !== undefined &&
         userRecord.discord_id !== undefined &&
         userRecord.discord_channel_id !== undefined &&
         userRecord.bungie_membership_id !== undefined &&
@@ -32,6 +33,7 @@ export class DiscordService {
       ) {
         user = new User(
           userRecord.bungie_username,
+          userRecord.bungie_username_code,
           userRecord.discord_id,
           userRecord.discord_channel_id,
           userRecord.bungie_membership_id,
