@@ -45,4 +45,5 @@ jobs:
           script: |
             cd workspaces/D2-Vendor-Alert/
             git pull
+            npm install
             pm2 restart 0
