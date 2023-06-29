@@ -26,7 +26,6 @@ app.get('/', (async (request, result) => {
   }
 }) as express.RequestHandler)
 
-await startServer()
 await dailyReset()
 
 /**
