@@ -14,6 +14,7 @@ app.set('view engine', 'mustache')
 const landingPagePath = path.join(url.fileURLToPath(new URL('./', import.meta.url)), 'views')
 app.set('views', landingPagePath)
 
+const directoryName = path.dirname('app.js')
 const destinyService = new DestinyService()
 const databaseRepo = new DatabaseRepository()
 const discordClient = new DiscordClient()
@@ -30,6 +31,8 @@ app.get('/', (async (request, result) => {
     const guardian = await handleAuthorizationCode(String(request.query.code))
 
     result.render('landing-page.mustache', { guardian })
+  } else {
+    result.sendFile('src/views/landing-page-error.html', { root: directoryName })
   }
 }) as express.RequestHandler)
 
