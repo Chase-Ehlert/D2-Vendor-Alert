@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { Vendor } from '../vendor.js'
+import { Vendor } from '../destiny/vendor.js'
 import { DatabaseRepository } from '../database/database-repository.js'
 import { DestinyService } from './destiny-service.js'
 import { DatabaseService } from './database-service.js'
