@@ -2,4 +2,3 @@ node_modules
 .env
 aggregate*.json
 manifest*.json
-dist/
