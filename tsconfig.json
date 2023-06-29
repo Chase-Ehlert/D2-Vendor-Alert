@@ -4,12 +4,13 @@
     "noImplicitAny": true,
     "sourceMap": true,
     "module": "esnext",
-    "target": "es2022",
+    "target": "es2021",
     "jsx": "react",
     "allowJs": true,
     "moduleResolution": "node",
     "strictNullChecks": true,
-    "typeRoots": ["src/@types", "node_modules/@types"]
+    "typeRoots": ["src/@types", "node_modules/@types"],
+    "esModuleInterop": true
   },
   "include": [
     "./src/**/*"

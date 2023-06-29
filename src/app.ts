@@ -1,4 +1,4 @@
-import * as express from 'express'
+import express from 'express'
 import * as path from 'path'
 import { DestinyService } from './services/destiny-service.js'
 import { DatabaseRepository } from './database/database-repository.js'
@@ -26,6 +26,7 @@ app.get('/', (async (request, result) => {
   }
 }) as express.RequestHandler)
 
+await startServer()
 await dailyReset()
 
 /**

@@ -1,4 +1,4 @@
-import * as express from 'express';
+import express from 'express';
 import * as path from 'path';
 import { DestinyService } from './services/destiny-service.js';
 import { DatabaseRepository } from './database/database-repository.js';
@@ -20,6 +20,7 @@ app.get('/', (async (request, result) => {
         result.sendFile('src/views/landing-page.html', { root: directoryName });
     }
 }));
+await startServer();
 await dailyReset();
 /**
  * Calculates the time till the next Destiny daily reset and waits till then to alert users of vendor inventory

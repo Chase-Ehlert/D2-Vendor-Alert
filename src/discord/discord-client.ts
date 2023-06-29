@@ -56,8 +56,8 @@ export class DiscordClient {
      * Respond to any slash command and prompt user for profile information
      */
   async replyToSlashCommands (discordClient: any): Promise<void> {
-    discordClient.on(discord.Events.InteractionCreate, async (interaction: discord.Interaction) => {
-      if (!interaction.isCommand()) return
+    discordClient.on(discord.Events.InteractionCreate, async (interaction: any) => {
+      if (!(interaction as discord.Interaction).isCommand()) return
 
       const command = interaction.client.commands.get(interaction.commandName)
 

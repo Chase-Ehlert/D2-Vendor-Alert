@@ -34,7 +34,7 @@ export class Vendor {
   }
 
   /**
-   * Collect mods for sale by Banshee-44 and Ada-1
+   * Collect mods for sale by Ada-1
    */
   async getProfileCollectibles (user: User): Promise<string[]> {
     const adaVendorId = '350061650'
@@ -45,8 +45,7 @@ export class Vendor {
       destinyService.getDestinyCollectibleInfo(user.destinyId),
       this.getVendorModInventory(user, adaVendorId)
     ]).then((values) => {
-      let modsForSale = ''
-      values.map((mod: string) => { modsForSale += mod })
+      const modsForSale = values[1].join(', ')
       console.log(`Ada has these mods for sale: ${modsForSale}`)
       values[1].forEach((key: string) => {
         if (values[0][key].state === collectibleId) {

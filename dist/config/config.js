@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import * as joi from 'joi';
+import joi from 'joi';
 const environmentVariableSchema = joi
     .object()
     .keys({
@@ -21,15 +21,6 @@ if (error) {
     throw new Error(`Config validation error: ${error.message}`);
 }
 class Config {
-    databaseUser;
-    databaseCluster;
-    databaseName;
-    databasePassword;
-    apiKey;
-    token;
-    clientId;
-    oauthClientId;
-    oauthSecret;
     constructor(databaseUser, databaseCluster, databaseName, databasePassword, apiKey, token, clientId, oauthClientId, oauthSecret) {
         this.databaseUser = databaseUser;
         this.databaseCluster = databaseCluster;

@@ -1,5 +1,5 @@
 import 'dotenv/config'
-import * as joi from 'joi'
+import joi from 'joi'
 
 const environmentVariableSchema = joi
   .object()
