@@ -11,8 +11,8 @@ const app = express()
 app.engine('mustache', mustacheExpress())
 app.set('view engine', 'mustache')
 
-const langinPagePath = path.join(url.fileURLToPath(new URL('./', import.meta.url)), 'views')
-app.set('views', langinPagePath)
+const landingPagePath = path.join(url.fileURLToPath(new URL('./', import.meta.url)), 'views')
+app.set('views', landingPagePath)
 
 const destinyService = new DestinyService()
 const databaseRepo = new DatabaseRepository()
