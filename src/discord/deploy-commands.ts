@@ -3,7 +3,7 @@ import { config } from '../../config/config.js'
 import { REST, Routes } from 'discord.js'
 
 const commands: any[] = []
-const commandFiles = fs.readdirSync('./src/discord/commands').filter(file => file.endsWith('.js'))
+const commandFiles = fs.readdirSync('./src/discord/commands').filter(file => file.endsWith('.ts'))
 
 for (const file of commandFiles) {
   const command = await import(`./commands/${file}`)
