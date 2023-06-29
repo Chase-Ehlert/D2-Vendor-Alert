@@ -29,7 +29,7 @@ export class DestinyService {
   /**
      * Retrieves Destiny membership information for a user
      */
-  async getDestinyMembershipInfo (membershipId: string): Promise<string> {
+  async getDestinyMembershipInfo (membershipId: string): Promise<Array<string>> {
     const { data } = await axios.get(
       `https://www.bungie.net/platform/User/GetMembershipsById/${membershipId}/3/`, {
         headers: {
@@ -40,7 +40,7 @@ export class DestinyService {
       throw error
     })
 
-    return data.Response.destinyMemberships[0].membershipId
+    return [data.Response.destinyMemberships[0].membershipId, data.Response.destinyMemberships[0].displayName]
   }
 
   /**

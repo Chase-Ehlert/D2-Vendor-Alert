@@ -29,10 +29,10 @@ app.get('/', (async (request, result) => {
   if (request.query.code !== undefined) {
     // const guardian = 
     console.log(request)
-    await handleAuthorizationCode(String(request.query.code))
+    const guardian = await handleAuthorizationCode(String(request.query.code))
 
-    // result.render('src/views/landing-page.html', { guardian })
-    result.sendFile('src/views/landing-page.html', { root: directoryName })
+    result.render('src/views/landing-page.html', { guardian })
+    // result.sendFile('src/views/landing-page.html', { root: directoryName })
   }
 }) as express.RequestHandler)
 
@@ -71,16 +71,18 @@ async function startServer (): Promise<void> {
 /**
  * Uses the authorization code to retreive the user's token information and then save it to the database
  */
-async function handleAuthorizationCode (authorizationCode: string): Promise<void> {
+async function handleAuthorizationCode (authorizationCode: string): Promise<string> {
   const tokenInfo = await destinyService.getRefreshToken(authorizationCode)
-  const destinyMembershipId = await destinyService.getDestinyMembershipInfo(tokenInfo.bungieMembershipId)
-  const destinyCharacterId = await destinyService.getDestinyCharacterId(destinyMembershipId)
+  const destinyMembershipInfo = await destinyService.getDestinyMembershipInfo(tokenInfo.bungieMembershipId)
+  const destinyCharacterId = await destinyService.getDestinyCharacterId(destinyMembershipInfo[0])
 
   await databaseRepo.updateUser(
     tokenInfo.bungieMembershipId,
     tokenInfo.refreshTokenExpirationTime,
     tokenInfo.refreshToken,
-    destinyMembershipId,
+    destinyMembershipInfo[0],
     destinyCharacterId
   )
+
+  return destinyMembershipInfo[1]
 }
