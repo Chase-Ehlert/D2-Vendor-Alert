@@ -46,4 +46,5 @@ jobs:
             cd workspaces/D2-Vendor-Alert/
             git pull
             npm install
+            tsc
             pm2 restart 0
