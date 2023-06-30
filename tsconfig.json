@@ -9,7 +9,7 @@
     "allowJs": true,
     "moduleResolution": "node",
     "strictNullChecks": true,
-    "typeRoots": ["src/@types", "node_modules/@types"],
+    "typeRoots": ["src/@types", "node_modules/@types", "jest"],
     "esModuleInterop": true
   },
   "include": [
