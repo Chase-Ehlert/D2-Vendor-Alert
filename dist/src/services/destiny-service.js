@@ -34,7 +34,7 @@ export class DestinyService {
             console.log('Retreiving Destiny membership info with membership id failed');
             throw error;
         });
-        return data.Response.destinyMemberships[0].membershipId;
+        return [data.Response.destinyMemberships[0].membershipId, data.Response.destinyMemberships[0].displayName];
     }
     /**
       * Retrieves Destiny character information for a user

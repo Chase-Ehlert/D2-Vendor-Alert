@@ -33,7 +33,7 @@ export class DiscordClient {
        */
     async setupSlashCommands(discordClient) {
         const commandsPath = path.join(url.fileURLToPath(new URL('./', import.meta.url)), 'commands');
-        const commandsFiles = fileSystem.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
+        const commandsFiles = fileSystem.readdirSync(commandsPath).filter(file => file.endsWith('.ts'));
         for (const file of commandsFiles) {
             const filePath = path.join(commandsPath, file);
             const command = await import(`./commands/${file}`);
@@ -99,7 +99,10 @@ export class DiscordClient {
        * Add user's profile information to database
        */
     async addUserToAlertBot(command, username, interaction) {
-        await databaseRepo.addUser(username, interaction.user.id, interaction.channelId);
+        const index = username.indexOf('#');
+        const bungieUsername = username.substring(0, index);
+        const bungieUsernameCode = username.substring(Number(index) + 1, username.length);
+        await databaseRepo.addUser(bungieUsername, bungieUsernameCode, interaction.user.id, interaction.channelId);
         command.execute(interaction);
     }
     /**

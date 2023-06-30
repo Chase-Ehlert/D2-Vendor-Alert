@@ -1,9 +1,9 @@
 export class User {
-    constructor(bungieUsername, discordId, discordChannelId, bungieMembershipId, destinyId, destinyCharacterId, refreshExpiration, refreshToken) {
+    constructor(bungieUsername, bungieUsernameCode, discordId, discordChannelId, destinyId, destinyCharacterId, refreshExpiration, refreshToken) {
         this.bungieUsername = bungieUsername;
+        this.bungieUsernameCode = bungieUsernameCode;
         this.discordId = discordId;
         this.discordChannelId = discordChannelId;
-        this.bungieMembershipId = bungieMembershipId;
         this.destinyId = destinyId;
         this.destinyCharacterId = destinyCharacterId;
         this.refreshExpiration = refreshExpiration;

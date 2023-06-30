@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 mongoose.set('strictQuery', false);
 const User = new mongoose.Schema({
     bungie_username: String,
+    bungie_username_code: String,
     discord_id: String,
     discord_channel_id: String,
     bungie_membership_id: String,

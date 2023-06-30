@@ -9,8 +9,8 @@ import { DiscordService } from './services/discord-service.js';
 const app = express();
 app.engine('mustache', mustacheExpress());
 app.set('view engine', 'mustache');
-const langinPagePath = path.join(url.fileURLToPath(new URL('./', import.meta.url)), 'views');
-app.set('views', langinPagePath);
+const landingPagePath = path.join(url.fileURLToPath(new URL('./', import.meta.url)), 'views');
+app.set('views', landingPagePath);
 const directoryName = path.dirname('app.js');
 const destinyService = new DestinyService();
 const databaseRepo = new DatabaseRepository();
@@ -22,11 +22,11 @@ app.listen(3001, () => {
 });
 app.get('/', (async (request, result) => {
     if (request.query.code !== undefined) {
-        // const guardian = 
-        console.log(request);
-        await handleAuthorizationCode(String(request.query.code));
-        // result.render('src/views/landing-page.html', { guardian })
-        result.sendFile('src/views/landing-page.html', { root: directoryName });
+        const guardian = await handleAuthorizationCode(String(request.query.code));
+        result.render('landing-page.mustache', { guardian });
+    }
+    else {
+        result.sendFile('src/views/landing-page-error.html', { root: directoryName });
     }
 }));
 await dailyReset();
@@ -61,8 +61,9 @@ async function startServer() {
  */
 async function handleAuthorizationCode(authorizationCode) {
     const tokenInfo = await destinyService.getRefreshToken(authorizationCode);
-    const destinyMembershipId = await destinyService.getDestinyMembershipInfo(tokenInfo.bungieMembershipId);
-    const destinyCharacterId = await destinyService.getDestinyCharacterId(destinyMembershipId);
-    await databaseRepo.updateUser(tokenInfo.bungieMembershipId, tokenInfo.refreshTokenExpirationTime, tokenInfo.refreshToken, destinyMembershipId, destinyCharacterId);
+    const destinyMembershipInfo = await destinyService.getDestinyMembershipInfo(tokenInfo.bungieMembershipId);
+    const destinyCharacterId = await destinyService.getDestinyCharacterId(destinyMembershipInfo[0]);
+    await databaseRepo.updateUserByUsername(destinyMembershipInfo[1], tokenInfo.refreshTokenExpirationTime, tokenInfo.refreshToken, destinyMembershipInfo[0], destinyCharacterId);
+    return destinyMembershipInfo[1];
 }
 //# sourceMappingURL=app.js.map
