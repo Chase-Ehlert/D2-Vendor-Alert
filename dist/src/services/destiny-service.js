@@ -20,7 +20,7 @@ export class DestinyService {
             return new RefreshTokenInfo(data.membership_id, data.refresh_expires_in, data.refresh_token);
         }).catch(async (error) => {
             console.log('Retreiving refresh token with authorization code failed');
-            result.redirect('/error');
+            result.redirect('/error/authCode');
             console.error(error);
         });
     }

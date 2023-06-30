@@ -20,10 +20,8 @@ await discordClient.setupDiscordClient();
 app.listen(3001, () => {
     console.log('Server is running...');
 });
-app.get('/error', (async (request, result) => {
-    console.log('123');
-    await result.sendFile('src/views/landing-page-error.html', { root: directoryName });
-    console.log('456');
+app.get('/error/authCode', ((request, result) => {
+    result.sendFile('src/views/landing-page-error-auth-code.html', { root: directoryName });
 }));
 app.get('/', (async (request, result) => {
     if (request.query.code !== undefined) {
