@@ -45,29 +45,26 @@ await dailyReset()
 /**
  * Calculates the time till the next Destiny daily reset and waits till then to alert users of vendor inventory
  */
-async function dailyReset (): Promise<void> {
-  let today = new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate()))
-  const tomorrowResetTime = new Date()
-  tomorrowResetTime.setDate(today.getDate() + 1)
-  tomorrowResetTime.setUTCHours(17, 2, 0, 0)
+async function dailyReset(): Promise<void> {
+  const today = new Date()
 
-  const waitTime = Number(tomorrowResetTime) - Date.now()
-
-  if (waitTime > 0) {
-    console.log(`Wait time is: ${waitTime / 1000 / 60 / 60}`)
-
-    setTimeout(() => startServer, waitTime)
+  if (today.getMinutes() > 1 && today.getHours() >= 17) {
+    today.setDate(today.getDate() + 1)
+    today.setHours(17)
+    today.setMinutes(1)
   } else {
-    console.log('Timeout not required')
-    today = new Date()
-    await startServer()
+    today.setHours(17)
+    today.setMinutes(1)
   }
+
+  const waitTime = Number(today) - Date.now()
+  setTimeout(() => startServer, waitTime)
 }
 
 /**
  * Begin the alert workflow for users and then set the time till the next daily reset
  */
-async function startServer (): Promise<void> {
+async function startServer(): Promise<void> {
   await discordService.sendMessage()
   await dailyReset()
 }
@@ -75,7 +72,7 @@ async function startServer (): Promise<void> {
 /**
  * Uses the authorization code to retreive the user's token information and then save it to the database
  */
-async function handleAuthorizationCode (authorizationCode: string, result: any): Promise<void | string> {
+async function handleAuthorizationCode(authorizationCode: string, result: any): Promise<void | string> {
   await destinyService.getRefreshToken(authorizationCode, result)
     .then(async (tokenInfo) => {
       if (tokenInfo !== undefined) {
