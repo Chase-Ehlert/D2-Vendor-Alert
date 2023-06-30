@@ -7,7 +7,7 @@ export class DatabaseRepository {
   /**
      * Checks if user exists in database
      */
-  async doesUserExist(bungieNetUsername: string): Promise<boolean> {
+  async doesUserExist (bungieNetUsername: string): Promise<boolean> {
     await databaseService.connectToDatabase()
     const doesUserExist = !((await UserSchema.exists({ bungie_username: bungieNetUsername }).exec()) == null)
     await databaseService.disconnectToDatabase()
@@ -18,7 +18,7 @@ export class DatabaseRepository {
   /**
      * Adds the specified user's information to the database
      */
-  async addUser(bungieNetUsername: string, bungieNetUsernameCode: string, discordId: string, discordChannelId: string): Promise<void> {
+  async addUser (bungieNetUsername: string, bungieNetUsernameCode: string, discordId: string, discordChannelId: string): Promise<void> {
     const user = new UserSchema({
       bungie_username: bungieNetUsername,
       bungie_username_code: bungieNetUsernameCode,
@@ -34,7 +34,7 @@ export class DatabaseRepository {
   /**
      * Updates the database information for a specific user using their Bungie username
      */
-  async updateUserByUsername(
+  async updateUserByUsername (
     bungieUsername: string,
     refreshExpirationTime: string,
     refreshToken: string,
@@ -62,10 +62,10 @@ export class DatabaseRepository {
   /**
      * Updates the database information for a specific user using their Bungie membership id
      */
-  async updateUserByMembershipId(
+  async updateUserByMembershipId (
     bungieMembershipId: string,
     refreshExpirationTime: string,
-    refreshToken: string,
+    refreshToken: string
   ): Promise<void> {
     const daysTillTokenExpires = Number(refreshExpirationTime) / 60 / 60 / 24
     const expirationDate = new Date()

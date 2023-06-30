@@ -8,7 +8,7 @@ export class DatabaseService {
   async connectToDatabase (): Promise<void> {
     mongoose.set('strictQuery', false)
     await mongoose.connect(
-          `mongodb+srv://${config.databaseUser}:${config.databasePassword}@${config.databaseCluster}.mongodb.net/${config.databaseName}`
+      `mongodb+srv://${config.databaseUser}:${config.databasePassword}@${config.databaseCluster}.mongodb.net/${config.databaseName}`
     )
   }
 

@@ -12,6 +12,7 @@
         "sourceType": "module"
     },
     "rules": {
+        "indent": [2, 2],
         "@typescript-eslint/strict-boolean-expressions": "warn",
         "@typescript-eslint/prefer-nullish-coalescing": "warn",
         "@typescript-eslint/no-invalid-void-type": 0

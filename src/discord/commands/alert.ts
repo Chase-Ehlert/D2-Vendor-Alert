@@ -8,7 +8,7 @@ export default {
   async execute (interaction: any) {
     interaction.followUp(hyperlink(
       'Authorize D2 Vendor Alert',
-            `https://www.bungie.net/en/oauth/authorize?client_id=${config.oauthClientId}&response_type=code`
+      `https://www.bungie.net/en/oauth/authorize?client_id=${config.oauthClientId}&response_type=code`
     ))
   }
 }
