@@ -5,8 +5,8 @@ export class DestinyService {
     /**
        * Retrieves refresh token for a user
        */
-    async getRefreshToken(authorizationCode) {
-        const { data } = await axios.post('https://www.bungie.net/platform/app/oauth/token/', {
+    async getRefreshToken(authorizationCode, result) {
+        await axios.post('https://www.bungie.net/platform/app/oauth/token/', {
             grant_type: 'authorization_code',
             code: authorizationCode,
             client_secret: config.oauthSecret,
@@ -16,11 +16,13 @@ export class DestinyService {
                 'Content-Type': 'application/x-www-form-urlencoded',
                 'x-api-key': config.apiKey
             }
-        }).catch((error) => {
+        }).then((data) => {
+            return new RefreshTokenInfo(data.membership_id, data.refresh_expires_in, data.refresh_token);
+        }).catch(async (error) => {
             console.log('Retreiving refresh token with authorization code failed');
-            throw error;
+            result.redirect('/error');
+            console.error(error);
         });
-        return new RefreshTokenInfo(data.membership_id, data.refresh_expires_in, data.refresh_token);
     }
     /**
        * Retrieves Destiny membership information for a user

@@ -7,8 +7,8 @@ export class DestinyService {
   /**
      * Retrieves refresh token for a user
      */
-  async getRefreshToken (authorizationCode: string): Promise<RefreshTokenInfo> {
-    const { data } = await axios.post('https://www.bungie.net/platform/app/oauth/token/', {
+  async getRefreshToken (authorizationCode: string, result: any): Promise<void | RefreshTokenInfo> {
+    await axios.post('https://www.bungie.net/platform/app/oauth/token/', {
       grant_type: 'authorization_code',
       code: authorizationCode,
       client_secret: config.oauthSecret,
@@ -18,24 +18,25 @@ export class DestinyService {
         'Content-Type': 'application/x-www-form-urlencoded',
         'x-api-key': config.apiKey
       }
-    }).catch((error) => {
+    }).then((data: any) => {
+      return new RefreshTokenInfo(data.membership_id, data.refresh_expires_in, data.refresh_token)
+    }).catch(async (error) => {
       console.log('Retreiving refresh token with authorization code failed')
-      throw error
+      result.redirect('/error/authCode')
+      console.error(error)
     })
-
-    return new RefreshTokenInfo(data.membership_id, data.refresh_expires_in, data.refresh_token)
   }
 
   /**
      * Retrieves Destiny membership information for a user
      */
-  async getDestinyMembershipInfo (membershipId: string): Promise<Array<string>> {
+  async getDestinyMembershipInfo(membershipId: string): Promise<Array<string>> {
     const { data } = await axios.get(
       `https://www.bungie.net/platform/User/GetMembershipsById/${membershipId}/3/`, {
-        headers: {
-          'x-api-key': config.apiKey
-        }
-      }).catch((error) => {
+      headers: {
+        'x-api-key': config.apiKey
+      }
+    }).catch((error) => {
       console.log('Retreiving Destiny membership info with membership id failed')
       throw error
     })
@@ -46,17 +47,17 @@ export class DestinyService {
   /**
     * Retrieves Destiny character information for a user
     */
-  async getDestinyCharacterId (destinyMembershipId: string): Promise<string> {
+  async getDestinyCharacterId(destinyMembershipId: string): Promise<string> {
     const getProfiles = 100
     const { data } = await axios.get(
       `https://bungie.net/Platform/Destiny2/3/Profile/${destinyMembershipId}/`, {
-        headers: {
-          'x-api-key': config.apiKey
-        },
-        params: {
-          components: getProfiles
-        }
-      }).catch((error) => {
+      headers: {
+        'x-api-key': config.apiKey
+      },
+      params: {
+        components: getProfiles
+      }
+    }).catch((error) => {
       console.log('Retreiving Destiny character info failed')
       throw error
     })
@@ -67,7 +68,7 @@ export class DestinyService {
   /**
      * Retrieves the list of definitions of Destiny items for a specified manifest file
      */
-  async getDestinyInventoryItemDefinition (manifestFileName: string): Promise<any> {
+  async getDestinyInventoryItemDefinition(manifestFileName: string): Promise<any> {
     const { data } = await axios.get(
       'https://www.bungie.net' + manifestFileName
     ).catch((error) => {
@@ -81,7 +82,7 @@ export class DestinyService {
   /**
      * Call the Destiny API to retreive the manifest
      */
-  async getManifestFile (): Promise<any> {
+  async getManifestFile(): Promise<any> {
     const { data } = await axios.get('https://www.bungie.net/Platform/Destiny2/Manifest/', {
       headers: {
         'x-api-key': config.apiKey
@@ -97,7 +98,7 @@ export class DestinyService {
   /**
      * Retrieve the user's access token by calling the Destiny API with their refresh token
      */
-  async getAccessToken (refreshToken: string): Promise<RefreshTokenInfo> {
+  async getAccessToken(refreshToken: string): Promise<RefreshTokenInfo> {
     const { data } = await axios.post('https://www.bungie.net/platform/app/oauth/token/', {
       grant_type: 'refresh_token',
       refresh_token: refreshToken,
@@ -119,7 +120,7 @@ export class DestinyService {
   /**
      * Looks for a Destiny username that belongs to a user's Bungie username
      */
-  async getDestinyUsername (bungieUsername: string, bungieUsernameCode: string): Promise<any> {
+  async getDestinyUsername(bungieUsername: string, bungieUsernameCode: string): Promise<any> {
     const { data } = await axios.post('https://www.bungie.net/Platform/Destiny2/SearchDestinyPlayerByBungieName/3/', {
       displayName: bungieUsername,
       displayNameCode: bungieUsernameCode
@@ -139,18 +140,18 @@ export class DestinyService {
   /**
      * Retrieves the list of vendors and their inventory
      */
-  async getDestinyVendorInfo (user: User, accessToken: string): Promise<any> {
+  async getDestinyVendorInfo(user: User, accessToken: string): Promise<any> {
     const getVendorSales = 402
     const { data } = await axios.get(
       `https://www.bungie.net/Platform/Destiny2/3/Profile/${user.destinyId}/Character/${user.destinyCharacterId}/Vendors/`, {
-        params: {
-          components: getVendorSales
-        },
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          'x-api-key': config.apiKey
-        }
-      }).catch((error) => {
+      params: {
+        components: getVendorSales
+      },
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'x-api-key': config.apiKey
+      }
+    }).catch((error) => {
       console.log('Retreiving list of vendors from Destiny failed')
       throw error
     })
@@ -161,7 +162,7 @@ export class DestinyService {
   /**
      * Retrieves the list of collectibles that exist in Destiny
      */
-  async getDestinyCollectibleInfo (destinyId: string): Promise<any> {
+  async getDestinyCollectibleInfo(destinyId: string): Promise<any> {
     const getCollectibles = 800
     const { data } = await axios.get(`https://www.bungie.net/Platform/Destiny2/3/Profile/${destinyId}/`, {
       params: {

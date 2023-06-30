@@ -1,4 +1,4 @@
-import express from 'express'
+import express, { RequestHandler } from 'express'
 import mustacheExpress from 'mustache-express'
 import * as path from 'path'
 import * as url from 'url'
@@ -26,9 +26,13 @@ app.listen(3001, () => {
   console.log('Server is running...')
 })
 
+app.get('/error/authCode', ((request, result) => {
+  result.sendFile('src/views/landing-page-error-auth-code.html', { root: directoryName })
+}) as RequestHandler)
+
 app.get('/', (async (request, result) => {
   if (request.query.code !== undefined) {
-    const guardian = await handleAuthorizationCode(String(request.query.code))
+    const guardian = await handleAuthorizationCode(String(request.query.code), result)
 
     result.render('landing-page.mustache', { guardian })
   } else {
@@ -41,7 +45,7 @@ await dailyReset()
 /**
  * Calculates the time till the next Destiny daily reset and waits till then to alert users of vendor inventory
  */
-async function dailyReset(): Promise<void> {
+async function dailyReset (): Promise<void> {
   let today = new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate()))
   const tomorrowResetTime = new Date()
   tomorrowResetTime.setDate(today.getDate() + 1)
@@ -71,18 +75,23 @@ async function startServer(): Promise<void> {
 /**
  * Uses the authorization code to retreive the user's token information and then save it to the database
  */
-async function handleAuthorizationCode(authorizationCode: string): Promise<string> {
-  const tokenInfo = await destinyService.getRefreshToken(authorizationCode)
-  const destinyMembershipInfo = await destinyService.getDestinyMembershipInfo(tokenInfo.bungieMembershipId)
-  const destinyCharacterId = await destinyService.getDestinyCharacterId(destinyMembershipInfo[0])
+async function handleAuthorizationCode(authorizationCode: string, result: any): Promise<void | string> {
+  await destinyService.getRefreshToken(authorizationCode, result)
+    .then(async (tokenInfo) => {
+      if (tokenInfo !== undefined) {
+        await destinyService.getDestinyMembershipInfo(tokenInfo.bungieMembershipId)
+          .then(async (destinyMembershipInfo) => {
+            const destinyCharacterId = await destinyService.getDestinyCharacterId(destinyMembershipInfo[0])
+            await databaseRepo.updateUserByUsername(
+              destinyMembershipInfo[1],
+              tokenInfo.refreshTokenExpirationTime,
+              tokenInfo.refreshToken,
+              destinyMembershipInfo[0],
+              destinyCharacterId
+            )
 
-  await databaseRepo.updateUserByUsername(
-    destinyMembershipInfo[1],
-    tokenInfo.refreshTokenExpirationTime,
-    tokenInfo.refreshToken,
-    destinyMembershipInfo[0],
-    destinyCharacterId
-  )
-
-  return destinyMembershipInfo[1]
+            return destinyMembershipInfo[1]
+          })
+      }
+    })
 }

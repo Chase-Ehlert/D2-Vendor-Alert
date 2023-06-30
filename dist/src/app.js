@@ -20,9 +20,14 @@ await discordClient.setupDiscordClient();
 app.listen(3001, () => {
     console.log('Server is running...');
 });
+app.get('/error', (async (request, result) => {
+    console.log('123');
+    await result.sendFile('src/views/landing-page-error.html', { root: directoryName });
+    console.log('456');
+}));
 app.get('/', (async (request, result) => {
     if (request.query.code !== undefined) {
-        const guardian = await handleAuthorizationCode(String(request.query.code));
+        const guardian = await handleAuthorizationCode(String(request.query.code), result);
         result.render('landing-page.mustache', { guardian });
     }
     else {
@@ -59,11 +64,17 @@ async function startServer() {
 /**
  * Uses the authorization code to retreive the user's token information and then save it to the database
  */
-async function handleAuthorizationCode(authorizationCode) {
-    const tokenInfo = await destinyService.getRefreshToken(authorizationCode);
-    const destinyMembershipInfo = await destinyService.getDestinyMembershipInfo(tokenInfo.bungieMembershipId);
-    const destinyCharacterId = await destinyService.getDestinyCharacterId(destinyMembershipInfo[0]);
-    await databaseRepo.updateUserByUsername(destinyMembershipInfo[1], tokenInfo.refreshTokenExpirationTime, tokenInfo.refreshToken, destinyMembershipInfo[0], destinyCharacterId);
-    return destinyMembershipInfo[1];
+async function handleAuthorizationCode(authorizationCode, result) {
+    await destinyService.getRefreshToken(authorizationCode, result)
+        .then(async (tokenInfo) => {
+        if (tokenInfo !== undefined) {
+            await destinyService.getDestinyMembershipInfo(tokenInfo.bungieMembershipId)
+                .then(async (destinyMembershipInfo) => {
+                const destinyCharacterId = await destinyService.getDestinyCharacterId(destinyMembershipInfo[0]);
+                await databaseRepo.updateUserByUsername(destinyMembershipInfo[1], tokenInfo.refreshTokenExpirationTime, tokenInfo.refreshToken, destinyMembershipInfo[0], destinyCharacterId);
+                return destinyMembershipInfo[1];
+            });
+        }
+    });
 }
 //# sourceMappingURL=app.js.map
