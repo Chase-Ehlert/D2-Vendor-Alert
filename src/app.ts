@@ -58,6 +58,7 @@ async function dailyReset(): Promise<void> {
   }
 
   const waitTime = Number(today) - Date.now()
+  console.log(`Wait time on ${today.getDate()} is ${waitTime}`)
   setTimeout(() => startServer, waitTime)
 }
 
@@ -65,6 +66,7 @@ async function dailyReset(): Promise<void> {
  * Begin the alert workflow for users and then set the time till the next daily reset
  */
 async function startServer(): Promise<void> {
+  console.log('startServer() was called')
   await discordService.sendMessage()
   await dailyReset()
 }
