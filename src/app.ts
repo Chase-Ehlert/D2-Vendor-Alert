@@ -14,7 +14,7 @@ app.set('view engine', 'mustache')
 const landingPagePath = path.join(url.fileURLToPath(new URL('./', import.meta.url)), 'views')
 app.set('views', landingPagePath)
 
-const directoryName = path.dirname('app.js')
+const directoryName = path.dirname('app')
 const destinyService = new DestinyService()
 const databaseRepo = new DatabaseRepository()
 const discordClient = new DiscordClient()
@@ -61,7 +61,7 @@ async function dailyReset (): Promise<void> {
   console.log(`Wait time on ${today.getDate()} is ${waitTime / 1000 / 60 / 60}`)
   setTimeout((async () => {
     await startServer()
-  }) as RequestHandler, 1000)
+  }) as RequestHandler, waitTime)
 }
 
 /**

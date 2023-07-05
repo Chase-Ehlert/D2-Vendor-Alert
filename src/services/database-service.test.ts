@@ -1,4 +1,4 @@
-import { DatabaseService } from './database-service'
+import { DatabaseService } from './database-service.js'
 import mongoose from 'mongoose'
 import { Config } from './../../config/config.js'
 

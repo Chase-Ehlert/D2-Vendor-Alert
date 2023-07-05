@@ -1,4 +1,4 @@
-import 'dotenv/config';
+import 'dotenv/config.js';
 import joi from 'joi';
 const environmentVariableSchema = joi
     .object()
