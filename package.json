@@ -6,7 +6,6 @@
     "lint": "eslint \"./src/**/*.ts\" --fix",
     "tsc": "tsc",
     "test": "jest",
-    "test:ci": "jest --maxWorkers=2",
     "start": "ts-node-esm src/app.ts",
     "jsdoc": "jsdoc -c jsdoc.json"
   },

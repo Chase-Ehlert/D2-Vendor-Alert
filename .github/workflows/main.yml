@@ -26,6 +26,18 @@ jobs:
         with:
           node-version: 18.11.x
           cache: npm
+      - name: Create .env file
+        uses: SpicyPizza/create-envfile@v2.0
+        with:
+          envkey_DATABASE_USER: ${{ secrets.DATABASE_USER }}
+          envkey_DATABASE_CLUSTER: ${{ secrets.DATABASE_CLUSTER }}
+          envkey_DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+          envkey_DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+          envkey_API_KEY: ${{ secrets.API_KEY }}
+          envkey_TOKEN: ${{ secrets.TOKEN }}
+          envkey_CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          envkey_OAUTH_CLIENT_ID: ${{ secrets.OAUTH_CLIENT_ID }}
+          envkey_OAUTH_SECRET: ${{ secrets.OAUTH_SECRET }}
       - name: Install
         run: npm ci
       - name: Gather files changed
