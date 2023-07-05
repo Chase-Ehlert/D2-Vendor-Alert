@@ -59,11 +59,9 @@ async function dailyReset(): Promise<void> {
 
   const waitTime = Number(today) - Date.now()
   console.log(`Wait time on ${today.getDate()} is ${waitTime / 1000 / 60 / 60}`)
-  setTimeout(() => {
-    (async () => {
-      await startServer()
-    }) as RequestHandler
-  }, waitTime)
+  setTimeout((async () => {
+    await startServer()
+  }) as RequestHandler, waitTime)
 }
 
 /**
