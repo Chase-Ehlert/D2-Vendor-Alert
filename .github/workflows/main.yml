@@ -37,7 +37,7 @@ jobs:
       - name: Lint
         run: npm run lint
       - name: TSC
-        run: npm run tsc
+        run: tsc
       - name: Test
         run: npm run test
       - name: SSH into Droplet
