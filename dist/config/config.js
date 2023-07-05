@@ -20,18 +20,30 @@ const { value, error } = environmentVariableSchema
 if (error) {
     throw new Error(`Config validation error: ${error.message}`);
 }
-class Config {
-    constructor(databaseUser, databaseCluster, databaseName, databasePassword, apiKey, token, clientId, oauthClientId, oauthSecret) {
-        this.databaseUser = databaseUser;
-        this.databaseCluster = databaseCluster;
-        this.databaseName = databaseName;
-        this.databasePassword = databasePassword;
-        this.apiKey = apiKey;
-        this.token = token;
-        this.clientId = clientId;
-        this.oauthClientId = oauthClientId;
-        this.oauthSecret = oauthSecret;
+export class Config {
+    constructor() {
+        this.configModel = {
+            databaseUser: value.DATABASE_USER,
+            databaseCluster: value.DATABASE_CLUSTER,
+            databaseName: value.DATABASE_NAME,
+            databasePassword: value.DATABASE_PASSWORD,
+            apiKey: value.API_KEY,
+            token: value.TOKEN,
+            clientId: value.CLIENT_ID,
+            oauthClientId: value.OAUTH_CLIENT_ID,
+            oauthSecret: value.OAUTH_SECRET
+        };
     }
 }
-export const config = new Config(value.DATABASE_USER, value.DATABASE_CLUSTER, value.DATABASE_NAME, value.DATABASE_PASSWORD, value.API_KEY, value.TOKEN, value.CLIENT_ID, value.OAUTH_CLIENT_ID, value.OAUTH_SECRET);
+// export const config = new Config(
+//   value.DATABASE_USER,
+//   value.DATABASE_CLUSTER,
+//   value.DATABASE_NAME,
+//   value.DATABASE_PASSWORD,
+//   value.API_KEY,
+//   value.TOKEN,
+//   value.CLIENT_ID,
+//   value.OAUTH_CLIENT_ID,
+//   value.OAUTH_SECRET
+// )
 //# sourceMappingURL=config.js.map

@@ -3,9 +3,10 @@ import * as fileSystem from 'fs'
 import * as discord from 'discord.js'
 import * as url from 'url'
 import { DatabaseRepository } from '../database/database-repository.js'
-import { config } from '../../config/config.js'
 import { DestinyService } from '../services/destiny-service.js'
+import { Config } from '../../config/config.js'
 
+const config = new Config()
 const databaseRepo = new DatabaseRepository()
 const destinyService = new DestinyService()
 
@@ -27,7 +28,7 @@ export class DiscordClient {
     discordClient.once(discord.Events.ClientReady, (eventClient: any) => {
       console.log(`Ready, logged in as ${String(eventClient.user.tag)}`)
     })
-    discordClient.login(config.token)
+    discordClient.login(config.configModel.token)
 
     await this.setupSlashCommands(discordClient)
     await this.replyToSlashCommands(discordClient)

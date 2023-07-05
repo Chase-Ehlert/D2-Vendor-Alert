@@ -37,20 +37,21 @@ await dailyReset();
  * Calculates the time till the next Destiny daily reset and waits till then to alert users of vendor inventory
  */
 async function dailyReset() {
-    let today = new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate()));
-    const tomorrowResetTime = new Date();
-    tomorrowResetTime.setDate(today.getDate() + 1);
-    tomorrowResetTime.setUTCHours(17, 2, 0, 0);
-    const waitTime = Number(tomorrowResetTime) - Date.now();
-    if (waitTime > 0) {
-        console.log(`Wait time is: ${waitTime / 1000 / 60 / 60}`);
-        setTimeout(() => startServer, waitTime);
+    const today = new Date();
+    if (today.getMinutes() > 1 && today.getHours() >= 17) {
+        today.setDate(today.getDate() + 1);
+        today.setHours(17);
+        today.setMinutes(1);
     }
     else {
-        console.log('Timeout not required');
-        today = new Date();
-        await startServer();
+        today.setHours(17);
+        today.setMinutes(1);
     }
+    const waitTime = Number(today) - Date.now();
+    console.log(`Wait time on ${today.getDate()} is ${waitTime / 1000 / 60 / 60}`);
+    setTimeout((async () => {
+        await startServer();
+    }), waitTime);
 }
 /**
  * Begin the alert workflow for users and then set the time till the next daily reset

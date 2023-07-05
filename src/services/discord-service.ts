@@ -4,13 +4,13 @@ import { DatabaseRepository } from '../database/database-repository.js'
 import { DestinyService } from './destiny-service.js'
 import { DatabaseService } from './database-service.js'
 import { UserSchema } from '../database/models/user-schema.js'
-import { config } from '../../config/config.js'
 import { User } from '../database/models/user.js'
+import { Config } from '../../config/config.js'
 
 const vendor = new Vendor()
 const databaseRepo = new DatabaseRepository()
 const destinyService = new DestinyService()
-const databaseService = new DatabaseService()
+const databaseService = new DatabaseService(new Config())
 
 export class DiscordService {
   /**
@@ -106,7 +106,7 @@ export class DiscordService {
       },
       {
         headers: {
-          Authorization: `Bot ${config.token}`,
+          Authorization: `Bot ${databaseService.config.configModel.token}`,
           'Content-Type': 'application/json'
         }
       }

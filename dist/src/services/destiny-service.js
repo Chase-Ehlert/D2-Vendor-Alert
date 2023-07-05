@@ -1,6 +1,7 @@
 import axios from 'axios';
-import { config } from '../../config/config.js';
 import { RefreshTokenInfo } from './models/refresh-token-info.js';
+import { Config } from '../../config/config.js';
+const config = new Config();
 export class DestinyService {
     /**
        * Retrieves refresh token for a user
@@ -9,12 +10,12 @@ export class DestinyService {
         await axios.post('https://www.bungie.net/platform/app/oauth/token/', {
             grant_type: 'authorization_code',
             code: authorizationCode,
-            client_secret: config.oauthSecret,
-            client_id: config.oauthClientId
+            client_secret: config.configModel.oauthSecret,
+            client_id: config.configModel.oauthClientId
         }, {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
-                'x-api-key': config.apiKey
+                'x-api-key': config.configModel.apiKey
             }
         }).then((data) => {
             return new RefreshTokenInfo(data.membership_id, data.refresh_expires_in, data.refresh_token);
@@ -30,7 +31,7 @@ export class DestinyService {
     async getDestinyMembershipInfo(membershipId) {
         const { data } = await axios.get(`https://www.bungie.net/platform/User/GetMembershipsById/${membershipId}/3/`, {
             headers: {
-                'x-api-key': config.apiKey
+                'x-api-key': config.configModel.apiKey
             }
         }).catch((error) => {
             console.log('Retreiving Destiny membership info with membership id failed');
@@ -45,7 +46,7 @@ export class DestinyService {
         const getProfiles = 100;
         const { data } = await axios.get(`https://bungie.net/Platform/Destiny2/3/Profile/${destinyMembershipId}/`, {
             headers: {
-                'x-api-key': config.apiKey
+                'x-api-key': config.configModel.apiKey
             },
             params: {
                 components: getProfiles
@@ -72,7 +73,7 @@ export class DestinyService {
     async getManifestFile() {
         const { data } = await axios.get('https://www.bungie.net/Platform/Destiny2/Manifest/', {
             headers: {
-                'x-api-key': config.apiKey
+                'x-api-key': config.configModel.apiKey
             }
         }).catch((error) => {
             console.log('Retreiving the Destiny manifest failed');
@@ -87,11 +88,11 @@ export class DestinyService {
         const { data } = await axios.post('https://www.bungie.net/platform/app/oauth/token/', {
             grant_type: 'refresh_token',
             refresh_token: refreshToken,
-            client_id: config.oauthClientId,
-            client_secret: config.oauthSecret
+            client_id: config.configModel.oauthClientId,
+            client_secret: config.configModel.oauthSecret
         }, {
             headers: {
-                'x-api-key': config.apiKey,
+                'x-api-key': config.configModel.apiKey,
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
         }).catch((error) => {
@@ -110,7 +111,7 @@ export class DestinyService {
         }, {
             headers: {
                 'Content-Type': 'application/json',
-                'x-api-key': config.apiKey
+                'x-api-key': config.configModel.apiKey
             }
         }).catch((error) => {
             console.log('Checking for a Destiny username failed');
@@ -129,7 +130,7 @@ export class DestinyService {
             },
             headers: {
                 Authorization: `Bearer ${accessToken}`,
-                'x-api-key': config.apiKey
+                'x-api-key': config.configModel.apiKey
             }
         }).catch((error) => {
             console.log('Retreiving list of vendors from Destiny failed');
@@ -147,7 +148,7 @@ export class DestinyService {
                 components: getCollectibles
             },
             headers: {
-                'x-api-key': config.apiKey
+                'x-api-key': config.configModel.apiKey
             }
         }).catch((error) => {
             console.log('Retreiving the list of collectibles in Destiny failed');

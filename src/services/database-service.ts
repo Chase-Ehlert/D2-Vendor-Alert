@@ -1,14 +1,20 @@
 import mongoose from 'mongoose'
-import { config } from '../../config/config.js'
+import { Config } from '../../config/config.js'
 
 export class DatabaseService {
+  public readonly config
+
+  constructor (config: Config) {
+    this.config = config
+  }
+
   /**
      * Establishes a connection to the MongoDB for the list of users waiting for an alert
      */
   async connectToDatabase (): Promise<void> {
     mongoose.set('strictQuery', false)
     await mongoose.connect(
-      `mongodb+srv://${config.databaseUser}:${config.databasePassword}@${config.databaseCluster}.mongodb.net/${config.databaseName}`
+      `mongodb+srv://${this.config.configModel.databaseUser}:${this.config.configModel.databasePassword}@${this.config.configModel.databaseCluster}.mongodb.net/${this.config.configModel.databaseName}`
     )
   }
 
