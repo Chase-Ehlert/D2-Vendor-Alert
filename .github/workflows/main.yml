@@ -18,6 +18,9 @@ concurrency:
 jobs:
   update-deployment:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -37,7 +40,7 @@ jobs:
       - name: Lint
         run: npm run lint
       - name: TSC
-        run: tsc
+        run: npm run tsc
       - name: Test
         run: npm run test
       - name: SSH into Droplet
