@@ -1,7 +1,6 @@
-import { Config } from '../../config/config.js';
 import { DatabaseService } from '../services/database-service.js';
 import { UserSchema } from './models/user-schema.js';
-const databaseService = new DatabaseService(new Config());
+const databaseService = new DatabaseService();
 export class DatabaseRepository {
     /**
        * Checks if user exists in database

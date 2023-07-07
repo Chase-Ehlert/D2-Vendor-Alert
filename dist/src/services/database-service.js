@@ -1,14 +1,16 @@
 import mongoose from 'mongoose';
+import { config } from '../../config/config';
 export class DatabaseService {
-    constructor(config) {
-        this.config = config;
-    }
+    // public readonly config
+    // constructor (config: Config) {
+    //   this.config = config
+    // }
     /**
        * Establishes a connection to the MongoDB for the list of users waiting for an alert
        */
     async connectToDatabase() {
         mongoose.set('strictQuery', false);
-        await mongoose.connect(`mongodb+srv://${this.config.configModel.databaseUser}:${this.config.configModel.databasePassword}@${this.config.configModel.databaseCluster}.mongodb.net/${this.config.configModel.databaseName}`);
+        await mongoose.connect(`mongodb+srv://${config.configModel.databaseUser}:${config.configModel.databasePassword}@${config.configModel.databaseCluster}.mongodb.net/${config.configModel.databaseName}`);
     }
     /**
        * Closes the connection to the MongoDB instance

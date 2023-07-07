@@ -1,9 +1,7 @@
 import axios from 'axios'
 import { User } from '../database/models/user.js'
 import { RefreshTokenInfo } from './models/refresh-token-info.js'
-import { Config } from '../../config/config.js'
-
-const config = new Config()
+import { config } from '../../config/config.js'
 
 export class DestinyService {
   /**

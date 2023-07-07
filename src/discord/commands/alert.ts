@@ -1,7 +1,5 @@
 import { hyperlink, SlashCommandBuilder } from 'discord.js'
-import { Config } from '../../../config/config.js'
-
-const config = new Config()
+import { config } from '../../../config/config.js'
 
 export default {
   data: new SlashCommandBuilder()

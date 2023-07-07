@@ -2,7 +2,7 @@ import mongoose from 'mongoose'
 
 mongoose.set('strictQuery', false)
 
-const User = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
   bungie_username: String,
   bungie_username_code: String,
   discord_id: String,
@@ -14,4 +14,4 @@ const User = new mongoose.Schema({
   refresh_token: String
 })
 
-export const UserSchema = mongoose.model('users', User)
+export const UserSchema = mongoose.model('users', userSchema)

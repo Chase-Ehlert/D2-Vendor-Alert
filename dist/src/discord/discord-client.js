@@ -4,8 +4,7 @@ import * as discord from 'discord.js';
 import * as url from 'url';
 import { DatabaseRepository } from '../database/database-repository.js';
 import { DestinyService } from '../services/destiny-service.js';
-import { Config } from '../../config/config.js';
-const config = new Config();
+import { config } from '../../config/config.js';
 const databaseRepo = new DatabaseRepository();
 const destinyService = new DestinyService();
 export class DiscordClient {

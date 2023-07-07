@@ -5,19 +5,26 @@ import { DestinyService } from './destiny-service.js'
 import { DatabaseService } from './database-service.js'
 import { UserSchema } from '../database/models/user-schema.js'
 import { User } from '../database/models/user.js'
-import { Config } from '../../config/config.js'
-
-const vendor = new Vendor()
-const databaseRepo = new DatabaseRepository()
-const destinyService = new DestinyService()
-const databaseService = new DatabaseService(new Config())
+import { config } from '../../config/config.js'
 
 export class DiscordService {
+  private readonly vendor
+  private readonly destinyService
+  private readonly databaseRepo
+  private readonly databaseService
+
+  constructor (vendor: Vendor, destinyService: DestinyService, databaseRepo: DatabaseRepository, databaseService: DatabaseService) {
+    this.vendor = vendor
+    this.destinyService = destinyService
+    this.databaseRepo = databaseRepo
+    this.databaseService = databaseService
+  }
+
   /**
    * Alert registered users about today's vendor inventory
    */
-  async sendMessage (): Promise<void> {
-    await databaseService.connectToDatabase()
+  async getUserInfo (): Promise<void> {
+    await this.databaseService.connectToDatabase()
     for await (const userRecord of UserSchema.find()) {
       let user
       if (
@@ -40,44 +47,50 @@ export class DiscordService {
           userRecord.refresh_expiration,
           userRecord.refresh_token
         )
-        const discordEndpoint = `channels/${user.discordChannelId}/messages`
-        const currentDate = new Date()
-        const expirationDate = new Date(String(user.refreshExpiration))
-        expirationDate.setDate(expirationDate.getDate() - 1)
 
-        if (currentDate.getTime() < expirationDate.getTime()) {
-          console.log('Token does not need to be refreshed')
-        } else {
-          console.log('Token does need to be refreshed')
-          const tokenInfo = await destinyService.getAccessToken(Object(user).refresh_token)
-          await databaseRepo.updateUserByMembershipId(
-            tokenInfo.bungieMembershipId,
-            tokenInfo.refreshTokenExpirationTime,
-            tokenInfo.refreshToken
-          )
-        }
-        await this.compareModListWithUserInventory(user, discordEndpoint)
+        await this.checkRefreshTokenExpiration(user)
+        await this.compareModListWithUserInventory(user)
       }
     }
-    await databaseService.disconnectToDatabase()
+    await this.databaseService.disconnectToDatabase()
+  }
+
+  /**
+   * Check the token expiration date and update it if it's expired
+   */
+  private async checkRefreshTokenExpiration (user: User): Promise<void> {
+    const currentDate = new Date()
+    const expirationDate = new Date(String(user.refreshExpiration))
+    expirationDate.setDate(expirationDate.getDate() - 1)
+
+    if (currentDate.getTime() > expirationDate.getTime()) {
+      const tokenInfo = await this.destinyService.getAccessToken(user.refreshToken)
+      await this.databaseRepo.updateUserByMembershipId(
+        tokenInfo.bungieMembershipId,
+        tokenInfo.refreshTokenExpirationTime,
+        tokenInfo.refreshToken
+      )
+    }
   }
 
   /**
    * Check whether any mods for sale are owned by the user
    */
-  async compareModListWithUserInventory (user: User, discordEndpoint: string): Promise<void> {
-    const unownedModList = await vendor.getProfileCollectibles(user)
+  private async compareModListWithUserInventory (user: User): Promise<void> {
+    const discordEndpoint = `channels/${user.discordChannelId}/messages`
+    const unownedModList = await this.vendor.getProfileCollectibles(user)
+
     if (unownedModList.length > 0) {
-      await this.shareUnownedModsList(discordEndpoint, user.discordId, unownedModList)
+      await this.messageUnownedModsList(discordEndpoint, user.discordId, unownedModList)
     } else {
-      await this.shareEmptyModsList(discordEndpoint, user.bungieUsername)
+      await this.messageEmptyModsList(discordEndpoint, user.bungieUsername)
     }
   }
 
   /**
    * Send alert message for unowned mods
    */
-  async shareUnownedModsList (discordEndpoint: string, discordId: string, unownedModList: string[]): Promise<void> {
+  private async messageUnownedModsList (discordEndpoint: string, discordId: string, unownedModList: string[]): Promise<void> {
     let message = `<@${discordId}>\r\nYou have these unowned mods for sale, grab them!`
 
     unownedModList.forEach(mod => {
@@ -90,7 +103,7 @@ export class DiscordService {
   /**
    * Send update message for no alert required
    */
-  async shareEmptyModsList (discordEndpoint: string, username: string): Promise<void> {
+  private async messageEmptyModsList (discordEndpoint: string, username: string): Promise<void> {
     const message = `${username} does not have any unowned mods for sale today.`
 
     await this.discordRequest(discordEndpoint, message)
@@ -99,14 +112,14 @@ export class DiscordService {
   /**
    * Send off message to user's desired Discord alert channel
    */
-  async discordRequest (endpoint: string, message: string): Promise<void> {
+  private async discordRequest (endpoint: string, message: string): Promise<void> {
     const result = await axios.post('https://discord.com/api/v10/' + endpoint,
       {
         content: message
       },
       {
         headers: {
-          Authorization: `Bot ${databaseService.config.configModel.token}`,
+          Authorization: `Bot ${config.configModel.token}`,
           'Content-Type': 'application/json'
         }
       }

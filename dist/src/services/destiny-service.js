@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { RefreshTokenInfo } from './models/refresh-token-info.js';
-import { Config } from '../../config/config.js';
-const config = new Config();
+import { config } from '../../config/config.js';
 export class DestinyService {
     /**
        * Retrieves refresh token for a user

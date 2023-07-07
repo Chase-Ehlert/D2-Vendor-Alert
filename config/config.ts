@@ -12,7 +12,7 @@ const environmentVariableSchema = joi
     TOKEN: joi.string().required(),
     CLIENT_ID: joi.string().required(),
     OAUTH_CLIENT_ID: joi.string().required(),
-    OAUTH_SECRET: joi.string().required(),
+    OAUTH_SECRET: joi.string().required()
   })
   .unknown()
 
@@ -36,7 +36,7 @@ type ConfigModel = {
   oauthSecret: string
 }
 
-export class Config {
+class Config {
   public configModel: ConfigModel
 
   constructor() {
@@ -54,14 +54,4 @@ export class Config {
   }
 }
 
-// export const config = new Config(
-//   value.DATABASE_USER,
-//   value.DATABASE_CLUSTER,
-//   value.DATABASE_NAME,
-//   value.DATABASE_PASSWORD,
-//   value.API_KEY,
-//   value.TOKEN,
-//   value.CLIENT_ID,
-//   value.OAUTH_CLIENT_ID,
-//   value.OAUTH_SECRET
-// )
+export const config = new Config()

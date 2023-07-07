@@ -1,12 +1,11 @@
+import { config } from '../../config/config.js'
 import { DatabaseService } from './database-service.js'
 import mongoose from 'mongoose'
-import { Config } from './../../config/config.js'
-
-jest.mock('./../../config/config.js')
 
 describe('<DatabaseService/>', () => {
+  let databaseService = new DatabaseService()
+
   it('should instantiate', () => {
-    const databaseService = new DatabaseService(new Config())
     expect(databaseService).not.toBeNull()
   })
 
@@ -15,16 +14,15 @@ describe('<DatabaseService/>', () => {
     const expectedDatabasePassword = '123'
     const expectedDatabaseCluster = 'someCluster'
     const expectedDatabaseName = 'someName'
-    const configMock = new Config()
-    configMock.configModel = {
-      ...configMock.configModel,
+    config.configModel = {
+      ...config.configModel,
       databaseUser: expectedDatabaseUser,
       databasePassword: expectedDatabasePassword,
       databaseCluster: expectedDatabaseCluster,
       databaseName: expectedDatabaseName
     }
 
-    const databaseService = new DatabaseService(configMock)
+    databaseService = new DatabaseService()
 
     mongoose.connect = jest.fn()
 
@@ -36,7 +34,6 @@ describe('<DatabaseService/>', () => {
   })
 
   it('should disconnest the connection to the mongo database', async () => {
-    const databaseService = new DatabaseService(new Config())
     const disconnectMock = jest.fn()
     jest.spyOn(mongoose, 'disconnect').mockImplementation(disconnectMock)
 

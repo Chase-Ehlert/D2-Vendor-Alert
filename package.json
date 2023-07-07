@@ -5,7 +5,7 @@
   "scripts": {
     "lint": "eslint \"./src/**/*.ts\" --fix",
     "tsc": "tsc",
-    "test": "jest",
+    "test": "jest --coverage",
     "start": "ts-node-esm src/app.ts",
     "jsdoc": "jsdoc -c jsdoc.json"
   },

@@ -1,7 +1,6 @@
 import * as fs from 'fs';
 import { REST, Routes } from 'discord.js';
-import { Config } from '../../config/config.js';
-const config = new Config();
+import { config } from '../../config/config.js';
 const commands = [];
 const commandFiles = fs.readdirSync('./src/discord/commands').filter(file => file.endsWith('.ts'));
 for (const file of commandFiles) {
