@@ -50,8 +50,8 @@ describe('<DiscordService/>', () => {
     }
     const databaseUsers = [databaseUser1, databaseUser2]
     const expectedTokenInfo = new RefreshTokenInfo('0', '1', '2')
-    const connectToDatabaseMock = jest.spyOn(DatabaseService.prototype, 'connectToDatabase').mockResolvedValue()
-    const disconnectToDatabaseMock = jest.spyOn(DatabaseService.prototype, 'disconnectToDatabase').mockResolvedValue()
+    const connectToDatabaseMock = jest.spyOn(databaseService, 'connectToDatabase').mockResolvedValue()
+    const disconnectToDatabaseMock = jest.spyOn(databaseService, 'disconnectToDatabase').mockResolvedValue()
     const getAccessTokenMock = jest.spyOn(destinyService, 'getAccessToken').mockResolvedValue(expectedTokenInfo)
     const updateUserByMembershipIdMock = jest.spyOn(databaseRepo, 'updateUserByMembershipId').mockResolvedValue()
 

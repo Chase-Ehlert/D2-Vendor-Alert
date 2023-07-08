@@ -3,7 +3,7 @@ import { ManifestService } from '../services/manifest-service.js';
 import { DestinyService } from '../services/destiny-service.js';
 const destinyService = new DestinyService();
 const databaseRepo = new DatabaseRepository();
-const manifestService = new ManifestService();
+const manifestService = new ManifestService(destinyService);
 export class Vendor {
     /**
      * Collect mods for a specific vendor

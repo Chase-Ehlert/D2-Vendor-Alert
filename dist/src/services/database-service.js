@@ -1,10 +1,6 @@
 import mongoose from 'mongoose';
-import { config } from '../../config/config';
+import { config } from '../../config/config.js';
 export class DatabaseService {
-    // public readonly config
-    // constructor (config: Config) {
-    //   this.config = config
-    // }
     /**
        * Establishes a connection to the MongoDB for the list of users waiting for an alert
        */

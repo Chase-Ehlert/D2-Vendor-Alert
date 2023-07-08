@@ -82,7 +82,7 @@ export class DestinyService {
   /**
      * Call the Destiny API to retreive the manifest
      */
-  async getManifestFile (): Promise<any> {
+  async getManifestFile (): Promise<string> {
     const { data } = await axios.get('https://www.bungie.net/Platform/Destiny2/Manifest/', {
       headers: {
         'x-api-key': config.configModel.apiKey

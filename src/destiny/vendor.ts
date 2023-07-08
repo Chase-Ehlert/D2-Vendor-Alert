@@ -5,7 +5,7 @@ import { User } from '../database/models/user.js'
 
 const destinyService = new DestinyService()
 const databaseRepo = new DatabaseRepository()
-const manifestService = new ManifestService()
+const manifestService = new ManifestService(destinyService)
 
 export class Vendor {
   /**

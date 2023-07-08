@@ -1,136 +1,112 @@
 import * as fs from 'fs'
 import { DestinyService } from './destiny-service.js'
 
-const destinyService = new DestinyService()
 const fsPromises = fs.promises
 
 export class ManifestService {
+  private readonly destinyService
+
+  constructor (destinyService: DestinyService) {
+    this.destinyService = destinyService
+  }
+
   /**
    * Collect names of mods for sale from the manifest
    */
-  async getItemFromManifest (itemType: number, itemList: string[]): Promise<string[]> {
-    let inventoryNameList: string[] = []
-    const manifestFileName = await destinyService.getManifestFile()
-    const destinyInventoryItemDefinition = await destinyService.getDestinyInventoryItemDefinition(manifestFileName)
+  async getItemFromManifest (itemType: number, itemList: Object): Promise<string[]> {
+    const manifestFileName = await this.destinyService.getManifestFile()
+    const destinyInventoryItemDefinition = await this.destinyService.getDestinyInventoryItemDefinition(manifestFileName)
 
-    inventoryNameList = await this.readItemsFromManifest(
+    return await this.readItemsFromManifest(
       itemType,
-      inventoryNameList,
       itemList,
       destinyInventoryItemDefinition
     )
-
-    return inventoryNameList
   }
 
   /**
    * Compile list of mod names from manifest or create the manifest and then compile the list
    */
-  async readItemsFromManifest (
+  private async readItemsFromManifest (
     itemType: number,
-    inventoryNameList: string[],
-    itemList: string[],
-    destinyInventoryItemDefinition: any
+    itemList: Object,
+    destinyInventoryItemDefinition: Object
   ): Promise<string[]> {
     try {
       await fsPromises.access('manifest-items.json', fs.constants.F_OK)
-      inventoryNameList = await this.readFile(itemType, 'manifest-items.json', itemList, inventoryNameList, false)
+      return await this.readFile(itemType, 'manifest-items.json', itemList, false)
     } catch (error) {
-      inventoryNameList = await this.writeFile(itemType, 'manifest-items.json', destinyInventoryItemDefinition, itemList, inventoryNameList, false)
+      return await this.writeFile(itemType, 'manifest-items.json', destinyInventoryItemDefinition, itemList, false)
     }
-    return inventoryNameList
   }
 
   /**
    * Get the manifest file and read the list of collectibles from it
    */
-  async getCollectibleFromManifest (itemType: number, itemList: string[]): Promise<string[]> {
-    let inventoryNameList: string[] = []
-    const manifestFileName = await destinyService.getManifestFile()
-
-    const newData = await destinyService.getDestinyInventoryItemDefinition(manifestFileName)
-    inventoryNameList = await this.readCollectiblesFromManifest(
-      itemType,
-      inventoryNameList,
-      itemList,
-      newData
-    )
-
-    return inventoryNameList
+  async getCollectibleFromManifest (itemType: number, itemList: Object): Promise<string[]> {
+    const manifestFileName = await this.destinyService.getManifestFile()
+    const newData = await this.destinyService.getDestinyInventoryItemDefinition(manifestFileName)
+    return await this.readCollectiblesFromManifest(itemType, itemList, newData)
   }
 
   /**
    * Compile list of collectibles from Destiny's manifest or create the manifest and then compile the list
    */
-  async readCollectiblesFromManifest (itemType: number, inventoryNameList: string[], itemList: string[], data: any): Promise<string[]> {
+  private async readCollectiblesFromManifest (itemType: number, itemList: Object, data: any): Promise<string[]> {
     try {
       await fsPromises.access('manifest-collectibles.json', fs.constants.F_OK)
-      inventoryNameList = await this.readFile(
+      const value = await this.readFile(
         itemType,
         'manifest-collectibles.json',
         itemList,
-        inventoryNameList,
         true
       )
+      return value
     } catch (error) {
-      inventoryNameList = await this.writeFile(
+      return await this.writeFile(
         itemType,
         'manifest-collectibles.json',
-        data.data.DestinyCollectibleDefinition,
+        data,
         itemList,
-        inventoryNameList,
         true
       )
     }
-    return inventoryNameList
   }
 
   /**
    * Read manifest file for a list of names of collectibles or items
    */
-  async readFile (itemType: number, fileName: string, itemList: string[], inventoryNameList: string[], collectible: boolean): Promise<string[]> {
-    await fsPromises.readFile(fileName)
+  private async readFile (itemType: number, fileName: string, itemList: Object, collectible: boolean): Promise<string[]> {
+    return await fsPromises.readFile(fileName)
       .then((fileContents) => {
         if (collectible) {
-          inventoryNameList = this.getCollectibleName(itemList, JSON.parse(String(fileContents)))
+          return this.getCollectibleName(itemList, JSON.parse(String(fileContents)))
         } else {
-          inventoryNameList = this.getItemName(itemType, itemList, JSON.parse(String(fileContents)))
+          return this.getItemName(itemType, itemList, JSON.parse(String(fileContents)))
         }
       })
-      .catch((error) => {
-        console.log('Error reading file!')
-        throw error
-      })
-
-    return inventoryNameList
   }
 
   /**
    * Write manifest file and then read it for a list of names of collectibles or items
    */
-  async writeFile (itemType: number, fileName: string, manifestData: Object, itemList: string[], inventoryNameList: string[], collectible: boolean): Promise<string[]> {
-    await fsPromises.writeFile(fileName, JSON.stringify(manifestData))
+  private async writeFile (itemType: number, fileName: string, manifestData: Object, itemList: Object, collectible: boolean): Promise<string[]> {
+    return await fsPromises.writeFile(fileName, JSON.stringify(manifestData))
       .then(() => {
         if (collectible) {
-          inventoryNameList = this.getCollectibleName(itemList, manifestData)
+          return this.getCollectibleName(itemList, manifestData)
         } else {
-          inventoryNameList = this.getItemName(itemType, itemList, manifestData)
+          return this.getItemName(itemType, itemList, manifestData)
         }
       })
-      .catch((error) => {
-        console.log('Error while writing!')
-        throw error
-      })
-
-    return inventoryNameList
   }
 
   /**
    * Compile list of names for items on sale
    */
-  getItemName (itemType: number, inventoryItemList: string[], manifest: any): string[] {
+  private getItemName (itemType: number, itemList: Object, manifest: any): string[] {
     const manifestKeys = Object.keys(manifest)
-    const itemListValues = Object.values(inventoryItemList)
+    const itemListValues = Object.values(itemList)
     const itemHashList: string[] = []
     const itemNameList = []
 
@@ -152,13 +128,14 @@ export class ManifestService {
   /**
    * Compile list of names for collectibles on sale
    */
-  getCollectibleName (inventoryItemList: string[], manifest: any): string[] {
+  private getCollectibleName (itemList: Object, manifest: any): string[] {
     const itemNameList = []
+    const itemListKeys = Object.keys(itemList)
     const manifestKeys = Object.keys(manifest)
 
     for (let i = 0; i < manifestKeys.length; i++) {
-      for (const item of inventoryItemList) {
-        if (manifestKeys[i] === item) {
+      for (let j = 0; j < itemListKeys.length; j++) {
+        if (manifestKeys[i] === itemListKeys[j]) {
           itemNameList.push(manifest[manifestKeys[i]].displayProperties.name)
         }
       }
@@ -170,7 +147,7 @@ export class ManifestService {
   /**
    * Check whether an item from the manifest is for sale or not
    */
-  canManifestItemBeAdded (itemType: number, itemHashList: string[], manifest: any, manifestKeys: string[], index: number, itemNameList: string[]): boolean {
+  private canManifestItemBeAdded (itemType: number, itemHashList: string[], manifest: any, manifestKeys: string[], index: number, itemNameList: string[]): boolean {
     return itemHashList.includes(manifest[manifestKeys[index]].hash) &&
       manifest[manifestKeys[index]].itemType === itemType &&
       !itemNameList.includes(manifest[manifestKeys[index]].collectibleHash)

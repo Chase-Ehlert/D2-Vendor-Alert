@@ -1,5 +1,5 @@
 import { hyperlink, SlashCommandBuilder } from 'discord.js';
-import { config } from '../../../config/config';
+import { config } from '../../../config/config.js';
 export default {
     data: new SlashCommandBuilder()
         .setName('alert')

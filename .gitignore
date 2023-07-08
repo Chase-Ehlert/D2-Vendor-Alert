@@ -3,3 +3,4 @@ node_modules
 aggregate*.json
 manifest*.json
 dist
+coverage
