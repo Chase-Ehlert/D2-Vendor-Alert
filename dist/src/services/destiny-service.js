@@ -71,7 +71,6 @@ export class DestinyService {
                 'x-api-key': config.configModel.apiKey
             }
         }).catch((error) => {
-            console.log('Retreiving the Destiny manifest failed');
             throw error;
         });
         return data.Response.jsonWorldContentPaths.en;
@@ -126,7 +125,6 @@ export class DestinyService {
                 'x-api-key': config.configModel.apiKey
             }
         }).catch((error) => {
-            console.log('Retreiving list of vendors from Destiny failed');
             throw error;
         });
         return data.Response.sales.data;
@@ -144,7 +142,6 @@ export class DestinyService {
                 'x-api-key': config.configModel.apiKey
             }
         }).catch((error) => {
-            console.log('Retreiving the list of collectibles in Destiny failed');
             throw error;
         });
         return data.Response.profileCollectibles.data.collectibles;

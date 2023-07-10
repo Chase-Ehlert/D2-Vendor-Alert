@@ -1,8 +1,9 @@
 import { DatabaseRepository } from '../database/database-repository.js';
 import { ManifestService } from '../services/manifest-service.js';
 import { DestinyService } from '../services/destiny-service.js';
+import { DatabaseService } from '../services/database-service.js';
 const destinyService = new DestinyService();
-const databaseRepo = new DatabaseRepository();
+const databaseRepo = new DatabaseRepository(new DatabaseService());
 const manifestService = new ManifestService(destinyService);
 export class Vendor {
     /**

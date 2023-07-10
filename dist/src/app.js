@@ -15,7 +15,7 @@ const landingPagePath = path.join(url.fileURLToPath(new URL('./', import.meta.ur
 app.set('views', landingPagePath);
 const directoryName = path.dirname('app');
 const destinyService = new DestinyService();
-const databaseRepo = new DatabaseRepository();
+const databaseRepo = new DatabaseRepository(new DatabaseService());
 const discordClient = new DiscordClient();
 const discordService = new DiscordService(new Vendor(), destinyService, databaseRepo, new DatabaseService());
 await discordClient.setupDiscordClient();

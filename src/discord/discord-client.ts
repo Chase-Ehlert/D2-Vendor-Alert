@@ -5,8 +5,10 @@ import * as url from 'url'
 import { DatabaseRepository } from '../database/database-repository.js'
 import { DestinyService } from '../services/destiny-service.js'
 import { config } from '../../config/config.js'
+import { UserSchema } from '../database/models/user-schema.js'
+import { DatabaseService } from '../services/database-service.js'
 
-const databaseRepo = new DatabaseRepository()
+const databaseRepo = new DatabaseRepository(new DatabaseService())
 const destinyService = new DestinyService()
 
 export class DiscordClient {
@@ -113,7 +115,13 @@ export class DiscordClient {
     const index = username.indexOf('#')
     const bungieUsername = username.substring(0, index)
     const bungieUsernameCode = username.substring(Number(index) + 1, username.length)
-    await databaseRepo.addUser(bungieUsername, bungieUsernameCode, interaction.user.id, interaction.channelId)
+
+    await databaseRepo.addUser(new UserSchema({
+      bungie_username: bungieUsername,
+      bungie_username_code: bungieUsernameCode,
+      discord_id: interaction.user.id,
+      discord_channel_id: interaction.channelId
+    }))
     command.execute(interaction)
   }
 

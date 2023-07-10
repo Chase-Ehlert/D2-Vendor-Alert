@@ -18,7 +18,7 @@ app.set('views', landingPagePath)
 
 const directoryName = path.dirname('app')
 const destinyService = new DestinyService()
-const databaseRepo = new DatabaseRepository()
+const databaseRepo = new DatabaseRepository(new DatabaseService())
 const discordClient = new DiscordClient()
 const discordService = new DiscordService(new Vendor(), destinyService, databaseRepo, new DatabaseService())
 
@@ -66,7 +66,7 @@ async function dailyReset (): Promise<void> {
   console.log(`Wait time on ${today.getDate()} is ${waitTime / 1000 / 60 / 60}`)
   setTimeout((async () => {
     await startServer()
-  }) as RequestHandler, waitTime)
+  }) as RequestHandler, 1000)
 }
 
 /**

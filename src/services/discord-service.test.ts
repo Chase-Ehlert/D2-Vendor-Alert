@@ -11,8 +11,8 @@ import axios from 'axios'
 describe('<DiscordService/>', () => {
   const vendor = new Vendor()
   const destinyService = new DestinyService()
-  const databaseRepo = new DatabaseRepository()
   const databaseService = new DatabaseService()
+  const databaseRepo = new DatabaseRepository(databaseService)
   const discordService = new DiscordService(vendor, destinyService, databaseRepo, databaseService)
 
   jest.mock('axios')
