@@ -6,7 +6,7 @@ export class DestinyService {
        * Retrieves refresh token for a user
        */
     async getRefreshToken(authorizationCode, result) {
-        await axios.post('https://www.bungie.net/platform/app/oauth/token/', {
+        return await axios.post('https://www.bungie.net/platform/app/oauth/token/', {
             grant_type: 'authorization_code',
             code: authorizationCode,
             client_secret: config.configModel.oauthSecret,
@@ -18,8 +18,7 @@ export class DestinyService {
             }
         }).then((data) => {
             return new RefreshTokenInfo(data.membership_id, data.refresh_expires_in, data.refresh_token);
-        }).catch(async (error) => {
-            console.log('Retreiving refresh token with authorization code failed');
+        }).catch((error) => {
             result.redirect('/error/authCode');
             console.error(error);
         });
@@ -33,7 +32,6 @@ export class DestinyService {
                 'x-api-key': config.configModel.apiKey
             }
         }).catch((error) => {
-            console.log('Retreiving Destiny membership info with membership id failed');
             throw error;
         });
         return [data.Response.destinyMemberships[0].membershipId, data.Response.destinyMemberships[0].displayName];
@@ -51,7 +49,6 @@ export class DestinyService {
                 components: getProfiles
             }
         }).catch((error) => {
-            console.log('Retreiving Destiny character info failed');
             throw error;
         });
         return data.Response.profile.data.characterIds[0];
@@ -61,7 +58,6 @@ export class DestinyService {
        */
     async getDestinyInventoryItemDefinition(manifestFileName) {
         const { data } = await axios.get('https://www.bungie.net' + manifestFileName).catch((error) => {
-            console.log('Retreiving Destiny inventory item definition failed');
             throw error;
         });
         return data.DestinyInventoryItemDefinition;
@@ -95,7 +91,6 @@ export class DestinyService {
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
         }).catch((error) => {
-            console.log('Retreiving a Destiny access token failed');
             throw error;
         });
         return new RefreshTokenInfo(data.membership_id, data.refresh_expires_in, data.refresh_token, data.access_token);
@@ -113,7 +108,6 @@ export class DestinyService {
                 'x-api-key': config.configModel.apiKey
             }
         }).catch((error) => {
-            console.log('Checking for a Destiny username failed');
             throw error;
         });
         return data.Response;

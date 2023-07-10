@@ -33,6 +33,7 @@ app.get('/error/authCode', ((request, result) => {
 }) as RequestHandler)
 
 app.get('/', (async (request, result) => {
+  console.log(result)
   if (request.query.code !== undefined) {
     const guardian = await handleAuthorizationCode(String(request.query.code), result)
 
@@ -65,7 +66,7 @@ async function dailyReset (): Promise<void> {
   console.log(`Wait time on ${today.getDate()} is ${waitTime / 1000 / 60 / 60}`)
   setTimeout((async () => {
     await startServer()
-  }) as RequestHandler, waitTime)
+  }) as RequestHandler, 1000)
 }
 
 /**

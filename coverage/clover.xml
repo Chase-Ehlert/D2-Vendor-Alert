@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1688839654080" clover="3.2.0">
-  <project timestamp="1688839654081" name="All files">
-    <metrics statements="208" coveredstatements="128" conditionals="27" coveredconditionals="23" methods="53" coveredmethods="26" elements="288" coveredelements="177" complexity="0" loc="208" ncloc="208" packages="6" files="10" classes="10"/>
+<coverage generated="1689001026783" clover="3.2.0">
+  <project timestamp="1689001026783" name="All files">
+    <metrics statements="199" coveredstatements="159" conditionals="27" coveredconditionals="23" methods="53" coveredmethods="45" elements="279" coveredelements="227" complexity="0" loc="199" ncloc="199" packages="6" files="10" classes="10"/>
     <package name="config">
       <metrics statements="8" coveredstatements="7" conditionals="1" coveredconditionals="0" methods="1" coveredmethods="1"/>
       <file name="config.ts" path="C:\Users\Chase\workspaces\D2-Vendor-Alert\config\config.ts">
         <metrics statements="8" coveredstatements="7" conditionals="1" coveredconditionals="0" methods="1" coveredmethods="1"/>
-        <line num="1" count="3" type="stmt"/>
-        <line num="2" count="3" type="stmt"/>
-        <line num="4" count="3" type="stmt"/>
-        <line num="19" count="3" type="stmt"/>
-        <line num="23" count="3" type="cond" truecount="0" falsecount="1"/>
+        <line num="1" count="4" type="stmt"/>
+        <line num="2" count="4" type="stmt"/>
+        <line num="4" count="4" type="stmt"/>
+        <line num="19" count="4" type="stmt"/>
+        <line num="23" count="4" type="cond" truecount="0" falsecount="1"/>
         <line num="24" count="0" type="stmt"/>
-        <line num="43" count="3" type="stmt"/>
-        <line num="57" count="3" type="stmt"/>
+        <line num="43" count="4" type="stmt"/>
+        <line num="57" count="4" type="stmt"/>
       </file>
     </package>
     <package name="src.database">
@@ -57,15 +57,15 @@
       </file>
       <file name="user.ts" path="C:\Users\Chase\workspaces\D2-Vendor-Alert\src\database\models\user.ts">
         <metrics statements="9" coveredstatements="9" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
-        <line num="1" count="1" type="stmt"/>
-        <line num="3" count="12" type="stmt"/>
-        <line num="4" count="12" type="stmt"/>
-        <line num="5" count="12" type="stmt"/>
-        <line num="6" count="12" type="stmt"/>
-        <line num="7" count="12" type="stmt"/>
-        <line num="8" count="12" type="stmt"/>
-        <line num="9" count="12" type="stmt"/>
-        <line num="10" count="12" type="stmt"/>
+        <line num="1" count="2" type="stmt"/>
+        <line num="3" count="14" type="stmt"/>
+        <line num="4" count="14" type="stmt"/>
+        <line num="5" count="14" type="stmt"/>
+        <line num="6" count="14" type="stmt"/>
+        <line num="7" count="14" type="stmt"/>
+        <line num="8" count="14" type="stmt"/>
+        <line num="9" count="14" type="stmt"/>
+        <line num="10" count="14" type="stmt"/>
       </file>
     </package>
     <package name="src.destiny">
@@ -100,7 +100,7 @@
       </file>
     </package>
     <package name="src.services">
-      <metrics statements="133" coveredstatements="92" conditionals="23" coveredconditionals="23" methods="42" coveredmethods="23"/>
+      <metrics statements="124" coveredstatements="123" conditionals="23" coveredconditionals="23" methods="42" coveredmethods="42"/>
       <file name="database-service.ts" path="C:\Users\Chase\workspaces\D2-Vendor-Alert\src\services\database-service.ts">
         <metrics statements="6" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
         <line num="1" count="2" type="stmt"/>
@@ -111,51 +111,42 @@
         <line num="19" count="1" type="stmt"/>
       </file>
       <file name="destiny-service.ts" path="C:\Users\Chase\workspaces\D2-Vendor-Alert\src\services\destiny-service.ts">
-        <metrics statements="44" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="19" coveredmethods="0"/>
-        <line num="1" count="2" type="stmt"/>
-        <line num="3" count="2" type="stmt"/>
-        <line num="4" count="2" type="stmt"/>
-        <line num="6" count="2" type="stmt"/>
-        <line num="11" count="0" type="stmt"/>
-        <line num="22" count="0" type="stmt"/>
-        <line num="24" count="0" type="stmt"/>
-        <line num="25" count="0" type="stmt"/>
-        <line num="26" count="0" type="stmt"/>
-        <line num="34" count="0" type="stmt"/>
-        <line num="40" count="0" type="stmt"/>
-        <line num="41" count="0" type="stmt"/>
-        <line num="44" count="0" type="stmt"/>
-        <line num="51" count="0" type="stmt"/>
-        <line num="52" count="0" type="stmt"/>
-        <line num="61" count="0" type="stmt"/>
-        <line num="62" count="0" type="stmt"/>
-        <line num="65" count="0" type="stmt"/>
-        <line num="72" count="0" type="stmt"/>
-        <line num="75" count="0" type="stmt"/>
-        <line num="76" count="0" type="stmt"/>
-        <line num="79" count="0" type="stmt"/>
-        <line num="86" count="0" type="stmt"/>
-        <line num="91" count="0" type="stmt"/>
-        <line num="92" count="0" type="stmt"/>
-        <line num="95" count="0" type="stmt"/>
-        <line num="102" count="0" type="stmt"/>
-        <line num="113" count="0" type="stmt"/>
-        <line num="114" count="0" type="stmt"/>
-        <line num="117" count="0" type="stmt"/>
-        <line num="124" count="0" type="stmt"/>
-        <line num="133" count="0" type="stmt"/>
-        <line num="134" count="0" type="stmt"/>
-        <line num="137" count="0" type="stmt"/>
-        <line num="144" count="0" type="stmt"/>
-        <line num="145" count="0" type="stmt"/>
-        <line num="155" count="0" type="stmt"/>
-        <line num="156" count="0" type="stmt"/>
-        <line num="159" count="0" type="stmt"/>
-        <line num="166" count="0" type="stmt"/>
-        <line num="167" count="0" type="stmt"/>
-        <line num="175" count="0" type="stmt"/>
-        <line num="176" count="0" type="stmt"/>
-        <line num="179" count="0" type="stmt"/>
+        <metrics statements="35" coveredstatements="35" conditionals="0" coveredconditionals="0" methods="19" coveredmethods="19"/>
+        <line num="1" count="3" type="stmt"/>
+        <line num="3" count="3" type="stmt"/>
+        <line num="4" count="3" type="stmt"/>
+        <line num="6" count="3" type="stmt"/>
+        <line num="11" count="2" type="stmt"/>
+        <line num="22" count="1" type="stmt"/>
+        <line num="24" count="1" type="stmt"/>
+        <line num="25" count="1" type="stmt"/>
+        <line num="33" count="3" type="stmt"/>
+        <line num="39" count="2" type="stmt"/>
+        <line num="42" count="1" type="stmt"/>
+        <line num="49" count="3" type="stmt"/>
+        <line num="50" count="3" type="stmt"/>
+        <line num="59" count="2" type="stmt"/>
+        <line num="62" count="1" type="stmt"/>
+        <line num="69" count="3" type="stmt"/>
+        <line num="72" count="2" type="stmt"/>
+        <line num="75" count="1" type="stmt"/>
+        <line num="82" count="3" type="stmt"/>
+        <line num="88" count="2" type="stmt"/>
+        <line num="91" count="1" type="stmt"/>
+        <line num="98" count="3" type="stmt"/>
+        <line num="109" count="2" type="stmt"/>
+        <line num="112" count="1" type="stmt"/>
+        <line num="119" count="3" type="stmt"/>
+        <line num="128" count="2" type="stmt"/>
+        <line num="131" count="1" type="stmt"/>
+        <line num="138" count="3" type="stmt"/>
+        <line num="139" count="3" type="stmt"/>
+        <line num="149" count="2" type="stmt"/>
+        <line num="152" count="1" type="stmt"/>
+        <line num="159" count="3" type="stmt"/>
+        <line num="160" count="3" type="stmt"/>
+        <line num="168" count="2" type="stmt"/>
+        <line num="171" count="1" type="stmt"/>
       </file>
       <file name="discord-service.ts" path="C:\Users\Chase\workspaces\D2-Vendor-Alert\src\services\discord-service.ts">
         <metrics statements="36" coveredstatements="36" conditionals="13" coveredconditionals="13" methods="8" coveredmethods="8"/>
@@ -251,11 +242,11 @@
       <metrics statements="5" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
       <file name="refresh-token-info.ts" path="C:\Users\Chase\workspaces\D2-Vendor-Alert\src\services\models\refresh-token-info.ts">
         <metrics statements="5" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
-        <line num="1" count="2" type="stmt"/>
-        <line num="3" count="1" type="stmt"/>
-        <line num="4" count="1" type="stmt"/>
-        <line num="5" count="1" type="stmt"/>
-        <line num="6" count="1" type="stmt"/>
+        <line num="1" count="3" type="stmt"/>
+        <line num="3" count="5" type="stmt"/>
+        <line num="4" count="5" type="stmt"/>
+        <line num="5" count="5" type="stmt"/>
+        <line num="6" count="5" type="stmt"/>
       </file>
     </package>
   </project>

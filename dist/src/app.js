@@ -26,6 +26,7 @@ app.get('/error/authCode', ((request, result) => {
     result.sendFile('src/views/landing-page-error-auth-code.html', { root: directoryName });
 }));
 app.get('/', (async (request, result) => {
+    console.log(result);
     if (request.query.code !== undefined) {
         const guardian = await handleAuthorizationCode(String(request.query.code), result);
         result.render('landing-page.mustache', { guardian });
