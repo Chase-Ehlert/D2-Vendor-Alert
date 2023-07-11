@@ -11,10 +11,10 @@ import { DatabaseService } from './services/database-service.js'
 import { ManifestService } from './services/manifest-service.js'
 
 const app = express()
+const landingPagePath = path.join(url.fileURLToPath(new URL('./', import.meta.url)), 'views')
+
 app.engine('mustache', mustacheExpress())
 app.set('view engine', 'mustache')
-
-const landingPagePath = path.join(url.fileURLToPath(new URL('./', import.meta.url)), 'views')
 app.set('views', landingPagePath)
 
 const directoryName = path.dirname('app')

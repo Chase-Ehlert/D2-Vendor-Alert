@@ -12,9 +12,7 @@ export class DatabaseRepository {
      * Checks if user exists in database
      */
   async doesUserExist (bungieNetUsername: string): Promise<boolean> {
-    await this.databaseService.connectToDatabase()
     const doesUserExist = !((await UserSchema.exists({ bungie_username: bungieNetUsername }).exec()) == null)
-    await this.databaseService.disconnectToDatabase()
 
     return doesUserExist
   }
@@ -23,9 +21,7 @@ export class DatabaseRepository {
      * Adds the specified user's information to the database
      */
   async addUser (user: any): Promise<void> {
-    await this.databaseService.connectToDatabase()
     await user.save()
-    await this.databaseService.disconnectToDatabase()
   }
 
   /**
@@ -42,7 +38,6 @@ export class DatabaseRepository {
     const expirationDate = new Date()
     expirationDate.setDate(expirationDate.getDate() + daysTillTokenExpires)
 
-    await this.databaseService.connectToDatabase()
     await UserSchema.updateOne(
       { bungie_username: bungieUsername },
       {
@@ -53,7 +48,6 @@ export class DatabaseRepository {
           refresh_token: refreshToken
         }
       })
-    await this.databaseService.disconnectToDatabase()
   }
 
   /**
@@ -68,7 +62,6 @@ export class DatabaseRepository {
     const expirationDate = new Date()
     expirationDate.setDate(expirationDate.getDate() + daysTillTokenExpires)
 
-    await this.databaseService.connectToDatabase()
     await UserSchema.updateOne(
       { bungie_membership_id: bungieMembershipId },
       {
@@ -77,6 +70,5 @@ export class DatabaseRepository {
           refresh_token: refreshToken
         }
       })
-    await this.databaseService.disconnectToDatabase()
   }
 }
