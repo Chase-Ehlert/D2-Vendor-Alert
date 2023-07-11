@@ -38,8 +38,7 @@ export class ManifestService {
     async readCollectiblesFromManifest(itemType, itemList, data) {
         try {
             await fsPromises.access('manifest-collectibles.json', fs.constants.F_OK);
-            const value = await this.readFile(itemType, 'manifest-collectibles.json', itemList, true);
-            return value;
+            return await this.readFile(itemType, 'manifest-collectibles.json', itemList, true);
         }
         catch (error) {
             return await this.writeFile(itemType, 'manifest-collectibles.json', data, itemList, true);

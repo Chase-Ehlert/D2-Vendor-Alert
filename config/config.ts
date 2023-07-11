@@ -20,11 +20,11 @@ const { value, error } = environmentVariableSchema
   .prefs({ errors: { label: 'key' } })
   .validate(process.env)
 
-if (error) {
+if (error !== undefined) {
   throw new Error(`Config validation error: ${error.message}`)
 }
 
-type ConfigModel = {
+interface ConfigModel {
   databaseUser: string
   databaseCluster: string
   databaseName: string
@@ -39,7 +39,7 @@ type ConfigModel = {
 class Config {
   public configModel: ConfigModel
 
-  constructor() {
+  constructor () {
     this.configModel = {
       databaseUser: value.DATABASE_USER,
       databaseCluster: value.DATABASE_CLUSTER,

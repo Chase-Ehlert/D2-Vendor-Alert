@@ -17,7 +17,7 @@ const environmentVariableSchema = joi
 const { value, error } = environmentVariableSchema
     .prefs({ errors: { label: 'key' } })
     .validate(process.env);
-if (error) {
+if (error !== undefined) {
     throw new Error(`Config validation error: ${error.message}`);
 }
 class Config {
