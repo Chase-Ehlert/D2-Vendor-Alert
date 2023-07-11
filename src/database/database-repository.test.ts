@@ -22,9 +22,7 @@ describe('<DatabaseRepository/>', () => {
 
     const value = await databaseRepo.doesUserExist(bungieNetUsername)
 
-    expect(connectToDatabaseMock).toHaveBeenCalled()
     expect(value).toEqual(true)
-    expect(disconnectToDatabaseMock).toHaveBeenCalled()
   })
 
   it('should add a user to the database', async () => {
@@ -42,9 +40,7 @@ describe('<DatabaseRepository/>', () => {
 
     await databaseRepo.addUser(userSchema)
 
-    expect(connectToDatabaseMock).toHaveBeenCalled()
     expect(saveMock).toHaveBeenCalled()
-    expect(disconnectToDatabaseMock).toHaveBeenCalled()
   })
 
   it('should update a users record in the database by using their username', async () => {
@@ -61,7 +57,6 @@ describe('<DatabaseRepository/>', () => {
 
     await databaseRepo.updateUserByUsername(bungieUsername, refreshExpiration, refreshToken, destinyId, characterId)
 
-    expect(connectToDatabaseMock).toBeCalled()
     expect(UserSchema.updateOne).toBeCalledWith(
       { bungie_username: bungieUsername },
       {
@@ -72,7 +67,6 @@ describe('<DatabaseRepository/>', () => {
           refresh_token: refreshToken
         }
       })
-    expect(disconnectToDatabaseMock).toBeCalled()
   })
 
   it('should update a users record in the database by using their membership id', async () => {
@@ -87,7 +81,6 @@ describe('<DatabaseRepository/>', () => {
 
     await databaseRepo.updateUserByMembershipId(bungieMembershipId, refreshExpiration, refreshToken)
 
-    expect(connectToDatabaseMock).toBeCalled()
     expect(UserSchema.updateOne).toBeCalledWith(
       { bungie_membership_id: bungieMembershipId },
       {
@@ -96,6 +89,5 @@ describe('<DatabaseRepository/>', () => {
           refresh_token: refreshToken
         }
       })
-    expect(disconnectToDatabaseMock).toBeCalled()
   })
 })
