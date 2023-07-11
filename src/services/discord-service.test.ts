@@ -7,9 +7,10 @@ import { DatabaseRepository } from '../database/database-repository'
 import { RefreshTokenInfo } from './models/refresh-token-info'
 import { config } from '../../config/config'
 import axios from 'axios'
+import { ManifestService } from './manifest-service'
 
 describe('<DiscordService/>', () => {
-  const vendor = new Vendor()
+  const vendor = new Vendor(new DestinyService(), new DatabaseRepository(new DatabaseService()), new ManifestService(new DestinyService()))
   const destinyService = new DestinyService()
   const databaseService = new DatabaseService()
   const databaseRepo = new DatabaseRepository(databaseService)

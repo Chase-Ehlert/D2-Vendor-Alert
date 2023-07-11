@@ -12,10 +12,6 @@ describe('<DestinyService/>', () => {
   jest.mock('axios')
   jest.spyOn(console, 'error').mockImplementation(() => { })
 
-  // afterEach(() => {
-  //   jest.clearAllMocks()
-  // })
-
   it('should instantiate', async () => {
     expect(destinyService).not.toBeNull()
   })

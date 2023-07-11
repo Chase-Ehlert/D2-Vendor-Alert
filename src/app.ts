@@ -8,6 +8,7 @@ import { DiscordClient } from './discord/discord-client.js'
 import { DiscordService } from './services/discord-service.js'
 import { Vendor } from './destiny/vendor.js'
 import { DatabaseService } from './services/database-service.js'
+import { ManifestService } from './services/manifest-service.js'
 
 const app = express()
 app.engine('mustache', mustacheExpress())
@@ -20,7 +21,12 @@ const directoryName = path.dirname('app')
 const destinyService = new DestinyService()
 const databaseRepo = new DatabaseRepository(new DatabaseService())
 const discordClient = new DiscordClient()
-const discordService = new DiscordService(new Vendor(), destinyService, databaseRepo, new DatabaseService())
+const discordService = new DiscordService(
+  new Vendor(new DestinyService(), new DatabaseRepository(new DatabaseService()), new ManifestService(new DestinyService())),
+  destinyService,
+  databaseRepo,
+  new DatabaseService()
+)
 
 await discordClient.setupDiscordClient()
 
