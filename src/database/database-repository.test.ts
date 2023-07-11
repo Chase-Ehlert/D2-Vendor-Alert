@@ -5,12 +5,6 @@ import { UserSchema } from './models/user-schema'
 describe('<DatabaseRepository/>', () => {
   const databaseService = new DatabaseService()
   const databaseRepo = new DatabaseRepository(databaseService)
-  const connectToDatabaseMock = jest.spyOn(databaseService, 'connectToDatabase').mockResolvedValue()
-  const disconnectToDatabaseMock = jest.spyOn(databaseService, 'disconnectToDatabase').mockResolvedValue()
-
-  afterEach(() => {
-    jest.clearAllMocks()
-  })
 
   it('should instantiate', () => {
     expect(databaseRepo).not.toBeNull()
