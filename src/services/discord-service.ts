@@ -3,7 +3,6 @@ import { Vendor } from '../destiny/vendor.js'
 import { UserRepository } from '../database/user-repository.js'
 import { DestinyService } from './destiny-service.js'
 import { UserService } from './user-service.js'
-import { UserSchema } from '../database/models/user-schema.js'
 import { User } from '../database/models/user.js'
 import { config } from '../../config/config.js'
 
@@ -25,7 +24,7 @@ export class DiscordService {
    */
   async getUserInfo (): Promise<void> {
     await this.userService.connectToDatabase()
-    for await (const userRecord of UserSchema.find()) {
+    for await (const userRecord of await this.userRepo.fetchAllUsers()) {
       let user
       if (
         userRecord.bungie_username !== undefined &&

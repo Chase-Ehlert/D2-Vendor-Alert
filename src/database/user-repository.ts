@@ -4,7 +4,7 @@ import { UserSchema } from './models/user-schema.js'
 export class UserRepository {
   public userService
 
-  constructor(userService: UserService) {
+  constructor (userService: UserService) {
     this.userService = userService
   }
 
@@ -70,5 +70,12 @@ export class UserRepository {
           refresh_token: refreshToken
         }
       })
+  }
+
+  /**
+   * Returns a list of all users subscribed to be alerted
+   */
+  async fetchAllUsers (): Promise<any[]> {
+    return await UserSchema.find()
   }
 }

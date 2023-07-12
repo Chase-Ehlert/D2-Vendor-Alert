@@ -1,6 +1,7 @@
 import { UserService } from '../services/user-service'
 import { UserRepository } from './user-repository'
 import { UserSchema } from './models/user-schema'
+import { User } from './models/user'
 
 describe('<UserRepository/>', () => {
   const userService = new UserService()
@@ -83,5 +84,18 @@ describe('<UserRepository/>', () => {
           refresh_token: refreshToken
         }
       })
+  })
+
+  it('should return a list of users that are subscribed to be alerted', async () => {
+    const expectedUsers = [
+      new User('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'),
+      new User('i', 'j', 'k', 'l', 'm', 'n', 'o', 'p')
+    ]
+    UserSchema.find = jest.fn().mockResolvedValue(expectedUsers)
+
+    const result = await userRepo.fetchAllUsers()
+
+    expect(UserSchema.find).toBeCalled()
+    expect(result).toEqual(expectedUsers)
   })
 })
