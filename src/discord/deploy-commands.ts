@@ -16,18 +16,14 @@ const rest = new REST({ version: '10' }).setToken(String(config.configModel.toke
  * Update registered slash commands
  */
 async function registerCommands (): Promise<void> {
-  try {
-    console.log(`Started refreshing ${commands.length} application (/) commands.`)
+  console.log(`Started refreshing ${commands.length} application (/) commands.`)
 
-    const data = await rest.put(
-      Routes.applicationCommands(String(config.configModel.clientId)),
-      { body: commands }
-    )
+  const data = await rest.put(
+    Routes.applicationCommands(String(config.configModel.clientId)),
+    { body: commands }
+  )
 
-    console.log(`Successfully reloaded ${String(Object(data).length)} application (/) commands.`)
-  } catch (error) {
-    console.error(error)
-  }
+  console.log(`Successfully reloaded ${String(Object(data).length)} application (/) commands.`)
 }
 
 await registerCommands()

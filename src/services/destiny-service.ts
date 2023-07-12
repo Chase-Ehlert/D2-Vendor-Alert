@@ -35,9 +35,7 @@ export class DestinyService {
         headers: {
           'x-api-key': config.configModel.apiKey
         }
-      }).catch((error) => {
-      throw error
-    })
+      })
 
     return [data.Response.destinyMemberships[0].membershipId, data.Response.destinyMemberships[0].displayName]
   }
@@ -55,9 +53,7 @@ export class DestinyService {
         params: {
           components: getProfiles
         }
-      }).catch((error) => {
-      throw error
-    })
+      })
 
     return data.Response.profile.data.characterIds[0]
   }
@@ -68,9 +64,7 @@ export class DestinyService {
   async getDestinyInventoryItemDefinition (manifestFileName: string): Promise<any> {
     const { data } = await axios.get(
       'https://www.bungie.net' + manifestFileName
-    ).catch((error) => {
-      throw error
-    })
+    )
 
     return data.DestinyInventoryItemDefinition
   }
@@ -84,9 +78,7 @@ export class DestinyService {
         headers: {
           'x-api-key': config.configModel.apiKey
         }
-      }).catch((error) => {
-      throw error
-    })
+      })
 
     return data.Response.jsonWorldContentPaths.en
   }
@@ -105,8 +97,6 @@ export class DestinyService {
         'x-api-key': config.configModel.apiKey,
         'Content-Type': 'application/x-www-form-urlencoded'
       }
-    }).catch((error) => {
-      throw error
     })
 
     return new RefreshTokenInfo(data.membership_id, data.refresh_expires_in, data.refresh_token, data.access_token)
@@ -124,8 +114,6 @@ export class DestinyService {
         'Content-Type': 'application/json',
         'x-api-key': config.configModel.apiKey
       }
-    }).catch((error) => {
-      throw error
     })
 
     return data.Response
@@ -145,9 +133,7 @@ export class DestinyService {
           Authorization: `Bearer ${accessToken}`,
           'x-api-key': config.configModel.apiKey
         }
-      }).catch((error) => {
-      throw error
-    })
+      })
 
     return data.Response.sales.data
   }
@@ -164,8 +150,6 @@ export class DestinyService {
       headers: {
         'x-api-key': config.configModel.apiKey
       }
-    }).catch((error) => {
-      throw error
     })
 
     return data.Response.profileCollectibles.data.collectibles
