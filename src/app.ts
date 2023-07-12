@@ -75,6 +75,7 @@ async function dailyReset (): Promise<void> {
   }) as RequestHandler, waitTime)
 }
 
+
 /**
  * Begin the alert workflow for users and then set the time till the next daily reset
  */
