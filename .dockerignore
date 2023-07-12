@@ -1,6 +1,5 @@
 node_modules
 dist
 coverage
-package*.json
 manifest*.json
 aggregate*.json
