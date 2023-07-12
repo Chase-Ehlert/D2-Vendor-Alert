@@ -1,16 +1,16 @@
-import { DatabaseRepository } from '../database/user-repository.js'
+import { UserRepository } from '../database/user-repository.js'
 import { ManifestService } from '../services/manifest-service.js'
 import { DestinyService } from '../services/destiny-service.js'
 import { User } from '../database/models/user.js'
 
 export class Vendor {
   public destinyService
-  public databaseRepo
+  public userRepo
   public manifestService
 
-  constructor (destinyService: DestinyService, databaseRepo: DatabaseRepository, manifestService: ManifestService) {
+  constructor (destinyService: DestinyService, userRepo: UserRepository, manifestService: ManifestService) {
     this.destinyService = destinyService
-    this.databaseRepo = databaseRepo
+    this.userRepo = userRepo
     this.manifestService = manifestService
   }
 
@@ -43,7 +43,7 @@ export class Vendor {
    */
   private async getVendorModInventory (user: User, vendorId: string): Promise<string[]> {
     const tokenInfo = await this.destinyService.getAccessToken(user.refreshToken)
-    await this.databaseRepo.updateUserByMembershipId(
+    await this.userRepo.updateUserByMembershipId(
       tokenInfo.bungieMembershipId,
       tokenInfo.refreshTokenExpirationTime,
       tokenInfo.refreshToken

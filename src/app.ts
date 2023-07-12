@@ -3,11 +3,11 @@ import mustacheExpress from 'mustache-express'
 import * as path from 'path'
 import * as url from 'url'
 import { DestinyService } from './services/destiny-service.js'
-import { DatabaseRepository } from './database/user-repository.js'
+import { UserRepository } from './database/user-repository.js'
 import { DiscordClient } from './discord/discord-client.js'
 import { DiscordService } from './services/discord-service.js'
 import { Vendor } from './destiny/vendor.js'
-import { DatabaseService } from './services/user-service.js'
+import { UserService } from './services/user-service.js'
 import { ManifestService } from './services/manifest-service.js'
 
 const app = express()
@@ -19,13 +19,13 @@ app.set('views', landingPagePath)
 
 const directoryName = path.dirname('app')
 const destinyService = new DestinyService()
-const databaseRepo = new DatabaseRepository(new DatabaseService())
+const userRepo = new UserRepository(new UserService())
 const discordClient = new DiscordClient()
 const discordService = new DiscordService(
-  new Vendor(new DestinyService(), new DatabaseRepository(new DatabaseService()), new ManifestService(new DestinyService())),
+  new Vendor(new DestinyService(), new UserRepository(new UserService()), new ManifestService(new DestinyService())),
   destinyService,
-  databaseRepo,
-  new DatabaseService()
+  userRepo,
+  new UserService()
 )
 
 await discordClient.setupDiscordClient()
@@ -93,7 +93,7 @@ async function handleAuthorizationCode (authorizationCode: string, result: any):
         await destinyService.getDestinyMembershipInfo(tokenInfo.bungieMembershipId)
           .then(async (destinyMembershipInfo) => {
             const destinyCharacterId = await destinyService.getDestinyCharacterId(destinyMembershipInfo[0])
-            await databaseRepo.updateUserByUsername(
+            await userRepo.updateUserByUsername(
               destinyMembershipInfo[1],
               tokenInfo.refreshTokenExpirationTime,
               tokenInfo.refreshToken,

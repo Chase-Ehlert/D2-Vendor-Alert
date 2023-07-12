@@ -1,20 +1,20 @@
-import { DatabaseService } from '../services/user-service'
-import { DatabaseRepository } from './user-repository'
+import { UserService } from '../services/user-service'
+import { UserRepository } from './user-repository'
 import { UserSchema } from './models/user-schema'
 
-describe('<DatabaseRepository/>', () => {
-  const databaseService = new DatabaseService()
-  const databaseRepo = new DatabaseRepository(databaseService)
+describe('<UserRepository/>', () => {
+  const userService = new UserService()
+  const userRepo = new UserRepository(userService)
 
   it('should instantiate', () => {
-    expect(databaseRepo).not.toBeNull()
+    expect(userRepo).not.toBeNull()
   })
 
   it('should check if a user exists in the database', async () => {
     const bungieNetUsername = 'guardian'
     UserSchema.exists = jest.fn().mockImplementation(() => ({ exec: jest.fn().mockResolvedValue(true) }))
 
-    const value = await databaseRepo.doesUserExist(bungieNetUsername)
+    const value = await userRepo.doesUserExist(bungieNetUsername)
 
     expect(value).toEqual(true)
   })
@@ -32,7 +32,7 @@ describe('<DatabaseRepository/>', () => {
     })
     const saveMock = jest.spyOn(UserSchema.prototype, 'save').mockResolvedValue({})
 
-    await databaseRepo.addUser(userSchema)
+    await userRepo.addUser(userSchema)
 
     expect(saveMock).toHaveBeenCalled()
   })
@@ -49,7 +49,7 @@ describe('<DatabaseRepository/>', () => {
     expectedExpirationDate.setDate(expectedExpirationDate.getDate() + timeTillExpiration)
     const expirationDateWithoutMilliseconds = expectedExpirationDate.toISOString().split('.')[0] + 'Z'
 
-    await databaseRepo.updateUserByUsername(bungieUsername, refreshExpiration, refreshToken, destinyId, characterId)
+    await userRepo.updateUserByUsername(bungieUsername, refreshExpiration, refreshToken, destinyId, characterId)
 
     expect(UserSchema.updateOne).toBeCalledWith(
       { bungie_username: bungieUsername },
@@ -73,7 +73,7 @@ describe('<DatabaseRepository/>', () => {
     expectedExpirationDate.setDate(expectedExpirationDate.getDate() + timeTillExpiration)
     const expirationDateWithoutMilliseconds = expectedExpirationDate.toISOString().split('.')[0] + 'Z'
 
-    await databaseRepo.updateUserByMembershipId(bungieMembershipId, refreshExpiration, refreshToken)
+    await userRepo.updateUserByMembershipId(bungieMembershipId, refreshExpiration, refreshToken)
 
     expect(UserSchema.updateOne).toBeCalledWith(
       { bungie_membership_id: bungieMembershipId },

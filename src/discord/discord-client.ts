@@ -2,13 +2,13 @@ import * as path from 'path'
 import * as fileSystem from 'fs'
 import * as discord from 'discord.js'
 import * as url from 'url'
-import { DatabaseRepository } from '../database/user-repository.js'
+import { UserRepository } from '../database/user-repository.js'
 import { DestinyService } from '../services/destiny-service.js'
 import { config } from '../../config/config.js'
 import { UserSchema } from '../database/models/user-schema.js'
-import { DatabaseService } from '../services/user-service.js'
+import { UserService } from '../services/user-service.js'
 
-const databaseRepo = new DatabaseRepository(new DatabaseService())
+const userRepo = new UserRepository(new UserService())
 const destinyService = new DestinyService()
 
 export class DiscordClient {
@@ -93,7 +93,7 @@ export class DiscordClient {
      */
   async handleIncommingMessage (message: any, interaction: any, command: any): Promise<void> {
     if (await this.doesBungieUsernameExistInDestiny(message)) {
-      await databaseRepo.doesUserExist(message.content)
+      await userRepo.doesUserExist(message.content)
         ? await this.replyUserExists(interaction)
         : await this.addUserToAlertBot(command, message.content, interaction)
     } else {
@@ -116,7 +116,7 @@ export class DiscordClient {
     const bungieUsername = username.substring(0, index)
     const bungieUsernameCode = username.substring(Number(index) + 1, username.length)
 
-    await databaseRepo.addUser(new UserSchema({
+    await userRepo.addUser(new UserSchema({
       bungie_username: bungieUsername,
       bungie_username_code: bungieUsernameCode,
       discord_id: interaction.user.id,

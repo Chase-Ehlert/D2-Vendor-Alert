@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 import { config } from '../../config/config.js'
 
-export class DatabaseService {
+export class UserService {
   /**
      * Establishes a connection to the MongoDB for the list of users waiting for an alert
      */

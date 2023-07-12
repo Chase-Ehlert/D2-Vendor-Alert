@@ -1,8 +1,8 @@
 import axios from 'axios'
 import { Vendor } from '../destiny/vendor.js'
-import { DatabaseRepository } from '../database/user-repository.js'
+import { UserRepository } from '../database/user-repository.js'
 import { DestinyService } from './destiny-service.js'
-import { DatabaseService } from './user-service.js'
+import { UserService } from './user-service.js'
 import { UserSchema } from '../database/models/user-schema.js'
 import { User } from '../database/models/user.js'
 import { config } from '../../config/config.js'
@@ -10,21 +10,21 @@ import { config } from '../../config/config.js'
 export class DiscordService {
   private readonly vendor
   private readonly destinyService
-  private readonly databaseRepo
-  private readonly databaseService
+  private readonly userRepo
+  private readonly userService
 
-  constructor (vendor: Vendor, destinyService: DestinyService, databaseRepo: DatabaseRepository, databaseService: DatabaseService) {
+  constructor (vendor: Vendor, destinyService: DestinyService, userRepo: UserRepository, userService: UserService) {
     this.vendor = vendor
     this.destinyService = destinyService
-    this.databaseRepo = databaseRepo
-    this.databaseService = databaseService
+    this.userRepo = userRepo
+    this.userService = userService
   }
 
   /**
    * Alert registered users about today's vendor inventory
    */
   async getUserInfo (): Promise<void> {
-    await this.databaseService.connectToDatabase()
+    await this.userService.connectToDatabase()
     for await (const userRecord of UserSchema.find()) {
       let user
       if (
@@ -52,7 +52,7 @@ export class DiscordService {
         await this.compareModListWithUserInventory(user)
       }
     }
-    await this.databaseService.disconnectToDatabase()
+    await this.userService.disconnectToDatabase()
   }
 
   /**
@@ -65,7 +65,7 @@ export class DiscordService {
 
     if (currentDate.getTime() > expirationDate.getTime()) {
       const tokenInfo = await this.destinyService.getAccessToken(user.refreshToken)
-      await this.databaseRepo.updateUserByMembershipId(
+      await this.userRepo.updateUserByMembershipId(
         tokenInfo.bungieMembershipId,
         tokenInfo.refreshTokenExpirationTime,
         tokenInfo.refreshToken

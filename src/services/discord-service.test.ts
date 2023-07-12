@@ -1,20 +1,20 @@
 import { DiscordService } from './discord-service'
-import { DatabaseService } from './user-service.js'
+import { UserService } from './user-service.js'
 import { UserSchema } from '../database/models/user-schema'
 import { Vendor } from '../destiny/vendor'
 import { DestinyService } from './destiny-service'
-import { DatabaseRepository } from '../database/user-repository'
+import { UserRepository } from '../database/user-repository'
 import { RefreshTokenInfo } from './models/refresh-token-info'
 import { config } from '../../config/config'
 import axios from 'axios'
 import { ManifestService } from './manifest-service'
 
 describe('<DiscordService/>', () => {
-  const vendor = new Vendor(new DestinyService(), new DatabaseRepository(new DatabaseService()), new ManifestService(new DestinyService()))
+  const vendor = new Vendor(new DestinyService(), new UserRepository(new UserService()), new ManifestService(new DestinyService()))
   const destinyService = new DestinyService()
-  const databaseService = new DatabaseService()
-  const databaseRepo = new DatabaseRepository(databaseService)
-  const discordService = new DiscordService(vendor, destinyService, databaseRepo, databaseService)
+  const userService = new UserService()
+  const userRepo = new UserRepository(userService)
+  const discordService = new DiscordService(vendor, destinyService, userRepo, userService)
 
   jest.mock('axios')
 
@@ -51,10 +51,10 @@ describe('<DiscordService/>', () => {
     }
     const databaseUsers = [databaseUser1, databaseUser2]
     const expectedTokenInfo = new RefreshTokenInfo('0', '1', '2')
-    const connectToDatabaseMock = jest.spyOn(databaseService, 'connectToDatabase').mockResolvedValue()
-    const disconnectToDatabaseMock = jest.spyOn(databaseService, 'disconnectToDatabase').mockResolvedValue()
+    const connectToDatabaseMock = jest.spyOn(userService, 'connectToDatabase').mockResolvedValue()
+    const disconnectToDatabaseMock = jest.spyOn(userService, 'disconnectToDatabase').mockResolvedValue()
     const getAccessTokenMock = jest.spyOn(destinyService, 'getAccessToken').mockResolvedValue(expectedTokenInfo)
-    const updateUserByMembershipIdMock = jest.spyOn(databaseRepo, 'updateUserByMembershipId').mockResolvedValue()
+    const updateUserByMembershipIdMock = jest.spyOn(userRepo, 'updateUserByMembershipId').mockResolvedValue()
 
     jest.spyOn(vendor, 'getProfileCollectibles').mockResolvedValue([])
     UserSchema.find = jest.fn().mockImplementation(() => databaseUsers)

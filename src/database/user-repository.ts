@@ -1,11 +1,11 @@
-import { DatabaseService } from '../services/user-service.js'
+import { UserService } from '../services/user-service.js'
 import { UserSchema } from './models/user-schema.js'
 
-export class DatabaseRepository {
-  public databaseService
+export class UserRepository {
+  public userService
 
-  constructor (databaseService: DatabaseService) {
-    this.databaseService = databaseService
+  constructor(userService: UserService) {
+    this.userService = userService
   }
 
   /**

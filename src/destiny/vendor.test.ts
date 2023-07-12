@@ -1,6 +1,6 @@
-import { DatabaseRepository } from '../database/user-repository'
+import { UserRepository } from '../database/user-repository'
 import { User } from '../database/models/user'
-import { DatabaseService } from '../services/user-service'
+import { UserService } from '../services/user-service'
 import { DestinyService } from '../services/destiny-service'
 import { ManifestService } from '../services/manifest-service'
 import { RefreshTokenInfo } from '../services/models/refresh-token-info'
@@ -8,9 +8,9 @@ import { Vendor } from './vendor'
 
 describe('<Vendor/>', () => {
   const destinyService = new DestinyService()
-  const databaseRepo = new DatabaseRepository(new DatabaseService())
+  const userRepo = new UserRepository(new UserService())
   const manifestService = new ManifestService(new DestinyService())
-  const vendor = new Vendor(destinyService, databaseRepo, manifestService)
+  const vendor = new Vendor(destinyService, userRepo, manifestService)
 
   afterEach(() => {
     jest.resetAllMocks()
@@ -35,7 +35,7 @@ describe('<Vendor/>', () => {
     const collectibleInfo = { testing: { state: 65 } }
     const getDestinyCollectibleInfoMock = jest.spyOn(destinyService, 'getDestinyCollectibleInfo').mockResolvedValue(collectibleInfo)
     const getAccessTokenMock = jest.spyOn(destinyService, 'getAccessToken').mockResolvedValue(tokenInfo)
-    const updateUserByMembershipIdMock = jest.spyOn(databaseRepo, 'updateUserByMembershipId').mockResolvedValue()
+    const updateUserByMembershipIdMock = jest.spyOn(userRepo, 'updateUserByMembershipId').mockResolvedValue()
     const getDestinyVendorInfoMock = jest.spyOn(destinyService, 'getDestinyVendorInfo').mockResolvedValue(vendorInventory)
     const getItemFromManifestMock = jest.spyOn(manifestService, 'getItemFromManifest').mockResolvedValue(expectedManifestItem)
     const getCollectibleFromManifestMock = jest.spyOn(manifestService, 'getCollectibleFromManifest').mockResolvedValue(expectedCollectibleList)
@@ -54,7 +54,7 @@ describe('<Vendor/>', () => {
   it('should throw an error when the access token is undefined before calling getItemFromManifest()', async () => {
     const tokenInfo = new RefreshTokenInfo('bungieMembershipId', 'refreshTokenExpirationTime', 'refreshToken')
     jest.spyOn(destinyService, 'getAccessToken').mockResolvedValue(tokenInfo)
-    jest.spyOn(databaseRepo, 'updateUserByMembershipId').mockResolvedValue()
+    jest.spyOn(userRepo, 'updateUserByMembershipId').mockResolvedValue()
 
     await expect(async () => await vendor.getProfileCollectibles(new User('', '', '', '', '', '', '', ''))).rejects.toThrow(Error)
     await expect(async () => await vendor.getProfileCollectibles(new User('', '', '', '', '', '', '', ''))).rejects.toThrow('Missing access token for retreiving vendor mod inventory.')

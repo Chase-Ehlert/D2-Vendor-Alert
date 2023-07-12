@@ -1,12 +1,12 @@
 import { config } from '../../config/config.js'
-import { DatabaseService } from './user-service.js'
+import { UserService } from './user-service.js'
 import mongoose from 'mongoose'
 
-describe('<DatabaseService/>', () => {
-  let databaseService = new DatabaseService()
+describe('<UserService/>', () => {
+  let userService = new UserService()
 
   it('should instantiate', () => {
-    expect(databaseService).not.toBeNull()
+    expect(userService).not.toBeNull()
   })
 
   it('should establish a connection to the mongo database', async () => {
@@ -22,11 +22,11 @@ describe('<DatabaseService/>', () => {
       databaseName: expectedDatabaseName
     }
 
-    databaseService = new DatabaseService()
+    userService = new UserService()
 
     mongoose.connect = jest.fn()
 
-    await databaseService.connectToDatabase()
+    await userService.connectToDatabase()
 
     expect(mongoose.connect).toHaveBeenCalledWith(
       `mongodb+srv://${expectedDatabaseUser}:${expectedDatabasePassword}@${expectedDatabaseCluster}.mongodb.net/${expectedDatabaseName}`
@@ -37,7 +37,7 @@ describe('<DatabaseService/>', () => {
     const disconnectMock = jest.fn()
     jest.spyOn(mongoose, 'disconnect').mockImplementation(disconnectMock)
 
-    await databaseService.disconnectToDatabase()
+    await userService.disconnectToDatabase()
 
     expect(disconnectMock).toHaveBeenCalled()
   })
