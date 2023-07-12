@@ -1,5 +1,5 @@
-import { DatabaseService } from '../services/database-service'
-import { DatabaseRepository } from './database-repository'
+import { DatabaseService } from '../services/user-service'
+import { DatabaseRepository } from './user-repository'
 import { UserSchema } from './models/user-schema'
 
 describe('<DatabaseRepository/>', () => {

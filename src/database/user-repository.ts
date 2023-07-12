@@ -1,4 +1,4 @@
-import { DatabaseService } from '../services/database-service.js'
+import { DatabaseService } from '../services/user-service.js'
 import { UserSchema } from './models/user-schema.js'
 
 export class DatabaseRepository {

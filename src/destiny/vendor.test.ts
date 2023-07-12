@@ -1,6 +1,6 @@
-import { DatabaseRepository } from '../database/database-repository'
+import { DatabaseRepository } from '../database/user-repository'
 import { User } from '../database/models/user'
-import { DatabaseService } from '../services/database-service'
+import { DatabaseService } from '../services/user-service'
 import { DestinyService } from '../services/destiny-service'
 import { ManifestService } from '../services/manifest-service'
 import { RefreshTokenInfo } from '../services/models/refresh-token-info'

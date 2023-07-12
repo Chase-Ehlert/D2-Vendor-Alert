@@ -1,5 +1,5 @@
 import { config } from '../../config/config.js'
-import { DatabaseService } from './database-service.js'
+import { DatabaseService } from './user-service.js'
 import mongoose from 'mongoose'
 
 describe('<DatabaseService/>', () => {

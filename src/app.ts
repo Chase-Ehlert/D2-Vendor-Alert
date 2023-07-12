@@ -3,11 +3,11 @@ import mustacheExpress from 'mustache-express'
 import * as path from 'path'
 import * as url from 'url'
 import { DestinyService } from './services/destiny-service.js'
-import { DatabaseRepository } from './database/database-repository.js'
+import { DatabaseRepository } from './database/user-repository.js'
 import { DiscordClient } from './discord/discord-client.js'
 import { DiscordService } from './services/discord-service.js'
 import { Vendor } from './destiny/vendor.js'
-import { DatabaseService } from './services/database-service.js'
+import { DatabaseService } from './services/user-service.js'
 import { ManifestService } from './services/manifest-service.js'
 
 const app = express()

@@ -2,11 +2,11 @@ import * as path from 'path'
 import * as fileSystem from 'fs'
 import * as discord from 'discord.js'
 import * as url from 'url'
-import { DatabaseRepository } from '../database/database-repository.js'
+import { DatabaseRepository } from '../database/user-repository.js'
 import { DestinyService } from '../services/destiny-service.js'
 import { config } from '../../config/config.js'
 import { UserSchema } from '../database/models/user-schema.js'
-import { DatabaseService } from '../services/database-service.js'
+import { DatabaseService } from '../services/user-service.js'
 
 const databaseRepo = new DatabaseRepository(new DatabaseService())
 const destinyService = new DestinyService()
