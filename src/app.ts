@@ -9,6 +9,7 @@ import { DiscordService } from './services/discord-service.js'
 import { Vendor } from './destiny/vendor.js'
 import { UserService } from './services/user-service.js'
 import { ManifestService } from './services/manifest-service.js'
+import { DestinyApiClient } from './destiny/destiny-api-client.js'
 
 const app = express()
 const landingPagePath = path.join(url.fileURLToPath(new URL('./', import.meta.url)), 'views')
@@ -18,11 +19,15 @@ app.set('view engine', 'mustache')
 app.set('views', landingPagePath)
 
 const directoryName = path.dirname('app')
-const destinyService = new DestinyService()
+const destinyService = new DestinyService(new DestinyApiClient())
 const userRepo = new UserRepository(new UserService())
 const discordClient = new DiscordClient()
 const discordService = new DiscordService(
-  new Vendor(new DestinyService(), new UserRepository(new UserService()), new ManifestService(new DestinyService())),
+  new Vendor(
+    new DestinyService(new DestinyApiClient()),
+    new UserRepository(new UserService()),
+    new ManifestService(new DestinyService(new DestinyApiClient()))
+  ),
   destinyService,
   userRepo,
   new UserService()
@@ -72,7 +77,7 @@ async function dailyReset (): Promise<void> {
   console.log(`Wait time on ${today.getDate()} is ${waitTime / 1000 / 60 / 60}`)
   setTimeout((async () => {
     await startServer()
-  }) as RequestHandler, waitTime)
+  }) as RequestHandler, 1000)
 }
 
 /**
@@ -87,7 +92,7 @@ async function startServer (): Promise<void> {
  * Uses the authorization code to retreive the user's token information and then save it to the database
  */
 async function handleAuthorizationCode (authorizationCode: string, result: any): Promise<void | string> {
-  await destinyService.getRefreshToken(authorizationCode, result)
+  await destinyService.getRefreshTokenInfo(authorizationCode, result)
     .then(async (tokenInfo) => {
       if (tokenInfo !== undefined) {
         await destinyService.getDestinyMembershipInfo(tokenInfo.bungieMembershipId)

@@ -7,9 +7,10 @@ import { DestinyService } from '../services/destiny-service.js'
 import { config } from '../../config/config.js'
 import { UserSchema } from '../database/models/user-schema.js'
 import { UserService } from '../services/user-service.js'
+import { DestinyApiClient } from '../destiny/destiny-api-client.js'
 
 const userRepo = new UserRepository(new UserService())
-const destinyService = new DestinyService()
+const destinyService = new DestinyService(new DestinyApiClient())
 
 export class DiscordClient {
   /**

@@ -14,8 +14,7 @@ export class ManifestService {
    * Collect names of mods for sale from the manifest
    */
   async getItemFromManifest (itemType: number, itemList: Object): Promise<string[]> {
-    const manifestFileName = await this.destinyService.getManifestFile()
-    const destinyInventoryItemDefinition = await this.destinyService.getDestinyInventoryItemDefinition(manifestFileName)
+    const destinyInventoryItemDefinition = await this.destinyService.getDestinyInventoryItemDefinition()
 
     return await this.readItemsFromManifest(
       itemType,
@@ -44,8 +43,7 @@ export class ManifestService {
    * Get the manifest file and read the list of collectibles from it
    */
   async getCollectibleFromManifest (itemType: number, itemList: Object): Promise<string[]> {
-    const manifestFileName = await this.destinyService.getManifestFile()
-    const newData = await this.destinyService.getDestinyInventoryItemDefinition(manifestFileName)
+    const newData = await this.destinyService.getDestinyInventoryItemDefinition()
     return await this.readCollectiblesFromManifest(itemType, itemList, newData)
   }
 

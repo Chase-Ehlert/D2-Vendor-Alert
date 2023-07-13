@@ -5,11 +5,12 @@ import { DestinyService } from '../services/destiny-service'
 import { ManifestService } from '../services/manifest-service'
 import { RefreshTokenInfo } from '../services/models/refresh-token-info'
 import { Vendor } from './vendor'
+import { DestinyApiClient } from './destiny-api-client'
 
 describe('<Vendor/>', () => {
-  const destinyService = new DestinyService()
+  const destinyService = new DestinyService(new DestinyApiClient())
   const userRepo = new UserRepository(new UserService())
-  const manifestService = new ManifestService(new DestinyService())
+  const manifestService = new ManifestService(new DestinyService(new DestinyApiClient()))
   const vendor = new Vendor(destinyService, userRepo, manifestService)
 
   afterEach(() => {

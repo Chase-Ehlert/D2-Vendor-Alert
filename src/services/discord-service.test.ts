@@ -8,10 +8,15 @@ import { RefreshTokenInfo } from './models/refresh-token-info'
 import { config } from '../../config/config'
 import axios from 'axios'
 import { ManifestService } from './manifest-service'
+import { DestinyApiClient } from '../destiny/destiny-api-client'
 
 describe('<DiscordService/>', () => {
-  const vendor = new Vendor(new DestinyService(), new UserRepository(new UserService()), new ManifestService(new DestinyService()))
-  const destinyService = new DestinyService()
+  const vendor = new Vendor(
+    new DestinyService(new DestinyApiClient()),
+    new UserRepository(new UserService()),
+    new ManifestService(new DestinyService(new DestinyApiClient()))
+  )
+  const destinyService = new DestinyService(new DestinyApiClient())
   const userService = new UserService()
   const userRepo = new UserRepository(userService)
   const discordService = new DiscordService(vendor, destinyService, userRepo, userService)
