@@ -1,14 +1,14 @@
-import { UserRepository } from '../database/user-repository.js'
+import { MongoUserRepository } from '../database/mongo-user-repository.js'
 import { ManifestService } from '../services/manifest-service.js'
 import { DestinyService } from '../services/destiny-service.js'
-import { User } from '../database/models/user.js'
+import { UserInterface } from '../database/models/user.js'
 
 export class Vendor {
   public destinyService
   public userRepo
   public manifestService
 
-  constructor (destinyService: DestinyService, userRepo: UserRepository, manifestService: ManifestService) {
+  constructor (destinyService: DestinyService, userRepo: MongoUserRepository, manifestService: ManifestService) {
     this.destinyService = destinyService
     this.userRepo = userRepo
     this.manifestService = manifestService
@@ -17,7 +17,7 @@ export class Vendor {
   /**
    * Collect mods for sale by Ada-1
    */
-  async getProfileCollectibles (user: User): Promise<string[]> {
+  async getProfileCollectibles (user: UserInterface): Promise<string[]> {
     const adaVendorId = '350061650'
     const collectibleId = 65
     const collectibleList: string[] = []
@@ -26,8 +26,6 @@ export class Vendor {
       this.destinyService.getDestinyCollectibleInfo(user.destinyId),
       this.getVendorModInventory(user, adaVendorId)
     ]).then((values) => {
-      // const modsForSale = values[1].join(', ')
-      // console.log(`Ada has these mods for sale: ${modsForSale}`)
       values[1].forEach((key: string) => {
         if (values[0][key].state === collectibleId) {
           collectibleList.push(key)
@@ -41,7 +39,7 @@ export class Vendor {
   /**
    * Collect mods for a specific vendor
    */
-  private async getVendorModInventory (user: User, vendorId: string): Promise<string[]> {
+  private async getVendorModInventory (user: UserInterface, vendorId: string): Promise<string[]> {
     const tokenInfo = await this.destinyService.getAccessToken(user.refreshToken)
     await this.userRepo.updateUserByMembershipId(
       tokenInfo.bungieMembershipId,

@@ -2,14 +2,13 @@ import * as path from 'path'
 import * as fileSystem from 'fs'
 import * as discord from 'discord.js'
 import * as url from 'url'
-import { UserRepository } from '../database/user-repository.js'
+import { MongoUserRepository } from '../database/mongo-user-repository.js'
 import { DestinyService } from '../services/destiny-service.js'
 import { config } from '../../config/config.js'
-import { UserSchema } from '../database/models/user-schema.js'
 import { UserService } from '../services/user-service.js'
 import { DestinyApiClient } from '../destiny/destiny-api-client.js'
 
-const userRepo = new UserRepository(new UserService())
+const userRepo = new MongoUserRepository(new UserService())
 const destinyService = new DestinyService(new DestinyApiClient())
 
 export class DiscordClient {
@@ -41,7 +40,7 @@ export class DiscordClient {
      */
   async setupSlashCommands (discordClient: any): Promise<void> {
     const commandsPath = path.join(url.fileURLToPath(new URL('./', import.meta.url)), 'commands')
-    const commandsFiles = fileSystem.readdirSync(commandsPath).filter(file => file.endsWith('.ts'))
+    const commandsFiles = fileSystem.readdirSync(commandsPath).filter(file => file.endsWith('.js'))
 
     for (const file of commandsFiles) {
       const filePath = path.join(commandsPath, file)
@@ -83,7 +82,6 @@ export class DiscordClient {
           })
         }
       } catch (error) {
-        console.log(error)
         await interaction.reply({ content: 'Something went wrong!' })
       }
     })
@@ -96,7 +94,7 @@ export class DiscordClient {
     if (await this.doesBungieUsernameExistInDestiny(message)) {
       await userRepo.doesUserExist(message.content)
         ? await this.replyUserExists(interaction)
-        : await this.addUserToAlertBot(command, message.content, interaction)
+        : await this.addUserToAlertBot(message.content, interaction, command)
     } else {
       interaction.followUp({ content: 'That is not a valid Bungie Net username!' })
     }
@@ -112,17 +110,12 @@ export class DiscordClient {
   /**
      * Add user's profile information to database
      */
-  async addUserToAlertBot (command: any, username: string, interaction: any): Promise<void> {
+  async addUserToAlertBot (username: string, interaction: any, command: any): Promise<void> {
     const index = username.indexOf('#')
     const bungieUsername = username.substring(0, index)
     const bungieUsernameCode = username.substring(Number(index) + 1, username.length)
 
-    await userRepo.addUser(new UserSchema({
-      bungie_username: bungieUsername,
-      bungie_username_code: bungieUsernameCode,
-      discord_id: interaction.user.id,
-      discord_channel_id: interaction.channelId
-    }))
+    await userRepo.addUser(bungieUsername, bungieUsernameCode, interaction.user.id, interaction.channelId)
     command.execute(interaction)
   }
 

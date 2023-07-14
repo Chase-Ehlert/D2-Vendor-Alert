@@ -56,15 +56,19 @@ export class DestinyApiClient {
   }
 
   async getAccessTokenInfo (refreshToken: string): Promise<any> {
-    return await axios.post(
-      this.bungieDomainWithTokenDirectory, {
-        grant_type: 'refresh_token',
-        refresh_token: refreshToken,
-        client_id: config.configModel.oauthClientId,
-        client_secret: config.configModel.oauthSecret
-      }, {
-        headers: this.urlEncodedHeaders
-      })
+    try {
+      return await axios.post(
+        this.bungieDomainWithTokenDirectory, {
+          grant_type: 'refresh_token',
+          refresh_token: refreshToken,
+          client_id: config.configModel.oauthClientId,
+          client_secret: config.configModel.oauthSecret
+        }, {
+          headers: this.urlEncodedHeaders
+        })
+    } catch (error) {
+      throw Error('Could not fetch access token info')
+    }
   }
 
   async getDestinyUsername (bungieUsername: string, bungieUsernameCode: string): Promise<any> {

@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "lint": "eslint \"./src/**/*.ts\" --fix",
-    "tsc": "tsc",
+    "tsc": "node copy-views.mjs && tsc",
     "test": "jest --coverage",
-    "start": "node dist/src/app.js",
+    "start": "npm run tsc && node dist/src/app.js",
     "jsdoc": "jsdoc -c jsdoc.json"
   },
   "type": "module",
@@ -28,6 +28,7 @@
     "@types/mustache-express": "^1.2.2",
     "@types/node": "^18.16.18",
     "@typescript-eslint/eslint-plugin": "^5.60.1",
+    "cpy": "^10.1.0",
     "eslint": "^8.43.0",
     "eslint-config-standard-with-typescript": "^19.0.1",
     "eslint-plugin-import": "^2.26.0",

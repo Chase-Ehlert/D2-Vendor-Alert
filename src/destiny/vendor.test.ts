@@ -1,5 +1,5 @@
-import { UserRepository } from '../database/user-repository'
-import { User } from '../database/models/user'
+import { MongoUserRepository } from '../database/mongo-user-repository'
+import { UserInterface } from '../database/models/user'
 import { UserService } from '../services/user-service'
 import { DestinyService } from '../services/destiny-service'
 import { ManifestService } from '../services/manifest-service'
@@ -9,9 +9,20 @@ import { DestinyApiClient } from './destiny-api-client'
 
 describe('<Vendor/>', () => {
   const destinyService = new DestinyService(new DestinyApiClient())
-  const userRepo = new UserRepository(new UserService())
+  const userRepo = new MongoUserRepository(new UserService())
   const manifestService = new ManifestService(new DestinyService(new DestinyApiClient()))
   const vendor = new Vendor(destinyService, userRepo, manifestService)
+  let user = {
+    bungieUsername: 'name',
+    bungieUsernameCode: 'code',
+    discordId: 'discordId',
+    discordChannelId: 'channelId',
+    bungieMembershipId: 'bungie',
+    destinyId: 'destinyId',
+    destinyCharacterId: 'destinyCharacterId',
+    refreshExpiration: 'expiration',
+    refreshToken: 'token'
+  } as unknown as UserInterface
 
   afterEach(() => {
     jest.resetAllMocks()
@@ -22,7 +33,6 @@ describe('<Vendor/>', () => {
   })
 
   it('should collect all the mods for sale by Ada-1', async () => {
-    const user = new User('name', 'code', 'discordId', 'channelId', 'destinyId', 'destinyCharacterId', 'expiration', 'token')
     const bungieMembershipId = '1323'
     const refreshTokenExpirationTime = '3212341'
     const refreshToken = '888'
@@ -56,8 +66,12 @@ describe('<Vendor/>', () => {
     const tokenInfo = new RefreshTokenInfo('bungieMembershipId', 'refreshTokenExpirationTime', 'refreshToken')
     jest.spyOn(destinyService, 'getAccessToken').mockResolvedValue(tokenInfo)
     jest.spyOn(userRepo, 'updateUserByMembershipId').mockResolvedValue()
+    user = {
+      ...user,
+      refreshToken: ''
+    } as unknown as UserInterface
 
-    await expect(async () => await vendor.getProfileCollectibles(new User('', '', '', '', '', '', '', ''))).rejects.toThrow(Error)
-    await expect(async () => await vendor.getProfileCollectibles(new User('', '', '', '', '', '', '', ''))).rejects.toThrow('Missing access token for retreiving vendor mod inventory.')
+    await expect(async () => await vendor.getProfileCollectibles(user)).rejects.toThrow(Error)
+    await expect(async () => await vendor.getProfileCollectibles(user)).rejects.toThrow('Missing access token for retreiving vendor mod inventory.')
   })
 })

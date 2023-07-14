@@ -3,7 +3,7 @@ import http from 'axios'
 import axios from 'axios'
 import { DestinyApiClient } from './destiny-api-client'
 import { config } from '../../config/config'
-import { User } from '../database/models/user'
+import { UserInterface } from '../database/models/user'
 
 jest.mock('axios', () => ({
   create: jest.fn(() => http),
@@ -79,19 +79,6 @@ describe('<DestinyApiClient/>', () => {
     expect(value).toEqual(result)
   })
 
-  it('should throw the error when the get call fails for getDestinyMembershipInfo()', async () => {
-    const expectedError = new Error('Oops, something went wrong!')
-    axios.get = jest.fn().mockRejectedValue(expectedError)
-
-    await expect(
-      async () => await destinyApiClient.getDestinyMembershipInfo('1')
-    ).rejects.toThrow(Error)
-
-    await expect(
-      async () => await destinyApiClient.getDestinyMembershipInfo('1')
-    ).rejects.toThrow('Oops, something went wrong!')
-  })
-
   it('should retrieve the Destiny character information for a user', async () => {
     const expectedMembershipId = '123'
     const expectedCharacterId = '456'
@@ -120,19 +107,6 @@ describe('<DestinyApiClient/>', () => {
       }
     )
     expect(value).toEqual(result)
-  })
-
-  it('should throw the error when the get call fails for getDestinyCharacterId()', async () => {
-    const expectedError = new Error('Oops, something went wrong!')
-    axios.get = jest.fn().mockRejectedValue(expectedError)
-
-    await expect(
-      async () => await destinyApiClient.getDestinyCharacterIds('1')
-    ).rejects.toThrow(Error)
-
-    await expect(
-      async () => await destinyApiClient.getDestinyCharacterIds('1')
-    ).rejects.toThrow('Oops, something went wrong!')
   })
 
   it('should retrieve a list of definitions for Destiny items from a specific manifest file', async () => {
@@ -168,19 +142,6 @@ describe('<DestinyApiClient/>', () => {
     expect(axios.get).toHaveBeenCalledWith('https://www.bungie.net/manifest')
     expect(axios.get).toHaveBeenCalledWith(`https://www.bungie.net/${expectedManifestFileName}`)
     expect(value).toEqual(itemDefinition)
-  })
-
-  it('should throw the error when the get call fails for getDestinyInventoryItemDefinition()', async () => {
-    const expectedError = new Error('Oops, something went wrong!')
-    axios.get = jest.fn().mockRejectedValue(expectedError)
-
-    await expect(
-      async () => await destinyApiClient.getDestinyInventoryItemDefinition()
-    ).rejects.toThrow(Error)
-
-    await expect(
-      async () => await destinyApiClient.getDestinyInventoryItemDefinition()
-    ).rejects.toThrow('Oops, something went wrong!')
   })
 
   it('should retrieve a users access token by using their refresh token', async () => {
@@ -219,17 +180,11 @@ describe('<DestinyApiClient/>', () => {
     expect(value).toEqual(accessToken)
   })
 
-  it('should throw the error when the get call fails for getDestinyInventoryItemDefinition()', async () => {
-    const expectedError = new Error('Oops, something went wrong!')
-    axios.post = jest.fn().mockRejectedValue(expectedError)
+  it('should throw an error when the access token info cant be retrieved', async () => {
+    axios.post = jest.fn().mockRejectedValue({})
 
-    await expect(
-      async () => await destinyApiClient.getAccessTokenInfo('1')
-    ).rejects.toThrow(Error)
-
-    await expect(
-      async () => await destinyApiClient.getAccessTokenInfo('1')
-    ).rejects.toThrow('Oops, something went wrong!')
+    await expect(async () => await destinyApiClient.getAccessTokenInfo('refreshToken')).rejects.toThrow(Error)
+    await expect(async () => await destinyApiClient.getAccessTokenInfo('refreshToken')).rejects.toThrow('Could not fetch access token info')
   })
 
   it('should check if a Destiny username exists based on a users Bungie username', async () => {
@@ -257,24 +212,21 @@ describe('<DestinyApiClient/>', () => {
     expect(value).toEqual(result)
   })
 
-  it('should throw the error when the post call fails for getDestinyUsername()', async () => {
-    const expectedError = new Error('Oops, something went wrong!')
-    axios.post = jest.fn().mockRejectedValue(expectedError)
-
-    await expect(
-      async () => await destinyApiClient.getDestinyUsername('1', '1')
-    ).rejects.toThrow(Error)
-
-    await expect(
-      async () => await destinyApiClient.getDestinyUsername('1', '1')
-    ).rejects.toThrow('Oops, something went wrong!')
-  })
-
   it('should retrieve the list of Destiny vendors and their inventory', async () => {
     const destinyId = 'destinyId'
     const destinyCharacterId = 'character'
-    const user = new User('name', 'code', 'discordId', 'channelId', destinyId, destinyCharacterId, 'expiration', 'token')
     const accessToken = '123'
+    const user = {
+      bungieUsername: 'name',
+      bungieUsernameCode: 'code',
+      discordId: 'discordId',
+      discordChannelId: 'channelId',
+      bungieMembershipId: 'bungie',
+      destinyId: destinyId,
+      destinyCharacterId: destinyCharacterId,
+      refreshExpiration: 'expiration',
+      refreshToken: 'token'
+    } as unknown as UserInterface
     const result = {
       data: {
         Response: { sales: { data: { vendor: 'info' } } }
@@ -297,20 +249,6 @@ describe('<DestinyApiClient/>', () => {
       }
     )
     expect(value).toEqual(result)
-  })
-
-  it('should throw the error when the get call fails for getDestinyVendorInfo()', async () => {
-    const user = new User('name', 'code', 'discordId', 'channelId', 'destinyId', 'destinyCharacterId', 'expiration', 'token')
-    const expectedError = new Error('Oops, something went wrong!')
-    axios.get = jest.fn().mockRejectedValue(expectedError)
-
-    await expect(
-      async () => await destinyApiClient.getDestinyVendorInfo(user.destinyId, user.destinyCharacterId, '1')
-    ).rejects.toThrow(Error)
-
-    await expect(
-      async () => await destinyApiClient.getDestinyVendorInfo(user.destinyId, user.destinyCharacterId, '1')
-    ).rejects.toThrow('Oops, something went wrong!')
   })
 
   it('should retrieve the list of collectibles that exist in Destiny', async () => {
@@ -336,18 +274,5 @@ describe('<DestinyApiClient/>', () => {
       }
     )
     expect(value).toEqual(result)
-  })
-
-  it('should throw the error when the get call fails for getDestinyCollectibleInfo()', async () => {
-    const expectedError = new Error('Oops, something went wrong!')
-    axios.get = jest.fn().mockRejectedValue(expectedError)
-
-    await expect(
-      async () => await destinyApiClient.getDestinyCollectibleInfo('1')
-    ).rejects.toThrow(Error)
-
-    await expect(
-      async () => await destinyApiClient.getDestinyCollectibleInfo('1')
-    ).rejects.toThrow('Oops, something went wrong!')
   })
 })

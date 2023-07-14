@@ -1,70 +1,46 @@
 import axios from 'axios'
 import { Vendor } from '../destiny/vendor.js'
-import { UserRepository } from '../database/user-repository.js'
+import { MongoUserRepository } from '../database/mongo-user-repository.js'
 import { DestinyService } from './destiny-service.js'
-import { UserService } from './user-service.js'
-import { User } from '../database/models/user.js'
 import { config } from '../../config/config.js'
+import { UserInterface } from '../database/models/user.js'
 
 export class DiscordService {
   private readonly vendor
   private readonly destinyService
-  private readonly userRepo
-  private readonly userService
+  private readonly mongoUserRepo
 
-  constructor (vendor: Vendor, destinyService: DestinyService, userRepo: UserRepository, userService: UserService) {
+  constructor (
+    vendor: Vendor,
+    destinyService: DestinyService,
+    mongoUserRepo: MongoUserRepository
+  ) {
     this.vendor = vendor
     this.destinyService = destinyService
-    this.userRepo = userRepo
-    this.userService = userService
+    this.mongoUserRepo = mongoUserRepo
   }
 
   /**
    * Alert registered users about today's vendor inventory
    */
   async getUserInfo (): Promise<void> {
-    await this.userService.connectToDatabase()
-    for await (const userRecord of await this.userRepo.fetchAllUsers()) {
-      let user
-      if (
-        userRecord.bungie_username !== undefined &&
-        userRecord.bungie_username_code !== undefined &&
-        userRecord.discord_id !== undefined &&
-        userRecord.discord_channel_id !== undefined &&
-        userRecord.destiny_id !== undefined &&
-        userRecord.destiny_character_id !== undefined &&
-        userRecord.refresh_expiration !== undefined &&
-        userRecord.refresh_token !== undefined
-      ) {
-        user = new User(
-          userRecord.bungie_username,
-          userRecord.bungie_username_code,
-          userRecord.discord_id,
-          userRecord.discord_channel_id,
-          userRecord.destiny_id,
-          userRecord.destiny_character_id,
-          userRecord.refresh_expiration,
-          userRecord.refresh_token
-        )
-
-        await this.checkRefreshTokenExpiration(user)
-        await this.compareModListWithUserInventory(user)
-      }
+    for await (const user of await this.mongoUserRepo.fetchAllUsers()) {
+      await this.checkRefreshTokenExpiration(user)
+      await this.compareModListWithUserInventory(user)
     }
-    await this.userService.disconnectToDatabase()
   }
 
   /**
    * Check the token expiration date and update it if it's expired
    */
-  private async checkRefreshTokenExpiration (user: User): Promise<void> {
+  private async checkRefreshTokenExpiration (user: UserInterface): Promise<void> {
     const currentDate = new Date()
     const expirationDate = new Date(String(user.refreshExpiration))
     expirationDate.setDate(expirationDate.getDate() - 1)
 
     if (currentDate.getTime() > expirationDate.getTime()) {
       const tokenInfo = await this.destinyService.getAccessToken(user.refreshToken)
-      await this.userRepo.updateUserByMembershipId(
+      await this.mongoUserRepo.updateUserByMembershipId(
         tokenInfo.bungieMembershipId,
         tokenInfo.refreshTokenExpirationTime,
         tokenInfo.refreshToken
@@ -75,7 +51,7 @@ export class DiscordService {
   /**
    * Check whether any mods for sale are owned by the user
    */
-  private async compareModListWithUserInventory (user: User): Promise<void> {
+  private async compareModListWithUserInventory (user: UserInterface): Promise<void> {
     const discordEndpoint = `channels/${user.discordChannelId}/messages`
     const unownedModList = await this.vendor.getProfileCollectibles(user)
 
@@ -89,7 +65,11 @@ export class DiscordService {
   /**
    * Send alert message for unowned mods
    */
-  private async messageUnownedModsList (discordEndpoint: string, discordId: string, unownedModList: string[]): Promise<void> {
+  private async messageUnownedModsList (
+    discordEndpoint: string,
+    discordId: string,
+    unownedModList: string[]
+  ): Promise<void> {
     let message = `<@${discordId}>\r\nYou have these unowned mods for sale, grab them!`
 
     unownedModList.forEach(mod => {

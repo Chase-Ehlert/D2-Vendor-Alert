@@ -1,25 +1,24 @@
+import axios from 'axios'
 import { DiscordService } from './discord-service'
 import { UserService } from './user-service.js'
-import { UserSchema } from '../database/models/user-schema'
 import { Vendor } from '../destiny/vendor'
 import { DestinyService } from './destiny-service'
-import { UserRepository } from '../database/user-repository'
+import { MongoUserRepository } from '../database/mongo-user-repository'
 import { RefreshTokenInfo } from './models/refresh-token-info'
 import { config } from '../../config/config'
-import axios from 'axios'
 import { ManifestService } from './manifest-service'
 import { DestinyApiClient } from '../destiny/destiny-api-client'
+import { User, UserInterface } from '../database/models/user'
 
 describe('<DiscordService/>', () => {
   const vendor = new Vendor(
     new DestinyService(new DestinyApiClient()),
-    new UserRepository(new UserService()),
+    new MongoUserRepository(new UserService()),
     new ManifestService(new DestinyService(new DestinyApiClient()))
   )
   const destinyService = new DestinyService(new DestinyApiClient())
-  const userService = new UserService()
-  const userRepo = new UserRepository(userService)
-  const discordService = new DiscordService(vendor, destinyService, userRepo, userService)
+  const userRepo = new MongoUserRepository(new UserService())
+  const discordService = new DiscordService(vendor, destinyService, userRepo)
 
   jest.mock('axios')
 
@@ -29,57 +28,44 @@ describe('<DiscordService/>', () => {
 
   describe('<getUserInfo/>', () => {
     const databaseUser1 = {
-      _id: 0,
-      bungie_username: 'a',
-      bungie_username_code: 'b',
-      discord_id: 'c',
-      discord_channel_id: 'd',
-      bungie_membership_id: 'e',
-      destiny_id: 'f',
-      destiny_character_id: 'g',
-      refresh_expiration: '2023-09-28T12:48:55.489Z',
-      refresh_token: 'k',
-      __v: 0
-    }
+      bungieUsername: 'a',
+      bungieUsernameCode: 'b',
+      discordId: 'c',
+      discordChannelId: 'd',
+      bungieMembershipId: 'e',
+      destinyId: 'f',
+      destinyCharacterId: 'g',
+      refreshExpiration: '2023-09-28T12:48:55.489Z',
+      refreshToken: 'k'
+    } as unknown as UserInterface
     const databaseUser2 = {
-      _id: 1,
-      bungie_username: 'z',
-      bungie_username_code: 'y',
-      discord_id: 'x',
-      discord_channel_id: 'w',
-      bungie_membership_id: 'v',
-      destiny_id: 'u',
-      destiny_character_id: 't',
-      refresh_expiration: '1989-09-28T12:48:55.489Z',
-      refresh_token: 's',
-      __v: 0
-    }
+      bungieUsername: 'z',
+      bungieUsernameCode: 'y',
+      discordId: 'x',
+      discordChannelId: 'w',
+      bungieMembershipId: 'v',
+      destinyId: 'u',
+      destinyCharacterId: 't',
+      refreshExpiration: '1989-09-28T12:48:55.489Z',
+      refresh_token: 's'
+    } as unknown as UserInterface
     const databaseUsers = [databaseUser1, databaseUser2]
     const expectedTokenInfo = new RefreshTokenInfo('0', '1', '2')
-    const connectToDatabaseMock = jest.spyOn(userService, 'connectToDatabase').mockResolvedValue()
-    const disconnectToDatabaseMock = jest.spyOn(userService, 'disconnectToDatabase').mockResolvedValue()
     const getAccessTokenMock = jest.spyOn(destinyService, 'getAccessToken').mockResolvedValue(expectedTokenInfo)
     const updateUserByMembershipIdMock = jest.spyOn(userRepo, 'updateUserByMembershipId').mockResolvedValue()
 
     jest.spyOn(vendor, 'getProfileCollectibles').mockResolvedValue([])
-    UserSchema.find = jest.fn().mockImplementation(() => databaseUsers)
+    User.find = jest.fn().mockImplementation(() => databaseUsers)
     axios.post = jest.fn().mockImplementation(async () => await Promise.resolve({ status: 200 }))
 
     afterEach(() => {
       jest.clearAllMocks()
     })
 
-    it('should connect and disonnect to the database', async () => {
-      await discordService.getUserInfo()
-
-      expect(connectToDatabaseMock).toHaveBeenCalled()
-      expect(disconnectToDatabaseMock).toHaveBeenCalled()
-    })
-
     it('should update the users refresh token if it has expired', async () => {
       await discordService.getUserInfo()
 
-      expect(getAccessTokenMock).toHaveBeenCalledWith(databaseUser2.refresh_token)
+      expect(getAccessTokenMock).toHaveBeenCalledWith(databaseUser2.refreshToken)
       expect(updateUserByMembershipIdMock).toHaveBeenCalledWith(
         expectedTokenInfo.bungieMembershipId,
         expectedTokenInfo.refreshTokenExpirationTime,
@@ -97,8 +83,8 @@ describe('<DiscordService/>', () => {
     it('should send an alert message for any unowned mods that are for sale', async () => {
       const expectedMod1 = 'mod1'
       const expectedMod2 = 'mod2'
-      const expectedDiscordEndpoint = `https://discord.com/api/v10/channels/${databaseUser1.discord_channel_id}/messages`
-      const expectedMessage = `<@${databaseUser1.discord_id}>\r\nYou have these unowned mods for sale, grab them!\r\n${expectedMod1}\r\n${expectedMod2}`
+      const expectedDiscordEndpoint = `https://discord.com/api/v10/channels/${databaseUser1.discordChannelId}/messages`
+      const expectedMessage = `<@${databaseUser1.discordId}>\r\nYou have these unowned mods for sale, grab them!\r\n${expectedMod1}\r\n${expectedMod2}`
 
       jest.spyOn(vendor, 'getProfileCollectibles').mockResolvedValue([expectedMod1, expectedMod2])
 
@@ -125,8 +111,8 @@ describe('<DiscordService/>', () => {
     })
 
     it('should not send an alert message when all mods for sale are owned', async () => {
-      const expectedDiscordEndpoint = `https://discord.com/api/v10/channels/${databaseUser1.discord_channel_id}/messages`
-      const expectedMessage = `${databaseUser1.bungie_username} does not have any unowned mods for sale today.`
+      const expectedDiscordEndpoint = `https://discord.com/api/v10/channels/${databaseUser1.discordChannelId}/messages`
+      const expectedMessage = `${databaseUser1.bungieUsername} does not have any unowned mods for sale today.`
 
       jest.spyOn(vendor, 'getProfileCollectibles').mockResolvedValue([])
 

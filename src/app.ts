@@ -3,7 +3,7 @@ import mustacheExpress from 'mustache-express'
 import * as path from 'path'
 import * as url from 'url'
 import { DestinyService } from './services/destiny-service.js'
-import { UserRepository } from './database/user-repository.js'
+import { MongoUserRepository } from './database/mongo-user-repository.js'
 import { DiscordClient } from './discord/discord-client.js'
 import { DiscordService } from './services/discord-service.js'
 import { Vendor } from './destiny/vendor.js'
@@ -12,7 +12,7 @@ import { ManifestService } from './services/manifest-service.js'
 import { DestinyApiClient } from './destiny/destiny-api-client.js'
 
 const app = express()
-const landingPagePath = path.join(url.fileURLToPath(new URL('./', import.meta.url)), 'views')
+const landingPagePath = path.join(url.fileURLToPath(new URL('./dist/src', import.meta.url)), 'views')
 
 app.engine('mustache', mustacheExpress())
 app.set('view engine', 'mustache')
@@ -20,18 +20,20 @@ app.set('views', landingPagePath)
 
 const directoryName = path.dirname('app')
 const destinyService = new DestinyService(new DestinyApiClient())
-const userRepo = new UserRepository(new UserService())
+const userService = new UserService()
+const mongoUserRepo = new MongoUserRepository(userService)
 const discordClient = new DiscordClient()
 const discordService = new DiscordService(
   new Vendor(
     new DestinyService(new DestinyApiClient()),
-    new UserRepository(new UserService()),
+    new MongoUserRepository(userService),
     new ManifestService(new DestinyService(new DestinyApiClient()))
   ),
   destinyService,
-  userRepo,
-  new UserService()
+  mongoUserRepo
 )
+
+await userService.connectToDatabase()
 
 await discordClient.setupDiscordClient()
 
@@ -40,17 +42,16 @@ app.listen(3001, () => {
 })
 
 app.get('/error/authCode', ((request, result) => {
-  result.sendFile('src/views/landing-page-error-auth-code.html', { root: directoryName })
+  result.sendFile('./dist/src/views/landing-page-error-auth-code.html', { root: directoryName })
 }) as RequestHandler)
 
 app.get('/', (async (request, result) => {
-  console.log(result)
   if (request.query.code !== undefined) {
     const guardian = await handleAuthorizationCode(String(request.query.code), result)
 
     result.render('landing-page.mustache', { guardian })
   } else {
-    result.sendFile('src/views/landing-page-error.html', { root: directoryName })
+    result.sendFile('./dist/src/views/landing-page-error.html', { root: directoryName })
   }
 }) as express.RequestHandler)
 
@@ -98,7 +99,7 @@ async function handleAuthorizationCode (authorizationCode: string, result: any):
         await destinyService.getDestinyMembershipInfo(tokenInfo.bungieMembershipId)
           .then(async (destinyMembershipInfo) => {
             const destinyCharacterId = await destinyService.getDestinyCharacterId(destinyMembershipInfo[0])
-            await userRepo.updateUserByUsername(
+            await mongoUserRepo.updateUserByUsername(
               destinyMembershipInfo[1],
               tokenInfo.refreshTokenExpirationTime,
               tokenInfo.refreshToken,

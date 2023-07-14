@@ -2,7 +2,7 @@ import { IncomingMessage, ServerResponse } from 'http'
 import { DestinyService } from './destiny-service'
 import { Socket } from 'net'
 import { RefreshTokenInfo } from './models/refresh-token-info'
-import { User } from '../database/models/user'
+import { UserInterface } from '../database/models/user'
 import { DestinyApiClient } from '../destiny/destiny-api-client'
 
 describe('<DestinyService/>', () => {
@@ -131,7 +131,17 @@ describe('<DestinyService/>', () => {
   it('should retrieve the list of Destiny vendors and their inventory', async () => {
     const destinyId = 'destinyId'
     const destinyCharacterId = 'character'
-    const user = new User('name', 'code', 'discordId', 'channelId', destinyId, destinyCharacterId, 'expiration', 'token')
+    const user = {
+      bungieUsername: 'name',
+      bungieUsernameCode: 'code',
+      discordId: 'discordId',
+      discordChannelId: 'channelId',
+      bungieMembershipId: 'bungie',
+      destinyId: destinyId,
+      destinyCharacterId: destinyCharacterId,
+      refreshExpiration: 'expiration',
+      refreshToken: 'token'
+    } as unknown as UserInterface
     const accessToken = '123'
     const usernameInfo = { data: { Response: { sales: { data: { vendor: 'info' } } } } }
     jest.spyOn(destinyApiClient, 'getDestinyVendorInfo').mockResolvedValue(usernameInfo)

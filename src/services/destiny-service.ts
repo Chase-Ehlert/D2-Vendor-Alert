@@ -1,4 +1,4 @@
-import { User } from '../database/models/user.js'
+import { UserInterface } from '../database/models/user.js'
 import { RefreshTokenInfo } from './models/refresh-token-info.js'
 import { DestinyApiClient } from '../destiny/destiny-api-client.js'
 
@@ -83,7 +83,7 @@ export class DestinyService {
   /**
      * Retrieves the list of vendors and their inventory
      */
-  async getDestinyVendorInfo (user: User, accessToken: string): Promise<any> {
+  async getDestinyVendorInfo (user: UserInterface, accessToken: string): Promise<any> {
     const { data } = await this.destinyApiClient.getDestinyVendorInfo(
       user.destinyId,
       user.destinyCharacterId,
