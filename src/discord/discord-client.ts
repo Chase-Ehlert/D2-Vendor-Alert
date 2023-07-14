@@ -111,6 +111,7 @@ export class DiscordClient {
      * Add user's profile information to database
      */
   async addUserToAlertBot (username: string, interaction: any, command: any): Promise<void> {
+    console.log('2')
     const index = username.indexOf('#')
     const bungieUsername = username.substring(0, index)
     const bungieUsernameCode = username.substring(Number(index) + 1, username.length)
