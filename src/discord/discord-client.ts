@@ -68,8 +68,10 @@ export class DiscordClient {
         const filter = (message: any): boolean => message.author.id === interaction.user.id
         if (interaction.channel !== null) {
           const collector = interaction.channel.createMessageCollector({ filter, max: 1, time: 20000 })
+          console.log('bob')
 
           collector.on('collect', async (message: any) => {
+            console.log('greg')
             await this.handleIncommingMessage(message, interaction, command)
           })
 
