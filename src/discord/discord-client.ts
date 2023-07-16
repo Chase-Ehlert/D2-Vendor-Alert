@@ -66,6 +66,7 @@ export class DiscordClient {
       try {
         await interaction.reply('What is your Bungie Net username? (i.e. "Guardian#1234")')
         const filter = (message: any): boolean => message.author.id === interaction.user.id
+        console.log('joe')
         if (interaction.channel !== null) {
           const collector = interaction.channel.createMessageCollector({ filter, max: 1, time: 20000 })
           console.log('bob')
