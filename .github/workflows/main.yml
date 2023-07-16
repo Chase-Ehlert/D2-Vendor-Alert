@@ -61,6 +61,7 @@ jobs:
           key: ${{ secrets.DEPLOY_SECRET }}
           script: |
             cd workspaces/D2-Vendor-Alert/
+            git checkout .
             git pull
             npm install
             npm run tsc

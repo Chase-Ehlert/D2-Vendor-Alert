@@ -62,17 +62,15 @@ export class DiscordClient {
       if (!(interaction as discord.Interaction).isCommand()) return
 
       const command = interaction.client.commands.get(interaction.commandName)
+      console.log(interaction.client.commands)
 
       try {
         await interaction.reply('What is your Bungie Net username? (i.e. "Guardian#1234")')
         const filter = (message: any): boolean => message.author.id === interaction.user.id
-        console.log('joe')
         if (interaction.channel !== null) {
           const collector = interaction.channel.createMessageCollector({ filter, max: 1, time: 20000 })
-          console.log('bob')
 
           collector.on('collect', async (message: any) => {
-            console.log('greg')
             await this.handleIncommingMessage(message, interaction, command)
           })
 
@@ -114,7 +112,6 @@ export class DiscordClient {
      * Add user's profile information to database
      */
   async addUserToAlertBot (username: string, interaction: any, command: any): Promise<void> {
-    console.log('2')
     const index = username.indexOf('#')
     const bungieUsername = username.substring(0, index)
     const bungieUsernameCode = username.substring(Number(index) + 1, username.length)
@@ -127,12 +124,10 @@ export class DiscordClient {
      * Validate the user's submitted username exists in Destiny 2
      */
   async doesBungieUsernameExistInDestiny (message: any): Promise<boolean> {
-    console.log('12')
     const index = message.content.indexOf('#')
     const bungieUsername = message.content.substring(0, index)
     const bungieUsernameCode = message.content.substring(Number(index) + 1, message.content.length)
     const response = await destinyService.getDestinyUsername(bungieUsername, bungieUsernameCode)
-    console.log('34')
 
     return Object(response).length !== 0
   }

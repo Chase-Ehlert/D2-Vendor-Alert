@@ -42,7 +42,6 @@ export class MongoUserRepository {
 
     try {
       await newUser.save()
-      console.log('3')
     } catch (error) {
       throw Error('Could not create new user')
     }
