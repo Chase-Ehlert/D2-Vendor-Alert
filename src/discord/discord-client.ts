@@ -124,10 +124,12 @@ export class DiscordClient {
      * Validate the user's submitted username exists in Destiny 2
      */
   async doesBungieUsernameExistInDestiny (message: any): Promise<boolean> {
+    console.log('12')
     const index = message.content.indexOf('#')
     const bungieUsername = message.content.substring(0, index)
     const bungieUsernameCode = message.content.substring(Number(index) + 1, message.content.length)
     const response = await destinyService.getDestinyUsername(bungieUsername, bungieUsernameCode)
+    console.log('34')
 
     return Object(response).length !== 0
   }
