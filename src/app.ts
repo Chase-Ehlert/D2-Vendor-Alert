@@ -96,8 +96,6 @@ async function handleAuthorizationCode (authorizationCode: string, result: any):
   await destinyService.getRefreshTokenInfo(authorizationCode, result)
     .then(async (tokenInfo) => {
       if (tokenInfo !== undefined) {
-        console.log('token info')
-        console.log(tokenInfo)
         await destinyService.getDestinyMembershipInfo(tokenInfo.bungieMembershipId)
           .then(async (destinyMembershipInfo) => {
             const destinyCharacterId = await destinyService.getDestinyCharacterId(destinyMembershipInfo[0])

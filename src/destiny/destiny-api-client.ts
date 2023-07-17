@@ -13,8 +13,6 @@ export class DestinyApiClient {
   }
 
   async getRefreshTokenInfo (authorizationCode: string): Promise<any> {
-    console.log('auth code')
-    console.log(authorizationCode)
     return await axios.post(
       this.bungieDomainWithTokenDirectory, {
         grant_type: 'authorization_code',

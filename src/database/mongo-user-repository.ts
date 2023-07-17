@@ -63,6 +63,9 @@ export class MongoUserRepository {
       destinyCharacterId: characterId
     })
 
+    console.log('update user')
+    console.log(bungieUsername)
+    console.log(updatedUser)
     try {
       await User.findByIdAndUpdate(bungieUsername, updatedUser)
     } catch (error) {
