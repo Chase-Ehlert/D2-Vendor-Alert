@@ -1,7 +1,6 @@
 import { UserService } from '../services/user-service'
+import { NewUser, UpdatedUser } from './models/user'
 import { MongoUserRepository } from './mongo-user-repository'
-import { User } from './models/user.js'
-import { Types } from 'mongoose'
 
 describe('<MongoUserRepository/>', () => {
   const userService = new UserService()
@@ -12,7 +11,7 @@ describe('<MongoUserRepository/>', () => {
   })
 
   it('should return true if a user exists in the database', async () => {
-    User.exists = jest.fn().mockResolvedValue(true)
+    NewUser.exists = jest.fn().mockResolvedValue(true)
 
     const value = await mongoUserRepo.doesUserExist('bungieNetUsername')
 
@@ -20,7 +19,7 @@ describe('<MongoUserRepository/>', () => {
   })
 
   it('should return false if a user does not exist in the database', async () => {
-    User.exists = jest.fn().mockResolvedValue(null)
+    NewUser.exists = jest.fn().mockResolvedValue(null)
 
     const value = await mongoUserRepo.doesUserExist('bungieNetUsername')
 
@@ -28,7 +27,7 @@ describe('<MongoUserRepository/>', () => {
   })
 
   it('should add a user to the database', async () => {
-    const saveMock = jest.spyOn(User.prototype, 'save').mockResolvedValue({})
+    const saveMock = jest.spyOn(NewUser.prototype, 'save').mockResolvedValue({})
 
     await mongoUserRepo.addUser('bungieNetUsername', 'bungieNetUsernameCode', 'discordId', 'discordChannelId')
 
@@ -36,7 +35,7 @@ describe('<MongoUserRepository/>', () => {
   })
 
   it('should throw an error when a user is not saved to the database', async () => {
-    jest.spyOn(User.prototype, 'save').mockRejectedValue(Error)
+    jest.spyOn(NewUser.prototype, 'save').mockRejectedValue(Error)
 
     await expect(async () => await mongoUserRepo.addUser('', '', '', '')).rejects.toThrow(Error)
     await expect(async () => await mongoUserRepo.addUser('', '', '', '')).rejects.toThrow('Could not create new user')
@@ -48,16 +47,15 @@ describe('<MongoUserRepository/>', () => {
     const refreshToken = 'guardian#123'
     const destinyId = 'jack'
     const characterId = 'carl'
-    User.findOneAndUpdate = jest.fn().mockResolvedValue({})
+    UpdatedUser.findOneAndUpdate = jest.fn().mockResolvedValue({})
 
     await mongoUserRepo.updateUserByUsername(bungieUsername, refreshExpiration, refreshToken, destinyId, characterId)
 
-    expect(User.findOneAndUpdate).toBeCalledWith(
+    expect(UpdatedUser.findOneAndUpdate).toBeCalledWith(
       { bungieUsername: bungieUsername },
       {
         $set: expect.objectContaining(
           {
-            _id: expect.any(Types.ObjectId),
             destinyId: destinyId,
             destinyCharacterId: characterId,
             refreshExpiration: mongoUserRepo.determineExpirationDate(refreshExpiration),
@@ -69,7 +67,7 @@ describe('<MongoUserRepository/>', () => {
 
   it('should throw an error when a user record cant be updated by a username', async () => {
     const bungieUsername = 'guardian'
-    User.findOneAndUpdate = jest.fn().mockRejectedValue(Error)
+    UpdatedUser.findOneAndUpdate = jest.fn().mockRejectedValue(Error)
 
     await expect(
       async () => await mongoUserRepo.updateUserByUsername(bungieUsername, '', '', '', '')
@@ -84,15 +82,14 @@ describe('<MongoUserRepository/>', () => {
     const bungieMembershipId = 'guardian'
     const refreshExpiration = '1000'
     const refreshToken = 'guardian#123'
-    User.findOneAndUpdate = jest.fn().mockResolvedValue({})
+    UpdatedUser.findOneAndUpdate = jest.fn().mockResolvedValue({})
 
     await mongoUserRepo.updateUserByMembershipId(bungieMembershipId, refreshExpiration, refreshToken)
 
-    expect(User.findOneAndUpdate).toBeCalledWith(
+    expect(UpdatedUser.findOneAndUpdate).toBeCalledWith(
       { bungieMembershipId: bungieMembershipId },
       expect.objectContaining(
         {
-          _id: expect.any(Types.ObjectId),
           refreshExpiration: mongoUserRepo.determineExpirationDate(refreshExpiration),
           refreshToken: refreshToken
         })
@@ -101,7 +98,7 @@ describe('<MongoUserRepository/>', () => {
 
   it('should throw an error when a user record cant be updated by a membership id', async () => {
     const bungieUsername = 'guardian'
-    User.findOneAndUpdate = jest.fn().mockRejectedValue(Error)
+    UpdatedUser.findOneAndUpdate = jest.fn().mockRejectedValue(Error)
 
     await expect(
       async () => await mongoUserRepo.updateUserByMembershipId(bungieUsername, '', '')
@@ -114,7 +111,7 @@ describe('<MongoUserRepository/>', () => {
 
   it('should return a list of users that are subscribed to be alerted', async () => {
     const expectedUsers = [
-      new User({
+      new NewUser({
         bungieUsername: 'string',
         bungieUsernameCode: 'string',
         discordId: 'string',
@@ -124,7 +121,7 @@ describe('<MongoUserRepository/>', () => {
         refreshExpiration: 'string',
         refreshToken: 'string'
       }),
-      new User({
+      new NewUser({
         bungieUsername: 'string1',
         bungieUsernameCode: 'string1',
         discordId: 'string1',
@@ -135,11 +132,11 @@ describe('<MongoUserRepository/>', () => {
         refreshToken: 'string1'
       })
     ]
-    User.find = jest.fn().mockResolvedValue(expectedUsers)
+    NewUser.find = jest.fn().mockResolvedValue(expectedUsers)
 
     const result = await mongoUserRepo.fetchAllUsers()
 
-    expect(User.find).toBeCalled()
+    expect(NewUser.find).toBeCalled()
     expect(result).toEqual(expectedUsers)
   })
 })

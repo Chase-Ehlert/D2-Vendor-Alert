@@ -1,10 +1,10 @@
 import { UserService } from '../services/user-service.js'
-import { User, UserInterface } from './models/user.js'
+import { NewUser, UpdatedUser, UserInterface } from './models/user.js'
 
 export class MongoUserRepository {
   public userService
 
-  constructor(userService: UserService) {
+  constructor (userService: UserService) {
     this.userService = userService
   }
 
@@ -14,7 +14,7 @@ export class MongoUserRepository {
   async doesUserExist (bungieNetUsername: string): Promise<boolean> {
     const index = bungieNetUsername.indexOf('#')
     const username = bungieNetUsername.substring(0, index)
-    const doesUserExist = await User.exists({ bungieUsername: username })
+    const doesUserExist = await NewUser.exists({ bungieUsername: username })
 
     if (doesUserExist !== null) {
       return true
@@ -32,7 +32,7 @@ export class MongoUserRepository {
     discordId: string,
     discordChannelId: string
   ): Promise<void> {
-    const newUser = new User({
+    const newUser = new NewUser({
       bungieUsername: bungieUsername,
       bungieUsernameCode: bungieUsernameCode,
       discordId: discordId,
@@ -57,7 +57,7 @@ export class MongoUserRepository {
     characterId: string
   ): Promise<void> {
     const filter = { bungieUsername: bungieUsername }
-    const updatedUser = new User({
+    const updatedUser = new UpdatedUser({
       refreshExpiration: this.determineExpirationDate(refreshExpirationTime),
       refreshToken: refreshToken,
       destinyId: destinyId,
@@ -65,7 +65,7 @@ export class MongoUserRepository {
     })
 
     try {
-      await User.findOneAndUpdate(filter, { $set: updatedUser })
+      await UpdatedUser.findOneAndUpdate(filter, { $set: updatedUser })
     } catch (error) {
       console.error(error)
       throw Error(`The record for ${bungieUsername}, could not be updated`)
@@ -81,13 +81,13 @@ export class MongoUserRepository {
     refreshToken: string
   ): Promise<void> {
     const filter = { bungieMembershipId: bungieMembershipId }
-    const updatedUser = new User({
+    const updatedUser = new UpdatedUser({
       refreshExpiration: this.determineExpirationDate(refreshExpirationTime),
       refreshToken: refreshToken
     })
 
     try {
-      await User.findOneAndUpdate(filter, updatedUser)
+      await UpdatedUser.findOneAndUpdate(filter, updatedUser)
     } catch (error) {
       throw new Error(`The record for ${bungieMembershipId}, could not be updated`)
     }
@@ -97,7 +97,7 @@ export class MongoUserRepository {
    * Returns a list of all users subscribed to be alerted
    */
   async fetchAllUsers (): Promise<UserInterface[]> {
-    return await User.find()
+    return await NewUser.find()
   }
 
   public determineExpirationDate (refreshExpirationTime: string): string {
