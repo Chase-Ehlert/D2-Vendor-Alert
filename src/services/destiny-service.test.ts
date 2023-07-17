@@ -57,11 +57,13 @@ describe('<DestinyService/>', () => {
     const expectedDestinyMembershipId = '456'
     const expectedDisplayName = 'guardian'
     const membershipInfo = {
-      Response: {
-        destinyMemberships: [{
-          membershipId: expectedDestinyMembershipId,
-          displayName: expectedDisplayName
-        }]
+      data: {
+        Response: {
+          destinyMemberships: [{
+            membershipId: expectedDestinyMembershipId,
+            displayName: expectedDisplayName
+          }]
+        }
       }
     }
     jest.spyOn(destinyApiClient, 'getDestinyMembershipInfo').mockResolvedValue(membershipInfo)
