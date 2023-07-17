@@ -95,10 +95,10 @@ async function startServer (): Promise<void> {
  * Uses the authorization code to retreive the user's token information and then save it to the database
  */
 async function handleAuthorizationCode (authorizationCode: string, result: any): Promise<void | string> {
-  await destinyService.getRefreshTokenInfo(authorizationCode, result)
+  return await destinyService.getRefreshTokenInfo(authorizationCode, result)
     .then(async (tokenInfo) => {
       if (tokenInfo !== undefined) {
-        await destinyService.getDestinyMembershipInfo(tokenInfo.bungieMembershipId)
+        return await destinyService.getDestinyMembershipInfo(tokenInfo.bungieMembershipId)
           .then(async (destinyMembershipInfo) => {
             const destinyCharacterId = await destinyService.getDestinyCharacterId(destinyMembershipInfo[0])
             await mongoUserRepo.updateUserByUsername(
