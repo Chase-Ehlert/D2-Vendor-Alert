@@ -15,6 +15,8 @@ export class DestinyService {
   async getRefreshTokenInfo (authorizationCode: string, result: any): Promise<void | RefreshTokenInfo> {
     try {
       const refreshTokenInfo = await this.destinyApiClient.getRefreshTokenInfo(authorizationCode)
+      console.log('api client call')
+      console.log(refreshTokenInfo)
 
       return new RefreshTokenInfo(
         refreshTokenInfo.membership_id,
