@@ -33,11 +33,11 @@ export class DestinyService {
      * Retrieves Destiny membership information for a user
      */
   async getDestinyMembershipInfo (membershipId: string): Promise<string[]> {
-    const membershipInfo = await this.destinyApiClient.getDestinyMembershipInfo(membershipId)
+    const { data } = await this.destinyApiClient.getDestinyMembershipInfo(membershipId)
 
     return [
-      membershipInfo.Response.destinyMemberships[0].membershipId,
-      membershipInfo.Response.destinyMemberships[0].displayName
+      data.Response.destinyMemberships[0].membershipId,
+      data.Response.destinyMemberships[0].displayName
     ]
   }
 
