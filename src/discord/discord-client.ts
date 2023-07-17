@@ -41,10 +41,6 @@ export class DiscordClient {
   async setupSlashCommands (discordClient: any): Promise<void> {
     const commandsPath = path.join(url.fileURLToPath(new URL('./../../dist/src/discord/', import.meta.url)), 'commands')
     const commandsFiles = fileSystem.readdirSync(commandsPath).filter(file => file.endsWith('.js'))
-    console.log('jack')
-    console.log(commandsPath)
-    console.log('jill')
-    console.log(commandsFiles)
 
     for (const file of commandsFiles) {
       const filePath = path.join(commandsPath, file)
@@ -66,7 +62,6 @@ export class DiscordClient {
       if (!(interaction as discord.Interaction).isCommand()) return
 
       const command = interaction.client.commands.get(interaction.commandName)
-      console.log(interaction.client.commands)
 
       try {
         await interaction.reply('What is your Bungie Net username? (i.e. "Guardian#1234")')

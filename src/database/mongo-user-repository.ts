@@ -12,7 +12,6 @@ export class MongoUserRepository {
      * Checks if user exists in database
      */
   async doesUserExist (bungieNetUsername: string): Promise<boolean> {
-    console.log('1')
     const index = bungieNetUsername.indexOf('#')
     const username = bungieNetUsername.substring(0, index)
     const doesUserExist = await User.exists({ bungieUsername: username })
