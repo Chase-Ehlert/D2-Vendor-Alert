@@ -26,9 +26,11 @@ describe('<DestinyService/>', () => {
       expectedRefreshToken
     )
     jest.spyOn(destinyApiClient, 'getRefreshTokenInfo').mockResolvedValue({
-      membership_id: expectedMembershipId,
-      refresh_expires_in: expectedRefreshExpiration,
-      refresh_token: expectedRefreshToken
+      data: {
+        membership_id: expectedMembershipId,
+        refresh_expires_in: expectedRefreshExpiration,
+        refresh_token: expectedRefreshToken
+      }
     })
 
     const value = await destinyService.getRefreshTokenInfo(
