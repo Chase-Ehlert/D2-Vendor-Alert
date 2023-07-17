@@ -67,6 +67,7 @@ export class MongoUserRepository {
     try {
       await User.findOneAndUpdate(filter, { $set: updatedUser })
     } catch (error) {
+      console.error(error)
       throw Error(`The record for ${bungieUsername}, could not be updated`)
     }
   }
