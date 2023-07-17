@@ -56,6 +56,7 @@ export class MongoUserRepository {
     destinyId: string,
     characterId: string
   ): Promise<void> {
+    const filter = { bungieUsername: bungieUsername }
     const updatedUser = new User({
       refreshExpiration: this.determineExpirationDate(refreshExpirationTime),
       refreshToken: refreshToken,
@@ -63,11 +64,8 @@ export class MongoUserRepository {
       destinyCharacterId: characterId
     })
 
-    console.log('update user')
-    console.log(bungieUsername)
-    console.log(updatedUser)
     try {
-      await User.findByIdAndUpdate(bungieUsername, updatedUser)
+      await User.findOneAndUpdate(filter, updatedUser)
     } catch (error) {
       throw Error(`The record for ${bungieUsername}, could not be updated`)
     }

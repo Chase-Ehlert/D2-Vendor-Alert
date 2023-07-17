@@ -48,12 +48,12 @@ describe('<MongoUserRepository/>', () => {
     const refreshToken = 'guardian#123'
     const destinyId = 'jack'
     const characterId = 'carl'
-    User.findByIdAndUpdate = jest.fn().mockResolvedValue({})
+    User.findOneAndUpdate = jest.fn().mockResolvedValue({})
 
     await mongoUserRepo.updateUserByUsername(bungieUsername, refreshExpiration, refreshToken, destinyId, characterId)
 
-    expect(User.findByIdAndUpdate).toBeCalledWith(
-      bungieUsername,
+    expect(User.findOneAndUpdate).toBeCalledWith(
+      { bungieUsername: bungieUsername },
       expect.objectContaining(
         {
           _id: expect.any(Types.ObjectId),
@@ -67,7 +67,7 @@ describe('<MongoUserRepository/>', () => {
 
   it('should throw an error when a user record cant be updated by a username', async () => {
     const bungieUsername = 'guardian'
-    User.findByIdAndUpdate = jest.fn().mockRejectedValue(Error)
+    User.findOneAndUpdate = jest.fn().mockRejectedValue(Error)
 
     await expect(
       async () => await mongoUserRepo.updateUserByUsername(bungieUsername, '', '', '', '')
