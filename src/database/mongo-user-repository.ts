@@ -14,6 +14,7 @@ export class MongoUserRepository {
   async doesUserExist (bungieNetUsername: string): Promise<boolean> {
     const index = bungieNetUsername.indexOf('#')
     const username = bungieNetUsername.substring(0, index)
+
     const doesUserExist = await User.exists({ bungieUsername: username })
 
     if (doesUserExist !== null) {
@@ -92,6 +93,7 @@ export class MongoUserRepository {
     try {
       await User.findOneAndUpdate(filter, updatedUser)
     } catch (error) {
+      console.error(error)
       throw new Error(`The record for ${bungieMembershipId}, could not be updated`)
     }
   }

@@ -5,12 +5,16 @@ import { UserInterface } from '../database/models/user.js'
 
 export class Vendor {
   public destinyService
-  public userRepo
+  public mongoUserRepo
   public manifestService
 
-  constructor (destinyService: DestinyService, userRepo: MongoUserRepository, manifestService: ManifestService) {
+  constructor (
+    destinyService: DestinyService,
+    mongoUserRepo: MongoUserRepository,
+    manifestService: ManifestService
+  ) {
     this.destinyService = destinyService
-    this.userRepo = userRepo
+    this.mongoUserRepo = mongoUserRepo
     this.manifestService = manifestService
   }
 
@@ -41,7 +45,7 @@ export class Vendor {
    */
   private async getVendorModInventory (user: UserInterface, vendorId: string): Promise<string[]> {
     const tokenInfo = await this.destinyService.getAccessToken(user.refreshToken)
-    await this.userRepo.updateUserByMembershipId(
+    await this.mongoUserRepo.updateUserByMembershipId(
       tokenInfo.bungieMembershipId,
       tokenInfo.refreshTokenExpirationTime,
       tokenInfo.refreshToken
