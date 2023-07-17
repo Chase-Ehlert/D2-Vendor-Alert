@@ -12,7 +12,7 @@ import { ManifestService } from './services/manifest-service.js'
 import { DestinyApiClient } from './destiny/destiny-api-client.js'
 
 const app = express()
-const landingPagePath = path.join(url.fileURLToPath(new URL('./dist/src', import.meta.url)), 'views')
+const landingPagePath = path.join(url.fileURLToPath(new URL('./../dist/src', import.meta.url)), 'views')
 
 app.engine('mustache', mustacheExpress())
 app.set('view engine', 'mustache')
@@ -42,7 +42,7 @@ app.listen(3001, () => {
 })
 
 app.get('/error/authCode', ((request, result) => {
-  result.sendFile('./dist/src/views/landing-page-error-auth-code.html', { root: directoryName })
+  result.sendFile('./../dist/src/views/landing-page-error-auth-code.html', { root: directoryName })
 }) as RequestHandler)
 
 app.get('/', (async (request, result) => {
@@ -51,7 +51,7 @@ app.get('/', (async (request, result) => {
 
     result.render('landing-page.mustache', { guardian })
   } else {
-    result.sendFile('./dist/src/views/landing-page-error.html', { root: directoryName })
+    result.sendFile('./../dist/src/views/landing-page-error.html', { root: directoryName })
   }
 }) as express.RequestHandler)
 
