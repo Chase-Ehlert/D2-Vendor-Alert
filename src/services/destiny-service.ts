@@ -14,14 +14,14 @@ export class DestinyService {
      */
   async getRefreshTokenInfo (authorizationCode: string, result: any): Promise<void | RefreshTokenInfo> {
     try {
-      const refreshTokenInfo = await this.destinyApiClient.getRefreshTokenInfo(authorizationCode)
+      const { data } = await this.destinyApiClient.getRefreshTokenInfo(authorizationCode)
       console.log('api client call')
-      console.log(refreshTokenInfo)
+      console.log(data)
 
       return new RefreshTokenInfo(
-        refreshTokenInfo.membership_id,
-        refreshTokenInfo.refresh_expires_in,
-        refreshTokenInfo.refresh_token
+        data.membership_id,
+        data.refresh_expires_in,
+        data.refresh_token
       )
     } catch (error) {
       result.redirect('/error/authCode')
