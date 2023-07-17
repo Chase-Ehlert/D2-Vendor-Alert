@@ -48,6 +48,8 @@ app.get('/error/authCode', ((request, result) => {
 app.get('/', (async (request, result) => {
   if (request.query.code !== undefined) {
     const guardian = await handleAuthorizationCode(String(request.query.code), result)
+    console.log('HEEEEEEEEY')
+    console.log(guardian)
 
     result.render('landing-page.mustache', { guardian })
   } else {
