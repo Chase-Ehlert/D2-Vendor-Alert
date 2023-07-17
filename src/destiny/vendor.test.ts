@@ -1,6 +1,5 @@
 import { MongoUserRepository } from '../database/mongo-user-repository'
 import { UserInterface } from '../database/models/user'
-import { UserService } from '../services/user-service'
 import { DestinyService } from '../services/destiny-service'
 import { ManifestService } from '../services/manifest-service'
 import { RefreshTokenInfo } from '../services/models/refresh-token-info'
@@ -9,7 +8,7 @@ import { DestinyApiClient } from './destiny-api-client'
 
 describe('<Vendor/>', () => {
   const destinyService = new DestinyService(new DestinyApiClient())
-  const userRepo = new MongoUserRepository(new UserService())
+  const userRepo = new MongoUserRepository()
   const manifestService = new ManifestService(new DestinyService(new DestinyApiClient()))
   const vendor = new Vendor(destinyService, userRepo, manifestService)
   let user = {

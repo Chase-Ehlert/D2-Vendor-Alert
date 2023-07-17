@@ -1,13 +1,6 @@
-import { UserService } from '../services/user-service.js'
 import { User, UserInterface } from './models/user.js'
 
 export class MongoUserRepository {
-  public userService
-
-  constructor (userService: UserService) {
-    this.userService = userService
-  }
-
   /**
      * Checks if user exists in database
      */

@@ -5,10 +5,9 @@ import * as url from 'url'
 import { MongoUserRepository } from '../database/mongo-user-repository.js'
 import { DestinyService } from '../services/destiny-service.js'
 import { config } from '../../config/config.js'
-import { UserService } from '../services/user-service.js'
 import { DestinyApiClient } from '../destiny/destiny-api-client.js'
 
-const userRepo = new MongoUserRepository(new UserService())
+const userRepo = new MongoUserRepository()
 const destinyService = new DestinyService(new DestinyApiClient())
 
 export class DiscordClient {

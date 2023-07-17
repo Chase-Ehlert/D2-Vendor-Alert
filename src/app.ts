@@ -21,12 +21,12 @@ app.set('views', landingPagePath)
 const directoryName = path.dirname('app')
 const destinyService = new DestinyService(new DestinyApiClient())
 const userService = new UserService()
-const mongoUserRepo = new MongoUserRepository(userService)
+const mongoUserRepo = new MongoUserRepository()
 const discordClient = new DiscordClient()
 const discordService = new DiscordService(
   new Vendor(
     new DestinyService(new DestinyApiClient()),
-    new MongoUserRepository(userService),
+    new MongoUserRepository(),
     new ManifestService(new DestinyService(new DestinyApiClient()))
   ),
   destinyService,

@@ -1,6 +1,5 @@
 import axios from 'axios'
 import { DiscordService } from './discord-service'
-import { UserService } from './user-service.js'
 import { Vendor } from '../destiny/vendor'
 import { DestinyService } from './destiny-service'
 import { MongoUserRepository } from '../database/mongo-user-repository'
@@ -13,11 +12,11 @@ import { User, UserInterface } from '../database/models/user'
 describe('<DiscordService/>', () => {
   const vendor = new Vendor(
     new DestinyService(new DestinyApiClient()),
-    new MongoUserRepository(new UserService()),
+    new MongoUserRepository(),
     new ManifestService(new DestinyService(new DestinyApiClient()))
   )
   const destinyService = new DestinyService(new DestinyApiClient())
-  const userRepo = new MongoUserRepository(new UserService())
+  const userRepo = new MongoUserRepository()
   const discordService = new DiscordService(vendor, destinyService, userRepo)
 
   jest.mock('axios')

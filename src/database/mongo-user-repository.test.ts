@@ -1,10 +1,8 @@
-import { UserService } from '../services/user-service'
 import { User } from './models/user'
 import { MongoUserRepository } from './mongo-user-repository'
 
 describe('<MongoUserRepository/>', () => {
-  const userService = new UserService()
-  const mongoUserRepo = new MongoUserRepository(userService)
+  const mongoUserRepo = new MongoUserRepository()
 
   it('should instantiate', () => {
     expect(mongoUserRepo).not.toBeNull()
