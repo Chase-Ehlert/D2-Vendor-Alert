@@ -4,7 +4,7 @@ import { User, UserInterface } from './models/user.js'
 export class MongoUserRepository {
   public userService
 
-  constructor (userService: UserService) {
+  constructor(userService: UserService) {
     this.userService = userService
   }
 
@@ -65,7 +65,7 @@ export class MongoUserRepository {
     })
 
     try {
-      await User.findOneAndUpdate(filter, updatedUser)
+      await User.findOneAndUpdate(filter, { $set: updatedUser })
     } catch (error) {
       throw Error(`The record for ${bungieUsername}, could not be updated`)
     }

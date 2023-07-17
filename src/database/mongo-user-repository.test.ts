@@ -54,15 +54,17 @@ describe('<MongoUserRepository/>', () => {
 
     expect(User.findOneAndUpdate).toBeCalledWith(
       { bungieUsername: bungieUsername },
-      expect.objectContaining(
-        {
-          _id: expect.any(Types.ObjectId),
-          destinyId: destinyId,
-          destinyCharacterId: characterId,
-          refreshExpiration: mongoUserRepo.determineExpirationDate(refreshExpiration),
-          refreshToken: refreshToken
-        }
-      ))
+      {
+        $set: expect.objectContaining(
+          {
+            _id: expect.any(Types.ObjectId),
+            destinyId: destinyId,
+            destinyCharacterId: characterId,
+            refreshExpiration: mongoUserRepo.determineExpirationDate(refreshExpiration),
+            refreshToken: refreshToken
+          }
+        )
+      })
   })
 
   it('should throw an error when a user record cant be updated by a username', async () => {
