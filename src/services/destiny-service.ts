@@ -45,9 +45,9 @@ export class DestinyService {
     * Retrieves Destiny character information for a user
     */
   async getDestinyCharacterId (destinyMembershipId: string): Promise<string> {
-    const characterIds = await this.destinyApiClient.getDestinyCharacterIds(destinyMembershipId)
+    const { data } = await this.destinyApiClient.getDestinyCharacterIds(destinyMembershipId)
 
-    return characterIds.Response.profile.data.characterIds[0]
+    return data.Response.profile.data.characterIds[0]
   }
 
   /**

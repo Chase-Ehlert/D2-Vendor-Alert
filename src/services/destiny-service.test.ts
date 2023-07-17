@@ -76,7 +76,7 @@ describe('<DestinyService/>', () => {
   it('should retrieve the Destiny character information for a user', async () => {
     const expectedMembershipId = '123'
     const expectedCharacterId = '456'
-    const characterInfo = { Response: { profile: { data: { characterIds: [expectedCharacterId] } } } }
+    const characterInfo = { data: { Response: { profile: { data: { characterIds: [expectedCharacterId] } } } } }
     jest.spyOn(destinyApiClient, 'getDestinyCharacterIds').mockResolvedValue(characterInfo)
 
     const value = await destinyService.getDestinyCharacterId(expectedMembershipId)
