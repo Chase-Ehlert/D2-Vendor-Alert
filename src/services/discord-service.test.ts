@@ -8,7 +8,7 @@ import { RefreshTokenInfo } from './models/refresh-token-info'
 import { config } from '../../config/config'
 import { ManifestService } from './manifest-service'
 import { DestinyApiClient } from '../destiny/destiny-api-client'
-import { NewUser, UserInterface } from '../database/models/user'
+import { User, UserInterface } from '../database/models/user'
 
 describe('<DiscordService/>', () => {
   const vendor = new Vendor(
@@ -55,7 +55,7 @@ describe('<DiscordService/>', () => {
     const updateUserByMembershipIdMock = jest.spyOn(userRepo, 'updateUserByMembershipId').mockResolvedValue()
 
     jest.spyOn(vendor, 'getProfileCollectibles').mockResolvedValue([])
-    NewUser.find = jest.fn().mockImplementation(() => databaseUsers)
+    User.find = jest.fn().mockImplementation(() => databaseUsers)
     axios.post = jest.fn().mockImplementation(async () => await Promise.resolve({ status: 200 }))
 
     afterEach(() => {

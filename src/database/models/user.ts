@@ -12,7 +12,7 @@ export interface UserInterface extends Document {
   refreshToken: string
 }
 
-const NewUserSchema = new Schema({
+const UserSchema = new Schema({
   bungieUsername: { type: String, required: true },
   bungieUsernameCode: { type: String, required: true },
   discordId: { type: String, required: true },
@@ -24,19 +24,4 @@ const NewUserSchema = new Schema({
   refreshToken: { type: String }
 })
 
-const UpdatedUserSchema = new Schema({
-  bungieUsername: { type: String, required: true },
-  bungieUsernameCode: { type: String, required: true },
-  discordId: { type: String, required: true },
-  discordChannelId: { type: String, required: true },
-  bungieMembershipId: { type: String },
-  destinyId: { type: String },
-  destinyCharacterId: { type: String },
-  refreshExpiration: { type: String },
-  refreshToken: { type: String }
-},
-{ _id: false }
-)
-
-export const NewUser = mongoose.model<UserInterface>('NewUsers', NewUserSchema)
-export const UpdatedUser = mongoose.model<UserInterface>('UpdatedUsers', UpdatedUserSchema)
+export const User = mongoose.model<UserInterface>('Users', UserSchema)
