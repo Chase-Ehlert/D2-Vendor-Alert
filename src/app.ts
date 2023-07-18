@@ -12,7 +12,7 @@ import { ManifestService } from './services/manifest-service.js'
 import { DestinyApiClient } from './destiny/destiny-api-client.js'
 
 const app = express()
-const landingPagePath = path.join(url.fileURLToPath(new URL('.', import.meta.url)), 'views')
+const landingPagePath = path.join(url.fileURLToPath(new URL('./', import.meta.url)), 'views')
 
 app.engine('mustache', mustacheExpress())
 app.set('view engine', 'mustache')
