@@ -4,12 +4,26 @@ import { Socket } from 'net'
 import { RefreshTokenInfo } from './models/refresh-token-info'
 import { UserInterface } from '../database/models/user'
 import { DestinyApiClient } from '../destiny/destiny-api-client'
+import logger from '../utility/logger'
+
+jest.mock('./../utility/logger', () => {
+  return {
+    info: jest.fn(),
+    error: jest.fn()
+  }
+})
+
+jest.mock('./../utility/url', () => {
+  return 'example'
+})
+
+beforeEach(() => {
+  jest.resetAllMocks()
+})
 
 describe('<DestinyService/>', () => {
   const destinyApiClient = new DestinyApiClient()
   const destinyService = new DestinyService(destinyApiClient)
-
-  jest.spyOn(console, 'error').mockImplementation(() => { })
 
   it('should instantiate', async () => {
     expect(destinyService).not.toBeNull()
@@ -41,15 +55,14 @@ describe('<DestinyService/>', () => {
     expect(value).toEqual(expectedRefreshTokenInfo)
   })
 
-  it('should redirect when the post fails', async () => {
-    const expectedResult: any = { redirect: jest.fn() }
-    const expectedError = new Error('Oops, something went wrong')
+  it('should redirect when the call to destiny api client fails', async () => {
+    const expectedResult: any = { sendFile: jest.fn() }
+    const expectedError = { err: { message: 'Oops, something went wrong' } }
     jest.spyOn(destinyApiClient, 'getRefreshTokenInfo').mockRejectedValue(expectedError)
 
     await destinyService.getRefreshTokenInfo('1', expectedResult)
 
-    expect(expectedResult.redirect).toBeCalledWith('/error/authCode')
-    expect(console.error).toHaveBeenCalledWith(expectedError)
+    expect(expectedResult.sendFile).toBeCalledWith('landing-page-error-auth-code.html', expect.any(Object))
   })
 
   it('should retrieve the Destiny membership information for a user', async () => {
@@ -118,6 +131,15 @@ describe('<DestinyService/>', () => {
     const value = await destinyService.getAccessToken(refreshToken)
 
     expect(value).toEqual(expectedRefreshTokenInfo)
+  })
+
+  it('should log an error when a call to destiny api client fails', async () => {
+    const expectedError = { err: { message: 'Oops, something went wrong' } }
+    jest.spyOn(destinyApiClient, 'getRefreshTokenInfo').mockRejectedValue(expectedError)
+
+    await destinyService.getAccessToken('1')
+
+    expect(logger.error).toHaveBeenCalledWith('Issue with retreiving refresh token')
   })
 
   it('should check if a Destiny username exists based on a users Bungie username', async () => {

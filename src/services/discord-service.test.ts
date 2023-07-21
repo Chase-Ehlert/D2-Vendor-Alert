@@ -9,6 +9,10 @@ import { ManifestService } from './manifest-service'
 import { DestinyApiClient } from '../destiny/destiny-api-client'
 import { User, UserInterface } from '../database/models/user'
 
+jest.mock('./../utility/url', () => {
+  return 'example'
+})
+
 describe('<DiscordService/>', () => {
   const vendor = new Vendor(
     new DestinyService(new DestinyApiClient()),

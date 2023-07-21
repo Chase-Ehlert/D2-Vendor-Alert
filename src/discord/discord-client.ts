@@ -6,6 +6,7 @@ import { MongoUserRepository } from '../database/mongo-user-repository.js'
 import { DestinyService } from '../services/destiny-service.js'
 import { config } from '../../config/config.js'
 import { DestinyApiClient } from '../destiny/destiny-api-client.js'
+import logger from '../utility/logger.js'
 
 const userRepo = new MongoUserRepository()
 const destinyService = new DestinyService(new DestinyApiClient())
@@ -26,7 +27,7 @@ export class DiscordClient {
 
     discordClient.commands = new discord.Collection()
     discordClient.once(discord.Events.ClientReady, (eventClient: any) => {
-      console.log(`Ready, logged in as ${String(eventClient.user.tag)}`)
+      logger.info(`Ready, logged in as ${String(eventClient.user.tag)}`)
     })
     discordClient.login(config.configModel.token)
 
@@ -48,7 +49,7 @@ export class DiscordClient {
       if ('data' in command.default && 'execute' in command.default) {
         discordClient.commands.set(command.default.data.name, command.default)
       } else {
-        console.log(`The command at ${filePath} is missing "data" or "execute"`)
+        logger.info(`The command at ${filePath} is missing "data" or "execute"`)
       }
     }
   }

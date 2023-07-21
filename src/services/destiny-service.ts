@@ -1,6 +1,10 @@
 import { UserInterface } from '../database/models/user.js'
 import { RefreshTokenInfo } from './models/refresh-token-info.js'
 import { DestinyApiClient } from '../destiny/destiny-api-client.js'
+import logger from '../utility/logger.js'
+import path from 'path'
+// import { fileURLToPath } from 'url'
+import url from '../utility/url.js'
 
 export class DestinyService {
   public destinyApiClient
@@ -12,7 +16,7 @@ export class DestinyService {
   /**
      * Retrieves refresh token for a user
      */
-  async getRefreshTokenInfo (authorizationCode: string, result: any): Promise<void | RefreshTokenInfo> {
+  async getRefreshTokenInfo (authorizationCode: string, result: any): Promise<void | RefreshTokenInfo | any> {
     try {
       const { data } = await this.destinyApiClient.getRefreshTokenInfo(authorizationCode)
 
@@ -22,8 +26,9 @@ export class DestinyService {
         data.refresh_token
       )
     } catch (error) {
-      result.redirect('/error/authCode')
-      console.error(error)
+      logger.error('Error occurred while making the refresh token call with a authorization code')
+      logger.error(authorizationCode)
+      result.sendFile('landing-page-error-auth-code.html', { root: path.join(url, '../../views') })
     }
   }
 
@@ -60,15 +65,20 @@ export class DestinyService {
   /**
      * Retrieve the user's access token by calling the Destiny API with their refresh token
      */
-  async getAccessToken (refreshToken: string): Promise<RefreshTokenInfo> {
-    const { data } = await this.destinyApiClient.getAccessTokenInfo(refreshToken)
+  async getAccessToken (refreshToken: string): Promise<RefreshTokenInfo | undefined> {
+    try {
+      const { data } = await this.destinyApiClient.getAccessTokenInfo(refreshToken)
 
-    return new RefreshTokenInfo(
-      data.membership_id,
-      data.refresh_expires_in,
-      data.refresh_token,
-      data.access_token
-    )
+      return new RefreshTokenInfo(
+        data.membership_id,
+        data.refresh_expires_in,
+        data.refresh_token,
+        data.access_token
+      )
+    } catch (error) {
+      logger.error('Issue with retreiving refresh token')
+      logger.error(error)
+    }
   }
 
   /**

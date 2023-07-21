@@ -40,11 +40,13 @@ export class DiscordService {
 
     if (currentDate.getTime() > expirationDate.getTime()) {
       const tokenInfo = await this.destinyService.getAccessToken(user.refreshToken)
-      await this.mongoUserRepo.updateUserByMembershipId(
-        tokenInfo.bungieMembershipId,
-        tokenInfo.refreshTokenExpirationTime,
-        tokenInfo.refreshToken
-      )
+      if (tokenInfo !== undefined) {
+        await this.mongoUserRepo.updateUserByMembershipId(
+          tokenInfo.bungieMembershipId,
+          tokenInfo.refreshTokenExpirationTime,
+          tokenInfo.refreshToken
+        )
+      }
     }
   }
 
@@ -55,7 +57,7 @@ export class DiscordService {
     const discordEndpoint = `channels/${user.discordChannelId}/messages`
     const unownedModList = await this.vendor.getProfileCollectibles(user)
 
-    if (unownedModList.length > 0) {
+    if (unownedModList !== undefined && unownedModList.length > 0) {
       await this.messageUnownedModsList(discordEndpoint, user.discordId, unownedModList)
     } else {
       await this.messageEmptyModsList(discordEndpoint, user.bungieUsername)

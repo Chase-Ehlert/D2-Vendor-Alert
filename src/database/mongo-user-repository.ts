@@ -1,3 +1,4 @@
+import logger from '../utility/logger.js'
 import { User, UserInterface } from './models/user.js'
 
 export class MongoUserRepository {
@@ -62,7 +63,7 @@ export class MongoUserRepository {
     try {
       await User.findOneAndUpdate(filter, { $set: updatedUser })
     } catch (error) {
-      console.error(error)
+      logger.error(error)
       throw Error(`The record for ${bungieUsername}, could not be updated`)
     }
   }
@@ -86,7 +87,7 @@ export class MongoUserRepository {
     try {
       await User.findOneAndUpdate(filter, updatedUser)
     } catch (error) {
-      console.error(error)
+      logger.error(error)
       throw new Error(`The record for ${bungieMembershipId}, could not be updated`)
     }
   }

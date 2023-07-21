@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import { config } from '../../config/config.js'
+import logger from '../utility/logger.js'
 
 export class UserService {
   /**
@@ -10,6 +11,7 @@ export class UserService {
     await mongoose.connect(
       `mongodb+srv://${config.configModel.databaseUser}:${config.configModel.databasePassword}@${config.configModel.databaseCluster}.mongodb.net/${config.configModel.databaseName}`
     )
+    logger.info('Database connection set')
   }
 
   /**

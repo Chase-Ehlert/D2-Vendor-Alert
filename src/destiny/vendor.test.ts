@@ -5,6 +5,11 @@ import { ManifestService } from '../services/manifest-service'
 import { RefreshTokenInfo } from '../services/models/refresh-token-info'
 import { Vendor } from './vendor'
 import { DestinyApiClient } from './destiny-api-client'
+import logger from '../utility/logger'
+
+jest.mock('./../utility/url', () => {
+  return 'example'
+})
 
 describe('<Vendor/>', () => {
   const destinyService = new DestinyService(new DestinyApiClient())
@@ -63,14 +68,16 @@ describe('<Vendor/>', () => {
 
   it('should throw an error when the access token is undefined before calling getItemFromManifest()', async () => {
     const tokenInfo = new RefreshTokenInfo('bungieMembershipId', 'refreshTokenExpirationTime', 'refreshToken')
+    jest.spyOn(destinyService, 'getDestinyCollectibleInfo').mockResolvedValue({})
     jest.spyOn(destinyService, 'getAccessToken').mockResolvedValue(tokenInfo)
-    jest.spyOn(userRepo, 'updateUserByMembershipId').mockResolvedValue()
     user = {
       ...user,
       refreshToken: ''
     } as unknown as UserInterface
+    logger.error = jest.fn()
 
     await expect(async () => await vendor.getProfileCollectibles(user)).rejects.toThrow(Error)
-    await expect(async () => await vendor.getProfileCollectibles(user)).rejects.toThrow('Missing access token for retreiving vendor mod inventory.')
+
+    expect(logger.error).toBeCalledWith('Missing access token for retreiving vendor mod inventory.')
   })
 })

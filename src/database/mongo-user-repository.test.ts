@@ -1,6 +1,13 @@
 import { User } from './models/user'
 import { MongoUserRepository } from './mongo-user-repository'
 
+jest.mock('./../utility/logger', () => {
+  return {
+    info: jest.fn(),
+    error: jest.fn()
+  }
+})
+
 describe('<MongoUserRepository/>', () => {
   const mongoUserRepo = new MongoUserRepository()
 

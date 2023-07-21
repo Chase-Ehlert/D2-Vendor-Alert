@@ -3,6 +3,10 @@ import { DestinyService } from './destiny-service'
 import { ManifestService } from './manifest-service'
 import fs from 'fs'
 
+jest.mock('./../utility/url', () => {
+  return 'example'
+})
+
 describe('<ManifestService/>', () => {
   const destinyService = new DestinyService(new DestinyApiClient())
   const manifestService = new ManifestService(destinyService)

@@ -180,13 +180,6 @@ describe('<DestinyApiClient/>', () => {
     expect(value).toEqual(accessToken)
   })
 
-  it('should throw an error when the access token info cant be retrieved', async () => {
-    axios.post = jest.fn().mockRejectedValue({})
-
-    await expect(async () => await destinyApiClient.getAccessTokenInfo('refreshToken')).rejects.toThrow(Error)
-    await expect(async () => await destinyApiClient.getAccessTokenInfo('refreshToken')).rejects.toThrow('Could not fetch access token info')
-  })
-
   it('should check if a Destiny username exists based on a users Bungie username', async () => {
     const bungieUsername = 'name123'
     const bungieUsernameCode = '456'

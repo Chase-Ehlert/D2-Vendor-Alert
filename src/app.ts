@@ -2,6 +2,7 @@ import express, { RequestHandler } from 'express'
 import mustacheExpress from 'mustache-express'
 import * as path from 'path'
 import * as url from 'url'
+import logger from './utility/logger.js'
 import { DestinyService } from './services/destiny-service.js'
 import { MongoUserRepository } from './database/mongo-user-repository.js'
 import { DiscordClient } from './discord/discord-client.js'
@@ -10,6 +11,7 @@ import { Vendor } from './destiny/vendor.js'
 import { UserService } from './services/user-service.js'
 import { ManifestService } from './services/manifest-service.js'
 import { DestinyApiClient } from './destiny/destiny-api-client.js'
+import { RefreshTokenInfo } from './services/models/refresh-token-info.js'
 
 const app = express()
 const landingPagePath = path.join(url.fileURLToPath(new URL('./', import.meta.url)), 'views')
@@ -18,7 +20,6 @@ app.engine('mustache', mustacheExpress())
 app.set('view engine', 'mustache')
 app.set('views', landingPagePath)
 
-const directoryName = path.dirname('app')
 const destinyService = new DestinyService(new DestinyApiClient())
 const userService = new UserService()
 const mongoUserRepo = new MongoUserRepository()
@@ -38,22 +39,25 @@ await userService.connectToDatabase()
 await discordClient.setupDiscordClient()
 
 app.listen(3001, () => {
-  console.log('Server is running...')
+  logger.info('Server is running...')
 })
-
-app.get('/error/authCode', ((request, result) => {
-  result.sendFile('./views/landing-page-error-auth-code.html', { root: directoryName })
-}) as RequestHandler)
 
 app.get('/', (async (request, result) => {
   if (request.query.code !== undefined) {
-    const guardian = await handleAuthorizationCode(String(request.query.code), result)
-    console.log('HEEEEEEEEY')
-    console.log(guardian)
-
-    result.render('landing-page.mustache', { guardian })
+    try {
+      const guardian = await handleAuthorizationCode(String(request.query.code), result)
+      if (typeof guardian === 'string') {
+        result.render('landing-page.mustache', { guardian })
+      }
+    } catch (error) {
+      logger.error('Error with landing page')
+      logger.error(error)
+    }
   } else {
-    result.sendFile('./views/landing-page-error.html', { root: directoryName })
+    logger.error('Error with retreving code from authorization url on landing page')
+    logger.error(request)
+    const errorLandingPagePath = String(app.get('views')) + '/landing-page-error.html'
+    result.sendFile(errorLandingPagePath)
   }
 }) as express.RequestHandler)
 
@@ -77,7 +81,6 @@ async function dailyReset (): Promise<void> {
   }
 
   const waitTime = Number(today) - Date.now()
-  console.log(`Wait time on ${today.getDate()} is ${waitTime / 1000 / 60 / 60}`)
   setTimeout((async () => {
     await startServer()
   }) as RequestHandler, waitTime)
@@ -95,22 +98,25 @@ async function startServer (): Promise<void> {
  * Uses the authorization code to retreive the user's token information and then save it to the database
  */
 async function handleAuthorizationCode (authorizationCode: string, result: any): Promise<void | string> {
-  return await destinyService.getRefreshTokenInfo(authorizationCode, result)
-    .then(async (tokenInfo) => {
-      if (tokenInfo !== undefined) {
-        return await destinyService.getDestinyMembershipInfo(tokenInfo.bungieMembershipId)
-          .then(async (destinyMembershipInfo) => {
-            const destinyCharacterId = await destinyService.getDestinyCharacterId(destinyMembershipInfo[0])
-            await mongoUserRepo.updateUserByUsername(
-              destinyMembershipInfo[1],
-              tokenInfo.refreshTokenExpirationTime,
-              tokenInfo.refreshToken,
-              destinyMembershipInfo[0],
-              destinyCharacterId
-            )
+  try {
+    const tokenInfo = await destinyService.getRefreshTokenInfo(authorizationCode, result)
 
-            return destinyMembershipInfo[1]
-          })
-      }
-    })
+    if (tokenInfo instanceof RefreshTokenInfo) {
+      const destinyMembershipInfo = await destinyService.getDestinyMembershipInfo(tokenInfo.bungieMembershipId)
+      const destinyCharacterId = await destinyService.getDestinyCharacterId(destinyMembershipInfo[0])
+
+      await mongoUserRepo.updateUserByUsername(
+        destinyMembershipInfo[1],
+        tokenInfo.refreshTokenExpirationTime,
+        tokenInfo.refreshToken,
+        destinyMembershipInfo[0],
+        destinyCharacterId
+      )
+
+      return destinyMembershipInfo[1]
+    }
+  } catch (error) {
+    logger.error('Error occurred while handling authorization code')
+    logger.error(error)
+  }
 }
