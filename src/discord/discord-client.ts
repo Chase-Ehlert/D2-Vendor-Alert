@@ -1,12 +1,12 @@
 import * as path from 'path'
 import * as fileSystem from 'fs'
 import * as discord from 'discord.js'
-import * as url from 'url'
 import { MongoUserRepository } from '../database/mongo-user-repository.js'
 import { DestinyService } from '../services/destiny-service.js'
 import { config } from '../../config/config.js'
 import { DestinyApiClient } from '../destiny/destiny-api-client.js'
 import logger from '../utility/logger.js'
+import metaUrl from '../utility/url.js'
 
 const userRepo = new MongoUserRepository()
 const destinyService = new DestinyService(new DestinyApiClient())
@@ -39,8 +39,7 @@ export class DiscordClient {
      * Initialiaze registered slash commands
      */
   async setupSlashCommands (discordClient: any): Promise<void> {
-    const commandsPath = path.join(url.fileURLToPath(new URL('./../../dist/src/discord', import.meta.url)), 'commands')
-    console.log(commandsPath)
+    const commandsPath = path.join(metaUrl, '../../discord/commands')
     const commandsFiles = fileSystem.readdirSync(commandsPath).filter(file => file.endsWith('.js'))
 
     for (const file of commandsFiles) {
@@ -61,8 +60,8 @@ export class DiscordClient {
   async replyToSlashCommands (discordClient: any): Promise<void> {
     discordClient.on(discord.Events.InteractionCreate, async (interaction: any) => {
       if (!(interaction as discord.Interaction).isCommand()) return
-      console.log(interaction.client.commands)
 
+      console.log(interaction.client.commands)
       const command = interaction.client.commands.get(interaction.commandName)
 
       try {
