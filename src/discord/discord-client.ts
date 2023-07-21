@@ -60,6 +60,7 @@ export class DiscordClient {
   async replyToSlashCommands (discordClient: any): Promise<void> {
     discordClient.on(discord.Events.InteractionCreate, async (interaction: any) => {
       if (!(interaction as discord.Interaction).isCommand()) return
+      console.log(interaction.client.commands)
 
       const command = interaction.client.commands.get(interaction.commandName)
 
