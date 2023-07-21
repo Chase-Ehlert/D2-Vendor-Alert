@@ -3,8 +3,7 @@ import { RefreshTokenInfo } from './models/refresh-token-info.js'
 import { DestinyApiClient } from '../destiny/destiny-api-client.js'
 import logger from '../utility/logger.js'
 import path from 'path'
-// import { fileURLToPath } from 'url'
-import url from '../utility/url.js'
+import metaUrl from '../utility/url.js'
 
 export class DestinyService {
   public destinyApiClient
@@ -28,7 +27,7 @@ export class DestinyService {
     } catch (error) {
       logger.error('Error occurred while making the refresh token call with a authorization code')
       logger.error(authorizationCode)
-      result.sendFile('landing-page-error-auth-code.html', { root: path.join(url, '../../views') })
+      result.sendFile('landing-page-error-auth-code.html', { root: path.join(metaUrl, '../../views') })
     }
   }
 
