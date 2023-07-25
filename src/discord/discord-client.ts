@@ -7,6 +7,7 @@ import { config } from '../../config/config.js'
 import { DestinyApiClient } from '../destiny/destiny-api-client.js'
 import logger from '../utility/logger.js'
 import metaUrl from '../utility/url.js'
+import { fileURLToPath } from 'url'
 
 const userRepo = new MongoUserRepository()
 const destinyService = new DestinyService(new DestinyApiClient())
@@ -40,7 +41,8 @@ export class DiscordClient {
      */
   async setupSlashCommands (discordClient: any): Promise<void> {
     console.log(metaUrl)
-    const commandsPath = path.join(metaUrl, '../../discord/commands')
+    
+    const commandsPath = path.join(metaUrl, '/discord/commands')
     console.log(commandsPath)
     const commandsFiles = fileSystem.readdirSync(commandsPath).filter(file => file.endsWith('.js'))
 
