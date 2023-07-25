@@ -61,7 +61,6 @@ export class DiscordClient {
     discordClient.on(discord.Events.InteractionCreate, async (interaction: any) => {
       if (!(interaction as discord.Interaction).isCommand()) return
 
-      console.log(interaction.client.commands)
       const command = interaction.client.commands.get(interaction.commandName)
 
       try {
