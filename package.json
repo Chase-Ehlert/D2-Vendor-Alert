@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "lint": "eslint \"./src/**/*.ts\" --fix",
-    "tsc": "node copy-views.mjs && tsc",
+    "tsc": "tsc",
     "test": "jest --coverage",
     "start": "npm run tsc && node dist/src/app.js",
     "jsdoc": "jsdoc -c jsdoc.json"

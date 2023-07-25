@@ -27,7 +27,7 @@ export class DestinyService {
     } catch (error) {
       logger.error('Error occurred while making the refresh token call with a authorization code')
       logger.error(authorizationCode)
-      result.sendFile('landing-page-error-auth-code.html', { root: path.join(metaUrl, '../../views') })
+      result.sendFile('landing-page-error-auth-code.html', { root: path.join(metaUrl, 'src/views') })
     }
   }
 
