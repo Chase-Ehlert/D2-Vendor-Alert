@@ -1,17 +1,21 @@
 import * as path from 'path'
 import * as fileSystem from 'fs'
 import * as discord from 'discord.js'
-import { MongoUserRepository } from '../database/mongo-user-repository.js'
-import { DestinyService } from '../services/destiny-service.js'
-import { config } from '../../config/config.js'
-import { DestinyApiClient } from '../destiny/destiny-api-client.js'
 import logger from '../utility/logger.js'
 import metaUrl from '../utility/url.js'
-
-const userRepo = new MongoUserRepository()
-const destinyService = new DestinyService(new DestinyApiClient())
+import { DestinyService } from '../services/destiny-service.js'
+import { config } from '../../config/config.js'
+import { DatabaseInterface } from '../database/database-interface.js'
 
 export class DiscordClient {
+  private readonly database
+  private readonly destinyService
+
+  constructor (database: DatabaseInterface, destinyService: DestinyService) {
+    this.database = database
+    this.destinyService = destinyService
+  }
+
   /**
      * Connect to the Discord Client
      */
@@ -92,7 +96,7 @@ export class DiscordClient {
      */
   async handleIncommingMessage (message: any, interaction: any, command: any): Promise<void> {
     if (await this.doesBungieUsernameExistInDestiny(message)) {
-      await userRepo.doesUserExist(message.content)
+      await this.database.doesUserExist(message.content)
         ? await this.replyUserExists(interaction)
         : await this.addUserToAlertBot(message.content, interaction, command)
     } else {
@@ -115,7 +119,7 @@ export class DiscordClient {
     const bungieUsername = username.substring(0, index)
     const bungieUsernameCode = username.substring(Number(index) + 1, username.length)
 
-    await userRepo.addUser(bungieUsername, bungieUsernameCode, interaction.user.id, interaction.channelId)
+    await this.database.addUser(bungieUsername, bungieUsernameCode, interaction.user.id, interaction.channelId)
     command.execute(interaction)
   }
 
@@ -126,7 +130,7 @@ export class DiscordClient {
     const index = message.content.indexOf('#')
     const bungieUsername = message.content.substring(0, index)
     const bungieUsernameCode = message.content.substring(Number(index) + 1, message.content.length)
-    const response = await destinyService.getDestinyUsername(bungieUsername, bungieUsernameCode)
+    const response = await this.destinyService.getDestinyUsername(bungieUsername, bungieUsernameCode)
 
     return Object(response).length !== 0
   }

@@ -1,30 +1,30 @@
 import axios from 'axios'
 import { Vendor } from '../destiny/vendor.js'
-import { MongoUserRepository } from '../database/mongo-user-repository.js'
 import { DestinyService } from './destiny-service.js'
 import { config } from '../../config/config.js'
 import { UserInterface } from '../database/models/user.js'
+import { DatabaseInterface } from '../database/database-interface.js'
 
 export class DiscordService {
   private readonly vendor
   private readonly destinyService
-  private readonly mongoUserRepo
+  private readonly database
 
   constructor (
     vendor: Vendor,
     destinyService: DestinyService,
-    mongoUserRepo: MongoUserRepository
+    database: DatabaseInterface
   ) {
     this.vendor = vendor
     this.destinyService = destinyService
-    this.mongoUserRepo = mongoUserRepo
+    this.database = database
   }
 
   /**
    * Alert registered users about today's vendor inventory
    */
   async getUserInfo (): Promise<void> {
-    for await (const user of await this.mongoUserRepo.fetchAllUsers()) {
+    for await (const user of await this.database.fetchAllUsers()) {
       await this.checkRefreshTokenExpiration(user)
       await this.compareModListWithUserInventory(user)
     }
@@ -41,7 +41,7 @@ export class DiscordService {
     if (currentDate.getTime() > expirationDate.getTime()) {
       const tokenInfo = await this.destinyService.getAccessToken(user.refreshToken)
       if (tokenInfo !== undefined) {
-        await this.mongoUserRepo.updateUserByMembershipId(
+        await this.database.updateUserByMembershipId(
           tokenInfo.bungieMembershipId,
           tokenInfo.refreshTokenExpirationTime,
           tokenInfo.refreshToken

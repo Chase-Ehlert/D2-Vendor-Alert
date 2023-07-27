@@ -1,7 +1,8 @@
 import logger from '../utility/logger.js'
+import { DatabaseInterface } from './database-interface.js'
 import { User, UserInterface } from './models/user.js'
 
-export class MongoUserRepository {
+export class MongoUserRepository implements DatabaseInterface {
   /**
      * Checks if user exists in database
      */

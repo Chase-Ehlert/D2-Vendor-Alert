@@ -2,6 +2,12 @@ import { config } from '../../config/config.js'
 import { UserService } from './user-service.js'
 import mongoose from 'mongoose'
 
+jest.mock('./../utility/logger', () => {
+  return {
+    info: jest.fn()
+  }
+})
+
 describe('<UserService/>', () => {
   let userService = new UserService()
 

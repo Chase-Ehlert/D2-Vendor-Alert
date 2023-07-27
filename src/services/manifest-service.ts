@@ -1,10 +1,9 @@
 import * as fs from 'fs'
 import { DestinyService } from './destiny-service.js'
 
-const fsPromises = fs.promises
-
 export class ManifestService {
   private readonly destinyService
+  private readonly fsPromises = fs.promises
 
   constructor (destinyService: DestinyService) {
     this.destinyService = destinyService
@@ -32,7 +31,7 @@ export class ManifestService {
     destinyInventoryItemDefinition: Object
   ): Promise<string[]> {
     try {
-      await fsPromises.access('manifest-items.json', fs.constants.F_OK)
+      await this.fsPromises.access('manifest-items.json', fs.constants.F_OK)
       return await this.readFile(itemType, 'manifest-items.json', itemList, false)
     } catch (error) {
       return await this.writeFile(itemType, 'manifest-items.json', destinyInventoryItemDefinition, itemList, false)
@@ -52,7 +51,7 @@ export class ManifestService {
    */
   private async readCollectiblesFromManifest (itemType: number, itemList: Object, data: any): Promise<string[]> {
     try {
-      await fsPromises.access('manifest-collectibles.json', fs.constants.F_OK)
+      await this.fsPromises.access('manifest-collectibles.json', fs.constants.F_OK)
       return await this.readFile(
         itemType,
         'manifest-collectibles.json',
@@ -74,7 +73,7 @@ export class ManifestService {
    * Read manifest file for a list of names of collectibles or items
    */
   private async readFile (itemType: number, fileName: string, itemList: Object, collectible: boolean): Promise<string[]> {
-    return await fsPromises.readFile(fileName)
+    return await this.fsPromises.readFile(fileName)
       .then((fileContents) => {
         if (collectible) {
           return this.getCollectibleName(itemList, JSON.parse(String(fileContents)))
@@ -88,7 +87,7 @@ export class ManifestService {
    * Write manifest file and then read it for a list of names of collectibles or items
    */
   private async writeFile (itemType: number, fileName: string, manifestData: Object, itemList: Object, collectible: boolean): Promise<string[]> {
-    return await fsPromises.writeFile(fileName, JSON.stringify(manifestData))
+    return await this.fsPromises.writeFile(fileName, JSON.stringify(manifestData))
       .then(() => {
         if (collectible) {
           return this.getCollectibleName(itemList, manifestData)

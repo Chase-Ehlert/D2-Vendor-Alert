@@ -1,21 +1,21 @@
-import { MongoUserRepository } from '../database/mongo-user-repository.js'
+import logger from '../utility/logger.js'
 import { ManifestService } from '../services/manifest-service.js'
 import { DestinyService } from '../services/destiny-service.js'
 import { UserInterface } from '../database/models/user.js'
-import logger from '../utility/logger.js'
+import { DatabaseInterface } from '../database/database-interface.js'
 
 export class Vendor {
-  public destinyService
-  public mongoUserRepo
-  public manifestService
+  private readonly destinyService
+  private readonly database
+  private readonly manifestService
 
   constructor (
     destinyService: DestinyService,
-    mongoUserRepo: MongoUserRepository,
+    database: DatabaseInterface,
     manifestService: ManifestService
   ) {
     this.destinyService = destinyService
-    this.mongoUserRepo = mongoUserRepo
+    this.database = database
     this.manifestService = manifestService
   }
 
@@ -51,7 +51,7 @@ export class Vendor {
   private async getVendorModInventory (user: UserInterface, vendorId: string): Promise<string[] | undefined> {
     const tokenInfo = await this.destinyService.getAccessToken(user.refreshToken)
     if (tokenInfo?.accessToken !== undefined) {
-      await this.mongoUserRepo.updateUserByMembershipId(
+      await this.database.updateUserByMembershipId(
         tokenInfo.bungieMembershipId,
         tokenInfo.refreshTokenExpirationTime,
         tokenInfo.refreshToken
