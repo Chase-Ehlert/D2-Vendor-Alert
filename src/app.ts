@@ -87,7 +87,9 @@ async function dailyReset (): Promise<void> {
  */
 async function startServer (): Promise<void> {
   await discordService.getUserInfo()
-  await dailyReset()
+  setTimeout((async () => {
+    await dailyReset()
+  }) as RequestHandler, 1000)
 }
 
 /**
