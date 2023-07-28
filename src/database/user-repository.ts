@@ -1,6 +1,6 @@
 import { UserInterface } from './models/user'
 
-export interface DatabaseInterface {
+export interface UserRepository {
   doesUserExist: (bungieNetUsername: string) => Promise<boolean>
 
   addUser: (

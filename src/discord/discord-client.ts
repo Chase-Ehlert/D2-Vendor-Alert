@@ -5,13 +5,13 @@ import logger from '../utility/logger.js'
 import metaUrl from '../utility/url.js'
 import { DestinyService } from '../services/destiny-service.js'
 import { config } from '../../config/config.js'
-import { DatabaseInterface } from '../database/database-interface.js'
+import { UserRepository } from '../database/user-repository.js'
 
 export class DiscordClient {
   private readonly database
   private readonly destinyService
 
-  constructor (database: DatabaseInterface, destinyService: DestinyService) {
+  constructor (database: UserRepository, destinyService: DestinyService) {
     this.database = database
     this.destinyService = destinyService
   }

@@ -2,7 +2,7 @@ import logger from '../utility/logger.js'
 import { ManifestService } from '../services/manifest-service.js'
 import { DestinyService } from '../services/destiny-service.js'
 import { UserInterface } from '../database/models/user.js'
-import { DatabaseInterface } from '../database/database-interface.js'
+import { UserRepository } from '../database/user-repository.js'
 
 export class Vendor {
   private readonly destinyService
@@ -11,7 +11,7 @@ export class Vendor {
 
   constructor (
     destinyService: DestinyService,
-    database: DatabaseInterface,
+    database: UserRepository,
     manifestService: ManifestService
   ) {
     this.destinyService = destinyService

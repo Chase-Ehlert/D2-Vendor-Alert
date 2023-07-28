@@ -3,7 +3,7 @@ import { Vendor } from '../destiny/vendor.js'
 import { DestinyService } from './destiny-service.js'
 import { config } from '../../config/config.js'
 import { UserInterface } from '../database/models/user.js'
-import { DatabaseInterface } from '../database/database-interface.js'
+import { UserRepository } from '../database/user-repository.js'
 
 export class DiscordService {
   private readonly vendor
@@ -13,7 +13,7 @@ export class DiscordService {
   constructor (
     vendor: Vendor,
     destinyService: DestinyService,
-    database: DatabaseInterface
+    database: UserRepository
   ) {
     this.vendor = vendor
     this.destinyService = destinyService
