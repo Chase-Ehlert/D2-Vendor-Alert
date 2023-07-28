@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import { config } from '../../config/config.js'
+import { config } from '../config/config.js'
 import logger from '../utility/logger.js'
 
 export class UserService {

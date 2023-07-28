@@ -2,7 +2,7 @@
 import http from 'axios'
 import axios from 'axios'
 import { DestinyApiClient } from './destiny-api-client'
-import { config } from '../../config/config'
+import { config } from '../config/config'
 import { UserInterface } from '../database/models/user'
 
 jest.mock('axios', () => ({

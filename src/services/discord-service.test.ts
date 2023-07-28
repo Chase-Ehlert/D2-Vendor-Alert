@@ -4,7 +4,7 @@ import { Vendor } from '../destiny/vendor'
 import { DestinyService } from './destiny-service'
 import { MongoUserRepository } from '../database/mongo-user-repository'
 import { RefreshTokenInfo } from './models/refresh-token-info'
-import { config } from '../../config/config'
+import { config } from '../config/config'
 import { ManifestService } from './manifest-service'
 import { DestinyApiClient } from '../destiny/destiny-api-client'
 import { User, UserInterface } from '../database/models/user'
@@ -57,7 +57,7 @@ describe('<DiscordService/>', () => {
     const getAccessTokenMock = jest.spyOn(destinyService, 'getAccessToken').mockResolvedValue(expectedTokenInfo)
     const updateUserByMembershipIdMock = jest.spyOn(userRepo, 'updateUserByMembershipId').mockResolvedValue()
 
-    jest.spyOn(vendor, 'getProfileCollectibles').mockResolvedValue([])
+    jest.spyOn(vendor, 'getCollectiblesForSaleByAda').mockResolvedValue([])
     User.find = jest.fn().mockImplementation(() => databaseUsers)
     axios.post = jest.fn().mockImplementation(async () => await Promise.resolve({ status: 200 }))
 
@@ -89,7 +89,7 @@ describe('<DiscordService/>', () => {
       const expectedDiscordEndpoint = `https://discord.com/api/v10/channels/${databaseUser1.discordChannelId}/messages`
       const expectedMessage = `<@${databaseUser1.discordId}>\r\nYou have these unowned mods for sale, grab them!\r\n${expectedMod1}\r\n${expectedMod2}`
 
-      jest.spyOn(vendor, 'getProfileCollectibles').mockResolvedValue([expectedMod1, expectedMod2])
+      jest.spyOn(vendor, 'getCollectiblesForSaleByAda').mockResolvedValue([expectedMod1, expectedMod2])
 
       await discordService.alertUsersOfUnownedModsForSale()
 
@@ -117,7 +117,7 @@ describe('<DiscordService/>', () => {
       const expectedDiscordEndpoint = `https://discord.com/api/v10/channels/${databaseUser1.discordChannelId}/messages`
       const expectedMessage = `${databaseUser1.bungieUsername} does not have any unowned mods for sale today.`
 
-      jest.spyOn(vendor, 'getProfileCollectibles').mockResolvedValue([])
+      jest.spyOn(vendor, 'getCollectiblesForSaleByAda').mockResolvedValue([])
 
       await discordService.alertUsersOfUnownedModsForSale()
 

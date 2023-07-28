@@ -1,4 +1,4 @@
-import { config } from '../../config/config.js'
+import { config } from '../config/config.js'
 import { UserService } from './user-service.js'
 import mongoose from 'mongoose'
 

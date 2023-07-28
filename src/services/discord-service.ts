@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { Vendor } from '../destiny/vendor.js'
 import { DestinyService } from './destiny-service.js'
-import { config } from '../../config/config.js'
+import { config } from '../config/config.js'
 import { UserInterface } from '../database/models/user.js'
 import { UserRepository } from '../database/user-repository.js'
 

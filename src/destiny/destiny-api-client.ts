@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { config } from '../../config/config.js'
+import { config } from '../config/config.js'
 
 export class DestinyApiClient {
   private readonly bungieDomain = 'https://www.bungie.net/'

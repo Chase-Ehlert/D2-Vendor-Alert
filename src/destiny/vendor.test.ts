@@ -52,8 +52,8 @@ describe('<Vendor/>', () => {
     const getAccessTokenMock = jest.spyOn(destinyService, 'getAccessToken').mockResolvedValue(tokenInfo)
     const updateUserByMembershipIdMock = jest.spyOn(userRepo, 'updateUserByMembershipId').mockResolvedValue()
     const getDestinyVendorInfoMock = jest.spyOn(destinyService, 'getDestinyVendorInfo').mockResolvedValue(vendorInventory)
-    const getItemFromManifestMock = jest.spyOn(manifestService, 'getItemFromManifest').mockResolvedValue(expectedManifestItem)
-    const getCollectibleFromManifestMock = jest.spyOn(manifestService, 'getCollectibleFromManifest').mockResolvedValue(expectedCollectibleList)
+    const getItemFromManifestMock = jest.spyOn(manifestService, 'getItemsFromManifest').mockResolvedValue(expectedManifestItem)
+    const getCollectibleFromManifestMock = jest.spyOn(manifestService, 'getCollectiblesFromManifest').mockResolvedValue(expectedCollectibleList)
 
     const result = await vendor.getCollectiblesForSaleByAda(user)
 
