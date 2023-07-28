@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { config } from '../config/config.js'
+import { HttpClient } from '../utility/http-client.js'
 
 export class DestinyApiClient {
   private readonly bungieDomain = 'https://www.bungie.net/'
@@ -7,14 +8,32 @@ export class DestinyApiClient {
   private readonly bungieDomainWithDestinyDirectory = 'https://www.bungie.net/platform/destiny2/'
   private readonly profileDirectory = '3/profile/'
   private readonly apiKeyHeader = { 'x-api-key': config.configModel.apiKey }
+  private readonly httpClient
   private readonly urlEncodedHeaders = {
     'content-type': 'application/x-www-form-urlencoded',
     'x-api-key': config.configModel.apiKey
   }
 
+  constructor (httpClient: HttpClient) {
+    this.httpClient = httpClient
+  }
+
+  // async getRefreshTokenInfo (authorizationCode: string): Promise<any> {
+  //   return await axios.post(
+  //     this.bungieDomainWithTokenDirectory, {
+  //       grant_type: 'authorization_code',
+  //       code: authorizationCode,
+  //       client_secret: config.configModel.oauthSecret,
+  //       client_id: config.configModel.oauthClientId
+  //     }, {
+  //       headers: this.urlEncodedHeaders
+  //     })
+  // }
+
   async getRefreshTokenInfo (authorizationCode: string): Promise<any> {
-    return await axios.post(
-      this.bungieDomainWithTokenDirectory, {
+    return await this.httpClient.post(
+      this.bungieDomainWithTokenDirectory,
+      {
         grant_type: 'authorization_code',
         code: authorizationCode,
         client_secret: config.configModel.oauthSecret,

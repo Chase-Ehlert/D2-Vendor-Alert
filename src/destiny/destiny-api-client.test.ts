@@ -4,6 +4,7 @@ import axios from 'axios'
 import { DestinyApiClient } from './destiny-api-client'
 import { config } from '../config/config'
 import { UserInterface } from '../database/models/user'
+import { AxiosHttpClient } from '../utility/axios-http-client'
 
 jest.mock('axios', () => ({
   create: jest.fn(() => http),
@@ -11,7 +12,7 @@ jest.mock('axios', () => ({
 }))
 
 describe('<DestinyApiClient/>', () => {
-  const destinyApiClient = new DestinyApiClient()
+  const destinyApiClient = new DestinyApiClient(new AxiosHttpClient())
 
   it('should retrieve a users refresh token', async () => {
     const expectedAuthCode = 'authCode'

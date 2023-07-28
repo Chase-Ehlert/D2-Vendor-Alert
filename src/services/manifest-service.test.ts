@@ -1,4 +1,5 @@
 import { DestinyApiClient } from '../destiny/destiny-api-client'
+import { AxiosHttpClient } from '../utility/axios-http-client'
 import { DestinyService } from './destiny-service'
 import { ManifestService } from './manifest-service'
 import fs from 'fs'
@@ -8,7 +9,7 @@ jest.mock('./../utility/url', () => {
 })
 
 describe('<ManifestService/>', () => {
-  const destinyService = new DestinyService(new DestinyApiClient())
+  const destinyService = new DestinyService(new DestinyApiClient(new AxiosHttpClient()))
   const manifestService = new ManifestService(destinyService)
 
   afterEach(() => {

@@ -5,6 +5,7 @@ import { RefreshTokenInfo } from './models/refresh-token-info'
 import { UserInterface } from '../database/models/user'
 import { DestinyApiClient } from '../destiny/destiny-api-client'
 import logger from '../utility/logger'
+import { AxiosHttpClient } from '../utility/axios-http-client'
 
 jest.mock('./../utility/logger', () => {
   return {
@@ -22,7 +23,7 @@ beforeEach(() => {
 })
 
 describe('<DestinyService/>', () => {
-  const destinyApiClient = new DestinyApiClient()
+  const destinyApiClient = new DestinyApiClient(new AxiosHttpClient())
   const destinyService = new DestinyService(destinyApiClient)
 
   it('should instantiate', async () => {

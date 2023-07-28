@@ -8,6 +8,7 @@ import { config } from '../config/config'
 import { ManifestService } from './manifest-service'
 import { DestinyApiClient } from '../destiny/destiny-api-client'
 import { User, UserInterface } from '../database/models/user'
+import { AxiosHttpClient } from '../utility/axios-http-client'
 
 jest.mock('./../utility/url', () => {
   return 'example'
@@ -15,11 +16,11 @@ jest.mock('./../utility/url', () => {
 
 describe('<DiscordService/>', () => {
   const vendor = new Vendor(
-    new DestinyService(new DestinyApiClient()),
+    new DestinyService(new DestinyApiClient(new AxiosHttpClient())),
     new MongoUserRepository(),
-    new ManifestService(new DestinyService(new DestinyApiClient()))
+    new ManifestService(new DestinyService(new DestinyApiClient(new AxiosHttpClient())))
   )
-  const destinyService = new DestinyService(new DestinyApiClient())
+  const destinyService = new DestinyService(new DestinyApiClient(new AxiosHttpClient()))
   const userRepo = new MongoUserRepository()
   const discordService = new DiscordService(vendor, destinyService, userRepo)
 

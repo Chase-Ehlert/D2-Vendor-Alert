@@ -12,6 +12,7 @@ import { UserService } from './services/user-service.js'
 import { ManifestService } from './services/manifest-service.js'
 import { DestinyApiClient } from './destiny/destiny-api-client.js'
 import { RefreshTokenInfo } from './services/models/refresh-token-info.js'
+import { AxiosHttpClient } from './utility/axios-http-client.js'
 
 const app = express()
 const landingPagePath = path.join(url.fileURLToPath(new URL('./', import.meta.url)), 'views')
@@ -20,7 +21,7 @@ app.engine('mustache', mustacheExpress())
 app.set('view engine', 'mustache')
 app.set('views', landingPagePath)
 
-const destinyService = new DestinyService(new DestinyApiClient())
+const destinyService = new DestinyService(new DestinyApiClient(new AxiosHttpClient()))
 const userService = new UserService()
 const mongoUserRepo = new MongoUserRepository()
 const discordClient = new DiscordClient(mongoUserRepo, destinyService)
