@@ -66,7 +66,7 @@ describe('<DiscordService/>', () => {
     })
 
     it('should update the users refresh token if it has expired', async () => {
-      await discordService.getUserInfo()
+      await discordService.alertUsersOfUnownedModsForSale()
 
       expect(getAccessTokenMock).toHaveBeenCalledWith(databaseUser2.refreshToken)
       expect(updateUserByMembershipIdMock).toHaveBeenCalledWith(
@@ -77,7 +77,7 @@ describe('<DiscordService/>', () => {
     })
 
     it('should not update the users refresh toke if it has not expired', async () => {
-      await discordService.getUserInfo()
+      await discordService.alertUsersOfUnownedModsForSale()
 
       expect(getAccessTokenMock).toHaveBeenCalledTimes(1)
       expect(updateUserByMembershipIdMock).toHaveBeenCalledTimes(1)
@@ -91,7 +91,7 @@ describe('<DiscordService/>', () => {
 
       jest.spyOn(vendor, 'getProfileCollectibles').mockResolvedValue([expectedMod1, expectedMod2])
 
-      await discordService.getUserInfo()
+      await discordService.alertUsersOfUnownedModsForSale()
 
       expect(axios.post).toHaveBeenCalledWith(
         expectedDiscordEndpoint,
@@ -107,8 +107,8 @@ describe('<DiscordService/>', () => {
     it('should throw an error when an alert message does not return with a 200 status code', async () => {
       axios.post = jest.fn().mockImplementation(async () => await Promise.resolve({ status: 401 }))
 
-      await expect(async () => await discordService.getUserInfo()).rejects.toThrow(Error)
-      await expect(async () => await discordService.getUserInfo()).rejects.toThrow('401')
+      await expect(async () => await discordService.alertUsersOfUnownedModsForSale()).rejects.toThrow(Error)
+      await expect(async () => await discordService.alertUsersOfUnownedModsForSale()).rejects.toThrow('401')
 
       axios.post = jest.fn().mockImplementation(async () => await Promise.resolve({ status: 200 }))
     })
@@ -119,7 +119,7 @@ describe('<DiscordService/>', () => {
 
       jest.spyOn(vendor, 'getProfileCollectibles').mockResolvedValue([])
 
-      await discordService.getUserInfo()
+      await discordService.alertUsersOfUnownedModsForSale()
 
       expect(axios.post).toHaveBeenCalledWith(
         expectedDiscordEndpoint,

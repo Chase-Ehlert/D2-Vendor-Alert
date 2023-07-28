@@ -23,10 +23,10 @@ export class DiscordService {
   /**
    * Alert registered users about today's vendor inventory
    */
-  async getUserInfo (): Promise<void> {
+  async alertUsersOfUnownedModsForSale (): Promise<void> {
     for await (const user of await this.database.fetchAllUsers()) {
       await this.checkRefreshTokenExpiration(user)
-      await this.compareModListWithUserInventory(user)
+      await this.compareModsForSaleWithUserInventory(user)
     }
   }
 
@@ -53,9 +53,9 @@ export class DiscordService {
   /**
    * Check whether any mods for sale are owned by the user
    */
-  private async compareModListWithUserInventory (user: UserInterface): Promise<void> {
+  private async compareModsForSaleWithUserInventory (user: UserInterface): Promise<void> {
     const discordEndpoint = `channels/${user.discordChannelId}/messages`
-    const unownedModList = await this.vendor.getProfileCollectibles(user)
+    const unownedModList = await this.vendor.getCollectiblesForSaleByAda(user)
 
     if (unownedModList !== undefined && unownedModList.length > 0) {
       await this.messageUnownedModsList(discordEndpoint, user.discordId, unownedModList)

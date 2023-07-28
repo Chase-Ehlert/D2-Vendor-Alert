@@ -22,7 +22,7 @@ export class Vendor {
   /**
    * Collect mods for sale by Ada-1
    */
-  async getProfileCollectibles (user: UserInterface): Promise<string[] | undefined> {
+  async getCollectiblesForSaleByAda (user: UserInterface): Promise<string[] | undefined> {
     const adaVendorId = '350061650'
     const collectibleId = 65
     const collectibleList: string[] = []
@@ -37,7 +37,7 @@ export class Vendor {
             collectibleList.push(key)
           }
         })
-        return await this.manifestService.getCollectibleFromManifest(19, collectibleList)
+        return await this.manifestService.getCollectiblesFromManifest(19, collectibleList)
       }
     }).catch(async (error) => {
       logger.error(error)
@@ -66,7 +66,7 @@ export class Vendor {
         }
       }
 
-      return await this.manifestService.getItemFromManifest(19, vendorInventory)
+      return await this.manifestService.getItemsFromManifest(19, vendorInventory)
     } else {
       logger.error('Missing access token for retreiving vendor mod inventory.')
       return await Promise.reject(new Error('Missing access token'))

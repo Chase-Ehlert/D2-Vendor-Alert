@@ -86,7 +86,7 @@ async function dailyReset (): Promise<void> {
  * Begin the alert workflow for users and then set the time till the next daily reset
  */
 async function startServer (): Promise<void> {
-  await discordService.getUserInfo()
+  await discordService.alertUsersOfUnownedModsForSale()
   setTimeout((async () => {
     await dailyReset()
   }) as RequestHandler, 1000)

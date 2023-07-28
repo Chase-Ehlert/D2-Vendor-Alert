@@ -12,7 +12,7 @@ export class ManifestService {
   /**
    * Collect names of mods for sale from the manifest
    */
-  async getItemFromManifest (itemType: number, itemList: Object): Promise<string[]> {
+  async getItemsFromManifest (itemType: number, itemList: Object): Promise<string[]> {
     const destinyInventoryItemDefinition = await this.destinyService.getDestinyInventoryItemDefinition()
 
     return await this.readItemsFromManifest(
@@ -41,7 +41,7 @@ export class ManifestService {
   /**
    * Get the manifest file and read the list of collectibles from it
    */
-  async getCollectibleFromManifest (itemType: number, itemList: Object): Promise<string[]> {
+  async getCollectiblesFromManifest (itemType: number, itemList: Object): Promise<string[]> {
     const newData = await this.destinyService.getDestinyInventoryItemDefinition()
     return await this.readCollectiblesFromManifest(itemType, itemList, newData)
   }
@@ -76,9 +76,9 @@ export class ManifestService {
     return await this.fsPromises.readFile(fileName)
       .then((fileContents) => {
         if (collectible) {
-          return this.getCollectibleName(itemList, JSON.parse(String(fileContents)))
+          return this.getCollectibleNames(itemList, JSON.parse(String(fileContents)))
         } else {
-          return this.getItemName(itemType, itemList, JSON.parse(String(fileContents)))
+          return this.getItemNames(itemType, itemList, JSON.parse(String(fileContents)))
         }
       })
   }
@@ -90,9 +90,9 @@ export class ManifestService {
     return await this.fsPromises.writeFile(fileName, JSON.stringify(manifestData))
       .then(() => {
         if (collectible) {
-          return this.getCollectibleName(itemList, manifestData)
+          return this.getCollectibleNames(itemList, manifestData)
         } else {
-          return this.getItemName(itemType, itemList, manifestData)
+          return this.getItemNames(itemType, itemList, manifestData)
         }
       })
   }
@@ -100,7 +100,7 @@ export class ManifestService {
   /**
    * Compile list of names for items on sale
    */
-  private getItemName (itemType: number, itemList: Object, manifest: any): string[] {
+  private getItemNames (itemType: number, itemList: Object, manifest: any): string[] {
     const manifestKeys = Object.keys(manifest)
     const itemListValues = Object.values(itemList)
     const itemHashList: string[] = []
@@ -124,7 +124,7 @@ export class ManifestService {
   /**
    * Compile list of names for collectibles on sale
    */
-  private getCollectibleName (itemList: Object, manifest: any): string[] {
+  private getCollectibleNames (itemList: Object, manifest: any): string[] {
     const itemNameList = []
     const itemListKeys = Object.keys(itemList)
     const manifestKeys = Object.keys(manifest)

@@ -55,7 +55,7 @@ describe('<Vendor/>', () => {
     const getItemFromManifestMock = jest.spyOn(manifestService, 'getItemFromManifest').mockResolvedValue(expectedManifestItem)
     const getCollectibleFromManifestMock = jest.spyOn(manifestService, 'getCollectibleFromManifest').mockResolvedValue(expectedCollectibleList)
 
-    const result = await vendor.getProfileCollectibles(user)
+    const result = await vendor.getCollectiblesForSaleByAda(user)
 
     expect(getDestinyCollectibleInfoMock).toBeCalledWith(user.destinyId)
     expect(getAccessTokenMock).toBeCalledWith(user.refreshToken)
@@ -76,7 +76,7 @@ describe('<Vendor/>', () => {
     } as unknown as UserInterface
     logger.error = jest.fn()
 
-    await expect(async () => await vendor.getProfileCollectibles(user)).rejects.toThrow(Error)
+    await expect(async () => await vendor.getCollectiblesForSaleByAda(user)).rejects.toThrow(Error)
 
     expect(logger.error).toBeCalledWith('Missing access token for retreiving vendor mod inventory.')
   })

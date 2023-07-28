@@ -27,7 +27,7 @@ describe('<ManifestService/>', () => {
     fs.promises.access = jest.fn().mockImplementation(async () => await Promise.resolve())
     fs.promises.readFile = jest.fn().mockImplementation(async () => await Promise.resolve(expectedManifest))
 
-    const result = await manifestService.getItemFromManifest(1, itemList)
+    const result = await manifestService.getItemsFromManifest(1, itemList)
 
     expect(getDestinyInventoryItemDefinitionMock).toHaveBeenCalled()
     expect(fs.promises.readFile).toHaveBeenCalledWith('manifest-items.json')
@@ -46,7 +46,7 @@ describe('<ManifestService/>', () => {
     fs.promises.access = jest.fn().mockImplementation(async () => await Promise.reject(Error))
     fs.promises.writeFile = jest.fn().mockImplementation(async () => await Promise.resolve())
 
-    const result = await manifestService.getItemFromManifest(1, itemList)
+    const result = await manifestService.getItemsFromManifest(1, itemList)
 
     expect(fs.promises.writeFile).toHaveBeenCalledWith('manifest-items.json', JSON.stringify(expectedManifest))
     expect(result).toEqual(expectedItemNameList)
@@ -62,7 +62,7 @@ describe('<ManifestService/>', () => {
     fs.promises.access = jest.fn().mockImplementation(async () => await Promise.resolve())
     fs.promises.readFile = jest.fn().mockImplementation(async () => await Promise.resolve(expectedManifest))
 
-    const result = await manifestService.getCollectibleFromManifest(1, itemList)
+    const result = await manifestService.getCollectiblesFromManifest(1, itemList)
 
     expect(fs.promises.readFile).toHaveBeenCalledWith('manifest-collectibles.json')
     expect(result).toEqual(['item1', 'item2'])
@@ -78,7 +78,7 @@ describe('<ManifestService/>', () => {
     fs.promises.access = jest.fn().mockImplementation(async () => await Promise.reject(Error))
     fs.promises.writeFile = jest.fn().mockImplementation(async () => await Promise.resolve())
 
-    const result = await manifestService.getCollectibleFromManifest(1, itemList)
+    const result = await manifestService.getCollectiblesFromManifest(1, itemList)
 
     expect(fs.promises.writeFile).toHaveBeenCalledWith('manifest-collectibles.json', JSON.stringify(expectedManifest))
     expect(result).toEqual(['item1', 'item2'])
