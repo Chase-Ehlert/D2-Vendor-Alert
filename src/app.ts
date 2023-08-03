@@ -44,7 +44,8 @@ app.get('/', (async (request, result) => {
     try {
       const guardian = await handleAuthorizationCode(String(request.query.code), result)
       if (typeof guardian === 'string') {
-        result.render('landing-page.mustache', { guardian })
+        const landingPage = String(app.get('views')) + '/landing-page.mustache'
+        result.render(landingPage, { guardian })
       }
     } catch (error) {
       logger.error('Error with landing page')
