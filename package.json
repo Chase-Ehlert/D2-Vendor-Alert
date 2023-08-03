@@ -6,7 +6,7 @@
     "lint": "eslint \"./src/**/*.ts\" --fix",
     "tsc": "tsc",
     "test": "jest --coverage",
-    "start": "npm run tsc && node dist/src/app.js",
+    "start": "npm run tsc && node dist/app.js",
     "jsdoc": "jsdoc -c jsdoc.json"
   },
   "type": "module",
