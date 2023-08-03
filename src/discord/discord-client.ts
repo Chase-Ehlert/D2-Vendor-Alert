@@ -43,7 +43,7 @@ export class DiscordClient {
      * Initialiaze registered slash commands
      */
   async setupSlashCommands (discordClient: any): Promise<void> {
-    const commandsDirPath = path.join(metaUrl, '/dist/src/discord/commands')
+    const commandsDirPath = path.join(metaUrl, '/dist/discord/commands')
     const commandsFiles = fileSystem.readdirSync(commandsDirPath).filter(file => file.endsWith('.js'))
 
     for (const file of commandsFiles) {
