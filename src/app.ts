@@ -64,6 +64,7 @@ await dailyReset()
  * Calculates the time till the next Destiny daily reset and waits till then to alert users of vendor inventory
  */
 async function dailyReset (): Promise<void> {
+  console.log('HEEEEYOOO')
   const today = new Date()
 
   if (today.getMinutes() > 1 && today.getHours() >= 17) {
