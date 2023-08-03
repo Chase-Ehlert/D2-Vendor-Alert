@@ -15,7 +15,7 @@ import { RefreshTokenInfo } from './services/models/refresh-token-info.js'
 import { AxiosHttpClient } from './utility/axios-http-client.js'
 
 const app = express()
-const landingPagePath = path.join(url.fileURLToPath(new URL('./', import.meta.url)), 'views')
+const landingPagePath = path.join(url.fileURLToPath(new URL('./../src/', import.meta.url)), 'views')
 
 app.engine('mustache', mustacheExpress())
 app.set('view engine', 'mustache')
@@ -44,8 +44,7 @@ app.get('/', (async (request, result) => {
     try {
       const guardian = await handleAuthorizationCode(String(request.query.code), result)
       if (typeof guardian === 'string') {
-        const landingPage = String(app.get('views')) + '/landing-page.mustache'
-        result.render(landingPage, { guardian })
+        result.render('landing-page.mustache', { guardian })
       }
     } catch (error) {
       logger.error('Error with landing page')
