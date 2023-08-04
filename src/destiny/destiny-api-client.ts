@@ -18,18 +18,6 @@ export class DestinyApiClient {
     this.httpClient = httpClient
   }
 
-  // async getRefreshTokenInfo (authorizationCode: string): Promise<any> {
-  //   return await axios.post(
-  //     this.bungieDomainWithTokenDirectory, {
-  //       grant_type: 'authorization_code',
-  //       code: authorizationCode,
-  //       client_secret: config.configModel.oauthSecret,
-  //       client_id: config.configModel.oauthClientId
-  //     }, {
-  //       headers: this.urlEncodedHeaders
-  //     })
-  // }
-
   async getRefreshTokenInfo (authorizationCode: string): Promise<any> {
     return await this.httpClient.post(
       this.bungieDomainWithTokenDirectory,
