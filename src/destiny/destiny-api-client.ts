@@ -63,7 +63,7 @@ export class DestinyApiClient {
   }
 
   async getAccessTokenInfo (refreshToken: string): Promise<any> {
-    return await axios.post(
+    return await this.httpClient.post(
       this.bungieDomainWithTokenDirectory, {
         grant_type: 'refresh_token',
         refresh_token: refreshToken,
@@ -75,7 +75,7 @@ export class DestinyApiClient {
   }
 
   async getDestinyUsername (bungieUsername: string, bungieUsernameCode: string): Promise<any> {
-    return await axios.post(
+    return await this.httpClient.post(
       this.bungieDomainWithDestinyDirectory + 'SearchDestinyPlayerByBungieName/3/', {
         displayName: bungieUsername,
         displayNameCode: bungieUsernameCode

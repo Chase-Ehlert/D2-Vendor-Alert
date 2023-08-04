@@ -28,7 +28,8 @@ const discordClient = new DiscordClient(mongoUserRepo, destinyService)
 const discordService = new DiscordService(
   new Vendor(destinyService, mongoUserRepo, new ManifestService(destinyService)),
   destinyService,
-  mongoUserRepo
+  mongoUserRepo,
+  new AxiosHttpClient()
 )
 
 await userService.connectToDatabase()

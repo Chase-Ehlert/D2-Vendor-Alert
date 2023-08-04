@@ -1,23 +1,26 @@
-import axios from 'axios'
 import { Vendor } from '../destiny/vendor.js'
 import { DestinyService } from './destiny-service.js'
 import { config } from '../config/config.js'
 import { UserInterface } from '../database/models/user.js'
 import { UserRepository } from '../database/user-repository.js'
+import { HttpClient } from '../utility/http-client.js'
 
 export class DiscordService {
   private readonly vendor
   private readonly destinyService
   private readonly database
+  private readonly httpClient
 
   constructor (
     vendor: Vendor,
     destinyService: DestinyService,
-    database: UserRepository
+    database: UserRepository,
+    httpClient: HttpClient
   ) {
     this.vendor = vendor
     this.destinyService = destinyService
     this.database = database
+    this.httpClient = httpClient
   }
 
   /**
@@ -94,7 +97,7 @@ export class DiscordService {
    * Send off message to user's desired Discord alert channel
    */
   private async discordRequest (endpoint: string, message: string): Promise<void> {
-    const result = await axios.post('https://discord.com/api/v10/' + endpoint,
+    const result = await this.httpClient.post('https://discord.com/api/v10/' + endpoint,
       {
         content: message
       },

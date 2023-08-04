@@ -22,7 +22,7 @@ describe('<DiscordService/>', () => {
   )
   const destinyService = new DestinyService(new DestinyApiClient(new AxiosHttpClient()))
   const userRepo = new MongoUserRepository()
-  const discordService = new DiscordService(vendor, destinyService, userRepo)
+  const discordService = new DiscordService(vendor, destinyService, userRepo, new AxiosHttpClient())
 
   jest.mock('axios')
 
