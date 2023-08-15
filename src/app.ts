@@ -8,7 +8,7 @@ import { MongoUserRepository } from './database/mongo-user-repository.js'
 import { DiscordClient } from './discord/discord-client.js'
 import { DiscordService } from './services/discord-service.js'
 import { Vendor } from './destiny/vendor.js'
-import { UserService } from './services/user-service.js'
+import { MongoDbService } from './services/mongo-db-service.js'
 import { ManifestService } from './services/manifest-service.js'
 import { DestinyApiClient } from './destiny/destiny-api-client.js'
 import { RefreshTokenInfo } from './services/models/refresh-token-info.js'
@@ -23,7 +23,7 @@ app.set('view engine', 'mustache')
 app.set('views', landingPagePath)
 
 const destinyService = new DestinyService(new DestinyApiClient(new AxiosHttpClient(), new DestinyApiClientConfig()))
-const userService = new UserService(new UserServiceConfig())
+const userService = new MongoDbService(new UserServiceConfig())
 const mongoUserRepo = new MongoUserRepository()
 const discordClient = new DiscordClient(mongoUserRepo, destinyService, new DiscordConfig())
 const discordService = new DiscordService(
