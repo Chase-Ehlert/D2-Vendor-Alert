@@ -4,16 +4,18 @@ import * as discord from 'discord.js'
 import logger from '../utility/logger.js'
 import metaUrl from '../utility/url.js'
 import { DestinyService } from '../services/destiny-service.js'
-import { config } from '../config/config.js'
 import { UserRepository } from '../database/user-repository.js'
+import { DiscordConfig } from '../config/config.js'
 
 export class DiscordClient {
   private readonly database
   private readonly destinyService
+  private readonly config
 
-  constructor (database: UserRepository, destinyService: DestinyService) {
+  constructor (database: UserRepository, destinyService: DestinyService, config: DiscordConfig) {
     this.database = database
     this.destinyService = destinyService
+    this.config = config
   }
 
   /**
@@ -33,7 +35,7 @@ export class DiscordClient {
     discordClient.once(discord.Events.ClientReady, (eventClient: any) => {
       logger.info(`Ready, logged in as ${String(eventClient.user.tag)}`)
     })
-    discordClient.login(config.configModel.token)
+    discordClient.login(this.config.token)
 
     await this.setupSlashCommands(discordClient)
     await this.replyToSlashCommands(discordClient)
@@ -119,7 +121,12 @@ export class DiscordClient {
     const bungieUsername = username.substring(0, index)
     const bungieUsernameCode = username.substring(Number(index) + 1, username.length)
 
-    await this.database.addUser(bungieUsername, bungieUsernameCode, interaction.user.id, interaction.channelId)
+    await this.database.addUser(
+      bungieUsername,
+      bungieUsernameCode,
+      interaction.user.id,
+      interaction.channelId
+    )
     command.execute(interaction)
   }
 

@@ -1,11 +1,12 @@
 import { DestinyApiClient } from './destiny-api-client'
-import { config } from '../config/config'
 import { UserInterface } from '../database/models/user'
 import { AxiosHttpClient } from '../utility/axios-http-client'
+import { DestinyApiClientConfig } from '../config/config'
 
 describe('<DestinyApiClient/>', () => {
   const axiosHttpClient = new AxiosHttpClient()
-  const destinyApiClient = new DestinyApiClient(axiosHttpClient)
+  const config = new DestinyApiClientConfig()
+  const destinyApiClient = new DestinyApiClient(axiosHttpClient, config)
 
   it('should retrieve a users refresh token', async () => {
     const expectedAuthCode = 'authCode'
@@ -31,13 +32,13 @@ describe('<DestinyApiClient/>', () => {
       {
         grant_type: 'authorization_code',
         code: expectedAuthCode,
-        client_secret: config.configModel.oauthSecret,
-        client_id: config.configModel.oauthClientId
+        client_secret: config.oauthSecret,
+        client_id: config.oauthClientId
       },
       {
         headers: {
           'content-type': 'application/x-www-form-urlencoded',
-          'x-api-key': config.configModel.apiKey
+          'x-api-key': config.apiKey
         }
       }
     )
@@ -66,7 +67,7 @@ describe('<DestinyApiClient/>', () => {
       `https://www.bungie.net/platform/User/GetMembershipsById/${expectedMembershipId}/3/`,
       {
         headers: {
-          'x-api-key': config.configModel.apiKey
+          'x-api-key': config.apiKey
         }
       }
     )
@@ -95,7 +96,7 @@ describe('<DestinyApiClient/>', () => {
       `https://www.bungie.net/platform/destiny2/3/profile/${expectedMembershipId}/`,
       {
         headers: {
-          'x-api-key': config.configModel.apiKey
+          'x-api-key': config.apiKey
         },
         params: { components: 100 }
       }
@@ -160,13 +161,13 @@ describe('<DestinyApiClient/>', () => {
       {
         grant_type: 'refresh_token',
         refresh_token: refreshToken,
-        client_id: config.configModel.oauthClientId,
-        client_secret: config.configModel.oauthSecret
+        client_id: config.oauthClientId,
+        client_secret: config.oauthSecret
       },
       {
         headers: {
           'content-type': 'application/x-www-form-urlencoded',
-          'x-api-key': config.configModel.apiKey
+          'x-api-key': config.apiKey
         }
       }
     )
@@ -191,7 +192,7 @@ describe('<DestinyApiClient/>', () => {
       {
         headers: {
           'content-type': 'application/json',
-          'x-api-key': config.configModel.apiKey
+          'x-api-key': config.apiKey
         }
       }
     )
@@ -230,7 +231,7 @@ describe('<DestinyApiClient/>', () => {
         },
         headers: {
           Authorization: `Bearer ${accessToken}`,
-          'x-api-key': config.configModel.apiKey
+          'x-api-key': config.apiKey
         }
       }
     )
@@ -255,7 +256,7 @@ describe('<DestinyApiClient/>', () => {
           components: 800
         },
         headers: {
-          'x-api-key': config.configModel.apiKey
+          'x-api-key': config.apiKey
         }
       }
     )

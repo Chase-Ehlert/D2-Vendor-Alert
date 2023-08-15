@@ -1,26 +1,29 @@
 import { Vendor } from '../destiny/vendor.js'
 import { DestinyService } from './destiny-service.js'
-import { config } from '../config/config.js'
 import { UserInterface } from '../database/models/user.js'
 import { UserRepository } from '../database/user-repository.js'
 import { HttpClient } from '../utility/http-client.js'
+import { DiscordConfig } from '../config/config.js'
 
 export class DiscordService {
   private readonly vendor
   private readonly destinyService
   private readonly database
   private readonly httpClient
+  private readonly config
 
   constructor (
     vendor: Vendor,
     destinyService: DestinyService,
     database: UserRepository,
-    httpClient: HttpClient
+    httpClient: HttpClient,
+    config: DiscordConfig
   ) {
     this.vendor = vendor
     this.destinyService = destinyService
     this.database = database
     this.httpClient = httpClient
+    this.config = config
   }
 
   /**
@@ -103,7 +106,7 @@ export class DiscordService {
       },
       {
         headers: {
-          Authorization: `Bot ${config.configModel.token}`,
+          Authorization: `Bot ${this.config.token}`,
           'Content-Type': 'application/json'
         }
       }

@@ -1,4 +1,4 @@
-import { config } from '../config/config.js'
+import { UserServiceConfig } from '../config/config.js'
 import { UserService } from './user-service.js'
 import mongoose from 'mongoose'
 
@@ -9,7 +9,7 @@ jest.mock('./../utility/logger', () => {
 })
 
 describe('<UserService/>', () => {
-  let userService = new UserService()
+  let userService = new UserService(new UserServiceConfig())
 
   it('should instantiate', () => {
     expect(userService).not.toBeNull()
@@ -20,15 +20,14 @@ describe('<UserService/>', () => {
     const expectedDatabasePassword = '123'
     const expectedDatabaseCluster = 'someCluster'
     const expectedDatabaseName = 'someName'
-    config.configModel = {
-      ...config.configModel,
+    const expectedConfig = {
       databaseUser: expectedDatabaseUser,
       databasePassword: expectedDatabasePassword,
       databaseCluster: expectedDatabaseCluster,
       databaseName: expectedDatabaseName
     }
 
-    userService = new UserService()
+    userService = new UserService(expectedConfig)
 
     mongoose.connect = jest.fn()
 

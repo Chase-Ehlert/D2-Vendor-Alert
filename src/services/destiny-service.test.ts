@@ -6,6 +6,7 @@ import { UserInterface } from '../database/models/user'
 import { DestinyApiClient } from '../destiny/destiny-api-client'
 import logger from '../utility/logger'
 import { AxiosHttpClient } from '../utility/axios-http-client'
+import { DestinyApiClientConfig } from '../config/config'
 
 jest.mock('./../utility/logger', () => {
   return {
@@ -23,7 +24,7 @@ beforeEach(() => {
 })
 
 describe('<DestinyService/>', () => {
-  const destinyApiClient = new DestinyApiClient(new AxiosHttpClient())
+  const destinyApiClient = new DestinyApiClient(new AxiosHttpClient(), new DestinyApiClientConfig())
   const destinyService = new DestinyService(destinyApiClient)
 
   it('should instantiate', async () => {

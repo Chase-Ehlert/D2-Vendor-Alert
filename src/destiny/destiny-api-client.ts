@@ -1,20 +1,24 @@
-import { config } from '../config/config.js'
+import { DestinyApiClientConfig } from '../config/config.js'
 import { HttpClient } from '../utility/http-client.js'
 
 export class DestinyApiClient {
+  private readonly httpClient
+  private readonly config
+  private readonly apiKeyHeader
+  private readonly urlEncodedHeaders
   private readonly bungieDomain = 'https://www.bungie.net/'
   private readonly bungieDomainWithTokenDirectory = 'https://www.bungie.net/platform/app/oauth/token/'
   private readonly bungieDomainWithDestinyDirectory = 'https://www.bungie.net/platform/destiny2/'
   private readonly profileDirectory = '3/profile/'
-  private readonly apiKeyHeader = { 'x-api-key': config.configModel.apiKey }
-  private readonly httpClient
-  private readonly urlEncodedHeaders = {
-    'content-type': 'application/x-www-form-urlencoded',
-    'x-api-key': config.configModel.apiKey
-  }
 
-  constructor (httpClient: HttpClient) {
+  constructor (httpClient: HttpClient, config: DestinyApiClientConfig) {
     this.httpClient = httpClient
+    this.config = config
+    this.apiKeyHeader = { 'x-api-key': this.config.apiKey }
+    this.urlEncodedHeaders = {
+      'content-type': 'application/x-www-form-urlencoded',
+      'x-api-key': this.config.apiKey
+    }
   }
 
   async getRefreshTokenInfo (authorizationCode: string): Promise<any> {
@@ -23,8 +27,8 @@ export class DestinyApiClient {
       {
         grant_type: 'authorization_code',
         code: authorizationCode,
-        client_secret: config.configModel.oauthSecret,
-        client_id: config.configModel.oauthClientId
+        client_secret: this.config.oauthSecret,
+        client_id: this.config.oauthClientId
       }, {
         headers: this.urlEncodedHeaders
       })
@@ -66,8 +70,8 @@ export class DestinyApiClient {
       this.bungieDomainWithTokenDirectory, {
         grant_type: 'refresh_token',
         refresh_token: refreshToken,
-        client_id: config.configModel.oauthClientId,
-        client_secret: config.configModel.oauthSecret
+        client_id: this.config.oauthClientId,
+        client_secret: this.config.oauthSecret
       }, {
         headers: this.urlEncodedHeaders
       })
@@ -81,7 +85,7 @@ export class DestinyApiClient {
       }, {
         headers: {
           'content-type': 'application/json',
-          'x-api-key': config.configModel.apiKey
+          'x-api-key': this.config.apiKey
         }
       })
   }
@@ -98,7 +102,7 @@ export class DestinyApiClient {
         },
         headers: {
           Authorization: `Bearer ${accessToken}`,
-          'x-api-key': config.configModel.apiKey
+          'x-api-key': this.config.apiKey
         }
       })
   }
