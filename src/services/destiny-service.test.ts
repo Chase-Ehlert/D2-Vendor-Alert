@@ -136,7 +136,7 @@ describe('<DestinyService/>', () => {
 
   it('should log an error when a call to destiny api client fails', async () => {
     const expectedError = { err: { message: 'Oops, something went wrong' } }
-    jest.spyOn(destinyApiClient, 'getRefreshTokenInfo').mockRejectedValue(expectedError)
+    jest.spyOn(destinyApiClient, 'getAccessTokenInfo').mockRejectedValue(expectedError)
 
     await destinyService.getAccessToken('1')
 

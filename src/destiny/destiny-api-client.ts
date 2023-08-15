@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { config } from '../config/config.js'
 import { HttpClient } from '../utility/http-client.js'
 
@@ -32,7 +31,7 @@ export class DestinyApiClient {
   }
 
   async getDestinyMembershipInfo (membershipId: string): Promise<any> {
-    return await axios.get(
+    return await this.httpClient.get(
       this.bungieDomain + `platform/User/GetMembershipsById/${membershipId}/3/`, {
         headers: this.apiKeyHeader
       })
@@ -41,7 +40,7 @@ export class DestinyApiClient {
   async getDestinyCharacterIds (destinyMembershipId: string): Promise<any> {
     const getProfilesComponent = 100
 
-    return await axios.get(
+    return await this.httpClient.get(
       this.bungieDomainWithDestinyDirectory + this.profileDirectory + destinyMembershipId + '/', {
         headers: this.apiKeyHeader,
         params: {
@@ -51,13 +50,13 @@ export class DestinyApiClient {
   }
 
   async getDestinyInventoryItemDefinition (): Promise<any> {
-    const { data } = await axios.get(
+    const { data } = await this.httpClient.get(
       this.bungieDomainWithDestinyDirectory + 'manifest/', {
         headers: this.apiKeyHeader
       })
     const manifestFileName: string = data.Response.jsonWorldContentPaths.en
 
-    return await axios.get(
+    return await this.httpClient.get(
       this.bungieDomain + manifestFileName
     )
   }
@@ -90,7 +89,7 @@ export class DestinyApiClient {
   async getDestinyVendorInfo (destinyId: string, destinyCharacterId: string, accessToken: string): Promise<any> {
     const getVendorSalesComponent = 402
 
-    return await axios.get(
+    return await this.httpClient.get(
       this.bungieDomainWithDestinyDirectory +
       this.profileDirectory +
       `${destinyId}/Character/${destinyCharacterId}/Vendors/`, {
@@ -107,7 +106,7 @@ export class DestinyApiClient {
   async getDestinyCollectibleInfo (destinyId: string): Promise<any> {
     const getCollectiblesComponent = 800
 
-    return await axios.get(
+    return await this.httpClient.get(
       this.bungieDomainWithDestinyDirectory + this.profileDirectory + `${destinyId}/`, {
         params: {
           components: getCollectiblesComponent

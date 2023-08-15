@@ -1,18 +1,11 @@
-/* eslint-disable import/no-duplicates */
-import http from 'axios'
-import axios from 'axios'
 import { DestinyApiClient } from './destiny-api-client'
 import { config } from '../config/config'
 import { UserInterface } from '../database/models/user'
 import { AxiosHttpClient } from '../utility/axios-http-client'
 
-jest.mock('axios', () => ({
-  create: jest.fn(() => http),
-  get: jest.fn()
-}))
-
 describe('<DestinyApiClient/>', () => {
-  const destinyApiClient = new DestinyApiClient(new AxiosHttpClient())
+  const axiosHttpClient = new AxiosHttpClient()
+  const destinyApiClient = new DestinyApiClient(axiosHttpClient)
 
   it('should retrieve a users refresh token', async () => {
     const expectedAuthCode = 'authCode'
@@ -25,7 +18,7 @@ describe('<DestinyApiClient/>', () => {
       refresh_token: expectedRefreshToken,
       access_token: undefined
     }
-    axios.post = jest.fn().mockResolvedValue({
+    axiosHttpClient.post = jest.fn().mockResolvedValue({
       membership_id: expectedMembershipId,
       refresh_expires_in: expectedRefreshExpiration,
       refresh_token: expectedRefreshToken
@@ -33,7 +26,7 @@ describe('<DestinyApiClient/>', () => {
 
     const value = await destinyApiClient.getRefreshTokenInfo(expectedAuthCode)
 
-    expect(axios.post).toHaveBeenCalledWith(
+    expect(axiosHttpClient.post).toHaveBeenCalledWith(
       'https://www.bungie.net/platform/app/oauth/token/',
       {
         grant_type: 'authorization_code',
@@ -65,11 +58,11 @@ describe('<DestinyApiClient/>', () => {
         }
       }
     }
-    axios.get = jest.fn().mockResolvedValue(result)
+    axiosHttpClient.get = jest.fn().mockResolvedValue(result)
 
     const value = await destinyApiClient.getDestinyMembershipInfo(expectedMembershipId)
 
-    expect(axios.get).toHaveBeenCalledWith(
+    expect(axiosHttpClient.get).toHaveBeenCalledWith(
       `https://www.bungie.net/platform/User/GetMembershipsById/${expectedMembershipId}/3/`,
       {
         headers: {
@@ -94,11 +87,11 @@ describe('<DestinyApiClient/>', () => {
         }
       }
     }
-    axios.get = jest.fn().mockResolvedValue(result)
+    axiosHttpClient.get = jest.fn().mockResolvedValue(result)
 
     const value = await destinyApiClient.getDestinyCharacterIds(expectedMembershipId)
 
-    expect(axios.get).toHaveBeenCalledWith(
+    expect(axiosHttpClient.get).toHaveBeenCalledWith(
       `https://www.bungie.net/platform/destiny2/3/profile/${expectedMembershipId}/`,
       {
         headers: {
@@ -128,8 +121,7 @@ describe('<DestinyApiClient/>', () => {
         }
       }
     }
-    const httpMock = http as jest.Mocked<typeof http>
-    httpMock.get.mockImplementation(async (url): Promise<any> => {
+    axiosHttpClient.get = jest.fn().mockImplementation(async (url): Promise<any> => {
       switch (url) {
         case 'https://www.bungie.net/platform/destiny2/manifest/':
           return await Promise.resolve(manifest)
@@ -140,8 +132,8 @@ describe('<DestinyApiClient/>', () => {
 
     const value = await destinyApiClient.getDestinyInventoryItemDefinition()
 
-    expect(axios.get).toHaveBeenCalledWith('https://www.bungie.net/manifest')
-    expect(axios.get).toHaveBeenCalledWith(`https://www.bungie.net/${expectedManifestFileName}`)
+    expect(axiosHttpClient.get).toHaveBeenCalledWith('https://www.bungie.net/manifest')
+    expect(axiosHttpClient.get).toHaveBeenCalledWith(`https://www.bungie.net/${expectedManifestFileName}`)
     expect(value).toEqual(itemDefinition)
   })
 
@@ -159,11 +151,11 @@ describe('<DestinyApiClient/>', () => {
       }
     }
     const refreshToken = '654'
-    axios.post = jest.fn().mockResolvedValue(accessToken)
+    axiosHttpClient.post = jest.fn().mockResolvedValue(accessToken)
 
     const value = await destinyApiClient.getAccessTokenInfo(refreshToken)
 
-    expect(axios.post).toHaveBeenCalledWith(
+    expect(axiosHttpClient.post).toHaveBeenCalledWith(
       'https://www.bungie.net/platform/app/oauth/token/',
       {
         grant_type: 'refresh_token',
@@ -186,11 +178,11 @@ describe('<DestinyApiClient/>', () => {
     const bungieUsernameCode = '456'
     const expectedDestinyusername = 'coolGuy37'
     const result = { data: { Response: { name: expectedDestinyusername } } }
-    axios.post = jest.fn().mockResolvedValue(result)
+    axiosHttpClient.post = jest.fn().mockResolvedValue(result)
 
     const value = await destinyApiClient.getDestinyUsername(bungieUsername, bungieUsernameCode)
 
-    expect(axios.post).toHaveBeenCalledWith(
+    expect(axiosHttpClient.post).toHaveBeenCalledWith(
       'https://www.bungie.net/platform/destiny2/SearchDestinyPlayerByBungieName/3/',
       {
         displayName: bungieUsername,
@@ -226,11 +218,11 @@ describe('<DestinyApiClient/>', () => {
         Response: { sales: { data: { vendor: 'info' } } }
       }
     }
-    axios.get = jest.fn().mockResolvedValue(result)
+    axiosHttpClient.get = jest.fn().mockResolvedValue(result)
 
     const value = await destinyApiClient.getDestinyVendorInfo(user.destinyId, user.destinyCharacterId, accessToken)
 
-    expect(axios.get).toHaveBeenCalledWith(
+    expect(axiosHttpClient.get).toHaveBeenCalledWith(
       `https://www.bungie.net/platform/destiny2/3/profile/${user.destinyId}/Character/${user.destinyCharacterId}/Vendors/`,
       {
         params: {
@@ -252,11 +244,11 @@ describe('<DestinyApiClient/>', () => {
         Response: { profileCollectibles: { data: { collectibles: { item1: 'name' } } } }
       }
     }
-    axios.get = jest.fn().mockResolvedValue(result)
+    axiosHttpClient.get = jest.fn().mockResolvedValue(result)
 
     const value = await destinyApiClient.getDestinyCollectibleInfo(destinyId)
 
-    expect(axios.get).toHaveBeenCalledWith(
+    expect(axiosHttpClient.get).toHaveBeenCalledWith(
       `https://www.bungie.net/platform/destiny2/3/profile/${destinyId}/`,
       {
         params: {

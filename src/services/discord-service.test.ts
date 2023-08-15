@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { DiscordService } from './discord-service'
 import { Vendor } from '../destiny/vendor'
 import { DestinyService } from './destiny-service'
@@ -15,6 +14,7 @@ jest.mock('./../utility/url', () => {
 })
 
 describe('<DiscordService/>', () => {
+  const axiosHttpClient = new AxiosHttpClient()
   const vendor = new Vendor(
     new DestinyService(new DestinyApiClient(new AxiosHttpClient())),
     new MongoUserRepository(),
@@ -22,9 +22,7 @@ describe('<DiscordService/>', () => {
   )
   const destinyService = new DestinyService(new DestinyApiClient(new AxiosHttpClient()))
   const userRepo = new MongoUserRepository()
-  const discordService = new DiscordService(vendor, destinyService, userRepo, new AxiosHttpClient())
-
-  jest.mock('axios')
+  const discordService = new DiscordService(vendor, destinyService, userRepo, axiosHttpClient)
 
   it('should instantiate', () => {
     expect(discordService).not.toBeNull()
@@ -60,7 +58,7 @@ describe('<DiscordService/>', () => {
 
     jest.spyOn(vendor, 'getCollectiblesForSaleByAda').mockResolvedValue([])
     User.find = jest.fn().mockImplementation(() => databaseUsers)
-    axios.post = jest.fn().mockImplementation(async () => await Promise.resolve({ status: 200 }))
+    axiosHttpClient.post = jest.fn().mockImplementation(async () => await Promise.resolve({ status: 200 }))
 
     afterEach(() => {
       jest.clearAllMocks()
@@ -94,7 +92,7 @@ describe('<DiscordService/>', () => {
 
       await discordService.alertUsersOfUnownedModsForSale()
 
-      expect(axios.post).toHaveBeenCalledWith(
+      expect(axiosHttpClient.post).toHaveBeenCalledWith(
         expectedDiscordEndpoint,
         { content: expectedMessage },
         {
@@ -106,12 +104,12 @@ describe('<DiscordService/>', () => {
     })
 
     it('should throw an error when an alert message does not return with a 200 status code', async () => {
-      axios.post = jest.fn().mockImplementation(async () => await Promise.resolve({ status: 401 }))
+      axiosHttpClient.post = jest.fn().mockImplementation(async () => await Promise.resolve({ status: 401 }))
 
       await expect(async () => await discordService.alertUsersOfUnownedModsForSale()).rejects.toThrow(Error)
       await expect(async () => await discordService.alertUsersOfUnownedModsForSale()).rejects.toThrow('401')
 
-      axios.post = jest.fn().mockImplementation(async () => await Promise.resolve({ status: 200 }))
+      axiosHttpClient.post = jest.fn().mockImplementation(async () => await Promise.resolve({ status: 200 }))
     })
 
     it('should not send an alert message when all mods for sale are owned', async () => {
@@ -122,7 +120,7 @@ describe('<DiscordService/>', () => {
 
       await discordService.alertUsersOfUnownedModsForSale()
 
-      expect(axios.post).toHaveBeenCalledWith(
+      expect(axiosHttpClient.post).toHaveBeenCalledWith(
         expectedDiscordEndpoint,
         { content: expectedMessage },
         {
