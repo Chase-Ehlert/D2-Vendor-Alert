@@ -6,11 +6,7 @@ import path from 'path'
 import metaUrl from '../utility/url.js'
 
 export class DestinyService {
-  private readonly destinyApiClient
-
-  constructor (destinyApiClient: DestinyApiClient) {
-    this.destinyApiClient = destinyApiClient
-  }
+  constructor (private readonly destinyApiClient: DestinyApiClient) {}
 
   /**
      * Retrieves refresh token for a user

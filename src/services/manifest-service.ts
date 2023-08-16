@@ -2,12 +2,9 @@ import * as fs from 'fs'
 import { DestinyService } from './destiny-service.js'
 
 export class ManifestService {
-  private readonly destinyService
   private readonly fsPromises = fs.promises
 
-  constructor (destinyService: DestinyService) {
-    this.destinyService = destinyService
-  }
+  constructor (private readonly destinyService: DestinyService) {}
 
   /**
    * Collect names of mods for sale from the manifest

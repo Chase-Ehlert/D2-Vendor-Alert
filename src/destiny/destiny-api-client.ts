@@ -2,8 +2,6 @@ import { DestinyApiClientConfig } from '../config/config.js'
 import { HttpClient } from '../utility/http-client.js'
 
 export class DestinyApiClient {
-  private readonly httpClient
-  private readonly config
   private readonly apiKeyHeader
   private readonly urlEncodedHeaders
   private readonly bungieDomain = 'https://www.bungie.net/'
@@ -11,9 +9,10 @@ export class DestinyApiClient {
   private readonly bungieDomainWithDestinyDirectory = 'https://www.bungie.net/platform/destiny2/'
   private readonly profileDirectory = '3/profile/'
 
-  constructor (httpClient: HttpClient, config: DestinyApiClientConfig) {
-    this.httpClient = httpClient
-    this.config = config
+  constructor (
+    private readonly httpClient: HttpClient,
+    private readonly config: DestinyApiClientConfig
+  ) {
     this.apiKeyHeader = { 'x-api-key': this.config.apiKey }
     this.urlEncodedHeaders = {
       'content-type': 'application/x-www-form-urlencoded',

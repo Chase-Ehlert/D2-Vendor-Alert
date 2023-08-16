@@ -6,25 +6,13 @@ import { HttpClient } from '../utility/http-client.js'
 import { DiscordConfig } from '../config/config.js'
 
 export class DiscordService {
-  private readonly vendor
-  private readonly destinyService
-  private readonly database
-  private readonly httpClient
-  private readonly config
-
   constructor (
-    vendor: Vendor,
-    destinyService: DestinyService,
-    database: UserRepository,
-    httpClient: HttpClient,
-    config: DiscordConfig
-  ) {
-    this.vendor = vendor
-    this.destinyService = destinyService
-    this.database = database
-    this.httpClient = httpClient
-    this.config = config
-  }
+    private readonly vendor: Vendor,
+    private readonly destinyService: DestinyService,
+    private readonly database: UserRepository,
+    private readonly httpClient: HttpClient,
+    private readonly config: DiscordConfig
+  ) {}
 
   /**
    * Alert registered users about today's vendor inventory

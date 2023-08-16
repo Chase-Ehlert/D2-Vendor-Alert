@@ -8,15 +8,11 @@ import { UserRepository } from '../database/user-repository.js'
 import { DiscordConfig } from '../config/config.js'
 
 export class DiscordClient {
-  private readonly database
-  private readonly destinyService
-  private readonly config
-
-  constructor (database: UserRepository, destinyService: DestinyService, config: DiscordConfig) {
-    this.database = database
-    this.destinyService = destinyService
-    this.config = config
-  }
+  constructor (
+    private readonly database: UserRepository,
+    private readonly destinyService: DestinyService,
+    private readonly config: DiscordConfig
+  ) {}
 
   /**
      * Connect to the Discord Client

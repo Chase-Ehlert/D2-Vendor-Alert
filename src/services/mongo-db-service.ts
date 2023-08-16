@@ -3,11 +3,7 @@ import logger from '../utility/logger.js'
 import { UserServiceConfig as MongoDbServiceConfig } from '../config/config.js'
 
 export class MongoDbService {
-  private readonly config
-
-  constructor (config: MongoDbServiceConfig) {
-    this.config = config
-  }
+  constructor (private readonly config: MongoDbServiceConfig) {}
 
   /**
      * Establishes a connection to the MongoDB for the list of users waiting for an alert

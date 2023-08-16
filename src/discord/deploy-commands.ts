@@ -4,11 +4,7 @@ import logger from '../utility/logger.js'
 import { DeployCommandsConfig } from '../config/config.js'
 
 class DeployCommands {
-  private readonly config
-
-  constructor (config: DeployCommandsConfig) {
-    this.config = config
-  }
+  constructor (private readonly config: DeployCommandsConfig) {}
 
   /**
    * Update registered slash commands

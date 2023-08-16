@@ -5,19 +5,11 @@ import { UserInterface } from '../database/models/user.js'
 import { UserRepository } from '../database/user-repository.js'
 
 export class Vendor {
-  private readonly destinyService
-  private readonly database
-  private readonly manifestService
-
   constructor (
-    destinyService: DestinyService,
-    database: UserRepository,
-    manifestService: ManifestService
-  ) {
-    this.destinyService = destinyService
-    this.database = database
-    this.manifestService = manifestService
-  }
+    private readonly destinyService: DestinyService,
+    private readonly database: UserRepository,
+    private readonly manifestService: ManifestService
+  ) {}
 
   /**
    * Collect mods for sale by Ada-1

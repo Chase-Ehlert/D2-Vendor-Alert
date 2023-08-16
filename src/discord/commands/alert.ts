@@ -2,11 +2,7 @@ import { hyperlink, SlashCommandBuilder } from 'discord.js'
 import { AlertConfig } from '../../config/config.js'
 
 class AlertCommand {
-  private readonly config
-
-  constructor (config: AlertConfig) {
-    this.config = config
-  }
+  constructor (private readonly config: AlertConfig) {}
 
   setupCommand (): any {
     const oauthClientId = this.config.oauthClientId
