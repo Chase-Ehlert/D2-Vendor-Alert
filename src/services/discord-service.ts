@@ -12,7 +12,7 @@ export class DiscordService {
     private readonly database: UserRepository,
     private readonly httpClient: HttpClient,
     private readonly config: DiscordConfig
-  ) {}
+  ) { }
 
   /**
    * Alert registered users about today's vendor inventory
@@ -34,13 +34,11 @@ export class DiscordService {
 
     if (currentDate.getTime() > expirationDate.getTime()) {
       const tokenInfo = await this.destinyService.getAccessToken(user.refreshToken)
-      if (tokenInfo !== undefined) {
-        await this.database.updateUserByMembershipId(
-          tokenInfo.bungieMembershipId,
-          tokenInfo.refreshTokenExpirationTime,
-          tokenInfo.refreshToken
-        )
-      }
+      await this.database.updateUserByMembershipId(
+        tokenInfo.bungieMembershipId,
+        tokenInfo.refreshTokenExpirationTime,
+        tokenInfo.refreshToken
+      )
     }
   }
 
@@ -51,7 +49,7 @@ export class DiscordService {
     const discordEndpoint = `channels/${user.discordChannelId}/messages`
     const unownedModList = await this.vendor.getCollectiblesForSaleByAda(user)
 
-    if (unownedModList !== undefined && unownedModList.length > 0) {
+    if (unownedModList.length > 0) {
       await this.messageUnownedModsList(discordEndpoint, user.discordId, unownedModList)
     } else {
       await this.messageEmptyModsList(discordEndpoint, user.bungieUsername)

@@ -4,9 +4,9 @@ import { Socket } from 'net'
 import { RefreshTokenInfo } from './models/refresh-token-info'
 import { UserInterface } from '../database/models/user'
 import { DestinyApiClient } from '../destiny/destiny-api-client'
-import logger from '../utility/logger'
 import { AxiosHttpClient } from '../utility/axios-http-client'
 import { DestinyApiClientConfig } from '../config/config'
+import { AccessTokenInfo } from './models/access-token-info'
 
 jest.mock('./../utility/logger', () => {
   return {
@@ -113,7 +113,7 @@ describe('<DestinyService/>', () => {
     const expectedRefreshExpiration = '456'
     const expectedRefreshToken = '789'
     const expectedAccessToken = '321'
-    const expectedRefreshTokenInfo = new RefreshTokenInfo(
+    const expectedRefreshTokenInfo = new AccessTokenInfo(
       expectedMembershipId,
       expectedRefreshExpiration,
       expectedRefreshToken,
@@ -135,25 +135,16 @@ describe('<DestinyService/>', () => {
     expect(value).toEqual(expectedRefreshTokenInfo)
   })
 
-  it('should log an error when a call to destiny api client fails', async () => {
-    const expectedError = { err: { message: 'Oops, something went wrong' } }
-    jest.spyOn(destinyApiClient, 'getAccessTokenInfo').mockRejectedValue(expectedError)
-
-    await destinyService.getAccessToken('1')
-
-    expect(logger.error).toHaveBeenCalledWith('Issue with retreiving refresh token')
-  })
-
   it('should check if a Destiny username exists based on a users Bungie username', async () => {
     const bungieUsername = 'name123'
     const bungieUsernameCode = '456'
     const expectedDestinyusername = 'coolGuy37'
-    const usernameInfo = { Response: { name: expectedDestinyusername } }
+    const usernameInfo = { data: { Response: { name: expectedDestinyusername } } }
     jest.spyOn(destinyApiClient, 'getDestinyUsername').mockResolvedValue(usernameInfo)
 
     const value = await destinyService.getDestinyUsername(bungieUsername, bungieUsernameCode)
 
-    expect(value).toEqual(usernameInfo.Response)
+    expect(value).toEqual(usernameInfo.data.Response)
   })
 
   it('should retrieve the list of Destiny vendors and their inventory', async () => {

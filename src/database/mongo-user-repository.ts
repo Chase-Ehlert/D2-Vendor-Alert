@@ -38,6 +38,7 @@ export class MongoUserRepository implements UserRepository {
     try {
       await newUser.save()
     } catch (error) {
+      logger.error(error)
       throw Error('Could not create new user')
     }
   }
@@ -97,7 +98,12 @@ export class MongoUserRepository implements UserRepository {
    * Returns a list of all users subscribed to be alerted
    */
   async fetchAllUsers (): Promise<UserInterface[]> {
-    return await User.find()
+    try {
+      return await User.find()
+    } catch (error) {
+      logger.error(error)
+      throw new Error('Could not retreive all users from the database')
+    }
   }
 
   public determineExpirationDate (refreshExpirationTime: string): string {

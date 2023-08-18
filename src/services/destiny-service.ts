@@ -4,9 +4,10 @@ import { DestinyApiClient } from '../destiny/destiny-api-client.js'
 import logger from '../utility/logger.js'
 import path from 'path'
 import metaUrl from '../utility/url.js'
+import { AccessTokenInfo } from './models/access-token-info.js'
 
 export class DestinyService {
-  constructor (private readonly destinyApiClient: DestinyApiClient) {}
+  constructor (private readonly destinyApiClient: DestinyApiClient) { }
 
   /**
      * Retrieves refresh token for a user
@@ -21,7 +22,7 @@ export class DestinyService {
         data.refresh_token
       )
     } catch (error) {
-      logger.error('Error occurred while making the refresh token call with a authorization code')
+      logger.error('Error occurred while making the refresh token call with an authorization code')
       logger.error(authorizationCode)
       result.sendFile('landing-page-error-auth-code.html', { root: path.join(metaUrl, 'src/views') })
     }
@@ -60,29 +61,24 @@ export class DestinyService {
   /**
      * Retrieve the user's access token by calling the Destiny API with their refresh token
      */
-  async getAccessToken (refreshToken: string): Promise<RefreshTokenInfo | undefined> {
-    try {
-      const { data } = await this.destinyApiClient.getAccessTokenInfo(refreshToken)
+  async getAccessToken (refreshToken: string): Promise<AccessTokenInfo> {
+    const { data } = await this.destinyApiClient.getAccessTokenInfo(refreshToken)
 
-      return new RefreshTokenInfo(
-        data.membership_id,
-        data.refresh_expires_in,
-        data.refresh_token,
-        data.access_token
-      )
-    } catch (error) {
-      logger.error('Issue with retreiving refresh token')
-      logger.error(error)
-    }
+    return new AccessTokenInfo(
+      data.membership_id,
+      data.refresh_expires_in,
+      data.refresh_token,
+      data.access_token
+    )
   }
 
   /**
      * Looks for a Destiny username that belongs to a user's Bungie username
      */
   async getDestinyUsername (bungieUsername: string, bungieUsernameCode: string): Promise<any> {
-    const usernameInfo = await this.destinyApiClient.getDestinyUsername(bungieUsername, bungieUsernameCode)
+    const { data } = await this.destinyApiClient.getDestinyUsername(bungieUsername, bungieUsernameCode)
 
-    return usernameInfo.Response
+    return data.Response
   }
 
   /**

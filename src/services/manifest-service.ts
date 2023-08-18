@@ -1,10 +1,11 @@
 import * as fs from 'fs'
 import { DestinyService } from './destiny-service.js'
+import logger from '../utility/logger.js'
 
 export class ManifestService {
   private readonly fsPromises = fs.promises
 
-  constructor (private readonly destinyService: DestinyService) {}
+  constructor (private readonly destinyService: DestinyService) { }
 
   /**
    * Collect names of mods for sale from the manifest
@@ -12,7 +13,7 @@ export class ManifestService {
   async getItemsFromManifest (itemType: number, itemList: Object): Promise<string[]> {
     const destinyInventoryItemDefinition = await this.destinyService.getDestinyInventoryItemDefinition()
 
-    return await this.readItemsFromManifest(
+    return this.readItemsFromManifest(
       itemType,
       itemList,
       destinyInventoryItemDefinition
@@ -40,7 +41,8 @@ export class ManifestService {
    */
   async getCollectiblesFromManifest (itemType: number, itemList: Object): Promise<string[]> {
     const newData = await this.destinyService.getDestinyInventoryItemDefinition()
-    return await this.readCollectiblesFromManifest(itemType, itemList, newData)
+
+    return this.readCollectiblesFromManifest(itemType, itemList, newData)
   }
 
   /**
@@ -70,28 +72,35 @@ export class ManifestService {
    * Read manifest file for a list of names of collectibles or items
    */
   private async readFile (itemType: number, fileName: string, itemList: Object, collectible: boolean): Promise<string[]> {
-    return await this.fsPromises.readFile(fileName)
-      .then((fileContents) => {
-        if (collectible) {
-          return this.getCollectibleNames(itemList, JSON.parse(String(fileContents)))
-        } else {
-          return this.getItemNames(itemType, itemList, JSON.parse(String(fileContents)))
-        }
-      })
+    try {
+      const fileContents = await this.fsPromises.readFile(fileName)
+      if (collectible) {
+        return this.getCollectibleNames(itemList, JSON.parse(String(fileContents)))
+      } else {
+        return this.getItemNames(itemType, itemList, JSON.parse(String(fileContents)))
+      }
+    } catch (error) {
+      logger.error(error)
+      throw new Error('Problem with reading file')
+    }
   }
 
   /**
    * Write manifest file and then read it for a list of names of collectibles or items
    */
   private async writeFile (itemType: number, fileName: string, manifestData: Object, itemList: Object, collectible: boolean): Promise<string[]> {
-    return await this.fsPromises.writeFile(fileName, JSON.stringify(manifestData))
-      .then(() => {
-        if (collectible) {
-          return this.getCollectibleNames(itemList, manifestData)
-        } else {
-          return this.getItemNames(itemType, itemList, manifestData)
-        }
-      })
+    try {
+      await this.fsPromises.writeFile(fileName, JSON.stringify(manifestData))
+    } catch (error) {
+      logger.error(error)
+      throw new Error('Problem with writing file')
+    }
+
+    if (collectible) {
+      return this.getCollectibleNames(itemList, manifestData)
+    } else {
+      return this.getItemNames(itemType, itemList, manifestData)
+    }
   }
 
   /**
@@ -108,10 +117,10 @@ export class ManifestService {
     })
 
     for (let i = 0; i < manifestKeys.length; i++) {
-      if (this.canManifestItemBeAdded(itemType, itemHashList, manifest, manifestKeys, i, itemNameList)) {
-        if (manifest[manifestKeys[i]].collectibleHash !== undefined) {
-          itemNameList.push(manifest[manifestKeys[i]].collectibleHash)
-        }
+      if (this.canManifestItemBeAdded(itemType, itemHashList, manifest, manifestKeys, i, itemNameList) &&
+        manifest[manifestKeys[i]].collectibleHash !== undefined
+      ) {
+        itemNameList.push(manifest[manifestKeys[i]].collectibleHash)
       }
     }
 
@@ -140,7 +149,14 @@ export class ManifestService {
   /**
    * Check whether an item from the manifest is for sale or not
    */
-  private canManifestItemBeAdded (itemType: number, itemHashList: string[], manifest: any, manifestKeys: string[], index: number, itemNameList: string[]): boolean {
+  private canManifestItemBeAdded (
+    itemType: number,
+    itemHashList: string[],
+    manifest: any,
+    manifestKeys: string[],
+    index: number,
+    itemNameList: string[]
+  ): boolean {
     return itemHashList.includes(manifest[manifestKeys[index]].hash) &&
       manifest[manifestKeys[index]].itemType === itemType &&
       !itemNameList.includes(manifest[manifestKeys[index]].collectibleHash)

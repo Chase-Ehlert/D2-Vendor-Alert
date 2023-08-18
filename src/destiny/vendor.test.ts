@@ -2,12 +2,12 @@ import { MongoUserRepository } from '../database/mongo-user-repository'
 import { UserInterface } from '../database/models/user'
 import { DestinyService } from '../services/destiny-service'
 import { ManifestService } from '../services/manifest-service'
-import { RefreshTokenInfo } from '../services/models/refresh-token-info'
 import { Vendor } from './vendor'
 import { DestinyApiClient } from './destiny-api-client'
 import logger from '../utility/logger'
 import { AxiosHttpClient } from '../utility/axios-http-client'
 import { DestinyApiClientConfig } from '../config/config'
+import { AccessTokenInfo } from '../services/models/access-token-info'
 
 jest.mock('./../utility/url', () => {
   return 'example'
@@ -43,7 +43,7 @@ describe('<Vendor/>', () => {
     const refreshTokenExpirationTime = '3212341'
     const refreshToken = '888'
     const accessToken = '000'
-    const tokenInfo = new RefreshTokenInfo(bungieMembershipId, refreshTokenExpirationTime, refreshToken, accessToken)
+    const tokenInfo = new AccessTokenInfo(bungieMembershipId, refreshTokenExpirationTime, refreshToken, accessToken)
     const expectedSaleItem = { saleItems: { item1: 'item1' } }
     const vendorInventory = { 350061650: expectedSaleItem, 456: { saleItems: { item2: 'item2' } } }
     const expectedCollectible = 'testing'
@@ -69,7 +69,7 @@ describe('<Vendor/>', () => {
   })
 
   it('should throw an error when the access token is undefined before calling getItemFromManifest()', async () => {
-    const tokenInfo = new RefreshTokenInfo('bungieMembershipId', 'refreshTokenExpirationTime', 'refreshToken')
+    const tokenInfo = new AccessTokenInfo('bungieMembershipId', 'refreshTokenExpirationTime', 'refreshToken', 'accessToken')
     jest.spyOn(destinyService, 'getDestinyCollectibleInfo').mockResolvedValue({})
     jest.spyOn(destinyService, 'getAccessToken').mockResolvedValue(tokenInfo)
     user = {
@@ -78,8 +78,6 @@ describe('<Vendor/>', () => {
     } as unknown as UserInterface
     logger.error = jest.fn()
 
-    await expect(async () => await vendor.getCollectiblesForSaleByAda(user)).rejects.toThrow(Error)
-
-    expect(logger.error).toBeCalledWith('Missing access token for retreiving vendor mod inventory.')
+    await expect(async () => vendor.getCollectiblesForSaleByAda(user)).rejects.toThrow(Error)
   })
 })

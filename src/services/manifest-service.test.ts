@@ -9,12 +9,18 @@ jest.mock('./../utility/url', () => {
   return 'example'
 })
 
+jest.mock('./../utility/logger', () => {
+  return {
+    error: jest.fn()
+  }
+})
+
 describe('<ManifestService/>', () => {
   const destinyService = new DestinyService(new DestinyApiClient(new AxiosHttpClient(), new DestinyApiClientConfig()))
   const manifestService = new ManifestService(destinyService)
 
   afterEach(() => {
-    jest.clearAllMocks()
+    jest.restoreAllMocks()
   })
 
   it('should instantiate', () => {
@@ -26,8 +32,8 @@ describe('<ManifestService/>', () => {
     const itemList = { item1: { itemHash: '123' }, item2: { itemHash: '321' } }
     const expectedManifest = '{ "item1": { "hash": "123", "itemType": 1, "collectibleHash": "456" }, "item2": { "hash": "321", "itemType": 1, "collectibleHash": "654" }}'
     const expectedItemNameList = ['456', '654']
-    fs.promises.access = jest.fn().mockImplementation(async () => await Promise.resolve())
-    fs.promises.readFile = jest.fn().mockImplementation(async () => await Promise.resolve(expectedManifest))
+    fs.promises.access = jest.fn().mockResolvedValue({})
+    fs.promises.readFile = jest.fn().mockResolvedValue(expectedManifest)
 
     const result = await manifestService.getItemsFromManifest(1, itemList)
 
@@ -45,13 +51,21 @@ describe('<ManifestService/>', () => {
     const expectedItemNameList = [456, 654]
 
     jest.spyOn(destinyService, 'getDestinyInventoryItemDefinition').mockResolvedValue(expectedManifest)
-    fs.promises.access = jest.fn().mockImplementation(async () => await Promise.reject(Error))
-    fs.promises.writeFile = jest.fn().mockImplementation(async () => await Promise.resolve())
+    fs.promises.access = jest.fn().mockRejectedValue(Error)
+    fs.promises.writeFile = jest.fn().mockResolvedValue({})
 
     const result = await manifestService.getItemsFromManifest(1, itemList)
 
     expect(fs.promises.writeFile).toHaveBeenCalledWith('manifest-items.json', JSON.stringify(expectedManifest))
     expect(result).toEqual(expectedItemNameList)
+  })
+
+  it('should catch an error thrown when attempting to write the manifest', async () => {
+    jest.spyOn(destinyService, 'getDestinyInventoryItemDefinition').mockResolvedValue({})
+    fs.promises.access = jest.fn().mockRejectedValue(Error)
+    fs.promises.writeFile = jest.fn().mockRejectedValue(Error)
+
+    await expect(async () => manifestService.getItemsFromManifest(1, {})).rejects.toThrow(Error)
   })
 
   it('should return a list of collectibles from the read manifest', async () => {
@@ -60,9 +74,10 @@ describe('<ManifestService/>', () => {
       item2: { displayProperties: { name: 'item2' } }
     }
     const itemList = { item1: { itemHash: 123 }, item2: { itemHash: 321 } }
+
     jest.spyOn(destinyService, 'getDestinyInventoryItemDefinition').mockResolvedValue(expectedManifest)
-    fs.promises.access = jest.fn().mockImplementation(async () => await Promise.resolve())
-    fs.promises.readFile = jest.fn().mockImplementation(async () => await Promise.resolve(expectedManifest))
+    fs.promises.access = jest.fn().mockResolvedValue({})
+    fs.promises.readFile = jest.fn().mockResolvedValue(expectedManifest)
 
     const result = await manifestService.getCollectiblesFromManifest(1, itemList)
 
@@ -76,9 +91,10 @@ describe('<ManifestService/>', () => {
       item2: { displayProperties: { name: 'item2' } }
     }
     const itemList = { item1: { itemHash: 123 }, item2: { itemHash: 321 } }
+
     jest.spyOn(destinyService, 'getDestinyInventoryItemDefinition').mockResolvedValue(expectedManifest)
-    fs.promises.access = jest.fn().mockImplementation(async () => await Promise.reject(Error))
-    fs.promises.writeFile = jest.fn().mockImplementation(async () => await Promise.resolve())
+    fs.promises.access = jest.fn().mockRejectedValue(Error)
+    fs.promises.writeFile = jest.fn().mockResolvedValue({})
 
     const result = await manifestService.getCollectiblesFromManifest(1, itemList)
 

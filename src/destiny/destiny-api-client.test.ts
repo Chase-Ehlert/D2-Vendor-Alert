@@ -3,6 +3,12 @@ import { UserInterface } from '../database/models/user'
 import { AxiosHttpClient } from '../utility/axios-http-client'
 import { DestinyApiClientConfig } from '../config/config'
 
+jest.mock('./../utility/logger', () => {
+  return {
+    error: jest.fn()
+  }
+})
+
 describe('<DestinyApiClient/>', () => {
   const axiosHttpClient = new AxiosHttpClient()
   const config = new DestinyApiClientConfig()
@@ -45,6 +51,12 @@ describe('<DestinyApiClient/>', () => {
     expect(value).toEqual(expectedRefreshTokenInfo)
   })
 
+  it('should catch an error in getRefreshTokenInfo if one occurs when making a http call', async () => {
+    axiosHttpClient.post = jest.fn().mockRejectedValue(Error)
+
+    await expect(async () => destinyApiClient.getRefreshTokenInfo('1')).rejects.toThrow(Error)
+  })
+
   it('should retrieve the Destiny membership information for a user', async () => {
     const expectedMembershipId = '123'
     const expectedDestinyMembershipId = '456'
@@ -72,6 +84,12 @@ describe('<DestinyApiClient/>', () => {
       }
     )
     expect(value).toEqual(result)
+  })
+
+  it('should catch an error in getDestinyMembershipInfo if one occurs when making a http call', async () => {
+    axiosHttpClient.get = jest.fn().mockRejectedValue(Error)
+
+    await expect(async () => destinyApiClient.getDestinyMembershipInfo('1')).rejects.toThrow(Error)
   })
 
   it('should retrieve the Destiny character information for a user', async () => {
@@ -104,6 +122,12 @@ describe('<DestinyApiClient/>', () => {
     expect(value).toEqual(result)
   })
 
+  it('should catch an error in getDestinyCharacterIds if one occurs when making a http call', async () => {
+    axiosHttpClient.get = jest.fn().mockRejectedValue(Error)
+
+    await expect(async () => destinyApiClient.getDestinyCharacterIds('1')).rejects.toThrow(Error)
+  })
+
   it('should retrieve a list of definitions for Destiny items from a specific manifest file', async () => {
     const expectedManifestFileName = 'manifest'
     const manifest = {
@@ -125,9 +149,9 @@ describe('<DestinyApiClient/>', () => {
     axiosHttpClient.get = jest.fn().mockImplementation(async (url): Promise<any> => {
       switch (url) {
         case 'https://www.bungie.net/platform/destiny2/manifest/':
-          return await Promise.resolve(manifest)
+          return Promise.resolve(manifest)
         case `https://www.bungie.net/${expectedManifestFileName}`:
-          return await Promise.resolve(itemDefinition)
+          return Promise.resolve(itemDefinition)
       }
     })
 
@@ -136,6 +160,36 @@ describe('<DestinyApiClient/>', () => {
     expect(axiosHttpClient.get).toHaveBeenCalledWith('https://www.bungie.net/manifest')
     expect(axiosHttpClient.get).toHaveBeenCalledWith(`https://www.bungie.net/${expectedManifestFileName}`)
     expect(value).toEqual(itemDefinition)
+  })
+
+  it('should catch an error in getDestinyInventoryItemDefinition if one occurs when making the first http call', async () => {
+    axiosHttpClient.get = jest.fn().mockRejectedValue(Error)
+
+    await expect(async () => destinyApiClient.getDestinyInventoryItemDefinition()).rejects.toThrow(Error)
+  })
+
+  it('should catch an error in getDestinyInventoryItemDefinition if one occurs when making the second http call', async () => {
+    const expectedManifestFileName = 'manifest'
+    const manifest = {
+      data: {
+        Response: {
+          jsonWorldContentPaths: {
+            en: expectedManifestFileName
+          }
+        }
+      }
+    }
+
+    axiosHttpClient.get = jest.fn().mockImplementation(async (url): Promise<any> => {
+      switch (url) {
+        case 'https://www.bungie.net/platform/destiny2/manifest/':
+          return Promise.resolve(manifest)
+        case `https://www.bungie.net/${expectedManifestFileName}`:
+          return Promise.reject(Error)
+      }
+    })
+
+    await expect(async () => destinyApiClient.getDestinyInventoryItemDefinition()).rejects.toThrow(Error)
   })
 
   it('should retrieve a users access token by using their refresh token', async () => {
@@ -174,6 +228,12 @@ describe('<DestinyApiClient/>', () => {
     expect(value).toEqual(accessToken)
   })
 
+  it('should catch an error in getAccessTokenInfo if one occurs when making a http call', async () => {
+    axiosHttpClient.post = jest.fn().mockRejectedValue(Error)
+
+    await expect(async () => destinyApiClient.getAccessTokenInfo('1')).rejects.toThrow(Error)
+  })
+
   it('should check if a Destiny username exists based on a users Bungie username', async () => {
     const bungieUsername = 'name123'
     const bungieUsernameCode = '456'
@@ -197,6 +257,12 @@ describe('<DestinyApiClient/>', () => {
       }
     )
     expect(value).toEqual(result)
+  })
+
+  it('should catch an error in getDestinyUsername if one occurs when making a http call', async () => {
+    axiosHttpClient.post = jest.fn().mockRejectedValue(Error)
+
+    await expect(async () => destinyApiClient.getDestinyUsername('1', '2')).rejects.toThrow(Error)
   })
 
   it('should retrieve the list of Destiny vendors and their inventory', async () => {
@@ -238,6 +304,12 @@ describe('<DestinyApiClient/>', () => {
     expect(value).toEqual(result)
   })
 
+  it('should catch an error in getDestinyVendorInfo if one occurs when making a http call', async () => {
+    axiosHttpClient.get = jest.fn().mockRejectedValue(Error)
+
+    await expect(async () => destinyApiClient.getDestinyVendorInfo('1', '2', '3')).rejects.toThrow(Error)
+  })
+
   it('should retrieve the list of collectibles that exist in Destiny', async () => {
     const destinyId = 'destinyId'
     const result = {
@@ -261,5 +333,11 @@ describe('<DestinyApiClient/>', () => {
       }
     )
     expect(value).toEqual(result)
+  })
+
+  it('should catch an error in getDestinyCollectibleInfo if one occurs when making a http call', async () => {
+    axiosHttpClient.get = jest.fn().mockRejectedValue(Error)
+
+    await expect(async () => destinyApiClient.getDestinyCollectibleInfo('1')).rejects.toThrow(Error)
   })
 })

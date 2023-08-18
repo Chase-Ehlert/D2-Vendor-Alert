@@ -42,8 +42,8 @@ describe('<MongoUserRepository/>', () => {
   it('should throw an error when a user is not saved to the database', async () => {
     jest.spyOn(User.prototype, 'save').mockRejectedValue(Error)
 
-    await expect(async () => await mongoUserRepo.addUser('', '', '', '')).rejects.toThrow(Error)
-    await expect(async () => await mongoUserRepo.addUser('', '', '', '')).rejects.toThrow('Could not create new user')
+    await expect(async () => mongoUserRepo.addUser('', '', '', '')).rejects.toThrow(Error)
+    await expect(async () => mongoUserRepo.addUser('', '', '', '')).rejects.toThrow('Could not create new user')
   })
 
   it('should update a users record in the database by using their username', async () => {
@@ -75,11 +75,11 @@ describe('<MongoUserRepository/>', () => {
     User.findOneAndUpdate = jest.fn().mockRejectedValue(Error)
 
     await expect(
-      async () => await mongoUserRepo.updateUserByUsername(bungieUsername, '', '', '', '')
+      async () => mongoUserRepo.updateUserByUsername(bungieUsername, '', '', '', '')
     ).rejects.toThrow(Error)
 
     await expect(
-      async () => await mongoUserRepo.updateUserByUsername(bungieUsername, '', '', '', '')
+      async () => mongoUserRepo.updateUserByUsername(bungieUsername, '', '', '', '')
     ).rejects.toThrow(`The record for ${bungieUsername}, could not be updated`)
   })
 
@@ -106,11 +106,11 @@ describe('<MongoUserRepository/>', () => {
     User.findOneAndUpdate = jest.fn().mockRejectedValue(Error)
 
     await expect(
-      async () => await mongoUserRepo.updateUserByMembershipId(bungieUsername, '', '')
+      async () => mongoUserRepo.updateUserByMembershipId(bungieUsername, '', '')
     ).rejects.toThrow(Error)
 
     await expect(
-      async () => await mongoUserRepo.updateUserByMembershipId(bungieUsername, '', '')
+      async () => mongoUserRepo.updateUserByMembershipId(bungieUsername, '', '')
     ).rejects.toThrow(`The record for ${bungieUsername}, could not be updated`)
   })
 
@@ -143,5 +143,11 @@ describe('<MongoUserRepository/>', () => {
 
     expect(User.find).toBeCalled()
     expect(result).toEqual(expectedUsers)
+  })
+
+  it('should catch an error in fetchAllUsers if one occurs when making the find call', async () => {
+    User.find = jest.fn().mockRejectedValue(Error)
+
+    await expect(async () => mongoUserRepo.fetchAllUsers()).rejects.toThrow(Error)
   })
 })

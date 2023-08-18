@@ -9,40 +9,38 @@ export class Vendor {
     private readonly destinyService: DestinyService,
     private readonly database: UserRepository,
     private readonly manifestService: ManifestService
-  ) {}
+  ) { }
 
   /**
    * Collect mods for sale by Ada-1
    */
-  async getCollectiblesForSaleByAda (user: UserInterface): Promise<string[] | undefined> {
+  async getCollectiblesForSaleByAda (user: UserInterface): Promise<string[]> {
     const adaVendorId = '350061650'
     const collectibleId = 65
     const collectibleList: string[] = []
 
-    return await Promise.all([
-      this.destinyService.getDestinyCollectibleInfo(user.destinyId),
-      this.getVendorModInventory(user, adaVendorId)
-    ]).then(async (values) => {
-      if (values[1] !== undefined) {
-        values[1].forEach((key: string) => {
-          if (values[0][key].state === collectibleId) {
-            collectibleList.push(key)
-          }
-        })
-        return await this.manifestService.getCollectiblesFromManifest(19, collectibleList)
-      }
-    }).catch(async (error) => {
+    try {
+      const vendorModInventory = await this.getVendorModInventory(user, adaVendorId)
+      const collectibleInfo = await this.destinyService.getDestinyCollectibleInfo(user.destinyId)
+
+      vendorModInventory.forEach(mod => {
+        if (collectibleInfo[mod].state === collectibleId) {
+          collectibleList.push(mod)
+        }
+      })
+      return await this.manifestService.getCollectiblesFromManifest(19, collectibleList)
+    } catch (error) {
       logger.error(error)
-      return await Promise.reject(error)
-    })
+      throw new Error('Problem with retreiving the collectibles for sale from Ada')
+    }
   }
 
   /**
    * Collect mods for a specific vendor
    */
-  private async getVendorModInventory (user: UserInterface, vendorId: string): Promise<string[] | undefined> {
+  private async getVendorModInventory (user: UserInterface, vendorId: string): Promise<string[]> {
     const tokenInfo = await this.destinyService.getAccessToken(user.refreshToken)
-    if (tokenInfo?.accessToken !== undefined) {
+    try {
       await this.database.updateUserByMembershipId(
         tokenInfo.bungieMembershipId,
         tokenInfo.refreshTokenExpirationTime,
@@ -59,9 +57,9 @@ export class Vendor {
       }
 
       return await this.manifestService.getItemsFromManifest(19, vendorInventory)
-    } else {
-      logger.error('Missing access token for retreiving vendor mod inventory.')
-      return await Promise.reject(new Error('Missing access token'))
+    } catch (error) {
+      logger.error(error)
+      throw new Error('Problem with retreiving vendor mod inventory')
     }
   }
 }
