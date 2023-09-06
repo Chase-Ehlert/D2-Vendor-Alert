@@ -68,19 +68,16 @@ await dailyReset()
  */
 async function dailyReset (): Promise<void> {
   const today = new Date()
+  const resetTime = new Date()
+  resetTime.setHours(17)
+  resetTime.setMinutes(0)
+  resetTime.setSeconds(0)
 
-  if (today.getMinutes() > 1 && today.getHours() >= 17) {
-    today.setDate(today.getDate() + 1)
-    today.setHours(17)
-    today.setMinutes(1)
-    today.setSeconds(1)
-  } else {
-    today.setHours(17)
-    today.setMinutes(1)
-    today.setSeconds(1)
+  if (today.getHours() >= 17 && today.getMinutes() > 0 && today.getSeconds() > 0) {
+    resetTime.setDate(today.getDate() + 1)
   }
 
-  const waitTime = Number(today) - Date.now()
+  const waitTime = resetTime.getTime() - Date.now()
   logger.info(`The wait time is ${waitTime}`)
   setTimeout((async () => {
     await startServer()
