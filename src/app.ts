@@ -69,18 +69,38 @@ await dailyReset()
 async function dailyReset (): Promise<void> {
   const today = new Date()
   const resetTime = new Date()
-  resetTime.setHours(0)
-  resetTime.setMinutes(35)
-  resetTime.setSeconds(0)
+  console.log(resetTime)
 
-  if (today.getHours() >= 0 && today.getMinutes() > 35 && today.getSeconds() > 0) {
+
+  if (resetTime.getUTCHours() >= 1 && resetTime.getUTCMinutes() > 10) {
     resetTime.setDate(today.getDate() + 1)
+    if (resetTime.getUTCHours() !== 1) {
+      resetTime.setUTCHours(1)
+    }
+    resetTime.setUTCMinutes(10)
+    console.log('riggs')
+    console.log(resetTime)
+  } else {
+    resetTime.setUTCHours(1)
+    resetTime.setUTCMinutes(10)
+    console.log('murtaugh')
+    console.log(resetTime)
   }
 
+
+
+
+  // if (today.getHours() > 0 && today.getMinutes() > 20 && today.getSeconds() > 0 && today.getMilliseconds() > 0) {
+  //   resetTime.setDate(today.getDate() + 1)
+  // }
+  // console.log(resetTime)
+
+  console.log('break')
+  const waitTime = resetTime.getTime() - Date.now()
   // logger.info(`The wait time is ${waitTime}`)
   setTimeout((async () => {
     await startServer()
-  }) as RequestHandler, resetTime.getTime())
+  }) as RequestHandler, waitTime)
 }
 
 /**
