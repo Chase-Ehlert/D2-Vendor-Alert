@@ -69,16 +69,20 @@ await dailyReset()
 async function dailyReset (): Promise<void> {
   const today = new Date()
   const resetTime = new Date()
-  resetTime.setHours(17)
-  resetTime.setMinutes(0)
+  resetTime.setHours(0)
+  resetTime.setMinutes(10)
   resetTime.setSeconds(0)
 
-  if (today.getHours() >= 17 && today.getMinutes() > 0 && today.getSeconds() > 0) {
+  console.log(resetTime)
+
+  if (today.getHours() >= 0 && today.getMinutes() > 10 && today.getSeconds() > 0) {
     resetTime.setDate(today.getDate() + 1)
   }
+  console.log(resetTime)
 
   const waitTime = resetTime.getTime() - Date.now()
-  logger.info(`The wait time is ${waitTime}`)
+  console.log(waitTime)
+  // logger.info(`The wait time is ${waitTime}`)
   setTimeout((async () => {
     await startServer()
   }) as RequestHandler, waitTime)
@@ -89,9 +93,7 @@ async function dailyReset (): Promise<void> {
  */
 async function startServer (): Promise<void> {
   await discordService.alertUsersOfUnownedModsForSale()
-  setTimeout((async () => {
-    await dailyReset()
-  }) as RequestHandler, 1000)
+  await dailyReset()
 }
 
 /**
