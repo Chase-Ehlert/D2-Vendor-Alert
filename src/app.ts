@@ -80,6 +80,9 @@ async function dailyReset (): Promise<void> {
   }
   console.log(resetTime)
 
+  console.log('break')
+  console.log(resetTime.getTime())
+  console.log(Date.now())
   const waitTime = resetTime.getTime() - Date.now()
   console.log(waitTime)
   // logger.info(`The wait time is ${waitTime}`)
