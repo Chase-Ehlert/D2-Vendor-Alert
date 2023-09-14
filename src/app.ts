@@ -69,12 +69,15 @@ await dailyReset()
 async function dailyReset (): Promise<void> {
   const resetTime = new Date()
 
-  if (resetTime.getUTCHours() >= 1 && resetTime.getUTCMinutes() > 40) {
+  if (resetTime.getUTCHours() >= 13 && resetTime.getUTCMinutes() > 1) {
     resetTime.setDate(resetTime.getDate() + 1)
+    if (resetTime.getUTCHours() !== 13) {
+      resetTime.setUTCHours(13)
+    }
+  } else {
+    resetTime.setUTCHours(13)
   }
-
-  resetTime.setUTCHours(1)
-  resetTime.setUTCMinutes(40)
+  resetTime.setUTCMinutes(1)
 
   const waitTime = resetTime.getTime() - Date.now()
   setTimeout((async () => {
