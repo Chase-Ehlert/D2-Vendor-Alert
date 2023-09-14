@@ -72,17 +72,17 @@ async function dailyReset (): Promise<void> {
   console.log(resetTime)
 
 
-  if (resetTime.getUTCHours() >= 1 && resetTime.getUTCMinutes() > 10) {
+  if (resetTime.getUTCHours() >= 1 && resetTime.getUTCMinutes() > 15) {
     resetTime.setDate(today.getDate() + 1)
     if (resetTime.getUTCHours() !== 1) {
       resetTime.setUTCHours(1)
     }
-    resetTime.setUTCMinutes(10)
+    resetTime.setUTCMinutes(15)
     console.log('riggs')
     console.log(resetTime)
   } else {
     resetTime.setUTCHours(1)
-    resetTime.setUTCMinutes(10)
+    resetTime.setUTCMinutes(15)
     console.log('murtaugh')
     console.log(resetTime)
   }
@@ -97,6 +97,7 @@ async function dailyReset (): Promise<void> {
 
   console.log('break')
   const waitTime = resetTime.getTime() - Date.now()
+  console.log(waitTime)
   // logger.info(`The wait time is ${waitTime}`)
   setTimeout((async () => {
     await startServer()
