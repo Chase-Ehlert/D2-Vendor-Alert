@@ -67,38 +67,16 @@ await dailyReset()
  * Calculates the time till the next Destiny daily reset and waits till then to alert users of vendor inventory
  */
 async function dailyReset (): Promise<void> {
-  const today = new Date()
   const resetTime = new Date()
-  console.log(resetTime)
 
-
-  if (resetTime.getUTCHours() >= 1 && resetTime.getUTCMinutes() > 25) {
-    resetTime.setDate(today.getDate() + 1)
-    if (resetTime.getUTCHours() !== 1) {
-      resetTime.setUTCHours(1)
-    }
-    resetTime.setUTCMinutes(25)
-    console.log('riggs')
-    console.log(resetTime)
-  } else {
-    resetTime.setUTCHours(1)
-    resetTime.setUTCMinutes(25)
-    console.log('murtaugh')
-    console.log(resetTime)
+  if (resetTime.getUTCHours() >= 1 && resetTime.getUTCMinutes() > 40) {
+    resetTime.setDate(resetTime.getDate() + 1)
   }
 
+  resetTime.setUTCHours(1)
+  resetTime.setUTCMinutes(40)
 
-
-
-  // if (today.getHours() > 0 && today.getMinutes() > 20 && today.getSeconds() > 0 && today.getMilliseconds() > 0) {
-  //   resetTime.setDate(today.getDate() + 1)
-  // }
-  // console.log(resetTime)
-
-  console.log('break')
   const waitTime = resetTime.getTime() - Date.now()
-  console.log(waitTime)
-  // logger.info(`The wait time is ${waitTime}`)
   setTimeout((async () => {
     await startServer()
   }) as RequestHandler, waitTime)
