@@ -70,12 +70,12 @@ async function dailyReset (): Promise<void> {
   const today = new Date()
   const resetTime = new Date()
   resetTime.setHours(0)
-  resetTime.setMinutes(10)
+  resetTime.setMinutes(20)
   resetTime.setSeconds(0)
 
   console.log(resetTime)
 
-  if (today.getHours() >= 0 && today.getMinutes() > 10 && today.getSeconds() > 0) {
+  if (today.getHours() >= 0 && today.getMinutes() > 20 && today.getSeconds() > 0) {
     resetTime.setDate(today.getDate() + 1)
   }
   console.log(resetTime)
