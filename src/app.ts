@@ -72,17 +72,17 @@ async function dailyReset (): Promise<void> {
   console.log(resetTime)
 
 
-  if (resetTime.getUTCHours() >= 1 && resetTime.getUTCMinutes() > 15) {
+  if (resetTime.getUTCHours() >= 1 && resetTime.getUTCMinutes() > 25) {
     resetTime.setDate(today.getDate() + 1)
     if (resetTime.getUTCHours() !== 1) {
       resetTime.setUTCHours(1)
     }
-    resetTime.setUTCMinutes(15)
+    resetTime.setUTCMinutes(25)
     console.log('riggs')
     console.log(resetTime)
   } else {
     resetTime.setUTCHours(1)
-    resetTime.setUTCMinutes(15)
+    resetTime.setUTCMinutes(25)
     console.log('murtaugh')
     console.log(resetTime)
   }
