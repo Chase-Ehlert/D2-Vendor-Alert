@@ -56,7 +56,7 @@ jobs:
       - name: SSH into Droplet
         uses: appleboy/ssh-action@master
         with:
-          host: 167.71.254.50
+          host: ${{ secrets.IP_ADDRESS }}
           username: root
           key: ${{ secrets.DEPLOY_SECRET }}
           script: |
