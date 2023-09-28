@@ -38,7 +38,7 @@ describe('<DiscordService/>', () => {
       bungieMembershipId: 'e',
       destinyId: 'f',
       destinyCharacterId: 'g',
-      refreshExpiration: '2023-09-28T12:48:55.489Z',
+      refreshExpiration: '5025-09-28T12:48:55.489Z',
       refreshToken: 'k'
     } as unknown as UserInterface
     const databaseUser2 = {
@@ -76,7 +76,7 @@ describe('<DiscordService/>', () => {
       )
     })
 
-    it('should not update the users refresh toke if it has not expired', async () => {
+    it('should not update the users refresh token if it has not expired', async () => {
       await discordService.alertUsersOfUnownedModsForSale()
 
       expect(getAccessTokenMock).toHaveBeenCalledTimes(1)
