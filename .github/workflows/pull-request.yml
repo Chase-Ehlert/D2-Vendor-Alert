@@ -1,17 +1,14 @@
-name: Install & Lint & Build & Deploy
+name: Validate Pull Request
 
 on:
-  workflow_dispatch:
-  push:
-    branches:
-      - main
+  pull_request:
 
 permissions:
   contents: read
   pull-requests: read
 
 concurrency:
-  group: '${{ github.workflow }} @ ${{ github.head_ref || github.ref }}'
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
   cancel-in-progress: true
 
 jobs:
@@ -51,16 +48,3 @@ jobs:
         run: npm run tsc
       - name: Test
         run: npm run test
-      - name: SSH into Droplet
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.IP_ADDRESS }}
-          username: root
-          key: ${{ secrets.DEPLOY_SECRET }}
-          script: |
-            cd workspaces/D2-Vendor-Alert/
-            git checkout .
-            git pull
-            npm install
-            npm run tsc
-            pm2 restart 0
