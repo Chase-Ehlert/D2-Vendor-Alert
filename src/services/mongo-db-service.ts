@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 import logger from '../utility/logger.js'
-import { UserServiceConfig as MongoDbServiceConfig } from '../config/config.js'
+import { MongoDbConfig as MongoDbServiceConfig } from '../config/config.js'
 
 export class MongoDbService {
   constructor (private readonly config: MongoDbServiceConfig) {}

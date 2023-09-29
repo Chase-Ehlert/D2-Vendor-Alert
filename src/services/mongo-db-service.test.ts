@@ -1,4 +1,4 @@
-import { UserServiceConfig } from '../config/config.js'
+import { MongoDbConfig } from '../config/config.js'
 import { MongoDbService } from './mongo-db-service.js'
 import mongoose from 'mongoose'
 
@@ -8,11 +8,11 @@ jest.mock('./../utility/logger', () => {
   }
 })
 
-describe('<UserService/>', () => {
-  let userService = new MongoDbService(new UserServiceConfig())
+describe('<MongoDbService/>', () => {
+  let mongoDbService = new MongoDbService(new MongoDbConfig())
 
   it('should instantiate', () => {
-    expect(userService).not.toBeNull()
+    expect(mongoDbService).not.toBeNull()
   })
 
   it('should establish a connection to the mongo database', async () => {
@@ -27,11 +27,11 @@ describe('<UserService/>', () => {
       databaseName: expectedDatabaseName
     }
 
-    userService = new MongoDbService(expectedConfig)
+    mongoDbService = new MongoDbService(expectedConfig)
 
     mongoose.connect = jest.fn()
 
-    await userService.connectToDatabase()
+    await mongoDbService.connectToDatabase()
 
     expect(mongoose.connect).toHaveBeenCalledWith(
       `mongodb+srv://${expectedDatabaseUser}:${expectedDatabasePassword}@${expectedDatabaseCluster}.mongodb.net/${expectedDatabaseName}`
@@ -42,7 +42,7 @@ describe('<UserService/>', () => {
     const disconnectMock = jest.fn()
     jest.spyOn(mongoose, 'disconnect').mockImplementation(disconnectMock)
 
-    await userService.disconnectToDatabase()
+    await mongoDbService.disconnectToDatabase()
 
     expect(disconnectMock).toHaveBeenCalled()
   })

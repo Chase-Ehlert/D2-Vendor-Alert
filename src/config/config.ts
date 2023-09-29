@@ -56,7 +56,7 @@ export class DiscordConfig implements Config {
   }
 }
 
-export class UserServiceConfig implements Config {
+export class MongoDbConfig implements Config {
   databaseUser: string
   databasePassword: string
   databaseCluster: string
