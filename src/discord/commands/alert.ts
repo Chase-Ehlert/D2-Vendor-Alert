@@ -1,7 +1,7 @@
 import { hyperlink, SlashCommandBuilder } from 'discord.js'
-import { AlertConfig } from '../../config/config.js'
+import { AlertConfig } from '../configs/alert-config'
 
-class AlertCommand {
+export class AlertCommand {
   constructor (private readonly config: AlertConfig) {}
 
   setupCommand (): any {
@@ -14,13 +14,9 @@ class AlertCommand {
       async execute (interaction: any) {
         interaction.followUp(hyperlink(
           'Authorize D2 Vendor Alert',
-          `https://www.bungie.net/en/oauth/authorize?client_id=${oauthClientId}&response_type=code`
+          `https://www.bungie.net/en/oauth/authorize?client_id=${String(oauthClientId)}&response_type=code`
         ))
       }
     }
   }
 }
-
-const alertCommand = new AlertCommand(new AlertConfig())
-
-export default alertCommand.setupCommand()

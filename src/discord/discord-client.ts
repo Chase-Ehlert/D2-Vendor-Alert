@@ -1,18 +1,17 @@
-import * as path from 'path'
-import * as fileSystem from 'fs'
 import * as discord from 'discord.js'
 import logger from '../utility/logger.js'
-import metaUrl from '../utility/url.js'
 import { DestinyService } from '../services/destiny-service.js'
 import { UserRepository } from '../database/user-repository.js'
-import { DiscordConfig } from '../config/config.js'
+import { AlertCommand } from './commands/alert.js'
+import { DiscordConfig } from './configs/discord-config.js'
 
 export class DiscordClient {
   constructor (
     private readonly database: UserRepository,
     private readonly destinyService: DestinyService,
+    private readonly alertCommand: AlertCommand,
     private readonly config: DiscordConfig
-  ) {}
+  ) { }
 
   /**
      * Connect to the Discord Client
@@ -41,18 +40,14 @@ export class DiscordClient {
      * Initialiaze registered slash commands
      */
   async setupSlashCommands (discordClient: any): Promise<void> {
-    const commandsDirPath = path.join(metaUrl, '/dist/discord/commands')
-    const commandsFiles = fileSystem.readdirSync(commandsDirPath).filter(file => file.endsWith('.js'))
+    const command = this.alertCommand.setupCommand()
 
-    for (const file of commandsFiles) {
-      const filePath = path.join(commandsDirPath, file)
-      const command = await import(`./commands/${file}`)
+    console.log(command)
 
-      if ('data' in command.default && 'execute' in command.default) {
-        discordClient.commands.set(command.default.data.name, command.default)
-      } else {
-        logger.info(`The command at ${filePath} is missing "data" or "execute"`)
-      }
+    if ('data' in command && 'execute' in command) {
+      discordClient.commands.set(command.data.name, command)
+    } else {
+      logger.info('The alert command is missing "data" or "execute"')
     }
   }
 

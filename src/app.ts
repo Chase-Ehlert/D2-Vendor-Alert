@@ -13,7 +13,8 @@ import { ManifestService } from './services/manifest-service.js'
 import { DestinyApiClient } from './destiny/destiny-api-client.js'
 import { RefreshTokenInfo } from './services/models/refresh-token-info.js'
 import { AxiosHttpClient } from './utility/axios-http-client.js'
-import { DestinyApiClientConfig, DiscordConfig, MongoDbConfig } from './config/config.js'
+import { ALERT_CONFIG, DESTINY_API_CLIENT_CONFIG, DISCORD_CONFIG, MONGO_DB_SERVICE_CONFIG } from './config/config.js'
+import { AlertCommand } from './discord/commands/alert.js'
 
 const app = express()
 const landingPagePath = path.join(url.fileURLToPath(new URL('./../src/', import.meta.url)), 'views')
@@ -22,16 +23,21 @@ app.engine('mustache', mustacheExpress())
 app.set('view engine', 'mustache')
 app.set('views', landingPagePath)
 
-const destinyService = new DestinyService(new DestinyApiClient(new AxiosHttpClient(), new DestinyApiClientConfig()))
-const mongoDbService = new MongoDbService(new MongoDbConfig())
+const destinyService = new DestinyService(new DestinyApiClient(new AxiosHttpClient(), DESTINY_API_CLIENT_CONFIG))
+const mongoDbService = new MongoDbService(MONGO_DB_SERVICE_CONFIG)
 const mongoUserRepo = new MongoUserRepository()
-const discordClient = new DiscordClient(mongoUserRepo, destinyService, new DiscordConfig())
+const discordClient = new DiscordClient(
+  mongoUserRepo,
+  destinyService,
+  new AlertCommand(ALERT_CONFIG),
+  DISCORD_CONFIG
+)
 const discordService = new DiscordService(
   new Vendor(destinyService, mongoUserRepo, new ManifestService(destinyService)),
   destinyService,
   mongoUserRepo,
   new AxiosHttpClient(),
-  new DiscordConfig()
+  DISCORD_CONFIG
 )
 
 await mongoDbService.connectToDatabase()
@@ -69,7 +75,12 @@ await dailyReset()
 async function dailyReset (): Promise<void> {
   const resetTime = new Date()
 
-  if (resetTime.getUTCHours() >= 17 && resetTime.getUTCMinutes() >= 1 && resetTime.getUTCSeconds() >= 0 && resetTime.getUTCMilliseconds() > 0) {
+  if (
+    resetTime.getUTCHours() >= 17 &&
+    resetTime.getUTCMinutes() >= 1 &&
+    resetTime.getUTCSeconds() >= 0 &&
+    resetTime.getUTCMilliseconds() > 0
+  ) {
     resetTime.setDate(resetTime.getDate() + 1)
   }
   resetTime.setUTCHours(17)

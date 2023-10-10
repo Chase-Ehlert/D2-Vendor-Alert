@@ -1,7 +1,7 @@
 import { DestinyApiClient } from './destiny-api-client'
 import { UserInterface } from '../database/models/user'
 import { AxiosHttpClient } from '../utility/axios-http-client'
-import { DestinyApiClientConfig } from '../config/config'
+import { DESTINY_API_CLIENT_CONFIG } from '../config/config'
 
 jest.mock('./../utility/logger', () => {
   return {
@@ -11,7 +11,7 @@ jest.mock('./../utility/logger', () => {
 
 describe('<DestinyApiClient/>', () => {
   const axiosHttpClient = new AxiosHttpClient()
-  const config = new DestinyApiClientConfig()
+  const config = DESTINY_API_CLIENT_CONFIG
   const destinyApiClient = new DestinyApiClient(axiosHttpClient, config)
 
   it('should retrieve a users refresh token', async () => {

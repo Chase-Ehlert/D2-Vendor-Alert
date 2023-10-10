@@ -6,17 +6,19 @@ import { Vendor } from './vendor'
 import { DestinyApiClient } from './destiny-api-client'
 import logger from '../utility/logger'
 import { AxiosHttpClient } from '../utility/axios-http-client'
-import { DestinyApiClientConfig } from '../config/config'
 import { AccessTokenInfo } from '../services/models/access-token-info'
+import { DESTINY_API_CLIENT_CONFIG } from '../config/config'
 
 jest.mock('./../utility/url', () => {
   return 'example'
 })
 
 describe('<Vendor/>', () => {
-  const destinyService = new DestinyService(new DestinyApiClient(new AxiosHttpClient(), new DestinyApiClientConfig()))
+  const destinyService = new DestinyService(new DestinyApiClient(new AxiosHttpClient(), DESTINY_API_CLIENT_CONFIG))
   const userRepo = new MongoUserRepository()
-  const manifestService = new ManifestService(new DestinyService(new DestinyApiClient(new AxiosHttpClient(), new DestinyApiClientConfig())))
+  const manifestService = new ManifestService(
+    new DestinyService(new DestinyApiClient(new AxiosHttpClient(), DESTINY_API_CLIENT_CONFIG))
+  )
   const vendor = new Vendor(destinyService, userRepo, manifestService)
   let user = {
     bungieUsername: 'name',

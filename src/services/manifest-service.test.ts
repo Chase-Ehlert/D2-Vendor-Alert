@@ -1,4 +1,4 @@
-import { DestinyApiClientConfig } from '../config/config'
+import { DESTINY_API_CLIENT_CONFIG } from '../config/config'
 import { DestinyApiClient } from '../destiny/destiny-api-client'
 import { AxiosHttpClient } from '../utility/axios-http-client'
 import { DestinyService } from './destiny-service'
@@ -16,7 +16,7 @@ jest.mock('./../utility/logger', () => {
 })
 
 describe('<ManifestService/>', () => {
-  const destinyService = new DestinyService(new DestinyApiClient(new AxiosHttpClient(), new DestinyApiClientConfig()))
+  const destinyService = new DestinyService(new DestinyApiClient(new AxiosHttpClient(), DESTINY_API_CLIENT_CONFIG))
   const manifestService = new ManifestService(destinyService)
 
   afterEach(() => {

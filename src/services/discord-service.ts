@@ -3,7 +3,7 @@ import { DestinyService } from './destiny-service.js'
 import { UserInterface } from '../database/models/user.js'
 import { UserRepository } from '../database/user-repository.js'
 import { HttpClient } from '../utility/http-client.js'
-import { DiscordConfig } from '../config/config.js'
+import { DiscordConfig } from '../discord/configs/discord-config.js'
 
 export class DiscordService {
   constructor (
@@ -92,7 +92,7 @@ export class DiscordService {
       },
       {
         headers: {
-          Authorization: `Bot ${this.config.token}`,
+          Authorization: `Bot ${String(this.config.token)}`,
           'Content-Type': 'application/json'
         }
       }

@@ -1,18 +1,39 @@
 import 'dotenv/config.js'
 import joi from 'joi'
+import { DestinyApiClientConfig } from '../destiny/config/destiny-api-client-config'
+import { DiscordConfig } from '../discord/configs/discord-config'
+import { MongoDbServiceConfig } from '../services/config/mongo-db-service-config'
+import { AlertConfig } from '../discord/configs/alert-config'
+import { DeployCommandsConfig } from '../discord/configs/deploy-commands-config'
+
+interface Config {
+  DATABASE_USER?: string
+  DATABASE_CLUSTER?: string
+  DATABASE_NAME?: string
+  DATABASE_PASSWORD?: string
+
+  DISCORD_TOKEN?: string
+  DISCORD_CLIENT_ID?: string
+
+  DESTINY_API_KEY?: string
+  DESTINY_OAUTH_CLIENT_ID?: string
+  DESTINY_OAUTH_SECRET?: string
+}
 
 const environmentVariableSchema = joi
-  .object()
+  .object<Config>()
   .keys({
     DATABASE_USER: joi.string().required(),
     DATABASE_CLUSTER: joi.string().required(),
     DATABASE_NAME: joi.string().required(),
     DATABASE_PASSWORD: joi.string().required(),
-    API_KEY: joi.string().required(),
-    TOKEN: joi.string().required(),
-    CLIENT_ID: joi.string().required(),
-    OAUTH_CLIENT_ID: joi.string().required(),
-    OAUTH_SECRET: joi.string().required()
+
+    DISCORD_TOKEN: joi.string().required(),
+    DISCORD_CLIENT_ID: joi.string().required(),
+
+    DESTINY_API_KEY: joi.string().required(),
+    DESTINY_OAUTH_CLIENT_ID: joi.string().required(),
+    DESTINY_OAUTH_SECRET: joi.string().required()
   })
   .unknown()
 
@@ -24,66 +45,76 @@ if (error !== undefined) {
   throw new Error(`Config validation error: ${error.message}`)
 }
 
-export interface Config {
-  databaseUser?: string
-  databaseCluster?: string
-  databaseName?: string
-  databasePassword?: string
-  apiKey?: string
-  token?: string
-  clientId?: string
-  oauthClientId?: string
-  oauthSecret?: string
-}
+class DestinyApiClientConfigClass implements DestinyApiClientConfig {
+  constructor (
+    public readonly apiKey?: string,
+    public readonly oauthSecret?: string,
+    public readonly oauthClientId?: string
+  ) { }
 
-export class DestinyApiClientConfig implements Config {
-  apiKey: string
-  oauthSecret: string
-  oauthClientId: string
-
-  constructor () {
-    this.apiKey = value.API_KEY
-    this.oauthSecret = value.OAUTH_SECRET
-    this.oauthClientId = value.OAUTH_CLIENT_ID
+  static fromConfig ({
+    DESTINY_API_KEY: key,
+    DESTINY_OAUTH_SECRET: secret,
+    DESTINY_OAUTH_CLIENT_ID: clientId
+  }: Config): DestinyApiClientConfig {
+    return new DestinyApiClientConfigClass(key, secret, clientId)
   }
 }
 
-export class DiscordConfig implements Config {
-  token: string
+class DiscordConfigClass implements DiscordConfig {
+  constructor (public readonly token?: string) { }
 
-  constructor () {
-    this.token = value.TOKEN
+  static fromConfig ({ DISCORD_TOKEN: tokenConfig }: Config): DiscordConfig {
+    return new DiscordConfigClass(tokenConfig)
   }
 }
 
-export class MongoDbConfig implements Config {
-  databaseUser: string
-  databasePassword: string
-  databaseCluster: string
-  databaseName: string
+class MongoDbServiceConfigClass implements MongoDbServiceConfig {
+  constructor (
+    public readonly databaseUser?: string,
+    public readonly databasePassword?: string,
+    public readonly databaseCluster?: string,
+    public readonly databaseName?: string
+  ) { }
 
-  constructor () {
-    this.databaseUser = value.DATABASE_USER
-    this.databasePassword = value.DATABASE_PASSWORD
-    this.databaseCluster = value.DATABASE_CLUSTER
-    this.databaseName = value.DATABASE_NAME
+  static fromConfig ({
+    DATABASE_USER: databaseUserConfig,
+    DATABASE_PASSWORD: databasePasswordConfig,
+    DATABASE_CLUSTER: databaseClusterConfig,
+    DATABASE_NAME: databaseNameConfig
+  }: Config): MongoDbServiceConfig {
+    return new MongoDbServiceConfigClass(
+      databaseUserConfig,
+      databasePasswordConfig,
+      databaseClusterConfig,
+      databaseNameConfig)
   }
 }
 
-export class AlertConfig implements Config {
-  oauthClientId: string
+class AlertConfigClass implements AlertConfig {
+  constructor (public readonly oauthClientId?: string) { }
 
-  constructor () {
-    this.oauthClientId = value.OAUTH_CLIENT_ID
+  static fromConfig ({ DESTINY_OAUTH_CLIENT_ID: oauthClientId }: Config): AlertConfig {
+    return new AlertConfigClass(oauthClientId)
   }
 }
 
-export class DeployCommandsConfig implements Config {
-  token: string
-  clientId: string
+class DeployCommandsConfigClass implements DeployCommandsConfig {
+  constructor (
+    public readonly token?: string,
+    public readonly clientId?: string
+  ) { }
 
-  constructor () {
-    this.token = value.TOKEN
-    this.clientId = value.CLIENT_ID
+  static fromConfig ({
+    DISCORD_TOKEN: token,
+    DISCORD_CLIENT_ID: clientId
+  }: Config): DeployCommandsConfig {
+    return new DeployCommandsConfigClass(token, clientId)
   }
 }
+
+export const DESTINY_API_CLIENT_CONFIG = DestinyApiClientConfigClass.fromConfig(value)
+export const DISCORD_CONFIG = DiscordConfigClass.fromConfig(value)
+export const MONGO_DB_SERVICE_CONFIG = MongoDbServiceConfigClass.fromConfig(value)
+export const ALERT_CONFIG = AlertConfigClass.fromConfig(value)
+export const DEPLOY_COMMANDS_CONFIG = DeployCommandsConfigClass.fromConfig(value)

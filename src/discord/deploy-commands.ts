@@ -1,34 +1,30 @@
-import * as fs from 'fs'
-import { REST, Routes } from 'discord.js'
 import logger from '../utility/logger.js'
-import { DeployCommandsConfig } from '../config/config.js'
+import { REST, Routes } from 'discord.js'
+import { AlertCommand } from './commands/alert.js'
+import { DeployCommandsConfig } from './configs/deploy-commands-config.js'
 
-class DeployCommands {
-  constructor (private readonly config: DeployCommandsConfig) {}
+export class DeployCommands {
+  constructor (
+    private readonly config: DeployCommandsConfig,
+    private readonly alertCommand: AlertCommand
+  ) { }
 
   /**
    * Update registered slash commands
    */
   async registerCommands (): Promise<void> {
     const commands: any[] = []
-    const commandFiles = fs.readdirSync('./src/discord/commands').filter(file => file.endsWith('.ts'))
+    const commandAlert = this.alertCommand.setupCommand()
+    commands.push(commandAlert.data)
 
-    for (const file of commandFiles) {
-      const command = await import(`./commands/${file}`)
-      commands.push(command.default.data)
-    }
-
-    const rest = new REST({ version: '10' }).setToken(this.config.token)
-    logger.info(`Started refreshing ${commands.length} application (/) commands.`)
+    const rest = new REST({ version: '10' }).setToken(String(this.config.token))
+    logger.info('Started refreshing the alert application (/) command.')
 
     const data = await rest.put(
-      Routes.applicationCommands(this.config.clientId),
+      Routes.applicationCommands(String(this.config.clientId)),
       { body: commands }
     )
 
     logger.info(`Successfully reloaded ${String(Object(data).length)} application (/) commands.`)
   }
 }
-
-const deployCommands = new DeployCommands(new DeployCommandsConfig())
-await deployCommands.registerCommands()

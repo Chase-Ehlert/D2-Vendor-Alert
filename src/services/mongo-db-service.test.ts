@@ -1,4 +1,4 @@
-import { MongoDbConfig } from '../config/config.js'
+import { MONGO_DB_SERVICE_CONFIG } from '../config/config.js'
 import { MongoDbService } from './mongo-db-service.js'
 import mongoose from 'mongoose'
 
@@ -9,7 +9,7 @@ jest.mock('./../utility/logger', () => {
 })
 
 describe('<MongoDbService/>', () => {
-  let mongoDbService = new MongoDbService(new MongoDbConfig())
+  let mongoDbService = new MongoDbService(MONGO_DB_SERVICE_CONFIG)
 
   it('should instantiate', () => {
     expect(mongoDbService).not.toBeNull()

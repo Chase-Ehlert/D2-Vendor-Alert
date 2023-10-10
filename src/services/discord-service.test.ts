@@ -6,8 +6,8 @@ import { ManifestService } from './manifest-service'
 import { DestinyApiClient } from '../destiny/destiny-api-client'
 import { User, UserInterface } from '../database/models/user'
 import { AxiosHttpClient } from '../utility/axios-http-client'
-import { DestinyApiClientConfig, DiscordConfig } from '../config/config'
 import { AccessTokenInfo } from './models/access-token-info'
+import { DESTINY_API_CLIENT_CONFIG, DISCORD_CONFIG } from '../config/config'
 
 jest.mock('./../utility/url', () => {
   return 'example'
@@ -15,13 +15,13 @@ jest.mock('./../utility/url', () => {
 
 describe('<DiscordService/>', () => {
   const axiosHttpClient = new AxiosHttpClient()
-  const config = new DiscordConfig()
+  const config = DISCORD_CONFIG
   const vendor = new Vendor(
-    new DestinyService(new DestinyApiClient(new AxiosHttpClient(), new DestinyApiClientConfig())),
+    new DestinyService(new DestinyApiClient(new AxiosHttpClient(), DESTINY_API_CLIENT_CONFIG)),
     new MongoUserRepository(),
-    new ManifestService(new DestinyService(new DestinyApiClient(new AxiosHttpClient(), new DestinyApiClientConfig())))
+    new ManifestService(new DestinyService(new DestinyApiClient(new AxiosHttpClient(), DESTINY_API_CLIENT_CONFIG)))
   )
-  const destinyService = new DestinyService(new DestinyApiClient(new AxiosHttpClient(), new DestinyApiClientConfig()))
+  const destinyService = new DestinyService(new DestinyApiClient(new AxiosHttpClient(), DESTINY_API_CLIENT_CONFIG))
   const userRepo = new MongoUserRepository()
   const discordService = new DiscordService(vendor, destinyService, userRepo, axiosHttpClient, config)
 
@@ -98,7 +98,7 @@ describe('<DiscordService/>', () => {
         { content: expectedMessage },
         {
           headers: {
-            Authorization: `Bot ${config.token}`, 'Content-Type': 'application/json'
+            Authorization: `Bot ${String(config.token)}`, 'Content-Type': 'application/json'
           }
         }
       )
@@ -126,7 +126,7 @@ describe('<DiscordService/>', () => {
         { content: expectedMessage },
         {
           headers: {
-            Authorization: `Bot ${config.token}`, 'Content-Type': 'application/json'
+            Authorization: `Bot ${String(config.token)}`, 'Content-Type': 'application/json'
           }
         }
       )

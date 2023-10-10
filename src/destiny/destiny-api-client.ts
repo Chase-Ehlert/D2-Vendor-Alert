@@ -1,6 +1,6 @@
-import { DestinyApiClientConfig } from '../config/config.js'
-import { HttpClient } from '../utility/http-client.js'
 import logger from '../utility/logger.js'
+import { HttpClient } from '../utility/http-client.js'
+import { DestinyApiClientConfig } from './config/destiny-api-client-config.js'
 
 export class DestinyApiClient {
   private readonly apiKeyHeader
