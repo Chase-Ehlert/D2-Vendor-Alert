@@ -42,8 +42,6 @@ export class DiscordClient {
   async setupSlashCommands (discordClient: any): Promise<void> {
     const command = this.alertCommand.setupCommand()
 
-    console.log(command)
-
     if ('data' in command && 'execute' in command) {
       discordClient.commands.set(command.data.name, command)
     } else {
