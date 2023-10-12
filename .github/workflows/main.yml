@@ -63,4 +63,13 @@ jobs:
             git pull
             npm install
             npm run tsc
-            DATABASE_USER=${{ secrets.DATABASE_USER }} DATABASE_CLUSTER=${{ secrets.DATABASE_CLUSTER }} DATABASE_NAME=${{ secrets.DATABASE_NAME }} DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} DESTINY_API_KEY=${{ secrets.DESTINY_API_KEY }} DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }} DISCORD_CLIENT_ID=${{ secrets.DISCORD_CLIENT_ID }} DESTINY_OAUTH_CLIENT_ID=${{ secrets.DESTINY_OAUTH_CLIENT_ID }} DESTINY_OAUTH_SECRET=${{ secrets.DESTINY_OAUTH_SECRET }} pm2 restart 0 --update-env
+            DATABASE_USER=${{ secrets.DATABASE_USER }} \
+              DATABASE_CLUSTER=${{ secrets.DATABASE_CLUSTER }} \
+              DATABASE_NAME=${{ secrets.DATABASE_NAME }} \
+              DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} \
+              DESTINY_API_KEY=${{ secrets.DESTINY_API_KEY }} \
+              DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }} \
+              DISCORD_CLIENT_ID=${{ secrets.DISCORD_CLIENT_ID }} \
+              DESTINY_OAUTH_CLIENT_ID=${{ secrets.DESTINY_OAUTH_CLIENT_ID }} \
+              DESTINY_OAUTH_SECRET=${{ secrets.DESTINY_OAUTH_SECRET }} \
+              pm2 restart 0 --update-env
