@@ -28,9 +28,13 @@ describe('<ManifestService/>', () => {
   })
 
   it('should return a list of item names from the read manifest', async () => {
-    const getDestinyInventoryItemDefinitionMock = jest.spyOn(destinyService, 'getDestinyInventoryItemDefinition').mockResolvedValue({})
+    const getDestinyInventoryItemDefinitionMock =
+      jest.spyOn(destinyService, 'getDestinyInventoryItemDefinition').mockResolvedValue({})
     const itemList = { item1: { itemHash: '123' }, item2: { itemHash: '321' } }
-    const expectedManifest = '{ "item1": { "hash": "123", "itemType": 1, "collectibleHash": "456" }, "item2": { "hash": "321", "itemType": 1, "collectibleHash": "654" }}'
+    const expectedManifest = '{ ' +
+      '"item1": { "hash": "123", "itemType": 1, "collectibleHash": "456" }, ' +
+      '"item2": { "hash": "321", "itemType": 1, "collectibleHash": "654" }' +
+    '}'
     const expectedItemNameList = ['456', '654']
     fs.promises.access = jest.fn().mockResolvedValue({})
     fs.promises.readFile = jest.fn().mockResolvedValue(expectedManifest)

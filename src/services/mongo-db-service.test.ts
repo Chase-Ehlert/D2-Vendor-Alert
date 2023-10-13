@@ -20,21 +20,24 @@ describe('<MongoDbService/>', () => {
     const expectedDatabasePassword = '123'
     const expectedDatabaseCluster = 'someCluster'
     const expectedDatabaseName = 'someName'
-    const expectedConfig = {
-      databaseUser: expectedDatabaseUser,
-      databasePassword: expectedDatabasePassword,
-      databaseCluster: expectedDatabaseCluster,
-      databaseName: expectedDatabaseName
+    const config = {
+      mongoUri: `mongodb+srv://${expectedDatabaseUser}:` +
+      `${expectedDatabasePassword}@` +
+      `${expectedDatabaseCluster}.mongodb.net/` +
+      `${expectedDatabaseName}`
     }
 
-    mongoDbService = new MongoDbService(expectedConfig)
+    mongoDbService = new MongoDbService(config)
 
     mongoose.connect = jest.fn()
 
     await mongoDbService.connectToDatabase()
 
     expect(mongoose.connect).toHaveBeenCalledWith(
-      `mongodb+srv://${expectedDatabaseUser}:${expectedDatabasePassword}@${expectedDatabaseCluster}.mongodb.net/${expectedDatabaseName}`
+      `mongodb+srv://${expectedDatabaseUser}:` +
+      `${expectedDatabasePassword}@` +
+      `${expectedDatabaseCluster}.mongodb.net/` +
+      `${expectedDatabaseName}`
     )
   })
 
