@@ -12,6 +12,7 @@ Follow these simple steps to add D2-Vendor-Alert to your Discord server:
 Create a pull request against the main branch and if it passes through the GitHub Action pipeline and a cursory look, I'll ensure it gets merged in.
 
 ## Development
+  - Install Node version 19, use this [doc](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) for help if needed
   - Clone repo
   - Use the ".example.env" file as a template for an actual ".env" file, located at the root of the project.
     - The example file lists out every required property needed for local development, albeit the "MONGO_URI" and "DATABASE_*" properties. The "MONGO_URI" and "DATABASE_*" properties are mutually exclusive and should be treated as so, you must pick eith to use the "MONGO_URI" property or the set of "DATABASE_*" properties.
