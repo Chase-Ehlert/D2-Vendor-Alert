@@ -15,6 +15,7 @@ Create a pull request against the main branch and if it passes through the GitHu
   - Install Node version 19, use this [doc](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) for help if needed
   - Clone repo
   - Use the ".example.env" file as a template for an actual ".env" file, located at the root of the project.
-    - The example file lists out every required property needed for local development, albeit the "MONGO_URI" and "DATABASE_*" properties. The "MONGO_URI" and "DATABASE_*" properties are mutually exclusive and should be treated as so, you must pick eith to use the "MONGO_URI" property or the set of "DATABASE_*" properties.
+    - The example file lists out every required property needed for local development, albeit the "MONGO_URI" and "DATABASE_..." properties.
+    - The "MONGO_URI" and "DATABASE_..." properties are mutually exclusive and should be treated as so, you must enter in values for either the "MONGO_URI" property or the set of "DATABASE_..." properties and then remove the other property(ies).
   - While located at the root of the project in a terminal, run the `npm install` command
-  - You should be good to go! Run the "npm run start" command in a termainal from the root of the project and the bot will start up.
+  - You should be good to go! Run the `npm run start` command in a termainal from the root of the project and the bot will start up.
