@@ -2,10 +2,8 @@ import { IncomingMessage, ServerResponse } from 'http'
 import { DestinyService } from './destiny-service'
 import { Socket } from 'net'
 import { RefreshTokenInfo } from './models/refresh-token-info'
-import { UserInterface } from '../database/models/user'
 import { DestinyApiClient } from '../destiny/destiny-api-client'
 import { AxiosHttpClient } from '../utility/axios-http-client'
-import { AccessTokenInfo } from './models/access-token-info'
 import { DESTINY_API_CLIENT_CONFIG } from '../config/config'
 
 jest.mock('./../utility/logger', () => {
@@ -99,42 +97,6 @@ describe('<DestinyService/>', () => {
     expect(value).toEqual(expectedCharacterId)
   })
 
-  it('should retrieve a list of definitions for Destiny items from a specific manifest file', async () => {
-    const itemDefinition = { DestinyInventoryItemDefinition: { item1: 'definition' } }
-    jest.spyOn(destinyApiClient, 'getDestinyInventoryItemDefinition').mockResolvedValue(itemDefinition)
-
-    const value = await destinyService.getDestinyInventoryItemDefinition()
-
-    expect(value).toEqual(itemDefinition.DestinyInventoryItemDefinition)
-  })
-
-  it('should retrieve a users access token by using their refresh token', async () => {
-    const expectedMembershipId = '123'
-    const expectedRefreshExpiration = '456'
-    const expectedRefreshToken = '789'
-    const expectedAccessToken = '321'
-    const expectedRefreshTokenInfo = new AccessTokenInfo(
-      expectedMembershipId,
-      expectedRefreshExpiration,
-      expectedRefreshToken,
-      expectedAccessToken
-    )
-    const accessToken = {
-      data: {
-        membership_id: expectedMembershipId,
-        refresh_expires_in: expectedRefreshExpiration,
-        refresh_token: expectedRefreshToken,
-        access_token: expectedAccessToken
-      }
-    }
-    const refreshToken = '654'
-    jest.spyOn(destinyApiClient, 'getAccessTokenInfo').mockResolvedValue(accessToken)
-
-    const value = await destinyService.getAccessToken(refreshToken)
-
-    expect(value).toEqual(expectedRefreshTokenInfo)
-  })
-
   it('should check if a Destiny username exists based on a users Bungie username', async () => {
     const bungieUsername = 'name123'
     const bungieUsernameCode = '456'
@@ -145,38 +107,5 @@ describe('<DestinyService/>', () => {
     const value = await destinyService.getDestinyUsername(bungieUsername, bungieUsernameCode)
 
     expect(value).toEqual(usernameInfo.data.Response)
-  })
-
-  it('should retrieve the list of Destiny vendors and their inventory', async () => {
-    const destinyId = 'destinyId'
-    const destinyCharacterId = 'character'
-    const user = {
-      bungieUsername: 'name',
-      bungieUsernameCode: 'code',
-      discordId: 'discordId',
-      discordChannelId: 'channelId',
-      bungieMembershipId: 'bungie',
-      destinyId: destinyId,
-      destinyCharacterId: destinyCharacterId,
-      refreshExpiration: 'expiration',
-      refreshToken: 'token'
-    } as unknown as UserInterface
-    const accessToken = '123'
-    const usernameInfo = { data: { Response: { sales: { data: { vendor: 'info' } } } } }
-    jest.spyOn(destinyApiClient, 'getDestinyVendorInfo').mockResolvedValue(usernameInfo)
-
-    const value = await destinyService.getDestinyVendorInfo(user, accessToken)
-
-    expect(value).toEqual(usernameInfo.data.Response.sales.data)
-  })
-
-  it('should retrieve the list of collectibles that exist in Destiny', async () => {
-    const destinyId = 'destinyId'
-    const collectibleInfo = { data: { Response: { profileCollectibles: { data: { collectibles: { item1: 'name' } } } } } }
-    jest.spyOn(destinyApiClient, 'getDestinyCollectibleInfo').mockResolvedValue(collectibleInfo)
-
-    const value = await destinyService.getDestinyCollectibleInfo(destinyId)
-
-    expect(value).toEqual(collectibleInfo.data.Response.profileCollectibles.data.collectibles)
   })
 })

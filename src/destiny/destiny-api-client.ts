@@ -68,45 +68,6 @@ export class DestinyApiClient {
     }
   }
 
-  async getDestinyInventoryItemDefinition (): Promise<any> {
-    try {
-      const { data } = await this.httpClient.get(
-        this.bungieDomainWithDestinyDirectory + 'manifest/', {
-          headers: this.apiKeyHeader
-        })
-      const manifestFileName: string = data.Response.jsonWorldContentPaths.en
-
-      try {
-        return await this.httpClient.get(
-          this.bungieDomain + manifestFileName
-        )
-      } catch (error) {
-        logger.error(error)
-        throw new Error('Could not retreive Destiny inventory item definition')
-      }
-    } catch (error) {
-      logger.error(error)
-      throw new Error('Could not retreive Destiny manifest file name')
-    }
-  }
-
-  async getAccessTokenInfo (refreshToken: string): Promise<any> {
-    try {
-      return await this.httpClient.post(
-        this.bungieDomainWithTokenDirectory, {
-          grant_type: 'refresh_token',
-          refresh_token: refreshToken,
-          client_id: this.config.oauthClientId,
-          client_secret: this.config.oauthSecret
-        }, {
-          headers: this.urlEncodedHeaders
-        })
-    } catch (error) {
-      logger.error(error)
-      throw new Error('Could not retreive access token information')
-    }
-  }
-
   async getDestinyUsername (bungieUsername: string, bungieUsernameCode: string): Promise<any> {
     try {
       return await this.httpClient.post(
@@ -122,45 +83,6 @@ export class DestinyApiClient {
     } catch (error) {
       logger.error(error)
       throw new Error('Could not retreive Destiny username')
-    }
-  }
-
-  async getDestinyVendorInfo (destinyId: string, destinyCharacterId: string, accessToken: string): Promise<any> {
-    const getVendorSalesComponent = 402
-
-    try {
-      return await this.httpClient.get(
-        this.bungieDomainWithDestinyDirectory +
-        this.profileDirectory +
-        `${destinyId}/Character/${destinyCharacterId}/Vendors/`, {
-          params: {
-            components: getVendorSalesComponent
-          },
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            'x-api-key': this.config.apiKey
-          }
-        })
-    } catch (error) {
-      logger.error(error)
-      throw new Error('Could not retreive Destiny vendor information')
-    }
-  }
-
-  async getDestinyCollectibleInfo (destinyId: string): Promise<any> {
-    const getCollectiblesComponent = 800
-
-    try {
-      return await this.httpClient.get(
-        this.bungieDomainWithDestinyDirectory + this.profileDirectory + `${destinyId}/`, {
-          params: {
-            components: getCollectiblesComponent
-          },
-          headers: this.apiKeyHeader
-        })
-    } catch (error) {
-      logger.error(error)
-      throw new Error('Could not retreive Destiny collectible information')
     }
   }
 }

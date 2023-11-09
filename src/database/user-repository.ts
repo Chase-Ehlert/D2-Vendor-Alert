@@ -18,11 +18,5 @@ export interface UserRepository {
     characterId: string
   ) => Promise<void>
 
-  updateUserByMembershipId: (
-    bungieMembershipId: string,
-    refreshExpirationTime: string,
-    refreshToken: string
-  ) => Promise<void>
-
   fetchAllUsers: () => Promise<UserInterface[]>
 }

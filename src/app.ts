@@ -6,10 +6,8 @@ import logger from './utility/logger.js'
 import { DestinyService } from './services/destiny-service.js'
 import { MongoUserRepository } from './database/mongo-user-repository.js'
 import { DiscordClient } from './discord/discord-client.js'
-import { DiscordService } from './services/discord-service.js'
-import { Vendor } from './destiny/vendor.js'
+import { NotifierService } from './services/notifier-service.js'
 import { MongoDbService } from './services/mongo-db-service.js'
-import { ManifestService } from './services/manifest-service.js'
 import { DestinyApiClient } from './destiny/destiny-api-client.js'
 import { RefreshTokenInfo } from './services/models/refresh-token-info.js'
 import { AxiosHttpClient } from './utility/axios-http-client.js'
@@ -32,13 +30,7 @@ const discordClient = new DiscordClient(
   new AlertCommand(ALERT_CONFIG),
   DISCORD_CONFIG
 )
-const discordService = new DiscordService(
-  new Vendor(destinyService, mongoUserRepo, new ManifestService(destinyService)),
-  destinyService,
-  mongoUserRepo,
-  new AxiosHttpClient(),
-  DISCORD_CONFIG
-)
+const notifierService = new NotifierService(mongoUserRepo)
 
 await mongoDbService.connectToDatabase()
 
@@ -98,7 +90,7 @@ async function dailyReset (): Promise<void> {
  * Begin the alert workflow for users and then set the time till the next daily reset
  */
 async function startServer (): Promise<void> {
-  await discordService.alertUsersOfUnownedModsForSale()
+  await notifierService.alertUsersOfUnownedModsForSale()
   await dailyReset()
 }
 
