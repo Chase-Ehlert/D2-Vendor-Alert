@@ -1,4 +1,5 @@
 import { UserRepository } from '../database/user-repository.js'
+import axios from 'axios'
 
 export class NotifierService {
   constructor (
@@ -13,7 +14,8 @@ export class NotifierService {
       // await this.checkRefreshTokenExpiration(user)
       // await this.compareModsForSaleWithUserInventory(user)
       console.log(user)
-
+      const test = await axios.post('localhost:3002/notify', { user: user })
+      console.log(test)
       // call notifier api
     }
   }
