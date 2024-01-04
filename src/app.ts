@@ -11,7 +11,7 @@ import { MongoDbService } from './services/mongo-db-service.js'
 import { DestinyApiClient } from './destiny/destiny-api-client.js'
 import { RefreshTokenInfo } from './services/models/refresh-token-info.js'
 import { AxiosHttpClient } from './utility/axios-http-client.js'
-import { ALERT_CONFIG, DESTINY_API_CLIENT_CONFIG, DISCORD_CONFIG, MONGO_DB_SERVICE_CONFIG } from './config/config.js'
+import { ALERT_CONFIG, DESTINY_API_CLIENT_CONFIG, DISCORD_CONFIG, DISCORD_NOTIFIER_ADDRESS, MONGO_DB_SERVICE_CONFIG } from './config/config.js'
 import { AlertCommand } from './discord/commands/alert.js'
 
 const app = express()
@@ -30,7 +30,7 @@ const discordClient = new DiscordClient(
   new AlertCommand(ALERT_CONFIG),
   DISCORD_CONFIG
 )
-const notifierService = new NotifierService(mongoUserRepo)
+const notifierService = new NotifierService(mongoUserRepo, DISCORD_NOTIFIER_ADDRESS)
 
 await mongoDbService.connectToDatabase()
 
