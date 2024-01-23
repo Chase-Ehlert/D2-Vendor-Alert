@@ -1,6 +1,7 @@
 import { UserRepository } from '../database/user-repository.js'
 import axios from 'axios'
 import { NotifierServiceConfig } from './config/notifier-service-config.js'
+import logger from '../utility/logger.js'
 
 export class NotifierService {
   constructor (
@@ -13,11 +14,16 @@ export class NotifierService {
    */
   async alertUsersOfUnownedModsForSale (): Promise<void> {
     for await (const user of await this.database.fetchAllUsers()) {
-      await axios.post(
+      const startTime = process.hrtime()
+
+      axios.post(
         String(this.config.address).concat(':3002/notify'),
         { user: user },
         { headers: { 'Content-Type': 'application/json' } }
-      )
+      ).catch((error) => logger.error(error))
+
+      const notifyTime = process.hrtime(startTime)
+      logger.info(`${user.bungieUsername} was notified in ${notifyTime[0]}`)
     }
   }
 }
