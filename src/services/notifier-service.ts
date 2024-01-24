@@ -14,16 +14,11 @@ export class NotifierService {
    */
   async alertUsersOfUnownedModsForSale (): Promise<void> {
     for await (const user of await this.database.fetchAllUsers()) {
-      const startTime = process.hrtime()
-
       axios.post(
         String(this.config.address).concat(':3002/notify'),
         { user: user },
         { headers: { 'Content-Type': 'application/json' } }
       ).catch((error) => logger.error(error))
-
-      const notifyTime = process.hrtime(startTime)
-      logger.info(`${user.bungieUsername} was notified in ${notifyTime[0]}`)
     }
   }
 }
