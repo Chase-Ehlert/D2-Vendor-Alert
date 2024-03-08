@@ -34,6 +34,7 @@ jobs:
           envkey_DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
           envkey_DESTINY_OAUTH_CLIENT_ID: ${{ secrets.DESTINY_OAUTH_CLIENT_ID }}
           envkey_DESTINY_OAUTH_SECRET: ${{ secrets.DESTINY_OAUTH_SECRET }}
+          envkey_DISCORD_NOTIFIER_ADDRESS: ${{ secrets.DISCORD_NOTIFIER_ADDRESS }}
       - name: Install
         run: npm ci
       - name: Gather files changed
