@@ -18,7 +18,9 @@ export class NotifierService {
         String(this.config.address).concat(':3002/notify'),
         { user: user },
         { headers: { 'Content-Type': 'application/json' } }
-      ).catch((error) => logger.error(error))
+      ).catch(
+        (error) => logger.error(error)
+      )
     }
   }
 }
