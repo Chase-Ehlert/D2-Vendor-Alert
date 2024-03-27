@@ -84,7 +84,7 @@ describe('<DestinyApiClient/>', () => {
         params: { components: 100 }
       }
     )
-    expect(value).toEqual(result)
+    expect(value).toEqual(expectedCharacterId)
   })
 
   it('should catch an error in getDestinyCharacterIds if one occurs when making a http call', async () => {

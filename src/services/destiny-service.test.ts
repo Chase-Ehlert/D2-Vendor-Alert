@@ -19,17 +19,6 @@ describe('<DestinyService/>', () => {
     expect(destinyService).not.toBeNull()
   })
 
-  it('should retrieve the Destiny character information for a user', async () => {
-    const expectedMembershipId = '123'
-    const expectedCharacterId = '456'
-    const characterInfo = { data: { Response: { profile: { data: { characterIds: [expectedCharacterId] } } } } }
-    jest.spyOn(destinyApiClient, 'getDestinyCharacterIds').mockResolvedValue(characterInfo)
-
-    const value = await destinyService.getDestinyCharacterId(expectedMembershipId)
-
-    expect(value).toEqual(expectedCharacterId)
-  })
-
   it('should check if a Destiny username exists based on a users Bungie username', async () => {
     const bungieUsername = 'name123'
     const bungieUsernameCode = '456'

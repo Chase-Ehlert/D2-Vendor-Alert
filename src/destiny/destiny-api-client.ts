@@ -71,17 +71,19 @@ export class DestinyApiClient {
     }
   }
 
-  async getDestinyCharacterIds (destinyMembershipId: string): Promise<any> {
+  async getDestinyCharacterIds (destinyMembershipId: string): Promise<string> {
     const getProfilesComponent = 100
 
     try {
-      return await this.httpClient.get(
+      const { data } = await this.httpClient.get(
         this.bungieDomainWithDestinyDirectory + this.profileDirectory + destinyMembershipId + '/', {
           headers: this.apiKeyHeader,
           params: {
             components: getProfilesComponent
           }
         })
+
+      return data.Response.profile.data.characterIds[0]
     } catch (error) {
       logger.error(error)
       throw new Error('Could not retreive Destiny character ids')

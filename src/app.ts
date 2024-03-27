@@ -104,7 +104,7 @@ async function handleAuthorizationCode (authorizationCode: string, result: any):
 
     if (tokenInfo instanceof RefreshTokenInfo) {
       const destinyMembershipInfo = await destinyApiClient.getDestinyMembershipInfo(tokenInfo.bungieMembershipId)
-      const destinyCharacterId = await destinyService.getDestinyCharacterId(destinyMembershipInfo[0])
+      const destinyCharacterId = await destinyApiClient.getDestinyCharacterIds(destinyMembershipInfo[0])
 
       await mongoUserRepo.updateUserByUsername(
         destinyMembershipInfo[1],
