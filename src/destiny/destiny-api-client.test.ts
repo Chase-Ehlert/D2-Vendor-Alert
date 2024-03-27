@@ -48,7 +48,7 @@ describe('<DestinyApiClient/>', () => {
         }
       }
     )
-    expect(value).toEqual(result)
+    expect(value).toEqual([expectedDestinyMembershipId, expectedDisplayName])
   })
 
   it('should catch an error in getDestinyMembershipInfo if one occurs when making a http call', async () => {

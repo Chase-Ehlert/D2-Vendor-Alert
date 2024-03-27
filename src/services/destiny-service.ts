@@ -4,18 +4,6 @@ export class DestinyService {
   constructor (private readonly destinyApiClient: DestinyApiClient) { }
 
   /**
-     * Retrieves Destiny membership information for a user
-     */
-  async getDestinyMembershipInfo (membershipId: string): Promise<string[]> {
-    const { data } = await this.destinyApiClient.getDestinyMembershipInfo(membershipId)
-
-    return [
-      data.Response.destinyMemberships[0].membershipId,
-      data.Response.destinyMemberships[0].displayName
-    ]
-  }
-
-  /**
     * Retrieves Destiny character information for a user
     */
   async getDestinyCharacterId (destinyMembershipId: string): Promise<string> {

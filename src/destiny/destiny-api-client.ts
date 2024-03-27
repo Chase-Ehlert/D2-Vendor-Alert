@@ -48,20 +48,23 @@ export class DestinyApiClient {
     } catch (error) {
       logger.error('Error occurred while making the refresh token call with an authorization code')
       logger.error(authorizationCode)
-      console.log('apple')
       if (result != null) {
-        console.log('banana')
         result.sendFile('landing-page-error-auth-code.html', { root: path.join(metaUrl, 'src/views') })
       }
     }
   }
 
-  async getDestinyMembershipInfo (membershipId: string): Promise<any> {
+  async getDestinyMembershipInfo (membershipId: string): Promise<string[]> {
     try {
-      return await this.httpClient.get(
+      const { data } = await this.httpClient.get(
         this.bungieDomain + `platform/User/GetMembershipsById/${membershipId}/3/`, {
           headers: this.apiKeyHeader
         })
+
+      return [
+        data.Response.destinyMemberships[0].membershipId,
+        data.Response.destinyMemberships[0].displayName
+      ]
     } catch (error) {
       logger.error(error)
       throw new Error('Could not retreive Destiny membership information')

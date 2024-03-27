@@ -19,27 +19,6 @@ describe('<DestinyService/>', () => {
     expect(destinyService).not.toBeNull()
   })
 
-  it('should retrieve the Destiny membership information for a user', async () => {
-    const membershipId = '123'
-    const expectedDestinyMembershipId = '456'
-    const expectedDisplayName = 'guardian'
-    const membershipInfo = {
-      data: {
-        Response: {
-          destinyMemberships: [{
-            membershipId: expectedDestinyMembershipId,
-            displayName: expectedDisplayName
-          }]
-        }
-      }
-    }
-    jest.spyOn(destinyApiClient, 'getDestinyMembershipInfo').mockResolvedValue(membershipInfo)
-
-    const value = await destinyService.getDestinyMembershipInfo(membershipId)
-
-    expect(value).toEqual([expectedDestinyMembershipId, expectedDisplayName])
-  })
-
   it('should retrieve the Destiny character information for a user', async () => {
     const expectedMembershipId = '123'
     const expectedCharacterId = '456'
