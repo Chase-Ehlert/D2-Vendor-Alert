@@ -92,7 +92,7 @@ export class DestinyApiClient {
 
   async getDestinyUsername (bungieUsername: string, bungieUsernameCode: string): Promise<any> {
     try {
-      return await this.httpClient.post(
+      const { data } = await this.httpClient.post(
         this.bungieDomainWithDestinyDirectory + 'SearchDestinyPlayerByBungieName/3/', {
           displayName: bungieUsername,
           displayNameCode: bungieUsernameCode
@@ -102,6 +102,8 @@ export class DestinyApiClient {
             'x-api-key': this.config.apiKey
           }
         })
+
+      return data.Response
     } catch (error) {
       logger.error(error)
       throw new Error('Could not retreive Destiny username')

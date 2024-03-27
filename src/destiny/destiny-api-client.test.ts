@@ -115,7 +115,7 @@ describe('<DestinyApiClient/>', () => {
         }
       }
     )
-    expect(value).toEqual(result)
+    expect(value).toEqual({ name: expectedDestinyusername })
   })
 
   it('should catch an error in getDestinyUsername if one occurs when making a http call', async () => {

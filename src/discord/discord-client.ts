@@ -1,14 +1,14 @@
 import * as discord from 'discord.js'
 import logger from '../utility/logger.js'
-import { DestinyService } from '../services/destiny-service.js'
 import { UserRepository } from '../database/user-repository.js'
 import { AlertCommand } from './commands/alert.js'
 import { DiscordConfig } from './configs/discord-config.js'
+import { DestinyApiClient } from '../destiny/destiny-api-client.js'
 
 export class DiscordClient {
   constructor (
     private readonly database: UserRepository,
-    private readonly destinyService: DestinyService,
+    private readonly destinyApiClient: DestinyApiClient,
     private readonly alertCommand: AlertCommand,
     private readonly config: DiscordConfig
   ) { }
@@ -126,7 +126,7 @@ export class DiscordClient {
     const index = message.content.indexOf('#')
     const bungieUsername = message.content.substring(0, index)
     const bungieUsernameCode = message.content.substring(Number(index) + 1, message.content.length)
-    const response = await this.destinyService.getDestinyUsername(bungieUsername, bungieUsernameCode)
+    const response = await this.destinyApiClient.getDestinyUsername(bungieUsername, bungieUsernameCode)
 
     return Object(response).length !== 0
   }
