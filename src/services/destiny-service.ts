@@ -1,30 +1,7 @@
-import { RefreshTokenInfo } from './models/refresh-token-info.js'
 import { DestinyApiClient } from '../destiny/destiny-api-client.js'
-import logger from '../utility/logger.js'
-import path from 'path'
-import metaUrl from '../utility/url.js'
 
 export class DestinyService {
   constructor (private readonly destinyApiClient: DestinyApiClient) { }
-
-  /**
-     * Retrieves refresh token for a user
-     */
-  async getRefreshTokenInfo (authorizationCode: string, result: any): Promise<void | RefreshTokenInfo | any> {
-    try {
-      const { data } = await this.destinyApiClient.getRefreshTokenInfo(authorizationCode)
-
-      return new RefreshTokenInfo(
-        data.membership_id,
-        data.refresh_expires_in,
-        data.refresh_token
-      )
-    } catch (error) {
-      logger.error('Error occurred while making the refresh token call with an authorization code')
-      logger.error(authorizationCode)
-      result.sendFile('landing-page-error-auth-code.html', { root: path.join(metaUrl, 'src/views') })
-    }
-  }
 
   /**
      * Retrieves Destiny membership information for a user

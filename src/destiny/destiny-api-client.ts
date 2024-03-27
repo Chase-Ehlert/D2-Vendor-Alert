@@ -1,6 +1,9 @@
 import logger from '../utility/logger.js'
 import { HttpClient } from '../utility/http-client.js'
 import { DestinyApiClientConfig } from './config/destiny-api-client-config.js'
+import { RefreshTokenInfo } from '../services/models/refresh-token-info.js'
+import path from 'path'
+import metaUrl from '../utility/url.js'
 
 export class DestinyApiClient {
   private readonly apiKeyHeader
@@ -21,9 +24,12 @@ export class DestinyApiClient {
     }
   }
 
-  async getRefreshTokenInfo (authorizationCode: string): Promise<any> {
+  async getRefreshTokenInfo (
+    authorizationCode: string,
+    result: { sendFile: (arg0: string, arg1: { root: string }) => void }
+  ): Promise<RefreshTokenInfo | void> {
     try {
-      return await this.httpClient.post(
+      const { data } = await this.httpClient.post(
         this.bungieDomainWithTokenDirectory,
         {
           grant_type: 'authorization_code',
@@ -33,9 +39,20 @@ export class DestinyApiClient {
         }, {
           headers: this.urlEncodedHeaders
         })
+
+      return new RefreshTokenInfo(
+        data.membership_id,
+        data.refresh_expires_in,
+        data.refresh_token
+      )
     } catch (error) {
-      logger.error(error)
-      throw new Error('Could not retreive refresh token information')
+      logger.error('Error occurred while making the refresh token call with an authorization code')
+      logger.error(authorizationCode)
+      console.log('apple')
+      if (result != null) {
+        console.log('banana')
+        result.sendFile('landing-page-error-auth-code.html', { root: path.join(metaUrl, 'src/views') })
+      }
     }
   }
 

@@ -21,7 +21,8 @@ app.engine('mustache', mustacheExpress())
 app.set('view engine', 'mustache')
 app.set('views', landingPagePath)
 
-const destinyService = new DestinyService(new DestinyApiClient(new AxiosHttpClient(), DESTINY_API_CLIENT_CONFIG))
+const destinyApiClient = new DestinyApiClient(new AxiosHttpClient(), DESTINY_API_CLIENT_CONFIG)
+const destinyService = new DestinyService(destinyApiClient)
 const mongoDbService = new MongoDbService(MONGO_DB_SERVICE_CONFIG)
 const mongoUserRepo = new MongoUserRepository()
 const discordClient = new DiscordClient(
@@ -82,14 +83,14 @@ async function dailyReset (): Promise<void> {
 
   const waitTime = resetTime.getTime() - Date.now()
   setTimeout((async () => {
-    await startServer()
+    await beginAlerting()
   }) as RequestHandler, waitTime)
 }
 
 /**
  * Begin the alert workflow for users and then set the time till the next daily reset
  */
-async function startServer (): Promise<void> {
+async function beginAlerting (): Promise<void> {
   await notifierService.alertUsersOfUnownedModsForSale()
   await dailyReset()
 }
@@ -99,7 +100,7 @@ async function startServer (): Promise<void> {
  */
 async function handleAuthorizationCode (authorizationCode: string, result: any): Promise<void | string> {
   try {
-    const tokenInfo = await destinyService.getRefreshTokenInfo(authorizationCode, result)
+    const tokenInfo = await destinyApiClient.getRefreshTokenInfo(authorizationCode, result)
 
     if (tokenInfo instanceof RefreshTokenInfo) {
       const destinyMembershipInfo = await destinyService.getDestinyMembershipInfo(tokenInfo.bungieMembershipId)
