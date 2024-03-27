@@ -2,6 +2,7 @@ import { DestinyApiClient } from './destiny-api-client'
 import { AxiosHttpClient } from '../utility/axios-http-client'
 import { DESTINY_API_CLIENT_CONFIG } from '../config/config'
 import { RefreshTokenInfo } from '../services/models/refresh-token-info'
+import { DestinyResponse } from './models/destiny-response'
 
 jest.mock('./../utility/url', () => {
   return 'example'
@@ -98,6 +99,8 @@ describe('<DestinyApiClient/>', () => {
     const bungieUsernameCode = '456'
     const expectedDestinyusername = 'coolGuy37'
     const result = { data: { Response: { name: expectedDestinyusername } } }
+    const expectedResult = new DestinyResponse({ name: expectedDestinyusername })
+
     axiosHttpClient.post = jest.fn().mockResolvedValue(result)
 
     const value = await destinyApiClient.getDestinyUsername(bungieUsername, bungieUsernameCode)
@@ -115,7 +118,7 @@ describe('<DestinyApiClient/>', () => {
         }
       }
     )
-    expect(value).toEqual({ name: expectedDestinyusername })
+    expect(value).toEqual(expectedResult)
   })
 
   it('should catch an error in getDestinyUsername if one occurs when making a http call', async () => {
