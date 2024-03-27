@@ -1,9 +1,9 @@
-import axios from 'axios'
+import axios, { AxiosResponse } from 'axios'
 import { HttpClient } from './http-client'
 import logger from './logger.js'
 
 export class AxiosHttpClient implements HttpClient {
-  async post (url: string, data: Object, config: Object): Promise<any> {
+  async post (url: string, data: Object, config: Object): Promise<AxiosResponse> {
     try {
       return await axios.post(url, data, config)
     } catch (error) {
@@ -12,7 +12,7 @@ export class AxiosHttpClient implements HttpClient {
     }
   }
 
-  async get (url: string, config?: Object): Promise<any> {
+  async get (url: string, config?: Object): Promise<AxiosResponse> {
     try {
       return await axios.get(url, config)
     } catch (error) {

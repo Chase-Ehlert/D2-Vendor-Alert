@@ -1,6 +1,10 @@
 import logger from '../utility/logger.js'
 import { HttpClient } from '../utility/http-client.js'
 import { DestinyApiClientConfig } from './config/destiny-api-client-config.js'
+import { RefreshTokenInfo } from '../services/models/refresh-token-info.js'
+import path from 'path'
+import metaUrl from '../utility/url.js'
+import { DestinyResponse } from './models/destiny-response.js'
 
 export class DestinyApiClient {
   private readonly apiKeyHeader
@@ -21,9 +25,12 @@ export class DestinyApiClient {
     }
   }
 
-  async getRefreshTokenInfo (authorizationCode: string): Promise<any> {
+  async getRefreshTokenInfo (
+    authorizationCode: string,
+    result: { sendFile: (arg0: string, arg1: { root: string }) => void }
+  ): Promise<RefreshTokenInfo | void> {
     try {
-      return await this.httpClient.post(
+      const { data } = await this.httpClient.post(
         this.bungieDomainWithTokenDirectory,
         {
           grant_type: 'authorization_code',
@@ -33,44 +40,60 @@ export class DestinyApiClient {
         }, {
           headers: this.urlEncodedHeaders
         })
+
+      return new RefreshTokenInfo(
+        data.membership_id,
+        data.refresh_expires_in,
+        data.refresh_token
+      )
     } catch (error) {
-      logger.error(error)
-      throw new Error('Could not retreive refresh token information')
+      logger.error('Error occurred while making the refresh token call with an authorization code')
+      logger.error(authorizationCode)
+      if (result != null) {
+        result.sendFile('landing-page-error-auth-code.html', { root: path.join(metaUrl, 'src/views') })
+      }
     }
   }
 
-  async getDestinyMembershipInfo (membershipId: string): Promise<any> {
+  async getDestinyMembershipInfo (membershipId: string): Promise<string[]> {
     try {
-      return await this.httpClient.get(
+      const { data } = await this.httpClient.get(
         this.bungieDomain + `platform/User/GetMembershipsById/${membershipId}/3/`, {
           headers: this.apiKeyHeader
         })
+
+      return [
+        data.Response.destinyMemberships[0].membershipId,
+        data.Response.destinyMemberships[0].displayName
+      ]
     } catch (error) {
       logger.error(error)
       throw new Error('Could not retreive Destiny membership information')
     }
   }
 
-  async getDestinyCharacterIds (destinyMembershipId: string): Promise<any> {
+  async getDestinyCharacterIds (destinyMembershipId: string): Promise<string> {
     const getProfilesComponent = 100
 
     try {
-      return await this.httpClient.get(
+      const { data } = await this.httpClient.get(
         this.bungieDomainWithDestinyDirectory + this.profileDirectory + destinyMembershipId + '/', {
           headers: this.apiKeyHeader,
           params: {
             components: getProfilesComponent
           }
         })
+
+      return data.Response.profile.data.characterIds[0]
     } catch (error) {
       logger.error(error)
       throw new Error('Could not retreive Destiny character ids')
     }
   }
 
-  async getDestinyUsername (bungieUsername: string, bungieUsernameCode: string): Promise<any> {
+  async getDestinyUsername (bungieUsername: string, bungieUsernameCode: string): Promise<DestinyResponse> {
     try {
-      return await this.httpClient.post(
+      const { data } = await this.httpClient.post(
         this.bungieDomainWithDestinyDirectory + 'SearchDestinyPlayerByBungieName/3/', {
           displayName: bungieUsername,
           displayNameCode: bungieUsernameCode
@@ -80,6 +103,8 @@ export class DestinyApiClient {
             'x-api-key': this.config.apiKey
           }
         })
+
+      return new DestinyResponse(data.Response)
     } catch (error) {
       logger.error(error)
       throw new Error('Could not retreive Destiny username')

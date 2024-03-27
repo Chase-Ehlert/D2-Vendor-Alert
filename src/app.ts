@@ -3,7 +3,6 @@ import mustacheExpress from 'mustache-express'
 import * as path from 'path'
 import * as url from 'url'
 import logger from './utility/logger.js'
-import { DestinyService } from './services/destiny-service.js'
 import { MongoUserRepository } from './database/mongo-user-repository.js'
 import { DiscordClient } from './discord/discord-client.js'
 import { NotifierService } from './services/notifier-service.js'
@@ -21,12 +20,12 @@ app.engine('mustache', mustacheExpress())
 app.set('view engine', 'mustache')
 app.set('views', landingPagePath)
 
-const destinyService = new DestinyService(new DestinyApiClient(new AxiosHttpClient(), DESTINY_API_CLIENT_CONFIG))
+const destinyApiClient = new DestinyApiClient(new AxiosHttpClient(), DESTINY_API_CLIENT_CONFIG)
 const mongoDbService = new MongoDbService(MONGO_DB_SERVICE_CONFIG)
 const mongoUserRepo = new MongoUserRepository()
 const discordClient = new DiscordClient(
   mongoUserRepo,
-  destinyService,
+  destinyApiClient,
   new AlertCommand(ALERT_CONFIG),
   DISCORD_CONFIG
 )
@@ -82,14 +81,14 @@ async function dailyReset (): Promise<void> {
 
   const waitTime = resetTime.getTime() - Date.now()
   setTimeout((async () => {
-    await startServer()
+    await beginAlerting()
   }) as RequestHandler, waitTime)
 }
 
 /**
  * Begin the alert workflow for users and then set the time till the next daily reset
  */
-async function startServer (): Promise<void> {
+async function beginAlerting (): Promise<void> {
   await notifierService.alertUsersOfUnownedModsForSale()
   await dailyReset()
 }
@@ -99,11 +98,11 @@ async function startServer (): Promise<void> {
  */
 async function handleAuthorizationCode (authorizationCode: string, result: any): Promise<void | string> {
   try {
-    const tokenInfo = await destinyService.getRefreshTokenInfo(authorizationCode, result)
+    const tokenInfo = await destinyApiClient.getRefreshTokenInfo(authorizationCode, result)
 
     if (tokenInfo instanceof RefreshTokenInfo) {
-      const destinyMembershipInfo = await destinyService.getDestinyMembershipInfo(tokenInfo.bungieMembershipId)
-      const destinyCharacterId = await destinyService.getDestinyCharacterId(destinyMembershipInfo[0])
+      const destinyMembershipInfo = await destinyApiClient.getDestinyMembershipInfo(tokenInfo.bungieMembershipId)
+      const destinyCharacterId = await destinyApiClient.getDestinyCharacterIds(destinyMembershipInfo[0])
 
       await mongoUserRepo.updateUserByUsername(
         destinyMembershipInfo[1],
