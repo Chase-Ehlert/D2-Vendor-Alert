@@ -128,6 +128,6 @@ export class DiscordClient {
     const bungieUsernameCode = message.content.substring(Number(index) + 1, message.content.length)
     const response = await this.destinyApiClient.getDestinyUsername(bungieUsername, bungieUsernameCode)
 
-    return Object(response).length !== 0
+    return response.length !== 0
   }
 }

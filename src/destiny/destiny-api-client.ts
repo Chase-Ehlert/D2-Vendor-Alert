@@ -4,7 +4,6 @@ import { DestinyApiClientConfig } from './config/destiny-api-client-config.js'
 import { RefreshTokenInfo } from '../services/models/refresh-token-info.js'
 import path from 'path'
 import metaUrl from '../utility/url.js'
-import { DestinyResponse } from './models/destiny-response.js'
 
 export class DestinyApiClient {
   private readonly apiKeyHeader
@@ -91,7 +90,7 @@ export class DestinyApiClient {
     }
   }
 
-  async getDestinyUsername (bungieUsername: string, bungieUsernameCode: string): Promise<DestinyResponse> {
+  async getDestinyUsername (bungieUsername: string, bungieUsernameCode: string): Promise<[]> {
     try {
       const { data } = await this.httpClient.post(
         this.bungieDomainWithDestinyDirectory + 'SearchDestinyPlayerByBungieName/3/', {
@@ -104,7 +103,7 @@ export class DestinyApiClient {
           }
         })
 
-      return new DestinyResponse(data.Response)
+      return data.Response
     } catch (error) {
       logger.error(error)
       throw new Error('Could not retreive Destiny username')
