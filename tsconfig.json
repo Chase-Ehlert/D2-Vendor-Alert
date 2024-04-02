@@ -9,10 +9,11 @@
     "allowJs": true,
     "moduleResolution": "node",
     "strictNullChecks": true,
-    "typeRoots": ["src/@types", "node_modules/@types", "jest"],
+    "typeRoots": ["src/d2-vendor-alert/@types", "node_modules/@types", "jest"],
     "esModuleInterop": true
   },
   "include": [
     "src/**/*.ts"
-  ]
+  ],
+  "exclude": ["**/jest.config.cjs"]
 }

@@ -1,7 +1,6 @@
 import logger from '../utility/logger.js'
 import { HttpClient } from '../utility/http-client.js'
 import { DestinyApiClientConfig } from './config/destiny-api-client-config.js'
-import { RefreshTokenInfo } from '../services/models/refresh-token-info.js'
 import path from 'path'
 import metaUrl from '../utility/url.js'
 
@@ -21,36 +20,6 @@ export class DestinyApiClient {
     this.urlEncodedHeaders = {
       'content-type': 'application/x-www-form-urlencoded',
       'x-api-key': this.config.apiKey
-    }
-  }
-
-  async getRefreshTokenInfo (
-    authorizationCode: string,
-    result: { sendFile: (arg0: string, arg1: { root: string }) => void }
-  ): Promise<RefreshTokenInfo | void> {
-    try {
-      const { data } = await this.httpClient.post(
-        this.bungieDomainWithTokenDirectory,
-        {
-          grant_type: 'authorization_code',
-          code: authorizationCode,
-          client_secret: this.config.oauthSecret,
-          client_id: this.config.oauthClientId
-        }, {
-          headers: this.urlEncodedHeaders
-        })
-
-      return new RefreshTokenInfo(
-        data.membership_id,
-        data.refresh_expires_in,
-        data.refresh_token
-      )
-    } catch (error) {
-      logger.error('Error occurred while making the refresh token call with an authorization code')
-      logger.error(authorizationCode)
-      if (result != null) {
-        result.sendFile('landing-page-error-auth-code.html', { root: path.join(metaUrl, 'src/views') })
-      }
     }
   }
 

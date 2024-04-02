@@ -2,16 +2,16 @@ import express, { RequestHandler } from 'express'
 import mustacheExpress from 'mustache-express'
 import * as path from 'path'
 import * as url from 'url'
-import logger from './utility/logger.js'
-import { MongoUserRepository } from './database/mongo-user-repository.js'
-import { DiscordClient } from './discord/discord-client.js'
-import { NotifierService } from './services/notifier-service.js'
-import { MongoDbService } from './services/mongo-db-service.js'
-import { DestinyApiClient } from './destiny/destiny-api-client.js'
-import { RefreshTokenInfo } from './services/models/refresh-token-info.js'
-import { AxiosHttpClient } from './utility/axios-http-client.js'
-import { ALERT_CONFIG, DESTINY_API_CLIENT_CONFIG, DISCORD_CONFIG, DISCORD_NOTIFIER_ADDRESS, MONGO_DB_SERVICE_CONFIG } from './config/config.js'
-import { AlertCommand } from './discord/commands/alert.js'
+import logger from '../common/utility/logger.js'
+import { MongoUserRepository } from '../common/database/mongo-user-repository.js'
+import { DiscordClient } from '../common/discord/discord-client.js'
+import { NotifierService } from '../common/services/notifier-service.js'
+import { MongoDbService } from '../common/services/mongo-db-service.js'
+import { DestinyApiClient } from '../common/destiny/destiny-api-client.js'
+import { AxiosHttpClient } from '../common/utility/axios-http-client.js'
+import { ALERT_CONFIG, DESTINY_API_CLIENT_CONFIG, DISCORD_CONFIG, DISCORD_NOTIFIER_ADDRESS, MONGO_DB_SERVICE_CONFIG } from '../common/config/config.js'
+import { AlertCommand } from '../common/discord/commands/alert.js'
+import { TokenInfo } from '../common/services/models/token-info.js'
 
 const app = express()
 const landingPagePath = path.join(url.fileURLToPath(new URL('./../src/', import.meta.url)), 'views')
@@ -20,9 +20,9 @@ app.engine('mustache', mustacheExpress())
 app.set('view engine', 'mustache')
 app.set('views', landingPagePath)
 
-const destinyApiClient = new DestinyApiClient(new AxiosHttpClient(), DESTINY_API_CLIENT_CONFIG)
-const mongoDbService = new MongoDbService(MONGO_DB_SERVICE_CONFIG)
 const mongoUserRepo = new MongoUserRepository()
+const destinyApiClient = new DestinyApiClient(new AxiosHttpClient(), mongoUserRepo, DESTINY_API_CLIENT_CONFIG)
+const mongoDbService = new MongoDbService(MONGO_DB_SERVICE_CONFIG)
 const discordClient = new DiscordClient(
   mongoUserRepo,
   destinyApiClient,
@@ -58,12 +58,12 @@ app.get('/', (async (request, result) => {
   }
 }) as express.RequestHandler)
 
-await dailyReset()
+dailyReset()
 
 /**
  * Calculates the time till the next Destiny daily reset and waits till then to alert users of vendor inventory
  */
-async function dailyReset (): Promise<void> {
+function dailyReset (): void {
   const resetTime = new Date()
 
   if (
@@ -90,7 +90,7 @@ async function dailyReset (): Promise<void> {
  */
 async function beginAlerting (): Promise<void> {
   await notifierService.alertUsersOfUnownedModsForSale()
-  await dailyReset()
+  dailyReset()
 }
 
 /**
@@ -100,7 +100,7 @@ async function handleAuthorizationCode (authorizationCode: string, result: any):
   try {
     const tokenInfo = await destinyApiClient.getRefreshTokenInfo(authorizationCode, result)
 
-    if (tokenInfo instanceof RefreshTokenInfo) {
+    if (tokenInfo instanceof TokenInfo) {
       const destinyMembershipInfo = await destinyApiClient.getDestinyMembershipInfo(tokenInfo.bungieMembershipId)
       const destinyCharacterId = await destinyApiClient.getDestinyCharacterIds(destinyMembershipInfo[0])
 

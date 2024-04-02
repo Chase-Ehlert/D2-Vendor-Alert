@@ -39,7 +39,7 @@ export class DiscordClient {
   /**
      * Initialiaze registered slash commands
      */
-  async setupSlashCommands (discordClient: any): Promise<void> {
+  setupSlashCommands (discordClient: any): void {
     const command = this.alertCommand.setupCommand()
 
     if ('data' in command && 'execute' in command) {
@@ -52,7 +52,7 @@ export class DiscordClient {
   /**
      * Respond to any slash command and prompt user for profile information
      */
-  async replyToSlashCommands (discordClient: any): Promise<void> {
+  replyToSlashCommands (discordClient: any): void {
     discordClient.on(discord.Events.InteractionCreate, async (interaction: any) => {
       if (!(interaction as discord.Interaction).isCommand()) return
 
