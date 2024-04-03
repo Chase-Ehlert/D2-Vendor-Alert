@@ -3,7 +3,7 @@ module.exports = {
     {
       name: 'Discord-Notifier',
       script: 'node',
-      args: 'dist/app.js',
+      args: 'dist/discord-notifier/discord-notifier.js',
     },
   ],
 };
