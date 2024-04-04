@@ -16,7 +16,7 @@ export class DiscordClient {
   /**
      * Connect to the Discord Client
      */
-  async setupDiscordClient (): Promise<void> {
+  setupDiscordClient (): void {
     const discordClient: any = new discord.Client({
       intents: [
         discord.GatewayIntentBits.Guilds,
@@ -32,14 +32,14 @@ export class DiscordClient {
     })
     discordClient.login(this.config.token)
 
-    await this.setupSlashCommands(discordClient)
-    await this.replyToSlashCommands(discordClient)
+    this.setupSlashCommands(discordClient)
+    this.replyToSlashCommands(discordClient)
   }
 
   /**
      * Initialiaze registered slash commands
      */
-  async setupSlashCommands (discordClient: any): Promise<void> {
+  setupSlashCommands (discordClient: any): void {
     const command = this.alertCommand.setupCommand()
 
     if ('data' in command && 'execute' in command) {
@@ -52,7 +52,7 @@ export class DiscordClient {
   /**
      * Respond to any slash command and prompt user for profile information
      */
-  async replyToSlashCommands (discordClient: any): Promise<void> {
+  replyToSlashCommands (discordClient: any): void {
     discordClient.on(discord.Events.InteractionCreate, async (interaction: any) => {
       if (!(interaction as discord.Interaction).isCommand()) return
 

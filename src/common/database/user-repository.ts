@@ -10,6 +10,12 @@ export interface UserRepository {
     discordChannelId: string
   ) => Promise<void>
 
+  updateUserByMembershipId: (
+    bungieMembershipId: string,
+    refreshExpirationTime: string,
+    refreshToken: string
+  ) => Promise<void>
+
   updateUserByUsername: (
     bungieUsername: string,
     refreshExpirationTime: string,

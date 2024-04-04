@@ -3,7 +3,7 @@ module.exports = {
     {
       name: 'D2-Vendor-Alert',
       script: 'node',
-      args: 'dist/app.js',
+      args: 'dist/d2-vendor-alert/d2-vendor-alert.js',
     },
   ],
 };

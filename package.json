@@ -6,7 +6,8 @@
     "lint": "eslint \"./src/**/*.ts\" --fix",
     "tsc": "tsc",
     "test": "jest --coverage",
-    "start": "npm run tsc && node dist/app.js",
+    "start-alert": "npm run tsc && node dist/d2-vendor-alert/d2-vendor-alert.js",
+    "start-notifier": "npm run tsc && node dist/discord-notifier/discord-notifier.js",
     "jsdoc": "jsdoc -c jsdoc.json"
   },
   "type": "module",
