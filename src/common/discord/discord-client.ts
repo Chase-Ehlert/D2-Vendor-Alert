@@ -16,7 +16,7 @@ export class DiscordClient {
   /**
      * Connect to the Discord Client
      */
-  async setupDiscordClient (): Promise<void> {
+  setupDiscordClient (): void {
     const discordClient: any = new discord.Client({
       intents: [
         discord.GatewayIntentBits.Guilds,
@@ -32,8 +32,8 @@ export class DiscordClient {
     })
     discordClient.login(this.config.token)
 
-    await this.setupSlashCommands(discordClient)
-    await this.replyToSlashCommands(discordClient)
+    this.setupSlashCommands(discordClient)
+    this.replyToSlashCommands(discordClient)
   }
 
   /**

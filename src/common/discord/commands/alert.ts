@@ -11,6 +11,7 @@ export class AlertCommand {
       data: new SlashCommandBuilder()
         .setName('alert')
         .setDescription('Invites user to be added to the alert list'),
+      // eslint-disable-next-line @typescript-eslint/require-await
       async execute (interaction: any) {
         interaction.followUp(hyperlink(
           'Authorize D2 Vendor Alert',

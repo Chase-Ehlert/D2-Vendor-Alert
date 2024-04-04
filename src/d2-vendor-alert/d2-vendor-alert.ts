@@ -33,7 +33,7 @@ const notifierService = new NotifierService(mongoUserRepo, DISCORD_NOTIFIER_ADDR
 
 await mongoDbService.connectToDatabase()
 
-await discordClient.setupDiscordClient()
+discordClient.setupDiscordClient()
 
 app.listen(3001, () => {
   logger.info('Server is running...')
