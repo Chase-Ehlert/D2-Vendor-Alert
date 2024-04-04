@@ -14,7 +14,7 @@ import { AlertCommand } from '../common/discord/commands/alert.js'
 import { TokenInfo } from '../common/services/models/token-info.js'
 
 const app = express()
-const landingPagePath = path.join(url.fileURLToPath(new URL('./../src/', import.meta.url)), 'views')
+const landingPagePath = path.join(url.fileURLToPath(new URL('./../../src/d2-vendor-alert', import.meta.url)), 'views')
 
 app.engine('mustache', mustacheExpress())
 app.set('view engine', 'mustache')
