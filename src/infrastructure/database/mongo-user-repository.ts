@@ -1,4 +1,4 @@
-import { UserRepository } from './user-repository.js'
+import { UserRepository } from '../../domain/user-repository.js'
 import { User, UserInterface } from '../../domain/user.js'
 
 export class MongoUserRepository implements UserRepository {

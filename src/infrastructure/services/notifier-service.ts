@@ -1,4 +1,4 @@
-import { UserRepository } from '../database/user-repository.js'
+import { UserRepository } from '../../domain/user-repository.js'
 import axios from 'axios'
 import { NotifierServiceConfig } from '../../configs/notifier-service-config.js'
 

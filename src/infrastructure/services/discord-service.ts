@@ -1,6 +1,6 @@
 import { Vendor } from '../destiny/vendor.js'
 import { UserInterface } from '../../domain/user.js'
-import { HttpClient } from '../http-client.js'
+import { HttpClient } from '../../domain/http-client.js'
 import { DiscordConfig } from '../../configs/discord-config.js'
 
 export class DiscordService {

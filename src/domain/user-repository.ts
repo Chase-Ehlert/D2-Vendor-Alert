@@ -1,4 +1,4 @@
-import { UserInterface } from '../../domain/user'
+import { UserInterface } from './user'
 
 export interface UserRepository {
   doesUserExist: (bungieNetUsername: string) => Promise<boolean>
