@@ -1,10 +1,10 @@
-import { DiscordService } from '../presentation/discord-service'
-import { Vendor } from '../presentation/vendor'
-import { MongoUserRepository } from '../infrastructure/database/mongo-user-repository'
-import { ManifestService } from '../presentation/manifest-service'
-import { DestinyApiClient } from '../presentation/destiny-api-client'
-import { AxiosHttpClient } from '../infrastructure/database/axios-http-client'
-import { DESTINY_API_CLIENT_CONFIG, DISCORD_CONFIG } from '../configs/config'
+import { DiscordService } from '../../presentation/discord-service'
+import { Vendor } from '../../presentation/vendor'
+import { MongoUserRepository } from '../../infrastructure/database/mongo-user-repository'
+import { ManifestService } from '../../presentation/manifest-service'
+import { DestinyApiClient } from '../../presentation/destiny-api-client'
+import { AxiosHttpClient } from '../../infrastructure/database/axios-http-client'
+import { DESTINY_API_CLIENT_CONFIG, DISCORD_CONFIG } from '../../configs/config'
 
 jest.mock('./../presentation/url', () => {
   return 'example'

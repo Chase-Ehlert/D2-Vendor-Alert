@@ -1,5 +1,5 @@
-import { User } from '../domain/user'
-import { MongoUserRepository } from '../infrastructure/database/mongo-user-repository'
+import { User } from '../../domain/user'
+import { MongoUserRepository } from '../../infrastructure/database/mongo-user-repository'
 
 describe('<MongoUserRepository/>', () => {
   const mongoUserRepo = new MongoUserRepository()
