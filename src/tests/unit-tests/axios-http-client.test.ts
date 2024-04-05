@@ -1,4 +1,4 @@
-import { AxiosHttpClient } from '../infrastructure/database/axios-http-client'
+import { AxiosHttpClient } from '../../infrastructure/database/axios-http-client'
 import axios from 'axios'
 
 describe('<AxiosHttpClient/>', () => {
