@@ -64,7 +64,7 @@ export class DestinyApiClient {
     return this.getDestinyInventoryModDescriptions(response.data.DestinyInventoryItemDefinition)
   }
 
-  async getVendorInfo (destinyId: string, destinyCharacterId: string, refreshToken: string): Promise<Mod[]> {
+  async getVendorInfo (destinyId: string, destinyCharacterId: string, refreshToken: string): Promise<string[]> {
     const getVendorSalesComponent = 402
     const tokenInfo = await this.getAccessTokenInfo(refreshToken)
 
@@ -154,7 +154,7 @@ export class DestinyApiClient {
   /**
      * Retrieves the merchandise sold by Ada
      */
-  private getAdaMerchandise (vendorMerchandise: { [x: string]: { saleItems: any } }): Mod[] {
+  private getAdaMerchandise (vendorMerchandise: { [x: string]: { saleItems: any } }): string[] {
     let adaMerchandise
     const adaVendorId = '350061650'
 
@@ -164,7 +164,7 @@ export class DestinyApiClient {
       }
     }
 
-    return Object.values(adaMerchandise).map((item: Mod) => (new Mod(item.itemHash)))
+    return Object.values(adaMerchandise).map((item: Mod) => (item.itemHash))
   }
 
   async getDestinyUsername (bungieUsername: string, bungieUsernameCode: string): Promise<[]> {

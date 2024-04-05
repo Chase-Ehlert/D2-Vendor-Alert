@@ -13,14 +13,6 @@ describe('<ManifestService/>', () => {
   const destinyApiClient = new DestinyApiClient(new AxiosHttpClient(), new MongoUserRepository(), DESTINY_API_CLIENT_CONFIG)
   const manifestService = new ManifestService(destinyApiClient)
 
-  afterEach(() => {
-    jest.resetAllMocks()
-  })
-
-  it('should instantiate', () => {
-    expect(manifestService).not.toBeNull()
-  })
-
   it('should return a list of mods with their info from the manifest', async () => {
     const itemHash1 = '123'
     const itemHash2 = '321'
@@ -32,7 +24,7 @@ describe('<ManifestService/>', () => {
 
     const getDestinyInventoryItemDefinitionMock =
       jest.spyOn(destinyApiClient, 'getDestinyInventoryItemDefinition').mockResolvedValue(expectedManifest)
-    const itemHashes = [new Mod(itemHash1), new Mod(itemHash2)]
+    const itemHashes = [itemHash1, itemHash2]
     const expectedItemNameList = [new Mod(itemHash1, itemName1), new Mod(itemHash2, itemName2)]
 
     const result = await manifestService.getModInfoFromManifest(itemHashes)

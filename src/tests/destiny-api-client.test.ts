@@ -2,7 +2,6 @@ import { DestinyApiClient } from '../presentation/destiny-api-client'
 import { AxiosHttpClient } from '../infrastructure/database/axios-http-client'
 import { DESTINY_API_CLIENT_CONFIG } from '../configs/config'
 import { MongoUserRepository } from '../infrastructure/database/mongo-user-repository'
-import { Mod } from '../domain/mod'
 import { UserInterface } from '../domain/user'
 import { TokenInfo } from '../domain/token-info'
 
@@ -74,8 +73,6 @@ describe('<DestinyApiClient/>', () => {
     const expectedRefreshToken = '789'
     const mod1ItemHash = '123'
     const mod2ItemHash = '456'
-    const mod1 = new Mod(mod1ItemHash)
-    const mod2 = new Mod(mod2ItemHash)
     const adaMerchandise = { 350061650: { saleItems: { 1: { itemHash: mod1ItemHash }, 2: { itemHash: mod2ItemHash } } } }
     const result = {
       data: {
@@ -120,7 +117,7 @@ describe('<DestinyApiClient/>', () => {
         }
       }
     )
-    expect(value).toEqual([mod1, mod2])
+    expect(value).toEqual([mod1ItemHash, mod2ItemHash])
   })
 
   it('should retrieve the list of collectibles that exist in Destiny', async () => {

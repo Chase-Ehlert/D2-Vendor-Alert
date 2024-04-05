@@ -7,17 +7,17 @@ export class ManifestService {
   /**
    * Collect info (name and hashId) of mods from the manifest
    */
-  async getModInfoFromManifest (itemHashes: Mod[]): Promise<Mod[]> {
+  async getModInfoFromManifest (itemHashes: string[]): Promise<Mod[]> {
     const destinyInventoryModDescriptions = await this.destinyApiClient.getDestinyInventoryItemDefinition()
-    const unownedMods = itemHashes.filter(item => destinyInventoryModDescriptions.has(item.itemHash))
+    const unownedMods = itemHashes.filter(item => destinyInventoryModDescriptions.has(item))
+
     const unownedModInfo = unownedMods.map(item => {
-      const modName = destinyInventoryModDescriptions.get(item.itemHash)
+      const modName = destinyInventoryModDescriptions.get(item)
       if (modName !== undefined) {
-        return new Mod(item.itemHash, modName)
+        return new Mod(item, modName)
       }
     })
-    const legitmateUnownedModInfo = unownedModInfo.filter((item): item is Mod => item !== undefined)
 
-    return legitmateUnownedModInfo
+    return unownedModInfo.filter((item): item is Mod => item !== undefined)
   }
 }

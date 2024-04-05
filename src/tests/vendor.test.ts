@@ -27,14 +27,6 @@ describe('<Vendor/>', () => {
     refreshToken: 'token'
   } as unknown as UserInterface
 
-  afterEach(() => {
-    jest.resetAllMocks()
-  })
-
-  it('should instantiate', () => {
-    expect(vendor).not.toBeNull()
-  })
-
   it('should collect all the mods for sale by Ada-1', async () => {
     const modHash1 = '123'
     const modName1 = 'Boots of Flying'
@@ -42,17 +34,16 @@ describe('<Vendor/>', () => {
     const modName2 = 'Helmet of Forseeing'
     const expectedCollectibleList = [modName1, modName2]
     const unownedMods = [modHash1, modHash2]
-    const adaMerchandise = [new Mod(modHash1), new Mod(modHash2)]
     const adaMerchandiseInfo = [new Mod('321', modName1), new Mod('654', modName2)]
     const getUnownedModsMock = jest.spyOn(destinyApiClient, 'getCollectibleInfo').mockResolvedValue(unownedMods)
-    const getVendorInfoMock = jest.spyOn(destinyApiClient, 'getVendorInfo').mockResolvedValue(adaMerchandise)
+    const getVendorInfoMock = jest.spyOn(destinyApiClient, 'getVendorInfo').mockResolvedValue(unownedMods)
     const manifestServiceMock = jest.spyOn(manifestService, 'getModInfoFromManifest').mockResolvedValue(adaMerchandiseInfo)
 
     const result = await vendor.getUnownedModsForSaleByAda(user)
 
     expect(getUnownedModsMock).toHaveBeenCalledWith(user.destinyId)
     expect(getVendorInfoMock).toHaveBeenCalledWith(user.destinyId, user.destinyCharacterId, user.refreshToken)
-    expect(manifestServiceMock).toHaveBeenCalledWith(adaMerchandise)
+    expect(manifestServiceMock).toHaveBeenCalledWith(unownedMods)
     expect(result).toEqual(expectedCollectibleList)
   })
 })
