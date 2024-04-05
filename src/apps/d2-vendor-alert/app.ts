@@ -15,7 +15,7 @@ import { AlertCommand } from '../../presentation/discord/commands/alert.js'
 import { DiscordClient } from '../../presentation/discord/discord-client.js'
 import { DestinyApiClient } from '../../infrastructure/destiny/destiny-api-client.js'
 import { MongoDbService } from '../../infrastructure/services/mongo-db-service.js'
-import { OAuthWebController } from '../../presentation/o-auth-web-controller.js'
+import { OAuthWebController } from '../../presentation/web/o-auth-web-controller.js'
 import { AlertManager } from '../../presentation/discord/alert-manager.js'
 import { NotifierService } from '../../infrastructure/services/notifier-service.js'
 

@@ -1,8 +1,8 @@
 import { Request, ParamsDictionary } from 'express-serve-static-core'
 import { ParsedQs } from 'qs'
-import { TokenInfo } from '../domain/token-info.js'
-import { MongoUserRepository } from '../infrastructure/database/mongo-user-repository.js'
-import { DestinyApiClient } from '../infrastructure/destiny/destiny-api-client.js'
+import { TokenInfo } from '../../domain/token-info.js'
+import { MongoUserRepository } from '../../infrastructure/database/mongo-user-repository.js'
+import { DestinyApiClient } from '../../infrastructure/destiny/destiny-api-client.js'
 
 export class OAuthWebController {
   constructor (
