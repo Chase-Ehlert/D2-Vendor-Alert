@@ -6,11 +6,11 @@ import { DESTINY_API_CLIENT_CONFIG, MONGO_DB_SERVICE_CONFIG, ALERT_CONFIG, DISCO
 import { TokenInfo } from '../../domain/token-info.js'
 import { AxiosHttpClient } from '../../infrastructure/database/axios-http-client.js'
 import { MongoUserRepository } from '../../infrastructure/database/mongo-user-repository.js'
-import { AlertCommand } from '../../infrastructure/discord/commands/alert.js'
-import { DiscordClient } from '../../infrastructure/discord/discord-client.js'
-import { DestinyApiClient } from '../../presentation/destiny-api-client.js'
-import { MongoDbService } from '../../presentation/mongo-db-service.js'
-import { NotifierService } from '../../presentation/notifier-service.js'
+import { AlertCommand } from '../../presentation/discord/commands/alert.js'
+import { DiscordClient } from '../../presentation/discord/discord-client.js'
+import { DestinyApiClient } from '../../infrastructure/destiny/destiny-api-client.js'
+import { MongoDbService } from '../../infrastructure/services/mongo-db-service.js'
+import { NotifierService } from '../../infrastructure/services/notifier-service.js'
 
 const app = express()
 const landingPagePath = path.join(url.fileURLToPath(new URL('./../../src/d2-vendor-alert', import.meta.url)), 'views')

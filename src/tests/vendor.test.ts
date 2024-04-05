@@ -1,13 +1,13 @@
 import { MongoUserRepository } from '../infrastructure/database/mongo-user-repository'
 import { UserInterface } from '../domain/user'
-import { ManifestService } from '../presentation/manifest-service'
-import { Vendor } from '../presentation/vendor'
-import { DestinyApiClient } from '../presentation/destiny-api-client'
+import { ManifestService } from '../infrastructure/services/manifest-service'
+import { Vendor } from '../infrastructure/destiny/vendor'
+import { DestinyApiClient } from '../infrastructure/destiny/destiny-api-client'
 import { AxiosHttpClient } from '../infrastructure/database/axios-http-client'
 import { DESTINY_API_CLIENT_CONFIG } from '../configs/config'
 import { Mod } from '../domain/mod'
 
-jest.mock('./../presentation/url', () => {
+jest.mock('./../infrastructure/url', () => {
   return 'example'
 })
 

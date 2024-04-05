@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios'
-import { HttpClient } from '../../presentation/http-client'
+import { HttpClient } from '../http-client'
 
 export class AxiosHttpClient implements HttpClient {
   async post (url: string, data: Object, config: Object): Promise<AxiosResponse> {

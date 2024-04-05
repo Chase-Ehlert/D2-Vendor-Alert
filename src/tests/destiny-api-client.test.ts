@@ -1,4 +1,4 @@
-import { DestinyApiClient } from '../presentation/destiny-api-client'
+import { DestinyApiClient } from '../infrastructure/destiny/destiny-api-client'
 import { AxiosHttpClient } from '../infrastructure/database/axios-http-client'
 import { DESTINY_API_CLIENT_CONFIG } from '../configs/config'
 import { MongoUserRepository } from '../infrastructure/database/mongo-user-repository'
@@ -6,7 +6,7 @@ import { Mod } from '../domain/mod'
 import { UserInterface } from '../domain/user'
 import { TokenInfo } from '../domain/token-info'
 
-jest.mock('./../presentation/url', () => {
+jest.mock('./../infrastructure/url', () => {
   return 'example'
 })
 

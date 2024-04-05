@@ -1,11 +1,11 @@
 import { DESTINY_API_CLIENT_CONFIG } from '../configs/config'
 import { MongoUserRepository } from '../infrastructure/database/mongo-user-repository'
-import { DestinyApiClient } from '../presentation/destiny-api-client'
+import { DestinyApiClient } from '../infrastructure/destiny/destiny-api-client'
 import { AxiosHttpClient } from '../infrastructure/database/axios-http-client'
-import { ManifestService } from '../presentation/manifest-service'
+import { ManifestService } from '../infrastructure/services/manifest-service'
 import { Mod } from '../domain/mod'
 
-jest.mock('./../presentation/url', () => {
+jest.mock('./../infrastructure/url', () => {
   return 'example'
 })
 
