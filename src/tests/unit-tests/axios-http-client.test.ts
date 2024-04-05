@@ -1,12 +1,8 @@
 import { AxiosHttpClient } from '../../infrastructure/database/axios-http-client'
 import axios from 'axios'
 
-describe('<AxiosHttpClient/>', () => {
+describe('AxiosHttpClient', () => {
   const axiosHttpClient = new AxiosHttpClient()
-
-  it('should instantiate', () => {
-    expect(axiosHttpClient).not.toBeNull()
-  })
 
   it('should be able to make an axios post call', async () => {
     const url = 'somewhere.com'
