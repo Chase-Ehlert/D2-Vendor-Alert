@@ -81,7 +81,7 @@ function dailyReset (): void {
   const waitTime = resetTime.getTime() - Date.now()
   setTimeout((async () => {
     await beginAlerting()
-  }) as RequestHandler, 5000)
+  }) as RequestHandler, waitTime)
 }
 
 /**
