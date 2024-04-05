@@ -1,3 +1,4 @@
+import { TokenInfo } from '../../domain/token-info.js'
 import { UserInterface } from '../../domain/user'
 
 export interface UserRepository {
@@ -10,11 +11,7 @@ export interface UserRepository {
     discordChannelId: string
   ) => Promise<void>
 
-  updateUserByMembershipId: (
-    bungieMembershipId: string,
-    refreshExpirationTime: string,
-    refreshToken: string
-  ) => Promise<void>
+  updateUserByMembershipId: (tokenInfo: TokenInfo) => Promise<void>
 
   updateUserByUsername: (
     bungieUsername: string,

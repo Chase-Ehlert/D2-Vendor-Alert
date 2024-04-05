@@ -5,7 +5,7 @@ import { AxiosHttpClient } from '../../infrastructure/database/axios-http-client
 import { ManifestService } from '../../presentation/manifest-service'
 import { Mod } from '../../domain/mod'
 
-jest.mock('./../presentation/url', () => {
+jest.mock('./../helpers/url', () => {
   return 'example'
 })
 

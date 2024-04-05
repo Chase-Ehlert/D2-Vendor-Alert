@@ -7,7 +7,7 @@ import { AxiosHttpClient } from '../../infrastructure/database/axios-http-client
 import { DESTINY_API_CLIENT_CONFIG } from '../../configs/config'
 import { Mod } from '../../domain/mod'
 
-jest.mock('./../presentation/url', () => {
+jest.mock('./../helpers/url', () => {
   return 'example'
 })
 

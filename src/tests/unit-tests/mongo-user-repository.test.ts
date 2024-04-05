@@ -1,3 +1,4 @@
+import { TokenInfo } from '../../domain/token-info.js'
 import { User } from '../../domain/user'
 import { MongoUserRepository } from '../../infrastructure/database/mongo-user-repository'
 
@@ -62,7 +63,7 @@ describe('<MongoUserRepository/>', () => {
     const refreshToken = 'guardian#123'
     User.findOneAndUpdate = jest.fn().mockResolvedValue({})
 
-    await mongoUserRepo.updateUserByMembershipId(bungieMembershipId, refreshExpiration, refreshToken)
+    await mongoUserRepo.updateUserByMembershipId(new TokenInfo(bungieMembershipId, refreshExpiration, refreshToken))
 
     expect(User.findOneAndUpdate).toBeCalledWith(
       { bungieMembershipId: bungieMembershipId },

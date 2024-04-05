@@ -6,15 +6,16 @@ import { Mod } from '../../domain/mod'
 import { UserInterface } from '../../domain/user'
 import { TokenInfo } from '../../domain/token-info'
 
-jest.mock('./../presentation/url', () => {
+jest.mock('./../helpers/url', () => {
   return 'example'
 })
 
 beforeEach(() => {
   jest.resetAllMocks()
+  global.Date = Date
 })
 
-describe('<DestinyApiClient/>', () => {
+describe('DestinyApiClient', () => {
   const axiosHttpClient = new AxiosHttpClient()
   const config = DESTINY_API_CLIENT_CONFIG
   const mongoUserRepository = new MongoUserRepository()
@@ -270,5 +271,37 @@ describe('<DestinyApiClient/>', () => {
     await destinyApiClient.getRefreshTokenInfo('1', expectedResult)
 
     expect(expectedResult.sendFile).toBeCalledWith('landing-page-error-auth-code.html', expect.any(Object))
+  })
+
+  it('should check a users token expiration data and refresh it if its expired', async () => {
+    const user = {
+      refreshExpiration: 1712345256981,
+      refreshToken: ''
+    } as unknown as UserInterface
+    const bungieMembershipId = 'bungieMembershipId'
+    const refreshTokenExpirationTime = 'refreshTokeExpirationTime-CHANGE_ME'
+    const refreshToken = 'refreshToken'
+    const expectedPostResponse = {
+      data: {
+        membership_id: bungieMembershipId,
+        refresh_expires_in: refreshTokenExpirationTime,
+        refresh_token: refreshToken,
+        access_token: ''
+      }
+    }
+    const expectedTokenInfo = new TokenInfo(
+      bungieMembershipId,
+      refreshTokenExpirationTime,
+      refreshToken
+    )
+    const mockDate = jest.fn()
+    mockDate.mockReturnValueOnce(new Date()).mockReturnValueOnce(new Date(712345256981))
+    global.Date = mockDate as any
+    axiosHttpClient.post = jest.fn().mockResolvedValue(expectedPostResponse)
+    mongoUserRepository.updateUserByMembershipId = jest.fn().mockResolvedValue({})
+
+    await destinyApiClient.checkRefreshTokenExpiration(user)
+
+    expect(mongoUserRepository.updateUserByMembershipId).toHaveBeenCalledWith(expectedTokenInfo)
   })
 })
