@@ -6,7 +6,7 @@ import { Mod } from '../domain/mod'
 import { UserInterface } from '../domain/user'
 import { TokenInfo } from '../domain/token-info'
 
-jest.mock('./../utility/url', () => {
+jest.mock('./../presentation/url', () => {
   return 'example'
 })
 

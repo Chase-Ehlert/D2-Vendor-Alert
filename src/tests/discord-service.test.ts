@@ -6,7 +6,7 @@ import { DestinyApiClient } from '../presentation/destiny-api-client'
 import { AxiosHttpClient } from '../infrastructure/database/axios-http-client'
 import { DESTINY_API_CLIENT_CONFIG, DISCORD_CONFIG } from '../configs/config'
 
-jest.mock('./../utility/url', () => {
+jest.mock('./../presentation/url', () => {
   return 'example'
 })
 
