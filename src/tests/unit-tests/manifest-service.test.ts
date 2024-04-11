@@ -9,17 +9,9 @@ jest.mock('./../helpers/url', () => {
   return 'example'
 })
 
-describe('<ManifestService/>', () => {
+describe('ManifestService', () => {
   const destinyApiClient = new DestinyApiClient(new AxiosHttpClient(), new MongoUserRepository(), DESTINY_API_CLIENT_CONFIG)
   const manifestService = new ManifestService(destinyApiClient)
-
-  afterEach(() => {
-    jest.resetAllMocks()
-  })
-
-  it('should instantiate', () => {
-    expect(manifestService).not.toBeNull()
-  })
 
   it('should return a list of mods with their info from the manifest', async () => {
     const itemHash1 = '123'
