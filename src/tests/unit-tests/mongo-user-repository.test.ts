@@ -2,12 +2,8 @@ import { TokenInfo } from '../../domain/token-info.js'
 import { User } from '../../domain/user'
 import { MongoUserRepository } from '../../infrastructure/database/mongo-user-repository'
 
-describe('<MongoUserRepository/>', () => {
+describe('MongoUserRepository', () => {
   const mongoUserRepo = new MongoUserRepository()
-
-  it('should instantiate', () => {
-    expect(mongoUserRepo).not.toBeNull()
-  })
 
   it('should return true if a user exists in the database', async () => {
     User.exists = jest.fn().mockResolvedValue(true)
