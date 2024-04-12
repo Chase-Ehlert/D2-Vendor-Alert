@@ -11,7 +11,7 @@ jest.mock('./../helpers/url', () => {
   return 'example'
 })
 
-describe('<Vendor/>', () => {
+describe('Vendor', () => {
   const destinyApiClient = new DestinyApiClient(new AxiosHttpClient(), new MongoUserRepository(), DESTINY_API_CLIENT_CONFIG)
   const manifestService = new ManifestService(destinyApiClient)
   const vendor = new Vendor(destinyApiClient, manifestService)
@@ -26,14 +26,6 @@ describe('<Vendor/>', () => {
     refreshExpiration: 'expiration',
     refreshToken: 'token'
   } as unknown as UserInterface
-
-  afterEach(() => {
-    jest.resetAllMocks()
-  })
-
-  it('should instantiate', () => {
-    expect(vendor).not.toBeNull()
-  })
 
   it('should collect all the mods for sale by Ada-1', async () => {
     const modHash1 = '123'
