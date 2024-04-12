@@ -4,7 +4,7 @@ import { MongoUserRepository } from '../../infrastructure/database/mongo-user-re
 import { NotifierService } from '../../presentation/notifier-service.js'
 import axios from 'axios'
 
-describe('MongoDbService', () => {
+describe('NotifierService', () => {
   const mongoUserRepo = new MongoUserRepository()
   const notifierService = new NotifierService(mongoUserRepo, DISCORD_NOTIFIER_ADDRESS)
 
