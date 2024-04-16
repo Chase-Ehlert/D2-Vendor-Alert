@@ -4,15 +4,19 @@ import { ManifestService } from '../../presentation/manifest-service'
 import { Vendor } from '../../presentation/vendor'
 import { DestinyApiClient } from '../../presentation/destiny-api-client'
 import { AxiosHttpClient } from '../../infrastructure/database/axios-http-client'
-import { DESTINY_API_CLIENT_CONFIG } from '../../configs/config'
 import { Mod } from '../../domain/mod'
+import { DestinyApiClientConfig } from '../../configs/destiny-api-client-config.js'
 
 jest.mock('./../helpers/url', () => {
   return 'example'
 })
 
 describe('Vendor', () => {
-  const destinyApiClient = new DestinyApiClient(new AxiosHttpClient(), new MongoUserRepository(), DESTINY_API_CLIENT_CONFIG)
+  const destinyApiClient = new DestinyApiClient(
+    new AxiosHttpClient(),
+    new MongoUserRepository(),
+    { apiKey: '', oauthSecret: '', oauthClientId: '' } satisfies DestinyApiClientConfig
+  )
   const manifestService = new ManifestService(destinyApiClient)
   const vendor = new Vendor(destinyApiClient, manifestService)
   const user = {
