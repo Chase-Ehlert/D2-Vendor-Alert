@@ -4,9 +4,10 @@ import { MongoUserRepository } from '../../infrastructure/database/mongo-user-re
 import { ManifestService } from '../../presentation/manifest-service'
 import { DestinyApiClient } from '../../presentation/destiny-api-client'
 import { AxiosHttpClient } from '../../infrastructure/database/axios-http-client'
-import { DESTINY_API_CLIENT_CONFIG, DISCORD_CONFIG } from '../../configs/config'
 import { UserInterface } from '../../domain/user.js'
 import axios from 'axios'
+import { DestinyApiClientConfig } from '../../configs/destiny-api-client-config.js'
+import { DiscordConfig } from '../../configs/discord-config.js'
 
 jest.mock('./../helpers/url', () => {
   return 'example'
@@ -16,13 +17,18 @@ describe('DiscordService', () => {
   const destinyApiClient = new DestinyApiClient(
     new AxiosHttpClient(),
     new MongoUserRepository(),
-    DESTINY_API_CLIENT_CONFIG
+    { apiKey: '', oauthClientId: '', oauthSecret: '' } satisfies DestinyApiClientConfig
   )
   const vendor = new Vendor(
     destinyApiClient,
     new ManifestService(destinyApiClient)
   )
-  const discordService = new DiscordService(vendor, new AxiosHttpClient(), DISCORD_CONFIG)
+  const expectedToken = '123Token'
+  const discordService = new DiscordService(
+    vendor,
+    new AxiosHttpClient(),
+      { token: expectedToken } satisfies DiscordConfig
+  )
 
   it('should message a user if they have any unowned mods', async () => {
     const user = {
@@ -38,7 +44,7 @@ describe('DiscordService', () => {
     const expectedPostData = { content: expectedMessage }
     const expectedPostConfig = {
       headers: {
-        Authorization: `Bot ${String(DISCORD_CONFIG.token)}`,
+        Authorization: `Bot ${expectedToken}`,
         'Content-Type': 'application/json'
       }
     }
@@ -63,7 +69,7 @@ describe('DiscordService', () => {
     const expectedPostData = { content: expectedMessage }
     const expectedPostConfig = {
       headers: {
-        Authorization: `Bot ${String(DISCORD_CONFIG.token)}`,
+        Authorization: `Bot ${expectedToken}`,
         'Content-Type': 'application/json'
       }
     }
