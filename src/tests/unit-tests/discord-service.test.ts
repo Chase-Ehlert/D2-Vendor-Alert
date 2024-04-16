@@ -17,7 +17,7 @@ describe('DiscordService', () => {
   const destinyApiClient = new DestinyApiClient(
     new AxiosHttpClient(),
     new MongoUserRepository(),
-    { apiKey: '', oauthClientId: '', oauthSecret: '' } satisfies DestinyApiClientConfig
+    {} satisfies DestinyApiClientConfig
   )
   const vendor = new Vendor(
     destinyApiClient,
