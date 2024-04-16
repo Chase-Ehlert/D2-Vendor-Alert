@@ -1,9 +1,9 @@
-import { MONGO_DB_SERVICE_CONFIG } from '../../configs/config.js'
+import { MongoDbServiceConfig } from '../../configs/mongo-db-service-config.js'
 import { MongoDbService } from '../../presentation/mongo-db-service.js'
 import mongoose from 'mongoose'
 
 describe('MongoDbService', () => {
-  let mongoDbService = new MongoDbService(MONGO_DB_SERVICE_CONFIG)
+  let mongoDbService = new MongoDbService({} satisfies MongoDbServiceConfig)
 
   it('should establish a connection to the mongo database', async () => {
     const expectedDatabaseUser = 'jack'
