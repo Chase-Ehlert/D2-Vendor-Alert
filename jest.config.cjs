@@ -8,5 +8,5 @@ module.exports = {
         '(.+)\\.js': '$1'
     },
     extensionsToTreatAsEsm: ['.ts'],
-    modulePathIgnorePatterns: ['.dist/']
+    modulePathIgnorePatterns: ['.dist/', '.src/tests/helpers/']
 }
