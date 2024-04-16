@@ -1,6 +1,5 @@
 import { DestinyApiClient } from '../../presentation/destiny-api-client'
 import { AxiosHttpClient } from '../../infrastructure/database/axios-http-client'
-import { DESTINY_API_CLIENT_CONFIG } from '../../configs/config'
 import { MongoUserRepository } from '../../infrastructure/database/mongo-user-repository'
 import { Mod } from '../../domain/mod'
 import { UserInterface } from '../../domain/user'
@@ -23,7 +22,7 @@ describe('DestinyApiClient', () => {
   const destinyApiClient = new DestinyApiClient(
     axiosHttpClient,
     mongoUserRepository,
-      { apiKey: expectedApiKey, oauthSecret: '', oauthClientId: '' } satisfies DestinyApiClientConfig
+      { apiKey: expectedApiKey } satisfies DestinyApiClientConfig
   )
 
   it('should retrieve a list of definitions for Destiny items from a specific manifest file', async () => {
