@@ -15,7 +15,7 @@ describe('Vendor', () => {
   const destinyApiClient = new DestinyApiClient(
     new AxiosHttpClient(),
     new MongoUserRepository(),
-    { apiKey: '', oauthSecret: '', oauthClientId: '' } satisfies DestinyApiClientConfig
+    {} satisfies DestinyApiClientConfig
   )
   const manifestService = new ManifestService(destinyApiClient)
   const vendor = new Vendor(destinyApiClient, manifestService)
