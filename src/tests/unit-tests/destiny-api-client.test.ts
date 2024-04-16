@@ -5,6 +5,7 @@ import { MongoUserRepository } from '../../infrastructure/database/mongo-user-re
 import { Mod } from '../../domain/mod'
 import { UserInterface } from '../../domain/user'
 import { TokenInfo } from '../../domain/token-info'
+import { DestinyApiClientConfig } from '../../configs/destiny-api-client-config.js'
 
 jest.mock('./../helpers/url', () => {
   return 'example'
@@ -17,9 +18,13 @@ beforeEach(() => {
 
 describe('DestinyApiClient', () => {
   const axiosHttpClient = new AxiosHttpClient()
-  const config = DESTINY_API_CLIENT_CONFIG
+  const expectedApiKey = '123key'
   const mongoUserRepository = new MongoUserRepository()
-  const destinyApiClient = new DestinyApiClient(axiosHttpClient, mongoUserRepository, config)
+  const destinyApiClient = new DestinyApiClient(
+    axiosHttpClient,
+    mongoUserRepository,
+      { apiKey: expectedApiKey, oauthSecret: '', oauthClientId: '' } satisfies DestinyApiClientConfig
+  )
 
   it('should retrieve a list of definitions for Destiny items from a specific manifest file', async () => {
     const expectedManifestFileName = 'manifest'
@@ -117,7 +122,7 @@ describe('DestinyApiClient', () => {
         },
         headers: {
           Authorization: `Bearer ${accessToken}`,
-          'x-api-key': config.apiKey
+          'x-api-key': expectedApiKey
         }
       }
     )
@@ -143,7 +148,7 @@ describe('DestinyApiClient', () => {
           components: 800
         },
         headers: {
-          'x-api-key': config.apiKey
+          'x-api-key': expectedApiKey
         }
       }
     )
@@ -172,7 +177,7 @@ describe('DestinyApiClient', () => {
       `https://www.bungie.net/platform/User/GetMembershipsById/${expectedMembershipId}/3/`,
       {
         headers: {
-          'x-api-key': config.apiKey
+          'x-api-key': expectedApiKey
         }
       }
     )
@@ -201,7 +206,7 @@ describe('DestinyApiClient', () => {
       `https://www.bungie.net/platform/destiny2/3/profile/${expectedMembershipId}/`,
       {
         headers: {
-          'x-api-key': config.apiKey
+          'x-api-key': expectedApiKey
         },
         params: { components: 100 }
       }
@@ -229,7 +234,7 @@ describe('DestinyApiClient', () => {
       {
         headers: {
           'content-type': 'application/json',
-          'x-api-key': config.apiKey
+          'x-api-key': expectedApiKey
         }
       }
     )
