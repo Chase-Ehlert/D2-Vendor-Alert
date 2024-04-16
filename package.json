@@ -6,6 +6,7 @@
     "lint": "eslint \"./src/**/*.ts\" --fix",
     "tsc": "tsc",
     "test": "jest --coverage",
+    "tests": "jest --coverage --collectCoverageFrom='src/**/*.ts'",
     "start-alert": "npm run tsc && node dist/apps/d2-vendor-alert/app.js",
     "start-notifier": "npm run tsc && node dist/apps/discord-notifier/app.js",
     "jsdoc": "jsdoc -c jsdoc.json"
