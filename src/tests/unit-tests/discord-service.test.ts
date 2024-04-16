@@ -1,13 +1,13 @@
-import { DiscordService } from '../../presentation/discord-service'
-import { Vendor } from '../../presentation/vendor'
 import { MongoUserRepository } from '../../infrastructure/database/mongo-user-repository'
-import { ManifestService } from '../../presentation/manifest-service'
-import { DestinyApiClient } from '../../presentation/destiny-api-client'
 import { AxiosHttpClient } from '../../infrastructure/database/axios-http-client'
 import { UserInterface } from '../../domain/user.js'
 import axios from 'axios'
 import { DestinyApiClientConfig } from '../../configs/destiny-api-client-config.js'
 import { DiscordConfig } from '../../configs/discord-config.js'
+import { DestinyApiClient } from '../../infrastructure/destiny/destiny-api-client.js'
+import { Vendor } from '../../infrastructure/destiny/vendor.js'
+import { DiscordService } from '../../infrastructure/services/discord-service.js'
+import { ManifestService } from '../../infrastructure/services/manifest-service.js'
 
 jest.mock('./../helpers/url', () => {
   return 'example'

@@ -1,5 +1,5 @@
-import { MongoDbServiceConfig } from '../../configs/mongo-db-service-config.js'
-import { MongoDbService } from '../../presentation/mongo-db-service.js'
+import { MongoDbService } from '../../infrastructure/services/mongo-db-service'
+import { MongoDbServiceConfig } from '../../configs/mongo-db-service-config'
 import mongoose from 'mongoose'
 
 describe('MongoDbService', () => {

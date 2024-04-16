@@ -1,5 +1,5 @@
-import { TokenInfo } from '../../domain/token-info.js'
-import { UserInterface } from '../../domain/user'
+import { TokenInfo } from './token-info.js'
+import { UserInterface } from './user.js'
 
 export interface UserRepository {
   doesUserExist: (bungieNetUsername: string) => Promise<boolean>

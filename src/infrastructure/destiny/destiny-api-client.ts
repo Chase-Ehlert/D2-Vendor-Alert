@@ -6,7 +6,7 @@ import { TokenInfo } from '../../domain/token-info.js'
 import { Mod } from '../../domain/mod.js'
 import { Collectible } from '../../domain/collectible.js'
 import path from 'path'
-import metaUrl from '../tests/helpers/url.js'
+import metaUrl from '../../tests/helpers/url.js'
 
 export class DestinyApiClient {
   private readonly apiKeyHeader

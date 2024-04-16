@@ -1,5 +1,5 @@
+import { MongoDbServiceConfig } from '../../configs/mongo-db-service-config'
 import mongoose from 'mongoose'
-import { MongoDbServiceConfig } from '../../configs/mongo-db-service-config.js'
 
 export class MongoDbService {
   constructor (private readonly config: MongoDbServiceConfig) { }
