@@ -10,6 +10,13 @@ jest.mock('./../helpers/url', () => {
   return 'example'
 })
 
+beforeAll(() => {
+  global.console = {
+    ...console,
+    log: jest.fn()
+  }
+})
+
 beforeEach(() => {
   jest.resetAllMocks()
   global.Date = Date

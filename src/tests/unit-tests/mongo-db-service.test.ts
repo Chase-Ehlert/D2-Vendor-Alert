@@ -2,6 +2,13 @@ import { MongoDbService } from '../../infrastructure/services/mongo-db-service'
 import { MongoDbServiceConfig } from '../../configs/mongo-db-service-config'
 import mongoose from 'mongoose'
 
+beforeAll(() => {
+  global.console = {
+    ...console,
+    log: jest.fn()
+  }
+})
+
 describe('MongoDbService', () => {
   let mongoDbService = new MongoDbService({} satisfies MongoDbServiceConfig)
 
@@ -16,7 +23,6 @@ describe('MongoDbService', () => {
       `${expectedDatabaseCluster}.mongodb.net/` +
       `${expectedDatabaseName}`
     }
-
     mongoDbService = new MongoDbService(config)
 
     mongoose.connect = jest.fn()
