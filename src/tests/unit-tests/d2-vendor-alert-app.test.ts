@@ -1,25 +1,25 @@
-import { createServer, startServer } from '../../apps/d2-vendor-alert/app'
-import { AlertConfig } from '../../configs/alert-config.js'
-import { DestinyApiClientConfig } from '../../configs/destiny-api-client-config.js'
-import { DiscordConfig } from '../../configs/discord-config.js'
-import { MongoDbServiceConfig } from '../../configs/mongo-db-service-config.js'
-import { NotifierServiceConfig } from '../../configs/notifier-service-config.js'
-import { AxiosHttpClient } from '../../infrastructure/database/axios-http-client.js'
-import { MongoUserRepository } from '../../infrastructure/database/mongo-user-repository.js'
-import { DestinyApiClient } from '../../infrastructure/destiny/destiny-api-client.js'
-import { MongoDbService } from '../../infrastructure/services/mongo-db-service.js'
-import { NotifierService } from '../../infrastructure/services/notifier-service.js'
-import { AlertManager } from '../../presentation/discord/alert-manager.js'
-import { AlertCommand } from '../../presentation/discord/commands/alert.js'
-import { DiscordClient } from '../../presentation/discord/discord-client.js'
-import { OAuthWebController } from '../../presentation/web/o-auth-web-controller.js'
+import { MongoUserRepository } from '../../infrastructure/database/mongo-user-repository'
+import { Alert } from '../../apps/d2-vendor-alert/alert'
+import { AlertConfig } from '../../configs/alert-config'
+import { DestinyApiClientConfig } from '../../configs/destiny-api-client-config'
+import { DiscordConfig } from '../../configs/discord-config'
+import { MongoDbServiceConfig } from '../../configs/mongo-db-service-config'
+import { NotifierServiceConfig } from '../../configs/notifier-service-config'
+import { AxiosHttpClient } from '../../infrastructure/database/axios-http-client'
+import { DestinyApiClient } from '../../infrastructure/destiny/destiny-api-client'
+import { MongoDbService } from '../../infrastructure/services/mongo-db-service'
+import { NotifierService } from '../../infrastructure/services/notifier-service'
+import { AlertManager } from '../../presentation/discord/alert-manager'
+import { AlertCommand } from '../../presentation/discord/commands/alert'
+import { DiscordClient } from '../../presentation/discord/discord-client'
+import { OAuthWebController } from '../../presentation/web/o-auth-web-controller'
 
 jest.mock('./../helpers/url', () => {
   return 'example'
 })
 
 jest.mock('express', () => {
-  const mockedExpress = () => {
+  const mockedExpress = (): Object => {
     return {
       engine: jest.fn(),
       set: jest.fn(),
@@ -33,23 +33,28 @@ jest.mock('express', () => {
 
 describe('App', () => {
   it('should create the server', async () => {
-    // const mongoUserRepo = new MongoUserRepository()
-    // const app = createServer(new OAuthWebController(
-    //   new DestinyApiClient(new AxiosHttpClient(), mongoUserRepo, {} satisfies DestinyApiClientConfig),
-    //   mongoUserRepo
-    // ))
+    const mongoUserRepo = new MongoUserRepository()
+    const mongoDbService = new MongoDbService({} satisfies MongoDbServiceConfig)
+    const alertManager = new AlertManager(new NotifierService(mongoUserRepo, {} satisfies NotifierServiceConfig))
+    const destinyApiClient = new DestinyApiClient(
+      new AxiosHttpClient(),
+      mongoUserRepo,
+        {} satisfies DestinyApiClientConfig
+    )
+    const discordClient = new DiscordClient(
+      mongoUserRepo,
+      destinyApiClient,
+      new AlertCommand({} satisfies AlertConfig),
+      {} satisfies DiscordConfig
+    )
+    const oAuthWebController = new OAuthWebController(destinyApiClient, mongoUserRepo)
+    const alert = new Alert(oAuthWebController, mongoDbService, discordClient, alertManager)
 
-    // await startServer(
-    //   app,
-    //   new MongoDbService({} satisfies MongoDbServiceConfig),
-    //   new DiscordClient(
-    //     mongoUserRepo,
-    //     new DestinyApiClient(new AxiosHttpClient(), mongoUserRepo, {} satisfies DestinyApiClientConfig),
-    //     new AlertCommand({} satisfies AlertConfig),
-    //        {} satisfies DiscordConfig
-    //   ),
-    //   new AlertManager(new NotifierService(mongoUserRepo, {} satisfies NotifierServiceConfig))
-    // )
+    mongoDbService.connectToDatabase = jest.fn()
+    discordClient.setupDiscordClient = jest.fn()
+    alertManager.dailyReset = jest.fn()
+
+    await alert.runApp()
 
     expect(true).toBeTruthy()
   })

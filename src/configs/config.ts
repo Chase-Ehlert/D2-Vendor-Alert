@@ -143,5 +143,5 @@ export const DISCORD_CONFIG = DiscordConfigClass.fromConfig(value)
 export const MONGO_DB_SERVICE_CONFIG = MongoDbServiceConfigClass.fromConfig(value)
 export const ALERT_CONFIG = AlertConfigClass.fromConfig(value)
 export const DEPLOY_COMMANDS_CONFIG = DeployCommandsConfigClass.fromConfig(value)
-export const DISCORD_NOTIFIER_ADDRESS = NotifierServiceConfigClass.fromConfig(value)
+export const NOTIFIER_SERVICE_CONFIG = NotifierServiceConfigClass.fromConfig(value)
 export default value
