@@ -1,4 +1,4 @@
-import express, { Application } from 'express'
+import express from 'express'
 import mustacheExpress from 'mustache-express'
 import * as path from 'path'
 import * as url from 'url'
@@ -16,40 +16,45 @@ export class Alert {
     private readonly alertManager: AlertManager
   ) {}
 
-  async runApp (): Promise<void> {
-    const app = this.createServer()
-
+  async runApp (app: express.Application): Promise<void> {
+    this.createServer(app)
     await this.startServer(app)
   }
 
-  private createServer (): Application {
-    const app = express()
+  private createServer (app: express.Application): void {
     app.engine('mustache', mustacheExpress())
     app.set('view engine', 'mustache')
     app.set(
       'views',
       path.join(url.fileURLToPath(new URL('../src/presentation', url.pathToFileURL(metaUrl).href)), 'views')
     )
+    app.get(
+      '/',
+      this.rootHandler(app) as express.RequestHandler
+    )
+  }
 
-    app.get('/', (async (
+  private rootHandler (app: express.Application): Function {
+    return async (
       request: any,
       result: {
-        render: (arg0: string, arg1: { guardian: string }) => void
+        render: (arg0: string, arg1: { guardian: string}) => void
         sendFile: (arg0: string) => void
       }
     ) => {
       await this.oAuthWebController.handleOAuth(app, request, result)
-    }) as express.RequestHandler)
-
-    return app
+    }
   }
 
   private async startServer (
     app: { listen: (arg0: number, arg1: () => void) => void }
   ): Promise<void> {
-    app.listen(3001, () => {
-      console.log('Server is running...')
-    })
+    app.listen(
+      3001,
+      () => {
+        console.log('Server is running...')
+      }
+    )
 
     await this.mongoDbService.connectToDatabase()
     this.discordClient.setupDiscordClient()

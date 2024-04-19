@@ -1,3 +1,4 @@
+import express from 'express'
 import { ALERT_CONFIG, DESTINY_API_CLIENT_CONFIG, MONGO_DB_SERVICE_CONFIG, NOTIFIER_SERVICE_CONFIG } from '../../configs/config.js'
 import { DiscordConfig } from '../../configs/discord-config.js'
 import { AxiosHttpClient } from '../../infrastructure/database/axios-http-client.js'
@@ -30,4 +31,4 @@ const alert = new Alert(
   new AlertManager(new NotifierService(mongoUserRepo, NOTIFIER_SERVICE_CONFIG))
 )
 
-await alert.runApp()
+await alert.runApp(express())
