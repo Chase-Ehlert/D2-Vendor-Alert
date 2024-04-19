@@ -30,8 +30,6 @@ app.listen(3002, () => {
 app.post('/notify', (async (request, result) => {
   await destinyApiClient.checkRefreshTokenExpiration(request.body.user)
   await discordService.compareModsForSaleWithUserInventory(request.body.user)
-  // result.status(200).send(String(request.body.user.bungieUsername) + ' notified')
-  // throw Error()
 }) as express.RequestHandler)
 
 await mongoDbService.connectToDatabase()
