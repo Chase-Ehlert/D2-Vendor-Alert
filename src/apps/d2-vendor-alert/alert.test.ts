@@ -1,5 +1,5 @@
 import { MongoUserRepository } from '../../infrastructure/database/mongo-user-repository'
-import { Alert } from '../../apps/d2-vendor-alert/alert'
+import { Alert } from './alert'
 import { AlertConfig } from '../../configs/alert-config'
 import { DestinyApiClientConfig } from '../../configs/destiny-api-client-config'
 import { DiscordConfig } from '../../configs/discord-config'
@@ -16,9 +16,9 @@ import { OAuthWebController } from '../../presentation/web/o-auth-web-controller
 import express from 'express'
 import path from 'path'
 import * as url from 'url'
-import metaUrl from '../helpers/url.js'
+import metaUrl from '../../testing-helpers/url'
 
-jest.mock('./../helpers/url', () => {
+jest.mock('./../../testing-helpers/url', () => {
   return 'example'
 })
 

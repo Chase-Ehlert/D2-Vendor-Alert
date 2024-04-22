@@ -1,4 +1,4 @@
-import { MongoDbService } from '../../infrastructure/services/mongo-db-service'
+import { MongoDbService } from './mongo-db-service'
 import { MongoDbServiceConfig } from '../../configs/mongo-db-service-config'
 import mongoose from 'mongoose'
 

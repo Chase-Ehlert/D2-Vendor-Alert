@@ -6,7 +6,7 @@ import { AxiosHttpClient } from '../../infrastructure/database/axios-http-client
 import { DestinyApiClient } from '../../infrastructure/destiny/destiny-api-client'
 import { MongoDbService } from '../../infrastructure/services/mongo-db-service'
 import { DiscordService } from '../../infrastructure/services/discord-service'
-import { Notify } from '../../apps/discord-notifier/notify'
+import { Notify } from './notify'
 import { Vendor } from '../../infrastructure/destiny/vendor'
 import { ManifestService } from '../../infrastructure/services/manifest-service'
 import express from 'express'
@@ -29,7 +29,7 @@ jest.mock('express', () => {
 
 express.json = jsonMock
 
-jest.mock('./../helpers/url', () => {
+jest.mock('./../../testing-helpers/url', () => {
   return 'example'
 })
 

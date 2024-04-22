@@ -1,8 +1,8 @@
 import { NotifierServiceConfig } from '../../configs/notifier-service-config.js'
 import { UserInterface } from '../../domain/user.js'
-import { MongoUserRepository } from '../../infrastructure/database/mongo-user-repository.js'
+import { MongoUserRepository } from '../database/mongo-user-repository.js'
 import axios from 'axios'
-import { NotifierService } from '../../infrastructure/services/notifier-service.js'
+import { NotifierService } from './notifier-service.js'
 
 describe('NotifierService', () => {
   const mongoUserRepo = new MongoUserRepository()

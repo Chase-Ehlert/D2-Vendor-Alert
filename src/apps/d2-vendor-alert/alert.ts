@@ -6,7 +6,7 @@ import { DiscordClient } from '../../presentation/discord/discord-client'
 import { MongoDbService } from '../../infrastructure/services/mongo-db-service'
 import { OAuthWebController } from '../../presentation/web/o-auth-web-controller'
 import { AlertManager } from '../../presentation/discord/alert-manager'
-import metaUrl from '../../tests/helpers/url'
+import metaUrl from '../../testing-helpers/url'
 
 export class Alert {
   constructor (
