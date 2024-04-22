@@ -44,5 +44,21 @@
     "ts-jest": "^29.1.1",
     "ts-loader": "^9.4.3",
     "typescript": "5.1.6"
+  },
+  "jest": {
+    "preset": "ts-jest",
+  "testEnvironment": "node",
+  "transform": {
+    "^.+\\.(t|j)sx?$": [
+      "ts-jest",
+      { "useESM": true }
+    ]
+  },
+  "moduleNameMapper": {
+    "^(\\.{1,2}/.*)\\.js$": "$1"
+  },
+  "extensionsToTreatAsEsm": [".ts"],
+  "modulePathIgnorePatterns": [".dist/", ".src/tests/helpers/"],
+  "moduleFileExtensions": ["ts", "js", "json", "node"]
   }
 }
