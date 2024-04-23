@@ -55,7 +55,13 @@
       "^(\\.{1,2}/.*)\\.js$": "$1"
     },
     "extensionsToTreatAsEsm": [".ts"],
-    "modulePathIgnorePatterns": [".dist/", ".src/testing-helpers/"],
+    "modulePathIgnorePatterns": [
+      ".dist/",
+      ".src/testing-helpers/",
+      ".src/apps/d2-vendor-alert/app.ts",
+      ".src/apps/discord-notifier/app.ts",
+      ".src/apps/d2-vendor-alert/@types"
+    ],
     "moduleFileExtensions": ["ts", "js", "json", "node"]
   }
 }
