@@ -1,12 +1,12 @@
 import { DestinyApiClientConfig } from '../../configs/destiny-api-client-config'
-import { OAuthResponseHandler } from '../../domain/o-auth-response-handler'
+import { OAuthRequest } from '../../domain/o-auth-request'
+import { OAuthResponse } from '../../domain/o-auth-response'
 import { TokenInfo } from '../../domain/token-info'
 import { AxiosHttpClient } from '../../infrastructure/database/axios-http-client'
 import { MongoUserRepository } from '../../infrastructure/database/mongo-user-repository'
 import { DestinyApiClient } from '../../infrastructure/destiny/destiny-api-client'
 import { OAuthWebController } from './o-auth-web-controller'
 import express from 'express'
-import { Request } from 'express-serve-static-core'
 
 jest.mock('./../../testing-helpers/url', () => {
   return 'example'
@@ -30,8 +30,8 @@ describe('OAuthWebController', () => {
 
   it('should handle the OAuth handshake', async () => {
     const mockApp = express()
-    const request = { query: { code: '123' } } as unknown as Request
-    const mockResult: jest.Mocked<OAuthResponseHandler> = { render: jest.fn(), sendFile: jest.fn() }
+    const request: OAuthRequest = { query: { code: '123' } }
+    const mockResult: jest.Mocked<OAuthResponse> = { render: jest.fn(), sendFile: jest.fn() }
     const expectedBungieMembershipId = 'id'
     const expectedRefreshTokenExpirationTime = '1234'
     const expectedRefreshToken = 'token'
@@ -60,8 +60,8 @@ describe('OAuthWebController', () => {
 
   it('should return an error page when the request code is undefined', async () => {
     const mockApp = express()
-    const request = { query: { code: undefined } } as unknown as Request
-    const mockResult: jest.Mocked<OAuthResponseHandler> = { render: jest.fn(), sendFile: jest.fn() }
+    const request = { query: { code: undefined } } as unknown as OAuthRequest
+    const mockResult: jest.Mocked<OAuthResponse> = { render: jest.fn(), sendFile: jest.fn() }
     const consoleSpy = jest.spyOn(console, 'log')
 
     await oauthWebController.handleOAuth(mockApp, request, mockResult)

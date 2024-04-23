@@ -1,9 +1,9 @@
-import { Request, ParamsDictionary } from 'express-serve-static-core'
-import { ParsedQs } from 'qs'
+import express from 'express'
 import { TokenInfo } from '../../domain/token-info'
 import { MongoUserRepository } from '../../infrastructure/database/mongo-user-repository'
 import { DestinyApiClient } from '../../infrastructure/destiny/destiny-api-client'
-import { OAuthResponseHandler } from '../../domain/o-auth-response-handler'
+import { OAuthResponse } from '../../domain/o-auth-response'
+import { OAuthRequest } from '../../domain/o-auth-request'
 
 export class OAuthWebController {
   constructor (
@@ -12,12 +12,12 @@ export class OAuthWebController {
   ) {}
 
   async handleOAuth (
-    app: { get: (arg0: string) => any },
-    request: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
-    result: OAuthResponseHandler
+    app: express.Application,
+    request: OAuthRequest,
+    result: OAuthResponse
   ): Promise<void> {
     if (request.query.code !== undefined) {
-      const guardian = await this.handleAuthorizationCode(String(request.query.code), result)
+      const guardian = await this.handleAuthorizationCode(request.query.code, result)
       if (typeof guardian === 'string') {
         result.render('landing-page.mustache', { guardian })
       }
@@ -34,7 +34,7 @@ export class OAuthWebController {
  */
   private async handleAuthorizationCode (
     authorizationCode: string,
-    result: OAuthResponseHandler
+    result: OAuthResponse
   ): Promise<void | string> {
     const tokenInfo = await this.destinyApiClient.getRefreshTokenInfo(authorizationCode, result)
 

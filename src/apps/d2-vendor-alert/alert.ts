@@ -7,6 +7,8 @@ import { MongoDbService } from '../../infrastructure/services/mongo-db-service'
 import { OAuthWebController } from '../../presentation/web/o-auth-web-controller'
 import { AlertManager } from '../../presentation/discord/alert-manager'
 import metaUrl from '../../testing-helpers/url'
+import { OAuthResponse } from '../../domain/o-auth-response'
+import { OAuthRequest } from '../../domain/o-auth-request'
 
 export class Alert {
   constructor (
@@ -36,11 +38,8 @@ export class Alert {
 
   private rootHandler (app: express.Application): Function {
     return async (
-      request: any,
-      result: {
-        render: (arg0: string, arg1: { guardian: string}) => void
-        sendFile: (arg0: string) => void
-      }
+      request: OAuthRequest,
+      result: OAuthResponse
     ) => {
       await this.oAuthWebController.handleOAuth(app, request, result)
     }

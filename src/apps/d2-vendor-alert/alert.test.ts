@@ -17,6 +17,7 @@ import express from 'express'
 import path from 'path'
 import * as url from 'url'
 import metaUrl from '../../testing-helpers/url'
+import { OAuthResponse } from '../../domain/o-auth-response'
 
 jest.mock('./../../testing-helpers/url', () => {
   return 'example'
@@ -91,12 +92,18 @@ describe('Alert', () => {
 
   it('should setup the get root endpoint with the handleOAuth function', () => {
     const expectedFunction = (alert as any).rootHandler(mockApp)
-    expectedFunction({}, { guardian: '123' })
+    const expectedRequest = { query: { code: '123' } }
+    const expectedResult: OAuthResponse = {
+      render: (_template: string, _data: Record<string, any>) => {},
+      sendFile: (_path: string) => {}
+    }
+
+    expectedFunction(expectedRequest, expectedResult)
 
     expect(oAuthWebController.handleOAuth).toBeCalledWith(
       mockApp,
-      expect.anything(),
-      (expect.any(String), { guardian: '123' })
+      expectedRequest,
+      expectedResult
     )
   })
 
