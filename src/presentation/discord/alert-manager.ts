@@ -5,35 +5,41 @@ export class AlertManager {
   constructor (private readonly notifierService: NotifierService) {}
 
   /**
- * Calculates the time till the next Destiny daily reset and waits till then to alert users of vendor inventory
+ * Calculates the time till the next Destiny daily reset and waits
+ * till then to alert users of vendor inventory
  */
-  dailyReset (): void {
+  dailyReset (hours: number, minutes: number, seconds: number, milliseconds: number): void {
     const resetTime = new Date()
 
     if (
-      resetTime.getUTCHours() >= 17 &&
-    resetTime.getUTCMinutes() >= 1 &&
-    resetTime.getUTCSeconds() >= 0 &&
-    resetTime.getUTCMilliseconds() > 0
+      resetTime.getUTCHours() >= hours &&
+      resetTime.getUTCMinutes() >= minutes &&
+      resetTime.getUTCSeconds() >= seconds &&
+      resetTime.getUTCMilliseconds() > milliseconds
     ) {
       resetTime.setDate(resetTime.getDate() + 1)
     }
-    resetTime.setUTCHours(17)
-    resetTime.setUTCMinutes(1)
-    resetTime.setUTCSeconds(0)
-    resetTime.setUTCMilliseconds(0)
+    resetTime.setUTCHours(hours)
+    resetTime.setUTCMinutes(minutes)
+    resetTime.setUTCSeconds(seconds)
+    resetTime.setUTCMilliseconds(milliseconds)
 
     const waitTime = resetTime.getTime() - Date.now()
     setTimeout((async () => {
-      await this.beginAlerting()
+      await this.beginAlerting(hours, minutes, seconds, milliseconds)
     }) as RequestHandler, waitTime)
   }
 
   /**
  * Begin the alert workflow for users and then set the time till the next daily reset
  */
-  private async beginAlerting (): Promise<void> {
+  private async beginAlerting (
+    hours: number,
+    minutes: number,
+    seconds: number,
+    milliseconds: number
+  ): Promise<void> {
     await this.notifierService.alertUsersOfUnownedModsForSale()
-    this.dailyReset()
+    this.dailyReset(hours, minutes, seconds, milliseconds)
   }
 }

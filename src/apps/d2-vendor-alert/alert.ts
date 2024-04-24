@@ -57,6 +57,6 @@ export class Alert {
 
     await this.mongoDbService.connectToDatabase()
     this.discordClient.setupDiscordClient()
-    this.alertManager.dailyReset()
+    this.alertManager.dailyReset(17, 1, 0, 0)
   }
 }

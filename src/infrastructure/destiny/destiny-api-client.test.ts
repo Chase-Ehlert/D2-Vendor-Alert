@@ -88,7 +88,13 @@ describe('DestinyApiClient', () => {
     const mod2ItemHash = '456'
     const mod1 = new Mod(mod1ItemHash)
     const mod2 = new Mod(mod2ItemHash)
-    const adaMerchandise = { 350061650: { saleItems: { 1: { itemHash: mod1ItemHash }, 2: { itemHash: mod2ItemHash } } } }
+    const adaMerchandise = {
+      350061650: {
+        saleItems: {
+          1: { itemHash: mod1ItemHash }, 2: { itemHash: mod2ItemHash }
+        }
+      }
+    }
     const result = {
       data: {
         Response: { sales: { data: adaMerchandise } }
