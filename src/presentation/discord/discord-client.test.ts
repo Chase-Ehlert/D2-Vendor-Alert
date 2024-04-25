@@ -4,7 +4,7 @@ import { DiscordConfig } from '../../configs/discord-config'
 import { AxiosHttpClient } from '../../infrastructure/database/axios-http-client'
 import { MongoUserRepository } from '../../infrastructure/database/mongo-user-repository'
 import { DestinyApiClient } from '../../infrastructure/destiny/destiny-api-client'
-import { AlertCommand } from './commands/alert'
+import { AlertCommand } from './commands/alert-command'
 import { DiscordClient } from './discord-client'
 import * as discord from 'discord.js'
 

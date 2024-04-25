@@ -7,7 +7,7 @@ import { DestinyApiClient } from '../../infrastructure/destiny/destiny-api-clien
 import { MongoDbService } from '../../infrastructure/services/mongo-db-service'
 import { NotifierService } from '../../infrastructure/services/notifier-service'
 import { AlertManager } from '../../presentation/discord/alert-manager'
-import { AlertCommand } from '../../presentation/discord/commands/alert'
+import { AlertCommand } from '../../presentation/discord/commands/alert-command'
 import { DiscordClient } from '../../presentation/discord/discord-client'
 import { OAuthWebController } from '../../presentation/web/o-auth-web-controller'
 import { Alert } from './alert'
