@@ -9,6 +9,7 @@ import { AlertManager } from '../../presentation/discord/alert-manager'
 import metaUrl from '../../testing-helpers/url'
 import { OAuthResponse } from '../../domain/o-auth-response'
 import { OAuthRequest } from '../../domain/o-auth-request'
+import * as discord from 'discord.js'
 
 export class Alert {
   constructor (
@@ -48,6 +49,15 @@ export class Alert {
   private async startServer (
     app: { listen: (arg0: number, arg1: () => void) => void }
   ): Promise<void> {
+    const discordJsClient: any = new discord.Client({
+      intents: [
+        discord.GatewayIntentBits.Guilds,
+        discord.GatewayIntentBits.GuildMessages,
+        discord.GatewayIntentBits.MessageContent,
+        discord.GatewayIntentBits.GuildMessageReactions
+      ]
+    })
+
     app.listen(
       3001,
       () => {
@@ -56,7 +66,7 @@ export class Alert {
     )
 
     await this.mongoDbService.connectToDatabase()
-    this.discordClient.setupDiscordClient()
+    await this.discordClient.setupDiscordClient(discordJsClient)
     this.alertManager.dailyReset(17, 1, 0, 0)
   }
 }

@@ -78,7 +78,7 @@ beforeEach(() => {
 })
 
 describe('Alert', () => {
-  it('should create the server', async () => {
+  it('should create and start the server', async () => {
     await alert.runApp(mockApp)
 
     expect(mockApp.engine).toHaveBeenCalledWith('mustache', 'mockedMustacheEngine')
@@ -88,9 +88,14 @@ describe('Alert', () => {
       path.join(url.fileURLToPath(new URL('../src/presentation', url.pathToFileURL(metaUrl).href)), 'views')
     )
     expect(mockApp.get).toHaveBeenCalledWith('/', expect.any(Function))
+    expect(mockApp.listen).toBeCalledWith(3001, expect.any(Function))
+    expect(mongoDbService.connectToDatabase).toBeCalled()
+    expect(discordClient.setupDiscordClient).toBeCalled()
+    expect(alertManager.dailyReset).toBeCalled()
   })
 
   it('should setup the get root endpoint with the handleOAuth function', () => {
+    // refactor this away from the "duct tape" approach
     const expectedFunction = (alert as any).rootHandler(mockApp)
     const expectedRequest = { query: { code: '123' } }
     const expectedResult: OAuthResponse = {
@@ -105,14 +110,5 @@ describe('Alert', () => {
       expectedRequest,
       expectedResult
     )
-  })
-
-  it('should start the server', async () => {
-    await alert.runApp(mockApp)
-
-    expect(mockApp.listen).toBeCalledWith(3001, expect.any(Function))
-    expect(mongoDbService.connectToDatabase).toBeCalled()
-    expect(discordClient.setupDiscordClient).toBeCalled()
-    expect(alertManager.dailyReset).toBeCalled()
   })
 })
