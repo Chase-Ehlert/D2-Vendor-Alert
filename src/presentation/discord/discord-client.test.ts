@@ -14,7 +14,6 @@ jest.mock('./../../testing-helpers/url', () => {
 
 jest.mock('discord.js', () => ({
   Client: jest.fn(() => ({
-    // Mock any methods or properties of the client if needed
     commands: new Map(),
     on: jest.fn(),
     once: jest.fn(),
@@ -22,7 +21,7 @@ jest.mock('discord.js', () => ({
   })),
   Collection: jest.fn(() => new Map()),
   Events: {
-    ClientReady: 'ready' // Mocked Events
+    ClientReady: 'ready'
   },
   GatewayIntentBits: {
     Guilds: 1,
