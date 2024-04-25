@@ -51,16 +51,15 @@
     "transform": {
       "^.+\\.(t|j)sx?$": ["ts-jest", {"useESM": true}]
     },
-    "moduleNameMapper": {
-      "^(\\.{1,2}/.*)\\.js$": "$1"
-    },
     "extensionsToTreatAsEsm": [".ts"],
     "modulePathIgnorePatterns": [
       ".dist/",
       ".src/testing-helpers/",
       ".src/apps/d2-vendor-alert/app.ts",
+      ".src/apps/d2-vendor-alert/@types",
       ".src/apps/discord-notifier/app.ts",
-      ".src/apps/d2-vendor-alert/@types"
+      ".src/presentation/discord/deploy-commands-script.ts",
+      ".src/presentation/discord/deploy-commands.ts"
     ],
     "moduleFileExtensions": ["ts", "js", "json", "node"]
   }

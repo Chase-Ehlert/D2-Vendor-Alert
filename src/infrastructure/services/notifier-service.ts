@@ -1,6 +1,6 @@
-import { UserRepository } from '../../domain/user-repository.js'
+import { UserRepository } from '../../domain/user-repository'
 import axios from 'axios'
-import { NotifierServiceConfig } from '../../configs/notifier-service-config.js'
+import { NotifierServiceConfig } from '../../configs/notifier-service-config'
 
 export class NotifierService {
   constructor (

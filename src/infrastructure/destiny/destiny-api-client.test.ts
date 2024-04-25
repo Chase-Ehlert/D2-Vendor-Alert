@@ -3,8 +3,8 @@ import { MongoUserRepository } from '../database/mongo-user-repository'
 import { Mod } from '../../domain/mod'
 import { UserInterface } from '../../domain/user'
 import { TokenInfo } from '../../domain/token-info'
-import { DestinyApiClientConfig } from '../../configs/destiny-api-client-config.js'
-import { DestinyApiClient } from './destiny-api-client.js'
+import { DestinyApiClientConfig } from '../../configs/destiny-api-client-config'
+import { DestinyApiClient } from './destiny-api-client'
 
 jest.mock('./../../testing-helpers/url', () => {
   return 'example'

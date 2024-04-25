@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express'
-import { NotifierService } from '../../infrastructure/services/notifier-service.js'
+import { NotifierService } from '../../infrastructure/services/notifier-service'
 
 export class AlertManager {
   constructor (private readonly notifierService: NotifierService) {}

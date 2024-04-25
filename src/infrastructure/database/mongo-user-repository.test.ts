@@ -1,6 +1,6 @@
-import { TokenInfo } from '../../domain/token-info.js'
-import { User } from '../../domain/user.js'
-import { MongoUserRepository } from './mongo-user-repository.js'
+import { TokenInfo } from '../../domain/token-info'
+import { User } from '../../domain/user'
+import { MongoUserRepository } from './mongo-user-repository'
 
 describe('MongoUserRepository', () => {
   const mongoUserRepo = new MongoUserRepository()
