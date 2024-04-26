@@ -1,6 +1,5 @@
 import { AxiosHttpClient } from '../database/axios-http-client'
 import { MongoUserRepository } from '../database/mongo-user-repository'
-import { Mod } from '../../domain/mod'
 import { UserInterface } from '../../domain/user'
 import { TokenInfo } from '../../domain/token-info'
 import { DestinyApiClientConfig } from '../../configs/destiny-api-client-config'
@@ -24,13 +23,38 @@ beforeEach(() => {
 
 describe('DestinyApiClient', () => {
   const axiosHttpClient = new AxiosHttpClient()
-  const expectedApiKey = '123key'
   const mongoUserRepository = new MongoUserRepository()
+  const expectedApiKey = '123key'
+  const destinyId = 'destinyId'
+  const destinyCharacterId = 'character'
+  const expectedMembershipId = '123'
+  const expectedRefreshExpiration = '456'
+  const expectedRefreshToken = '789'
+  const accessToken = '123'
   const destinyApiClient = new DestinyApiClient(
     axiosHttpClient,
     mongoUserRepository,
       { apiKey: expectedApiKey } satisfies DestinyApiClientConfig
   )
+  const response = {
+    data: {
+      membership_id: expectedMembershipId,
+      refresh_expires_in: expectedRefreshExpiration,
+      refresh_token: expectedRefreshToken,
+      access_token: accessToken
+    }
+  }
+  const user = {
+    bungieUsername: 'name',
+    bungieUsernameCode: 'code',
+    discordId: 'discordId',
+    discordChannelId: 'channelId',
+    bungieMembershipId: 'bungie',
+    destinyId: destinyId,
+    destinyCharacterId: destinyCharacterId,
+    refreshExpiration: 'expiration',
+    refreshToken: 'token'
+  } as unknown as UserInterface
 
   it('should retrieve a list of definitions for Destiny items from a specific manifest file', async () => {
     const expectedManifestFileName = 'manifest'
@@ -77,17 +101,9 @@ describe('DestinyApiClient', () => {
     expect(value).toEqual(expectedItemDefinitions)
   })
 
-  it('should retrieve the list of Destiny vendors and their inventory', async () => {
-    const destinyId = 'destinyId'
-    const destinyCharacterId = 'character'
-    const accessToken = '123'
-    const expectedMembershipId = '123'
-    const expectedRefreshExpiration = '456'
-    const expectedRefreshToken = '789'
+  it('should retrieve the list of merchandise for a Destiny vendor', async () => {
     const mod1ItemHash = '123'
     const mod2ItemHash = '456'
-    const mod1 = new Mod(mod1ItemHash)
-    const mod2 = new Mod(mod2ItemHash)
     const adaMerchandise = {
       350061650: {
         saleItems: {
@@ -100,28 +116,9 @@ describe('DestinyApiClient', () => {
         Response: { sales: { data: adaMerchandise } }
       }
     }
-    const response = {
-      data: {
-        membership_id: expectedMembershipId,
-        refresh_expires_in: expectedRefreshExpiration,
-        refresh_token: expectedRefreshToken,
-        access_token: accessToken
-      }
-    }
-    const user = {
-      bungieUsername: 'name',
-      bungieUsernameCode: 'code',
-      discordId: 'discordId',
-      discordChannelId: 'channelId',
-      bungieMembershipId: 'bungie',
-      destinyId: destinyId,
-      destinyCharacterId: destinyCharacterId,
-      refreshExpiration: 'expiration',
-      refreshToken: 'token'
-    } as unknown as UserInterface
 
-    axiosHttpClient.get = jest.fn().mockResolvedValue(result)
     axiosHttpClient.post = jest.fn().mockResolvedValue(response)
+    axiosHttpClient.get = jest.fn().mockResolvedValue(result)
     jest.spyOn(mongoUserRepository, 'updateUserByMembershipId').mockResolvedValue()
 
     const value = await destinyApiClient.getVendorInfo(user.destinyId, user.destinyCharacterId, accessToken)
@@ -139,6 +136,28 @@ describe('DestinyApiClient', () => {
       }
     )
     expect(value).toEqual([mod1ItemHash, mod2ItemHash])
+  })
+
+  it('should throw an error when a vendors merchandise returns undefined', async () => {
+    const notAdasMerchandise = {
+      350061651: {}
+    }
+    const result = {
+      data: {
+        Response: { sales: { data: notAdasMerchandise } }
+      }
+    }
+
+    axiosHttpClient.post = jest.fn().mockResolvedValue(response)
+    axiosHttpClient.get = jest.fn().mockResolvedValue(result)
+    mongoUserRepository.updateUserByMembershipId = jest.fn()
+
+    try {
+      await destinyApiClient.getVendorInfo(user.destinyId, user.destinyCharacterId, accessToken)
+    } catch (error) {
+      expect(error).toBeInstanceOf(Error)
+      expect(error.message).toBe('Ada does not have any merchandise!')
+    }
   })
 
   it('should retrieve the list of collectibles that exist in Destiny', async () => {
@@ -287,7 +306,7 @@ describe('DestinyApiClient', () => {
 
     await destinyApiClient.getRefreshTokenInfo('1', expectedResult)
 
-    expect(expectedResult.sendFile).toBeCalledWith('landing-page-error-auth-code.html', expect.any(Object))
+    expect(expectedResult.sendFile).toHaveBeenCalledWith('landing-page-error-auth-code.html', expect.any(Object))
   })
 
   it('should check a users token expiration data and refresh it if its expired', async () => {

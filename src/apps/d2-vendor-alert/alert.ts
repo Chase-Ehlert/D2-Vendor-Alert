@@ -49,7 +49,7 @@ export class Alert {
   private async startServer (
     app: { listen: (arg0: number, arg1: () => void) => void }
   ): Promise<void> {
-    const discordJsClient: any = new discord.Client({
+    const discordJsClient = new discord.Client({
       intents: [
         discord.GatewayIntentBits.Guilds,
         discord.GatewayIntentBits.GuildMessages,

@@ -1,4 +1,8 @@
 export interface OAuthResponse {
-  render: (template: string, data: Record<string, any>) => void
+  render: (template: string, data: RenderGuardian) => void
   sendFile: (path: string) => void
+}
+
+interface RenderGuardian {
+  guardian: string
 }

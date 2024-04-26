@@ -83,7 +83,14 @@ export class DestinyApiClient {
         }
       })
 
-    return this.getAdaMerchandise(data.Response.sales.data)
+    const vendorMerchandiseMap = new Map<string, Map<string, Mod>>()
+
+    Object.entries(data.Response.sales.data).map(
+      ([vendorId, vendorMerchandise]: [string, {saleItems: Map<string, Mod>}]) =>
+        vendorMerchandiseMap.set(vendorId, vendorMerchandise.saleItems)
+    )
+
+    return this.getAdaMerchandise('350061650', vendorMerchandiseMap)
   }
 
   async getCollectibleInfo (destinyId: string): Promise<String[]> {
@@ -146,17 +153,14 @@ export class DestinyApiClient {
   /**
      * Retrieves the merchandise sold by Ada
      */
-  private getAdaMerchandise (vendorMerchandise: { [x: string]: { saleItems: any } }): string[] {
-    let adaMerchandise
-    const adaVendorId = '350061650'
+  private getAdaMerchandise (vendorId: string, vendorMerchandise: Map<string, Map<string, Mod>>): string[] {
+    const adaMerchandise = vendorMerchandise.get(vendorId)
 
-    for (const vendorId in vendorMerchandise) {
-      if (vendorId === adaVendorId) {
-        adaMerchandise = vendorMerchandise[vendorId].saleItems
-      }
+    if (vendorMerchandise?.has(vendorId) && adaMerchandise !== undefined) {
+      return Object.values(adaMerchandise).map((item: Mod) => (item.itemHash))
+    } else {
+      throw new Error('Ada does not have any merchandise!')
     }
-
-    return Object.values(adaMerchandise).map((item: Mod) => (item.itemHash))
   }
 
   async getDestinyUsername (bungieUsername: string, bungieUsernameCode: string): Promise<[]> {
