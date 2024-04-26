@@ -1,6 +1,6 @@
-import { ManifestService } from './manifest-service.js'
-import { UserInterface } from '../domain/user.js'
-import { Mod } from '../domain/mod.js'
+import { ManifestService } from '../services/manifest-service.js'
+import { UserInterface } from '../../domain/user.js'
+import { Mod } from '../../domain/mod.js'
 import { DestinyApiClient } from './destiny-api-client.js'
 
 export class Vendor {

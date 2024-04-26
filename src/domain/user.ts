@@ -8,7 +8,7 @@ export interface UserInterface extends Document {
   bungieMembershipId: string
   destinyId: string
   destinyCharacterId: string
-  refreshExpiration: string
+  refreshExpiration: number
   refreshToken: string
 }
 

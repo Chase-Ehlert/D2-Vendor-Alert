@@ -1,12 +1,9 @@
-import { User } from '../domain/user'
-import { MongoUserRepository } from '../infrastructure/database/mongo-user-repository'
+import { TokenInfo } from '../../domain/token-info'
+import { User } from '../../domain/user'
+import { MongoUserRepository } from './mongo-user-repository'
 
-describe('<MongoUserRepository/>', () => {
+describe('MongoUserRepository', () => {
   const mongoUserRepo = new MongoUserRepository()
-
-  it('should instantiate', () => {
-    expect(mongoUserRepo).not.toBeNull()
-  })
 
   it('should return true if a user exists in the database', async () => {
     User.exists = jest.fn().mockResolvedValue(true)
@@ -62,7 +59,7 @@ describe('<MongoUserRepository/>', () => {
     const refreshToken = 'guardian#123'
     User.findOneAndUpdate = jest.fn().mockResolvedValue({})
 
-    await mongoUserRepo.updateUserByMembershipId(bungieMembershipId, refreshExpiration, refreshToken)
+    await mongoUserRepo.updateUserByMembershipId(new TokenInfo(bungieMembershipId, refreshExpiration, refreshToken))
 
     expect(User.findOneAndUpdate).toBeCalledWith(
       { bungieMembershipId: bungieMembershipId },

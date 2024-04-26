@@ -1,5 +1,6 @@
-import { UserRepository } from './user-repository.js'
+import { UserRepository } from '../../domain/user-repository.js'
 import { User, UserInterface } from '../../domain/user.js'
+import { TokenInfo } from '../../domain/token-info.js'
 
 export class MongoUserRepository implements UserRepository {
   /**
@@ -40,15 +41,11 @@ export class MongoUserRepository implements UserRepository {
   /**
      * Updates the database information for a specific user using their Bungie membership id
      */
-  async updateUserByMembershipId (
-    bungieMembershipId: string,
-    refreshExpirationTime: string,
-    refreshToken: string
-  ): Promise<void> {
-    const filter = { bungieMembershipId: bungieMembershipId }
+  async updateUserByMembershipId (tokenInfo: TokenInfo): Promise<void> {
+    const filter = { bungieMembershipId: tokenInfo.bungieMembershipId }
     const updatedUser = new User({
-      refreshExpiration: this.determineExpirationDate(refreshExpirationTime),
-      refreshToken: refreshToken
+      refreshExpiration: this.determineExpirationDate(tokenInfo.refreshTokenExpirationTime),
+      refreshToken: tokenInfo.refreshToken
     },
     { _id: false }
     )

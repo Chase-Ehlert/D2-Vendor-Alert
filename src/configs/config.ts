@@ -1,11 +1,11 @@
 import 'dotenv/config.js'
 import joi from 'joi'
-import { DestinyApiClientConfig } from './destiny-api-client-config'
-import { DiscordConfig } from './discord-config'
-import { MongoDbServiceConfig } from './mongo-db-service-config'
-import { AlertConfig } from './alert-config'
-import { DeployCommandsConfig } from './deploy-commands-config'
-import { NotifierServiceConfig } from './notifier-service-config'
+import { DestinyApiClientConfig } from './destiny-api-client-config.js'
+import { DiscordConfig } from './discord-config.js'
+import { MongoDbServiceConfig } from './mongo-db-service-config.js'
+import { AlertConfig } from './alert-config.js'
+import { DeployCommandsConfig } from './deploy-commands-config.js'
+import { NotifierServiceConfig } from './notifier-service-config.js'
 
 interface Config {
   MONGO_URI?: string
@@ -143,5 +143,5 @@ export const DISCORD_CONFIG = DiscordConfigClass.fromConfig(value)
 export const MONGO_DB_SERVICE_CONFIG = MongoDbServiceConfigClass.fromConfig(value)
 export const ALERT_CONFIG = AlertConfigClass.fromConfig(value)
 export const DEPLOY_COMMANDS_CONFIG = DeployCommandsConfigClass.fromConfig(value)
-export const DISCORD_NOTIFIER_ADDRESS = NotifierServiceConfigClass.fromConfig(value)
+export const NOTIFIER_SERVICE_CONFIG = NotifierServiceConfigClass.fromConfig(value)
 export default value

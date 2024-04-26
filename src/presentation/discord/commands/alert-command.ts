@@ -1,5 +1,5 @@
 import { hyperlink, SlashCommandBuilder } from 'discord.js'
-import { AlertConfig } from '../../../configs/alert-config'
+import { AlertConfig } from '../../../configs/alert-config.js'
 
 export class AlertCommand {
   constructor (private readonly config: AlertConfig) {}

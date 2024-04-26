@@ -1,6 +1,6 @@
-import { UserRepository } from '../infrastructure/database/user-repository.js'
+import { UserRepository } from '../../domain/user-repository.js'
 import axios from 'axios'
-import { NotifierServiceConfig } from '../configs/notifier-service-config.js'
+import { NotifierServiceConfig } from '../../configs/notifier-service-config.js'
 
 export class NotifierService {
   constructor (
@@ -13,12 +13,10 @@ export class NotifierService {
    */
   async alertUsersOfUnownedModsForSale (): Promise<void> {
     for await (const user of await this.database.fetchAllUsers()) {
-      axios.post(
+      await axios.post(
         String(this.config.address).concat(':3002/notify'),
         { user: user },
         { headers: { 'Content-Type': 'application/json' } }
-      ).catch(
-        (error) => console.log(error)
       )
     }
   }

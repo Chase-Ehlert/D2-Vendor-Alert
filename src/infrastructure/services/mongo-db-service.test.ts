@@ -1,13 +1,16 @@
-import { MONGO_DB_SERVICE_CONFIG } from '../configs/config.js'
-import { MongoDbService } from '../presentation/mongo-db-service.js'
+import { MongoDbService } from './mongo-db-service'
+import { MongoDbServiceConfig } from '../../configs/mongo-db-service-config'
 import mongoose from 'mongoose'
 
-describe('<MongoDbService/>', () => {
-  let mongoDbService = new MongoDbService(MONGO_DB_SERVICE_CONFIG)
+beforeAll(() => {
+  global.console = {
+    ...console,
+    log: jest.fn()
+  }
+})
 
-  it('should instantiate', () => {
-    expect(mongoDbService).not.toBeNull()
-  })
+describe('MongoDbService', () => {
+  let mongoDbService = new MongoDbService({} satisfies MongoDbServiceConfig)
 
   it('should establish a connection to the mongo database', async () => {
     const expectedDatabaseUser = 'jack'
@@ -20,7 +23,6 @@ describe('<MongoDbService/>', () => {
       `${expectedDatabaseCluster}.mongodb.net/` +
       `${expectedDatabaseName}`
     }
-
     mongoDbService = new MongoDbService(config)
 
     mongoose.connect = jest.fn()

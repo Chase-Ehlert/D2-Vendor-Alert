@@ -1,5 +1,5 @@
 import { REST, Routes } from 'discord.js'
-import { AlertCommand } from './commands/alert.js'
+import { AlertCommand } from './commands/alert-command.js'
 import { DeployCommandsConfig } from '../../configs/deploy-commands-config.js'
 
 export class DeployCommands {

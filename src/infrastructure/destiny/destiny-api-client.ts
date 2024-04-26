@@ -1,12 +1,12 @@
-import { HttpClient } from './http-client.js'
-import { DestinyApiClientConfig } from '../configs/destiny-api-client-config.js'
-import { UserInterface } from '../domain/user.js'
-import { UserRepository } from '../infrastructure/database/user-repository.js'
-import { TokenInfo } from '../domain/token-info.js'
-import { Mod } from '../domain/mod.js'
-import { Collectible } from '../domain/collectible.js'
+import { HttpClient } from '../../domain/http-client.js'
+import { DestinyApiClientConfig } from '../../configs/destiny-api-client-config.js'
+import { UserInterface } from '../../domain/user.js'
+import { UserRepository } from '../../domain/user-repository.js'
+import { TokenInfo } from '../../domain/token-info.js'
+import { Mod } from '../../domain/mod.js'
+import { Collectible } from '../../domain/collectible.js'
 import path from 'path'
-import metaUrl from './url.js'
+import metaUrl from '../../testing-helpers/url.js'
 
 export class DestinyApiClient {
   private readonly apiKeyHeader
@@ -66,13 +66,9 @@ export class DestinyApiClient {
 
   async getVendorInfo (destinyId: string, destinyCharacterId: string, refreshToken: string): Promise<string[]> {
     const getVendorSalesComponent = 402
-    const tokenInfo = await this.getAccessTokenInfo(refreshToken)
+    const tokenInfo = await this.getTokenInfo(refreshToken)
 
-    await this.database.updateUserByMembershipId(
-      tokenInfo.bungieMembershipId,
-      tokenInfo.refreshTokenExpirationTime,
-      tokenInfo.refreshToken
-    )
+    await this.database.updateUserByMembershipId(tokenInfo)
 
     const { data } = await this.httpClient.get(
       this.bungieDomainWithDestinyDirectory +
@@ -108,16 +104,12 @@ export class DestinyApiClient {
    */
   async checkRefreshTokenExpiration (user: UserInterface): Promise<void> {
     const currentDate = new Date()
-    const expirationDate = new Date(String(user.refreshExpiration))
+    const expirationDate = new Date(user.refreshExpiration)
     expirationDate.setDate(expirationDate.getDate() - 1)
 
     if (currentDate.getTime() > expirationDate.getTime()) {
-      const tokenInfo = await this.getAccessTokenInfo(user.refreshToken)
-      await this.database.updateUserByMembershipId(
-        tokenInfo.bungieMembershipId,
-        tokenInfo.refreshTokenExpirationTime,
-        tokenInfo.refreshToken
-      )
+      const tokenInfo = await this.getTokenInfo(user.refreshToken)
+      await this.database.updateUserByMembershipId(tokenInfo)
     }
   }
 
@@ -202,8 +194,8 @@ export class DestinyApiClient {
   /**
      * Retrieve the user's access token by calling the Destiny API with their refresh token
      */
-  private async getAccessTokenInfo (refreshToken: string): Promise<TokenInfo> {
-    const response = await this.httpClient.post(
+  private async getTokenInfo (refreshToken: string): Promise<TokenInfo> {
+    const { data } = await this.httpClient.post(
       this.bungieDomainWithTokenDirectory, {
         grant_type: 'refresh_token',
         refresh_token: refreshToken,
@@ -214,10 +206,10 @@ export class DestinyApiClient {
       })
 
     return new TokenInfo(
-      response.data.membership_id,
-      response.data.refresh_expires_in,
-      response.data.refresh_token,
-      response.data.access_token
+      data.membership_id,
+      data.refresh_expires_in,
+      data.refresh_token,
+      data.access_token
     )
   }
 

@@ -1,8 +1,8 @@
-import * as discord from 'discord.js'
-import { UserRepository } from '../database/user-repository.js'
-import { AlertCommand } from './commands/alert.js'
+import { UserRepository } from '../../domain/user-repository.js'
 import { DiscordConfig } from '../../configs/discord-config.js'
-import { DestinyApiClient } from '../../presentation/destiny-api-client.js'
+import { DestinyApiClient } from '../../infrastructure/destiny/destiny-api-client.js'
+import { AlertCommand } from './commands/alert-command.js'
+import * as discord from 'discord.js'
 
 export class DiscordClient {
   constructor (
@@ -15,21 +15,12 @@ export class DiscordClient {
   /**
      * Connect to the Discord Client
      */
-  setupDiscordClient (): void {
-    const discordClient: any = new discord.Client({
-      intents: [
-        discord.GatewayIntentBits.Guilds,
-        discord.GatewayIntentBits.GuildMessages,
-        discord.GatewayIntentBits.MessageContent,
-        discord.GatewayIntentBits.GuildMessageReactions
-      ]
-    })
-
+  async setupDiscordClient (discordClient: discord.Client): Promise<void> {
     discordClient.commands = new discord.Collection()
     discordClient.once(discord.Events.ClientReady, (eventClient: any) => {
       console.log(`Ready, logged in as ${String(eventClient.user.tag)}`)
     })
-    discordClient.login(this.config.token)
+    await discordClient.login(this.config.token)
 
     this.setupSlashCommands(discordClient)
     this.replyToSlashCommands(discordClient)
@@ -38,7 +29,7 @@ export class DiscordClient {
   /**
      * Initialiaze registered slash commands
      */
-  setupSlashCommands (discordClient: any): void {
+  private setupSlashCommands (discordClient: any): void {
     const command = this.alertCommand.setupCommand()
 
     if ('data' in command && 'execute' in command) {
@@ -51,7 +42,7 @@ export class DiscordClient {
   /**
      * Respond to any slash command and prompt user for profile information
      */
-  replyToSlashCommands (discordClient: any): void {
+  private replyToSlashCommands (discordClient: any): void {
     discordClient.on(discord.Events.InteractionCreate, async (interaction: any) => {
       if (!(interaction as discord.Interaction).isCommand()) return
 
@@ -84,7 +75,7 @@ export class DiscordClient {
   /**
      * Validate user's submitted profile information
      */
-  async handleIncommingMessage (message: any, interaction: any, command: any): Promise<void> {
+  private async handleIncommingMessage (message: any, interaction: any, command: any): Promise<void> {
     if (await this.doesBungieUsernameExistInDestiny(message)) {
       await this.database.doesUserExist(message.content)
         ? await this.replyUserExists(interaction)
@@ -97,14 +88,14 @@ export class DiscordClient {
   /**
      * Reply back to user that they're profile information exists in the database already
      */
-  async replyUserExists (interaction: any): Promise<void> {
+  private async replyUserExists (interaction: any): Promise<void> {
     await interaction.followUp({ content: 'User already exists!' })
   }
 
   /**
      * Add user's profile information to database
      */
-  async addUserToAlertBot (username: string, interaction: any, command: any): Promise<void> {
+  private async addUserToAlertBot (username: string, interaction: any, command: any): Promise<void> {
     const index = username.indexOf('#')
     const bungieUsername = username.substring(0, index)
     const bungieUsernameCode = username.substring(Number(index) + 1, username.length)
@@ -121,7 +112,7 @@ export class DiscordClient {
   /**
      * Validate the user's submitted username exists in Destiny 2
      */
-  async doesBungieUsernameExistInDestiny (message: any): Promise<boolean> {
+  private async doesBungieUsernameExistInDestiny (message: any): Promise<boolean> {
     const index = message.content.indexOf('#')
     const bungieUsername = message.content.substring(0, index)
     const bungieUsernameCode = message.content.substring(Number(index) + 1, message.content.length)

@@ -1,16 +1,16 @@
-import { DESTINY_API_CLIENT_CONFIG } from '../configs/config'
-import { MongoUserRepository } from '../infrastructure/database/mongo-user-repository'
-import { DestinyApiClient } from '../presentation/destiny-api-client'
-import { AxiosHttpClient } from '../infrastructure/database/axios-http-client'
-import { ManifestService } from '../presentation/manifest-service'
-import { Mod } from '../domain/mod'
+import { MongoUserRepository } from '../database/mongo-user-repository'
+import { AxiosHttpClient } from '../database/axios-http-client'
+import { Mod } from '../../domain/mod'
+import { DestinyApiClientConfig } from '../../configs/destiny-api-client-config'
+import { DestinyApiClient } from '../destiny/destiny-api-client'
+import { ManifestService } from './manifest-service'
 
-jest.mock('./../presentation/url', () => {
+jest.mock('./../../testing-helpers/url', () => {
   return 'example'
 })
 
-describe('<ManifestService/>', () => {
-  const destinyApiClient = new DestinyApiClient(new AxiosHttpClient(), new MongoUserRepository(), DESTINY_API_CLIENT_CONFIG)
+describe('ManifestService', () => {
+  const destinyApiClient = new DestinyApiClient(new AxiosHttpClient(), new MongoUserRepository(), {} satisfies DestinyApiClientConfig)
   const manifestService = new ManifestService(destinyApiClient)
 
   it('should return a list of mods with their info from the manifest', async () => {

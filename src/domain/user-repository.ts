@@ -1,4 +1,5 @@
-import { UserInterface } from '../../domain/user'
+import { TokenInfo } from './token-info.js'
+import { UserInterface } from './user.js'
 
 export interface UserRepository {
   doesUserExist: (bungieNetUsername: string) => Promise<boolean>
@@ -10,11 +11,7 @@ export interface UserRepository {
     discordChannelId: string
   ) => Promise<void>
 
-  updateUserByMembershipId: (
-    bungieMembershipId: string,
-    refreshExpirationTime: string,
-    refreshToken: string
-  ) => Promise<void>
+  updateUserByMembershipId: (tokenInfo: TokenInfo) => Promise<void>
 
   updateUserByUsername: (
     bungieUsername: string,
