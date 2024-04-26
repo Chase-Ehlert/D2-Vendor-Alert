@@ -49,9 +49,16 @@
     "preset": "ts-jest",
     "testEnvironment": "node",
     "transform": {
-      "^.+\\.(t|j)sx?$": ["ts-jest", {"useESM": true}]
+      "^.+\\.(t|j)sx?$": [
+        "ts-jest",
+        {
+          "useESM": true
+        }
+      ]
     },
-    "extensionsToTreatAsEsm": [".ts"],
+    "extensionsToTreatAsEsm": [
+      ".ts"
+    ],
     "modulePathIgnorePatterns": [
       ".dist/",
       ".src/testing-helpers/",
@@ -61,6 +68,12 @@
       ".src/presentation/discord/deploy-commands-script.ts",
       ".src/presentation/discord/deploy-commands.ts"
     ],
-    "moduleFileExtensions": ["ts", "js", "json", "node"]
+    "moduleFileExtensions": [
+      "ts",
+      "js",
+      "json",
+      "node"
+    ],
+    "setupFiles": ["./jest.setup.ts"]
   }
 }
