@@ -103,7 +103,11 @@ export class DestinyApiClient {
         headers: this.apiKeyHeader
       })
 
-    return this.getUnownedMods(data.Response.profileCollectibles.data.collectibles)
+    const collectibles = Object.entries(data.Response.profileCollectibles.data.collectibles).map(
+      ([id, value]: [string, {state: number}]) => new Collectible(id, value.state)
+    )
+
+    return this.getUnownedMods(collectibles)
   }
 
   /**
@@ -220,9 +224,8 @@ export class DestinyApiClient {
   /**
      * Retrieves the list of unowned mods for a user
      */
-  private getUnownedMods (collectibleData: ArrayLike<unknown> | { [s: string]: unknown }): String[] {
+  private getUnownedMods (collectibles: Collectible[]): String[] {
     const unownedModStateId = 65
-    const collectibles = Object.entries(collectibleData).map(([id, value]: [string, {state: number}]) => new Collectible(id, value.state))
     const collectibleMods = collectibles.filter(mod => mod.state === unownedModStateId)
 
     return collectibleMods.map(collectible => collectible.id)
