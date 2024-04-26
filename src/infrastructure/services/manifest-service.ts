@@ -1,5 +1,5 @@
-import { DestinyApiClient } from '../destiny/destiny-api-client'
-import { Mod } from '../../domain/mod'
+import { DestinyApiClient } from '../destiny/destiny-api-client.js'
+import { Mod } from '../../domain/mod.js'
 
 export class ManifestService {
   constructor (private readonly destinyApiClient: DestinyApiClient) { }

@@ -48,13 +48,9 @@
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node",
-    "transform": {
-      "^.+\\.(t|j)sx?$": [
-        "ts-jest",
-        {
-          "useESM": true
-        }
-      ]
+    "transform": {"\\.[jt]sx?$": ["ts-jest", { "useESM": true }] },
+    "moduleNameMapper": {
+      "^(\\.\\.?\\/.+)\\.js$": "$1"
     },
     "extensionsToTreatAsEsm": [
       ".ts"
@@ -67,12 +63,6 @@
       ".src/apps/discord-notifier/app.ts",
       ".src/presentation/discord/deploy-commands-script.ts",
       ".src/presentation/discord/deploy-commands.ts"
-    ],
-    "moduleFileExtensions": [
-      "ts",
-      "js",
-      "json",
-      "node"
     ],
     "setupFiles": ["./jest.setup.ts"]
   }

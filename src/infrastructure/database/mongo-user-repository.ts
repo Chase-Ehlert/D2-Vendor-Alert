@@ -1,6 +1,6 @@
-import { UserRepository } from '../../domain/user-repository'
-import { User, UserInterface } from '../../domain/user'
-import { TokenInfo } from '../../domain/token-info'
+import { UserRepository } from '../../domain/user-repository.js'
+import { User, UserInterface } from '../../domain/user.js'
+import { TokenInfo } from '../../domain/token-info.js'
 
 export class MongoUserRepository implements UserRepository {
   /**

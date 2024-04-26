@@ -1,9 +1,9 @@
 import express from 'express'
-import { TokenInfo } from '../../domain/token-info'
-import { MongoUserRepository } from '../../infrastructure/database/mongo-user-repository'
-import { DestinyApiClient } from '../../infrastructure/destiny/destiny-api-client'
-import { OAuthResponse } from '../../domain/o-auth-response'
-import { OAuthRequest } from '../../domain/o-auth-request'
+import { TokenInfo } from '../../domain/token-info.js'
+import { MongoUserRepository } from '../../infrastructure/database/mongo-user-repository.js'
+import { DestinyApiClient } from '../../infrastructure/destiny/destiny-api-client.js'
+import { OAuthResponse } from '../../domain/o-auth-response.js'
+import { OAuthRequest } from '../../domain/o-auth-request.js'
 
 export class OAuthWebController {
   constructor (

@@ -1,12 +1,12 @@
-import { HttpClient } from '../../domain/http-client'
-import { DestinyApiClientConfig } from '../../configs/destiny-api-client-config'
-import { UserInterface } from '../../domain/user'
-import { UserRepository } from '../../domain/user-repository'
-import { TokenInfo } from '../../domain/token-info'
-import { Mod } from '../../domain/mod'
-import { Collectible } from '../../domain/collectible'
+import { HttpClient } from '../../domain/http-client.js'
+import { DestinyApiClientConfig } from '../../configs/destiny-api-client-config.js'
+import { UserInterface } from '../../domain/user.js'
+import { UserRepository } from '../../domain/user-repository.js'
+import { TokenInfo } from '../../domain/token-info.js'
+import { Mod } from '../../domain/mod.js'
+import { Collectible } from '../../domain/collectible.js'
 import path from 'path'
-import metaUrl from '../../testing-helpers/url'
+import metaUrl from '../../testing-helpers/url.js'
 
 export class DestinyApiClient {
   private readonly apiKeyHeader
