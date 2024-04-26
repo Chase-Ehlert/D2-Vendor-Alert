@@ -39,7 +39,7 @@ describe('MongoUserRepository', () => {
 
     await mongoUserRepo.updateUserByUsername(bungieUsername, refreshExpiration, refreshToken, destinyId, characterId)
 
-    expect(User.findOneAndUpdate).toBeCalledWith(
+    expect(User.findOneAndUpdate).toHaveBeenCalledWith(
       { bungieUsername: bungieUsername },
       {
         $set: expect.objectContaining(
@@ -61,7 +61,7 @@ describe('MongoUserRepository', () => {
 
     await mongoUserRepo.updateUserByMembershipId(new TokenInfo(bungieMembershipId, refreshExpiration, refreshToken))
 
-    expect(User.findOneAndUpdate).toBeCalledWith(
+    expect(User.findOneAndUpdate).toHaveBeenCalledWith(
       { bungieMembershipId: bungieMembershipId },
       expect.objectContaining(
         {

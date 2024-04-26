@@ -78,7 +78,7 @@ describe('Notify', () => {
 
     await expectedFunction(request)
 
-    expect(destinyApiClient.checkRefreshTokenExpiration).toBeCalledWith(expectedUser)
-    expect(discordService.compareModsForSaleWithUserInventory).toBeCalledWith(expectedUser)
+    expect(destinyApiClient.checkRefreshTokenExpiration).toHaveBeenCalledWith(expectedUser)
+    expect(discordService.compareModsForSaleWithUserInventory).toHaveBeenCalledWith(expectedUser)
   })
 })

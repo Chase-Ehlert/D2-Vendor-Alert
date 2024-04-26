@@ -55,7 +55,7 @@ describe('OAuthWebController', () => {
 
     await oauthWebController.handleOAuth(mockApp, request, mockResult)
 
-    expect(mockResult.render).toBeCalledWith('landing-page.mustache', { guardian: expectedBungieUsername })
+    expect(mockResult.render).toHaveBeenCalledWith('landing-page.mustache', { guardian: expectedBungieUsername })
   })
 
   it('should return an error page when the request code is undefined', async () => {
@@ -66,8 +66,8 @@ describe('OAuthWebController', () => {
 
     await oauthWebController.handleOAuth(mockApp, request, mockResult)
 
-    expect(consoleSpy).toBeCalledWith('Error with retreving code from authorization url on landing page')
-    expect(consoleSpy).toBeCalledWith(request)
-    expect(mockResult.sendFile).toBeCalledWith(String(mockApp.get('views')) + '/landing-page-error.html')
+    expect(consoleSpy).toHaveBeenCalledWith('Error with retreving code from authorization url on landing page')
+    expect(consoleSpy).toHaveBeenCalledWith(request)
+    expect(mockResult.sendFile).toHaveBeenCalledWith(String(mockApp.get('views')) + '/landing-page-error.html')
   })
 })

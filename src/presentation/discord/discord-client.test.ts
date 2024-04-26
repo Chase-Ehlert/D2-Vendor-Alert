@@ -64,8 +64,8 @@ describe('DiscordClient', () => {
 
     await discordClient.setupDiscordClient(discordJsClient)
 
-    expect(discordJsClient.once).toBeCalledWith(discord.Events.ClientReady, expect.any(Function))
-    expect(discordJsClient.login).toBeCalledWith(expectedDiscordConfig.token)
-    expect(discordJsClient.on).toBeCalledWith(discord.Events.InteractionCreate, expect.any(Function))
+    expect(discordJsClient.once).toHaveBeenCalledWith(discord.Events.ClientReady, expect.any(Function))
+    expect(discordJsClient.login).toHaveBeenCalledWith(expectedDiscordConfig.token)
+    expect(discordJsClient.on).toHaveBeenCalledWith(discord.Events.InteractionCreate, expect.any(Function))
   })
 })

@@ -26,6 +26,6 @@ describe('AlertManager', () => {
 
     jest.advanceTimersByTime(0)
 
-    expect(notifierService.alertUsersOfUnownedModsForSale).toBeCalled()
+    expect(notifierService.alertUsersOfUnownedModsForSale).toHaveBeenCalled()
   })
 })

@@ -88,7 +88,7 @@ describe('Alert', () => {
       path.join(url.fileURLToPath(new URL('../src/presentation', url.pathToFileURL(metaUrl).href)), 'views')
     )
     expect(mockApp.get).toHaveBeenCalledWith('/', expect.any(Function))
-    expect(mockApp.listen).toBeCalledWith(3001, expect.any(Function))
+    expect(mockApp.listen).toHaveBeenCalledWith(3001, expect.any(Function))
     expect(mongoDbService.connectToDatabase).toBeCalled()
     expect(discordClient.setupDiscordClient).toBeCalled()
     expect(alertManager.dailyReset).toBeCalled()
@@ -105,7 +105,7 @@ describe('Alert', () => {
 
     expectedFunction(expectedRequest, expectedResult)
 
-    expect(oAuthWebController.handleOAuth).toBeCalledWith(
+    expect(oAuthWebController.handleOAuth).toHaveBeenCalledWith(
       mockApp,
       expectedRequest,
       expectedResult
