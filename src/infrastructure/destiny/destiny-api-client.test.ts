@@ -4,9 +4,10 @@ import { UserInterface } from '../../domain/user'
 import { TokenInfo } from '../../domain/token-info'
 import { DestinyApiClientConfig } from '../../configs/destiny-api-client-config'
 import { DestinyApiClient } from './destiny-api-client'
+import path from 'path'
 
 jest.mock('./../../testing-helpers/url', () => {
-  return 'example'
+  return 'example/somewhere'
 })
 
 beforeAll(() => {
@@ -295,7 +296,10 @@ describe('DestinyApiClient', () => {
 
     const value = await destinyApiClient.getRefreshTokenInfo(
       expectedAuthCode,
-      { sendFile: jest.fn() }
+      {
+        render: jest.fn(),
+        sendFile: jest.fn()
+      }
     )
 
     expect(value).toEqual(expectedRefreshTokenInfo)
@@ -306,7 +310,9 @@ describe('DestinyApiClient', () => {
 
     await destinyApiClient.getRefreshTokenInfo('1', expectedResult)
 
-    expect(expectedResult.sendFile).toHaveBeenCalledWith('landing-page-error-auth-code.html', expect.any(Object))
+    expect(expectedResult.sendFile).toHaveBeenCalledWith(
+      path.join('example/somewhere/src/presentation/views/landing-page-error-auth-code.html')
+    )
   })
 
   it('should check a users token expiration data and refresh it if its expired', async () => {

@@ -7,6 +7,7 @@ import { Mod } from '../../domain/mod.js'
 import { Collectible } from '../../domain/collectible.js'
 import path from 'path'
 import metaUrl from '../../testing-helpers/url.js'
+import { OAuthResponse } from '../../domain/o-auth-response.js'
 
 export class DestinyApiClient {
   private readonly apiKeyHeader
@@ -126,7 +127,7 @@ export class DestinyApiClient {
 
   async getRefreshTokenInfo (
     authorizationCode: string,
-    result: { sendFile: (arg0: string, arg1: { root: string }) => void }
+    result: OAuthResponse
   ): Promise<TokenInfo | void> {
     try {
       const { data } = await this.httpClient.post(
@@ -149,7 +150,7 @@ export class DestinyApiClient {
       console.log('Error occurred while making the refresh token call with an authorization code')
       console.log(authorizationCode)
       if (result != null) {
-        result.sendFile('landing-page-error-auth-code.html', { root: path.join(metaUrl, 'src/views') })
+        result.sendFile(path.join(metaUrl, 'src/presentation/views/landing-page-error-auth-code.html'))
       }
     }
   }
