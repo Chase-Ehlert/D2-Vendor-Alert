@@ -7,9 +7,10 @@ import { MongoUserRepository } from '../../infrastructure/database/mongo-user-re
 import { DestinyApiClient } from '../../infrastructure/destiny/destiny-api-client'
 import { OAuthWebController } from './o-auth-web-controller'
 import express from 'express'
+import path from 'path'
 
 jest.mock('./../../testing-helpers/url', () => {
-  return 'example'
+  return 'example/somewhere'
 })
 
 beforeAll(() => {
@@ -68,6 +69,8 @@ describe('OAuthWebController', () => {
 
     expect(consoleSpy).toHaveBeenCalledWith('Error with retreving code from authorization url on landing page')
     expect(consoleSpy).toHaveBeenCalledWith(request)
-    expect(mockResult.sendFile).toHaveBeenCalledWith(String(mockApp.get('views')) + '/landing-page-error.html')
+    expect(mockResult.sendFile).toHaveBeenCalledWith(
+      path.join('example/somewhere/src/presentation/views/landing-page-error.html')
+    )
   })
 })

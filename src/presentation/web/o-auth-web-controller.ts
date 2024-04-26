@@ -4,6 +4,8 @@ import { MongoUserRepository } from '../../infrastructure/database/mongo-user-re
 import { DestinyApiClient } from '../../infrastructure/destiny/destiny-api-client.js'
 import { OAuthResponse } from '../../domain/o-auth-response.js'
 import { OAuthRequest } from '../../domain/o-auth-request.js'
+import path from 'path'
+import metaUrl from '../../testing-helpers/url.js'
 
 export class OAuthWebController {
   constructor (
@@ -24,8 +26,7 @@ export class OAuthWebController {
     } else {
       console.log('Error with retreving code from authorization url on landing page')
       console.log(request)
-      const errorLandingPagePath = String(app.get('views')) + '/landing-page-error.html'
-      result.sendFile(errorLandingPagePath)
+      result.sendFile(path.join(metaUrl, 'src/presentation/views/landing-page-error.html'))
     }
   }
 
