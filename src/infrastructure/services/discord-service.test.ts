@@ -7,7 +7,6 @@ import { DiscordConfig } from '../../configs/discord-config'
 import { DestinyApiClient } from '../destiny/destiny-api-client'
 import { Vendor } from '../destiny/vendor'
 import { DiscordService } from './discord-service'
-import { ManifestService } from './manifest-service'
 
 jest.mock('./../../testing-helpers/url', () => {
   return 'example'
@@ -19,10 +18,7 @@ describe('DiscordService', () => {
     new MongoUserRepository(),
     {} satisfies DestinyApiClientConfig
   )
-  const vendor = new Vendor(
-    destinyApiClient,
-    new ManifestService(destinyApiClient)
-  )
+  const vendor = new Vendor(destinyApiClient)
   const expectedToken = '123Token'
   const discordService = new DiscordService(
     vendor,

@@ -5,6 +5,7 @@ import { TokenInfo } from '../../domain/token-info'
 import { DestinyApiClientConfig } from '../../configs/destiny-api-client-config'
 import { DestinyApiClient } from './destiny-api-client'
 import path from 'path'
+import { DisplayProperties, Merchandise, Mod } from '../../domain/mod.js'
 
 jest.mock('./../../testing-helpers/url', () => {
   return 'example/somewhere'
@@ -61,6 +62,7 @@ describe('DestinyApiClient', () => {
     const expectedManifestFileName = 'manifest'
     const itemHash = '0132'
     const itemName = 'Sunglasses of Dudeness'
+    const mod = new Mod(itemHash, { name: itemName } satisfies DisplayProperties, '19')
     const manifest = {
       data: {
         Response: {
@@ -74,8 +76,8 @@ describe('DestinyApiClient', () => {
       data: {
         DestinyInventoryItemDefinition: {
           987: {
-            itemType: 19,
             hash: itemHash,
+            itemType: 19,
             displayProperties: {
               name: itemName
             }
@@ -83,8 +85,6 @@ describe('DestinyApiClient', () => {
         }
       }
     }
-    const expectedItemDefinitions = new Map()
-    expectedItemDefinitions.set(itemHash, itemName)
 
     axiosHttpClient.get = jest.fn().mockImplementation(async (url): Promise<any> => {
       switch (url) {
@@ -95,11 +95,15 @@ describe('DestinyApiClient', () => {
       }
     })
 
-    const value = await destinyApiClient.getDestinyInventoryItemDefinition()
+    const value = await destinyApiClient.getDestinyEquippableMods()
 
     expect(axiosHttpClient.get).toHaveBeenCalledWith('https://www.bungie.net/manifest')
     expect(axiosHttpClient.get).toHaveBeenCalledWith(`https://www.bungie.net/${expectedManifestFileName}`)
-    expect(value).toEqual(expectedItemDefinitions)
+    expect(value).toHaveLength(1)
+    expect(value[0] instanceof Mod).toBeTruthy()
+    expect(value[0].displayProperties).toEqual(mod.displayProperties)
+    expect(value[0].hash).toEqual(mod.hash)
+    expect(JSON.stringify(value[0].itemType)).toEqual(mod.itemType)
   })
 
   it('should retrieve the list of merchandise for a Destiny vendor', async () => {
@@ -108,7 +112,8 @@ describe('DestinyApiClient', () => {
     const adaMerchandise = {
       350061650: {
         saleItems: {
-          1: { itemHash: mod1ItemHash }, 2: { itemHash: mod2ItemHash }
+          1: { itemHash: mod1ItemHash } satisfies Merchandise,
+          2: { itemHash: mod2ItemHash } satisfies Merchandise
         }
       }
     }

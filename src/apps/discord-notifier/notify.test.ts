@@ -8,7 +8,6 @@ import { MongoDbService } from '../../infrastructure/services/mongo-db-service'
 import { DiscordService } from '../../infrastructure/services/discord-service'
 import { Notify } from './notify'
 import { Vendor } from '../../infrastructure/destiny/vendor'
-import { ManifestService } from '../../infrastructure/services/manifest-service'
 import express from 'express'
 
 const jsonMock = jest.fn()
@@ -46,7 +45,7 @@ beforeEach(() => {
       {} satisfies DestinyApiClientConfig
   )
   discordService = new DiscordService(
-    new Vendor(destinyApiClient, new ManifestService(destinyApiClient)),
+    new Vendor(destinyApiClient),
     new AxiosHttpClient(),
       {} satisfies DiscordConfig
   )

@@ -3,7 +3,6 @@ import { MongoUserRepository } from '../../infrastructure/database/mongo-user-re
 import { DestinyApiClient } from '../../infrastructure/destiny/destiny-api-client.js'
 import { Vendor } from '../../infrastructure/destiny/vendor.js'
 import { DiscordService } from '../../infrastructure/services/discord-service.js'
-import { ManifestService } from '../../infrastructure/services/manifest-service.js'
 import { MongoDbService } from '../../infrastructure/services/mongo-db-service.js'
 import { AxiosHttpClient } from '../../infrastructure/database/axios-http-client.js'
 import { DESTINY_API_CLIENT_CONFIG, DISCORD_CONFIG, MONGO_DB_SERVICE_CONFIG } from '../../configs/config.js'
@@ -18,7 +17,7 @@ const destinyApiClient = new DestinyApiClient(
 const notify = new Notify(
   destinyApiClient,
   new DiscordService(
-    new Vendor(destinyApiClient, new ManifestService(destinyApiClient)),
+    new Vendor(destinyApiClient),
     new AxiosHttpClient(),
     DISCORD_CONFIG
   ),

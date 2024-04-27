@@ -3,7 +3,7 @@ import { DestinyApiClientConfig } from '../../configs/destiny-api-client-config.
 import { UserInterface } from '../../domain/user.js'
 import { UserRepository } from '../../domain/user-repository.js'
 import { TokenInfo } from '../../domain/token-info.js'
-import { Mod } from '../../domain/mod.js'
+import { Merchandise, Mod } from '../../domain/mod.js'
 import { Collectible } from '../../domain/collectible.js'
 import path from 'path'
 import metaUrl from '../../testing-helpers/url.js'
@@ -54,18 +54,34 @@ export class DestinyApiClient {
     return data.Response.profile.data.characterIds[0]
   }
 
-  async getDestinyInventoryItemDefinition (): Promise<Map<string, string>> {
+  async getDestinyEquippableMods (): Promise<Mod[]> {
     const { data } = await this.httpClient.get(
       this.bungieDomainWithDestinyDirectory + 'manifest/', {
         headers: this.apiKeyHeader
       })
+
     const manifestFileName: string = data.Response.jsonWorldContentPaths.en
     const response = await this.httpClient.get(this.bungieDomain + manifestFileName)
 
-    return this.getDestinyInventoryModDescriptions(response.data.DestinyInventoryItemDefinition)
+    const convertResponseToMods = Object.values(response.data.DestinyInventoryItemDefinition).map(
+      (mod: Mod) => (
+        new Mod(mod.hash, mod.displayProperties, mod.itemType)
+      )
+    )
+
+    const filterOutUnequippableMods = convertResponseToMods.filter((mod: Mod) => {
+      return (JSON.stringify(mod.itemType) === '19') &&
+      (Boolean(Object.prototype.hasOwnProperty.call(mod, 'hash')))
+    })
+
+    return filterOutUnequippableMods
   }
 
-  async getVendorInfo (destinyId: string, destinyCharacterId: string, refreshToken: string): Promise<string[]> {
+  async getVendorInfo (
+    destinyId: string,
+    destinyCharacterId: string,
+    refreshToken: string
+  ): Promise<string[]> {
     const getVendorSalesComponent = 402
     const tokenInfo = await this.getTokenInfo(refreshToken)
 
@@ -91,7 +107,7 @@ export class DestinyApiClient {
         vendorMerchandiseMap.set(vendorId, vendorMerchandise.saleItems)
     )
 
-    return this.getAdaMerchandise('350061650', vendorMerchandiseMap)
+    return this.getAdaMerchandiseHashes('350061650', vendorMerchandiseMap)
   }
 
   async getCollectibleInfo (destinyId: string): Promise<String[]> {
@@ -158,11 +174,14 @@ export class DestinyApiClient {
   /**
      * Retrieves the merchandise sold by Ada
      */
-  private getAdaMerchandise (vendorId: string, vendorMerchandise: Map<string, Map<string, Mod>>): string[] {
+  private getAdaMerchandiseHashes (
+    vendorId: string,
+    vendorMerchandise: Map<string, Map<string, Mod>>
+  ): string[] {
     const adaMerchandise = vendorMerchandise.get(vendorId)
 
-    if (vendorMerchandise?.has(vendorId) && adaMerchandise !== undefined) {
-      return Object.values(adaMerchandise).map((item: Mod) => (item.itemHash))
+    if (adaMerchandise !== undefined) {
+      return Object.values(adaMerchandise).map((item: Merchandise) => (item.itemHash))
     } else {
       throw new Error('Ada does not have any merchandise!')
     }
@@ -181,23 +200,6 @@ export class DestinyApiClient {
       })
 
     return data.Response
-  }
-
-  private getDestinyInventoryModDescriptions (
-    destinyInventoryItemDefinition: { [s: string]: unknown } | ArrayLike<unknown>
-  ): Map<string, string> {
-    const filteredInventory = Object.values(destinyInventoryItemDefinition).filter((item: Partial<Mod>) => {
-      return (JSON.stringify(item.itemType) === '19') &&
-      (Boolean(Object.prototype.hasOwnProperty.call(item, 'hash')))
-    })
-
-    const destinyInventoryMods: Mod[] = Object.values(filteredInventory).map((
-      { displayProperties, itemType, hash }: any
-    ) => (
-      new Mod(hash, displayProperties.name, itemType)
-    ))
-
-    return new Map(destinyInventoryMods.map(mod => [mod.itemHash, mod.displayPropertyName]))
   }
 
   /**
