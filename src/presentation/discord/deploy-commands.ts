@@ -12,7 +12,7 @@ export class DeployCommands {
    * Update registered slash commands
    */
   async registerCommands (): Promise<void> {
-    const commands: any[] = []
+    const commands = []
     const commandAlert = this.alertCommand.setupCommand()
     commands.push(commandAlert.data)
 
