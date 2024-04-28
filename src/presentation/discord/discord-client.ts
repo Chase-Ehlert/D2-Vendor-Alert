@@ -124,8 +124,7 @@ export class DiscordClient {
     const index = message.content.indexOf('#')
     const bungieUsername = message.content.substring(0, index)
     const bungieUsernameCode = message.content.substring(Number(index) + 1, message.content.length)
-    const response = await this.destinyApiClient.getDestinyUsername(bungieUsername, bungieUsernameCode)
 
-    return response.length !== 0
+    return this.destinyApiClient.doesDestinyPlayerExist(bungieUsername, bungieUsernameCode)
   }
 }

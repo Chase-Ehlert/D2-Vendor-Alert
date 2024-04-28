@@ -35,10 +35,16 @@ export class DestinyApiClient {
         headers: this.apiKeyHeader
       })
 
-    return [
-      data.Response.destinyMemberships[0].membershipId,
-      data.Response.destinyMemberships[0].displayName
-    ]
+    if (data.Response.destinyMemberships[0].membershipId !== undefined &&
+      data.Response.destinyMemberships[0].displayName !== undefined
+    ) {
+      return [
+        data.Response.destinyMemberships[0].membershipId,
+        data.Response.destinyMemberships[0].displayName
+      ]
+    } else {
+      throw new Error('Membership ID or Display Name are undefined.')
+    }
   }
 
   async getDestinyCharacterIds (destinyMembershipId: string): Promise<string> {
@@ -51,7 +57,11 @@ export class DestinyApiClient {
         }
       })
 
-    return data.Response.profile.data.characterIds[0]
+    if (data.Response.profile.data.characterIds[0] !== undefined) {
+      return data.Response.profile.data.characterIds[0]
+    } else {
+      throw new Error('Character ID is undefined!')
+    }
   }
 
   async getDestinyEquippableMods (): Promise<Mod[]> {
@@ -157,11 +167,18 @@ export class DestinyApiClient {
           headers: this.urlEncodedHeaders
         })
 
-      return new TokenInfo(
-        data.membership_id,
-        data.refresh_expires_in,
-        data.refresh_token
-      )
+      if (data.membership_id !== undefined &&
+        data.refresh_expires_in !== undefined &&
+        data.refresh_token !== undefined
+      ) {
+        return new TokenInfo(
+          String(data.membership_id),
+          String(data.refresh_expires_in),
+          String(data.refresh_token)
+        )
+      } else {
+        throw Error()
+      }
     } catch (error) {
       console.log('Error occurred while making the refresh token call with an authorization code')
       console.log(authorizationCode)
@@ -187,7 +204,7 @@ export class DestinyApiClient {
     }
   }
 
-  async getDestinyUsername (bungieUsername: string, bungieUsernameCode: string): Promise<[]> {
+  async doesDestinyPlayerExist (bungieUsername: string, bungieUsernameCode: string): Promise<boolean> {
     const { data } = await this.httpClient.post(
       this.bungieDomainWithDestinyDirectory + 'SearchDestinyPlayerByBungieName/3/', {
         displayName: bungieUsername,
@@ -199,7 +216,7 @@ export class DestinyApiClient {
         }
       })
 
-    return data.Response
+    return data.Response.length !== 0
   }
 
   /**
@@ -216,12 +233,20 @@ export class DestinyApiClient {
         headers: this.urlEncodedHeaders
       })
 
-    return new TokenInfo(
-      data.membership_id,
-      data.refresh_expires_in,
-      data.refresh_token,
-      data.access_token
-    )
+    if (data.membership_id !== undefined &&
+      data.refresh_expires_in !== undefined &&
+      data.refresh_token !== undefined &&
+      data.access_token !== undefined
+    ) {
+      return new TokenInfo(
+        data.membership_id,
+        data.refresh_expires_in,
+        data.refresh_token,
+        data.access_token
+      )
+    } else {
+      throw new Error('Refresh token call failed!')
+    }
   }
 
   /**

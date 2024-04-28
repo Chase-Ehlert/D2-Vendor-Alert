@@ -166,6 +166,80 @@ describe('DestinyApiClient', () => {
     }
   })
 
+  it('should throw an error when the users access token info is undefined', async () => {
+    let response
+    // eslint-disable-next-line no-undef-init
+    let expectedMembershipId: any = undefined
+    let expectedRefreshExpiration: any = '456'
+    let expectedRefreshToken: any = 'token'
+    let expectedAccessToken: any = 'accessToken'
+    const tokenResponse = {
+      data: {
+        membership_id: expectedMembershipId,
+        refresh_expires_in: expectedRefreshExpiration,
+        refresh_token: expectedRefreshToken,
+        access_token: expectedAccessToken
+      }
+    }
+    const notAdasMerchandise = {
+      350061651: {}
+    }
+    const result = {
+      data: {
+        Response: { sales: { data: notAdasMerchandise } }
+      }
+    }
+
+    axiosHttpClient.post = jest.fn().mockResolvedValue(tokenResponse)
+    axiosHttpClient.get = jest.fn().mockResolvedValue(result)
+    mongoUserRepository.updateUserByMembershipId = jest.fn()
+
+    try {
+      response = await destinyApiClient.getVendorInfo(user.destinyId, user.destinyCharacterId, accessToken)
+    } catch (error) {
+      expect(error).toBeInstanceOf(Error)
+      expect(error.message).toBe('Refresh token call failed!')
+    }
+
+    expect(typeof response).toBe(typeof undefined)
+
+    expectedMembershipId = '123'
+    expectedRefreshExpiration = undefined
+
+    try {
+      response = await destinyApiClient.getVendorInfo(user.destinyId, user.destinyCharacterId, accessToken)
+    } catch (error) {
+      expect(error).toBeInstanceOf(Error)
+      expect(error.message).toBe('Refresh token call failed!')
+    }
+
+    expect(typeof response).toBe(typeof undefined)
+
+    expectedRefreshExpiration = '456'
+    expectedRefreshToken = undefined
+
+    try {
+      response = await destinyApiClient.getVendorInfo(user.destinyId, user.destinyCharacterId, accessToken)
+    } catch (error) {
+      expect(error).toBeInstanceOf(Error)
+      expect(error.message).toBe('Refresh token call failed!')
+    }
+
+    expect(typeof response).toBe(typeof undefined)
+
+    expectedRefreshToken = 'token'
+    expectedAccessToken = undefined
+
+    try {
+      response = await destinyApiClient.getVendorInfo(user.destinyId, user.destinyCharacterId, accessToken)
+    } catch (error) {
+      expect(error).toBeInstanceOf(Error)
+      expect(error.message).toBe('Refresh token call failed!')
+    }
+
+    expect(typeof response).toBe(typeof undefined)
+  })
+
   it('should retrieve the list of collectibles that exist in Destiny', async () => {
     const destinyId = 'destinyId'
     const expectedCollectibleName = ['item1']
@@ -221,6 +295,47 @@ describe('DestinyApiClient', () => {
     expect(value).toEqual([expectedDestinyMembershipId, expectedDisplayName])
   })
 
+  it('should throw an error when Destiny info for a user is undefined', async () => {
+    const expectedMembershipId = '123'
+    // eslint-disable-next-line no-undef-init
+    let expectedDestinyMembershipId: any = undefined
+    let expectedDisplayName: any = 'guardian'
+    const result = {
+      data: {
+        Response: {
+          destinyMemberships: [{
+            membershipId: expectedDestinyMembershipId,
+            displayName: expectedDisplayName
+          }]
+        }
+      }
+    }
+    let response
+
+    axiosHttpClient.get = jest.fn().mockResolvedValue(result)
+
+    try {
+      response = await destinyApiClient.getDestinyMembershipInfo(expectedMembershipId)
+    } catch (error) {
+      expect(error).toBeInstanceOf(Error)
+      expect(error.message).toBe('Membership ID or Display Name are undefined.')
+    }
+
+    expect(typeof response).toBe(typeof undefined)
+
+    expectedDestinyMembershipId = '456'
+    expectedDisplayName = undefined
+
+    try {
+      response = await destinyApiClient.getDestinyMembershipInfo(expectedMembershipId)
+    } catch (error) {
+      expect(error).toBeInstanceOf(Error)
+      expect(error.message).toBe('Membership ID or Display Name are undefined.')
+    }
+
+    expect(typeof response).toBe(typeof undefined)
+  })
+
   it('should retrieve the Destiny character information for a user', async () => {
     const expectedMembershipId = '123'
     const expectedCharacterId = '456'
@@ -251,16 +366,41 @@ describe('DestinyApiClient', () => {
     expect(value).toEqual(expectedCharacterId)
   })
 
+  it('should throw an error when the Destiny character information for a user is undefined', async () => {
+    let response
+    const expectedMembershipId = '123'
+    const result = {
+      data: {
+        Response: {
+          profile: {
+            data: {
+              characterIds: [undefined]
+            }
+          }
+        }
+      }
+    }
+    axiosHttpClient.get = jest.fn().mockResolvedValue(result)
+
+    try {
+      response = await destinyApiClient.getDestinyCharacterIds(expectedMembershipId)
+    } catch (error) {
+      expect(error).toBeInstanceOf(Error)
+      expect(error.message).toBe('Character ID is undefined!')
+    }
+
+    expect(typeof response).toBe(typeof undefined)
+  })
+
   it('should check if a Destiny username exists based on a users Bungie username', async () => {
     const bungieUsername = 'name123'
     const bungieUsernameCode = '456'
     const expectedDestinyusername = 'coolGuy37'
     const result = { data: { Response: [{ name: expectedDestinyusername }] } }
-    const expectedResult = [{ name: expectedDestinyusername }]
 
     axiosHttpClient.post = jest.fn().mockResolvedValue(result)
 
-    const value = await destinyApiClient.getDestinyUsername(bungieUsername, bungieUsernameCode)
+    const value = await destinyApiClient.doesDestinyPlayerExist(bungieUsername, bungieUsernameCode)
 
     expect(axiosHttpClient.post).toHaveBeenCalledWith(
       'https://www.bungie.net/platform/destiny2/SearchDestinyPlayerByBungieName/3/',
@@ -275,7 +415,7 @@ describe('DestinyApiClient', () => {
         }
       }
     )
-    expect(value).toEqual(expectedResult)
+    expect(value).toBeTruthy()
   })
 
   it('should retrieve a users refresh token', async () => {
@@ -308,6 +448,75 @@ describe('DestinyApiClient', () => {
     )
 
     expect(value).toEqual(expectedRefreshTokenInfo)
+  })
+
+  it('should throw an error when any value of a users token is undefined', async () => {
+    let response
+    const expectedAuthCode = 'authCode'
+    // eslint-disable-next-line no-undef-init
+    let expectedMembershipId = undefined
+    let expectedRefreshExpiration: any = '456'
+    let expectedRefreshToken: any = '789'
+    const expectedResponse = {
+      data: {
+        membership_id: expectedMembershipId,
+        refresh_expires_in: expectedRefreshExpiration,
+        refresh_token: expectedRefreshToken,
+        access_token: 'accessToken'
+      }
+    }
+
+    axiosHttpClient.post = jest.fn().mockResolvedValue(expectedResponse)
+
+    try {
+      response = await destinyApiClient.getRefreshTokenInfo(
+        expectedAuthCode,
+        {
+          render: jest.fn(),
+          sendFile: jest.fn()
+        }
+      )
+    } catch (error) {
+      expect(error).toBeInstanceOf(Error)
+    }
+
+    expect(typeof response).toBe(typeof undefined)
+
+    expectedMembershipId = '123'
+    expectedRefreshExpiration = undefined
+    expectedRefreshToken = '789'
+
+    try {
+      response = await destinyApiClient.getRefreshTokenInfo(
+        expectedAuthCode,
+        {
+          render: jest.fn(),
+          sendFile: jest.fn()
+        }
+      )
+    } catch (error) {
+      expect(error).toBeInstanceOf(Error)
+    }
+
+    expect(typeof response).toBe(typeof undefined)
+
+    expectedMembershipId = '123'
+    expectedRefreshExpiration = '456'
+    expectedRefreshToken = undefined
+
+    try {
+      response = await destinyApiClient.getRefreshTokenInfo(
+        expectedAuthCode,
+        {
+          render: jest.fn(),
+          sendFile: jest.fn()
+        }
+      )
+    } catch (error) {
+      expect(error).toBeInstanceOf(Error)
+    }
+
+    expect(typeof response).toBe(typeof undefined)
   })
 
   it('should redirect when the call to destiny api client fails', async () => {
