@@ -80,8 +80,7 @@ export class DestinyApiClient {
     )
 
     const filterOutUnequippableMods = convertResponseToMods.filter((mod: Mod) => {
-      return (JSON.stringify(mod.itemType) === '19') &&
-      (Boolean(Object.prototype.hasOwnProperty.call(mod, 'hash')))
+      return (JSON.stringify(mod.itemType) === '19')
     })
 
     return filterOutUnequippableMods
