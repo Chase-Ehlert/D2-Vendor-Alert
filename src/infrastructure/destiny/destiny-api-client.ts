@@ -188,6 +188,21 @@ export class DestinyApiClient {
     }
   }
 
+  async doesDestinyPlayerExist (bungieUsername: string, bungieUsernameCode: string): Promise<boolean> {
+    const { data } = await this.httpClient.post(
+      this.bungieDomainWithDestinyDirectory + 'SearchDestinyPlayerByBungieName/3/', {
+        displayName: bungieUsername,
+        displayNameCode: bungieUsernameCode
+      }, {
+        headers: {
+          'content-type': 'application/json',
+          'x-api-key': this.config.apiKey
+        }
+      })
+
+    return data.Response.length !== 0
+  }
+
   /**
      * Retrieves the merchandise sold by Ada
      */
@@ -202,21 +217,6 @@ export class DestinyApiClient {
     } else {
       throw new Error('Ada does not have any merchandise!')
     }
-  }
-
-  async doesDestinyPlayerExist (bungieUsername: string, bungieUsernameCode: string): Promise<boolean> {
-    const { data } = await this.httpClient.post(
-      this.bungieDomainWithDestinyDirectory + 'SearchDestinyPlayerByBungieName/3/', {
-        displayName: bungieUsername,
-        displayNameCode: bungieUsernameCode
-      }, {
-        headers: {
-          'content-type': 'application/json',
-          'x-api-key': this.config.apiKey
-        }
-      })
-
-    return data.Response.length !== 0
   }
 
   /**
