@@ -31,7 +31,7 @@ export class DestinyApiClient {
 
   async getDestinyMembershipInfo (membershipId: string): Promise<string[]> {
     const { data } = await this.httpClient.get(
-      this.bungieDomain + `platform/User/GetMembershipsById/${membershipId}/3/`, {
+      this.bungieDomain + 'platform/User/GetMembershipsById/' + membershipId + '/3/', {
         headers: this.apiKeyHeader
       })
 
@@ -99,7 +99,7 @@ export class DestinyApiClient {
     const { data } = await this.httpClient.get(
       this.bungieDomainWithDestinyDirectory +
         this.profileDirectory +
-        `${destinyId}/Character/${destinyCharacterId}/Vendors/`, {
+        destinyId + '/Character/' + destinyCharacterId + '/Vendors/', {
         params: {
           components: getVendorSalesComponent
         },
