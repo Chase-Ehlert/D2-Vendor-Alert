@@ -6,9 +6,9 @@ import { DiscordClient } from '../../presentation/discord/discord-client.js'
 import { MongoDbService } from '../../infrastructure/services/mongo-db-service.js'
 import { OAuthWebController } from '../../presentation/web/o-auth-web-controller.js'
 import { AlertManager } from '../../presentation/discord/alert-manager.js'
-import metaUrl from '../../testing-helpers/url.js'
 import { OAuthResponse } from '../../domain/o-auth-response.js'
 import { OAuthRequest } from '../../domain/o-auth-request.js'
+import metaUrl from '../../testing-helpers/url.js'
 import * as discord from 'discord.js'
 
 export class Alert {

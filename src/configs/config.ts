@@ -3,11 +3,10 @@ import joi from 'joi'
 import { DestinyApiClientConfig } from './destiny-api-client-config.js'
 import { DiscordConfig } from './discord-config.js'
 import { MongoDbServiceConfig } from './mongo-db-service-config.js'
-import { AlertConfig } from './alert-config.js'
 import { DeployCommandsConfig } from './deploy-commands-config.js'
-import { NotifierServiceConfig } from './notifier-service-config.js'
+import { AlertCommandConfig } from './../presentation/discord/commands/alert-command-config.js'
 
-interface Config {
+export interface Config {
   MONGO_URI?: string
   DATABASE_USER?: string
   DATABASE_CLUSTER?: string
@@ -20,8 +19,6 @@ interface Config {
   DESTINY_API_KEY?: string
   DESTINY_OAUTH_CLIENT_ID?: string
   DESTINY_OAUTH_SECRET?: string
-
-  DISCORD_NOTIFIER_ADDRESS?: string
 }
 
 const environmentVariableSchema = joi
@@ -38,9 +35,7 @@ const environmentVariableSchema = joi
 
     DESTINY_API_KEY: joi.string().required(),
     DESTINY_OAUTH_CLIENT_ID: joi.string().required(),
-    DESTINY_OAUTH_SECRET: joi.string().required(),
-
-    DISCORD_NOTIFIER_ADDRESS: joi.string().required()
+    DESTINY_OAUTH_SECRET: joi.string().required()
   })
   .without('MONGO_URI', ['DATABASE_USER', 'DATABASE_CLUSTER', 'DATABASE_NAME', 'DATABASE_PASSWORD'])
   .or('DATABASE_USER', 'MONGO_URI')
@@ -109,11 +104,11 @@ class MongoDbServiceConfigClass implements MongoDbServiceConfig {
   }
 }
 
-class AlertConfigClass implements AlertConfig {
+class AlertCommandConfigClass implements AlertCommandConfig {
   constructor (public readonly oauthClientId?: string) { }
 
-  static fromConfig ({ DESTINY_OAUTH_CLIENT_ID: oauthClientId }: Config): AlertConfig {
-    return new AlertConfigClass(oauthClientId)
+  static fromConfig ({ DESTINY_OAUTH_CLIENT_ID: oauthClientId }: Config): AlertCommandConfig {
+    return new AlertCommandConfigClass(oauthClientId)
   }
 }
 
@@ -131,17 +126,9 @@ class DeployCommandsConfigClass implements DeployCommandsConfig {
   }
 }
 
-class NotifierServiceConfigClass implements NotifierServiceConfig {
-  constructor (public readonly address?: string) { }
-  static fromConfig ({ DISCORD_NOTIFIER_ADDRESS: address }: Config): NotifierServiceConfig {
-    return new NotifierServiceConfigClass(address)
-  }
-}
-
 export const DESTINY_API_CLIENT_CONFIG = DestinyApiClientConfigClass.fromConfig(value)
 export const DISCORD_CONFIG = DiscordConfigClass.fromConfig(value)
 export const MONGO_DB_SERVICE_CONFIG = MongoDbServiceConfigClass.fromConfig(value)
-export const ALERT_CONFIG = AlertConfigClass.fromConfig(value)
+export const ALERT_COMMAND_CONFIG = AlertCommandConfigClass.fromConfig(value)
 export const DEPLOY_COMMANDS_CONFIG = DeployCommandsConfigClass.fromConfig(value)
-export const NOTIFIER_SERVICE_CONFIG = NotifierServiceConfigClass.fromConfig(value)
 export default value

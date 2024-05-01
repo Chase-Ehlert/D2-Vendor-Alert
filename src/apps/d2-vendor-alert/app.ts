@@ -1,6 +1,6 @@
 import express from 'express'
-import { ALERT_CONFIG, DESTINY_API_CLIENT_CONFIG, MONGO_DB_SERVICE_CONFIG, NOTIFIER_SERVICE_CONFIG } from '../../configs/config.js'
-import { DiscordConfig } from '../../configs/discord-config.js'
+import { ALERT_COMMAND_CONFIG, DESTINY_API_CLIENT_CONFIG, DISCORD_CONFIG, MONGO_DB_SERVICE_CONFIG } from '../../configs/config.js'
+import { DISCORD_NOTIFIER_ADDRESS } from '../d2-vendor-alert/alert-config.js'
 import { AxiosHttpClient } from '../../infrastructure/database/axios-http-client.js'
 import { MongoUserRepository } from '../../infrastructure/database/mongo-user-repository.js'
 import { DestinyApiClient } from '../../infrastructure/destiny/destiny-api-client.js'
@@ -25,10 +25,10 @@ const alert = new Alert(
   new DiscordClient(
     mongoUserRepo,
     destinyApiClient,
-    new AlertCommand(ALERT_CONFIG),
-  {} satisfies DiscordConfig
+    new AlertCommand(ALERT_COMMAND_CONFIG),
+    DISCORD_CONFIG
   ),
-  new AlertManager(new NotifierService(mongoUserRepo, NOTIFIER_SERVICE_CONFIG))
+  new AlertManager(new NotifierService(mongoUserRepo, DISCORD_NOTIFIER_ADDRESS))
 )
 
 await alert.runApp(express())

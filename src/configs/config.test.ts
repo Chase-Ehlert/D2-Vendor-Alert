@@ -1,10 +1,9 @@
 import {
-  ALERT_CONFIG,
+  ALERT_COMMAND_CONFIG,
   DEPLOY_COMMANDS_CONFIG,
   DESTINY_API_CLIENT_CONFIG,
   DISCORD_CONFIG,
-  MONGO_DB_SERVICE_CONFIG,
-  NOTIFIER_SERVICE_CONFIG
+  MONGO_DB_SERVICE_CONFIG
 } from './config'
 
 describe('Config', () => {
@@ -28,8 +27,8 @@ describe('Config', () => {
   })
 
   it('should setup ALERT_CONFIG with the correct properties', () => {
-    expect(ALERT_CONFIG).toHaveProperty('oauthClientId')
-    expect(typeof ALERT_CONFIG.oauthClientId).toBe('string')
+    expect(ALERT_COMMAND_CONFIG).toHaveProperty('oauthClientId')
+    expect(typeof ALERT_COMMAND_CONFIG.oauthClientId).toBe('string')
   })
 
   it('should setup DEPLOY_COMMANDS_CONFIG with the correct properties', () => {
@@ -37,10 +36,5 @@ describe('Config', () => {
     expect(DEPLOY_COMMANDS_CONFIG).toHaveProperty('clientId')
     expect(typeof DEPLOY_COMMANDS_CONFIG.token).toBe('string')
     expect(typeof DEPLOY_COMMANDS_CONFIG.clientId).toBe('string')
-  })
-
-  it('should setup NOTIFIER_SERVICE_CONFIG with the correct properties', () => {
-    expect(NOTIFIER_SERVICE_CONFIG).toHaveProperty('address')
-    expect(typeof NOTIFIER_SERVICE_CONFIG.address).toBe('string')
   })
 })
