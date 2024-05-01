@@ -1,7 +1,5 @@
 import 'dotenv/config.js'
 import joi from 'joi'
-import { DestinyApiClientConfig } from '../infrastructure/destiny/destiny-api-client-config.js'
-import { DiscordConfig } from '../presentation/discord/discord-config.js'
 import { MongoDbServiceConfig } from '../infrastructure/services/mongo-db-service-config.js'
 import { DeployCommandsConfig } from '../presentation/discord/deploy-commands-config.js'
 import { AlertCommandConfig } from '../presentation/discord/commands/alert-command-config.js'
@@ -37,14 +35,6 @@ const { value, error } = environmentVariableSchema
 
 if (error !== undefined) {
   throw new Error(`Config validation error: ${error.message}`)
-}
-
-class DiscordConfigClass implements DiscordConfig {
-  constructor (public readonly token?: string) { }
-
-  static fromConfig ({ DISCORD_TOKEN: token }: Config): DiscordConfig {
-    return new DiscordConfigClass(token)
-  }
 }
 
 class MongoDbServiceConfigClass implements MongoDbServiceConfig {
@@ -96,7 +86,6 @@ class DeployCommandsConfigClass implements DeployCommandsConfig {
   }
 }
 
-export const DISCORD_CONFIG = DiscordConfigClass.fromConfig(value)
 export const MONGO_DB_SERVICE_CONFIG = MongoDbServiceConfigClass.fromConfig(value)
 export const ALERT_COMMAND_CONFIG = AlertCommandConfigClass.fromConfig(value)
 export const DEPLOY_COMMANDS_CONFIG = DeployCommandsConfigClass.fromConfig(value)
