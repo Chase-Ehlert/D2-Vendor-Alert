@@ -8,8 +8,8 @@ import { AxiosHttpClient } from '../../infrastructure/database/axios-http-client
 import { Notify } from './notify.js'
 import { DestinyApiClientConfigClass } from '../../infrastructure/destiny/destiny-api-client-config-class.js'
 import { DiscordConfigClass } from '../../presentation/discord/discord-config-class.js'
-import value from '../config.js'
 import { MongoDbServiceConfigClass } from '../../infrastructure/services/mongo-db-service-config-class.js'
+import value from '../config.js'
 
 const MONGO_DB_SERVICE_CONFIG = MongoDbServiceConfigClass.fromConfig(value)
 const DISCORD_CONFIG = DiscordConfigClass.fromConfig(value)

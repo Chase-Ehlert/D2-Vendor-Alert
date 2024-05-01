@@ -1,7 +1,6 @@
 import 'dotenv/config.js'
 import joi from 'joi'
 import { DeployCommandsConfig } from '../presentation/discord/deploy-commands-config.js'
-import { AlertCommandConfig } from '../presentation/discord/commands/alert-command-config.js'
 import { Config } from '../domain/config.js'
 
 const environmentVariableSchema = joi
@@ -36,14 +35,6 @@ if (error !== undefined) {
   throw new Error(`Config validation error: ${error.message}`)
 }
 
-class AlertCommandConfigClass implements AlertCommandConfig {
-  constructor (public readonly oauthClientId?: string) { }
-
-  static fromConfig ({ DESTINY_OAUTH_CLIENT_ID: oauthClientId }: Config): AlertCommandConfig {
-    return new AlertCommandConfigClass(oauthClientId)
-  }
-}
-
 class DeployCommandsConfigClass implements DeployCommandsConfig {
   constructor (
     public readonly token?: string,
@@ -58,6 +49,5 @@ class DeployCommandsConfigClass implements DeployCommandsConfig {
   }
 }
 
-export const ALERT_COMMAND_CONFIG = AlertCommandConfigClass.fromConfig(value)
 export const DEPLOY_COMMANDS_CONFIG = DeployCommandsConfigClass.fromConfig(value)
 export default value
