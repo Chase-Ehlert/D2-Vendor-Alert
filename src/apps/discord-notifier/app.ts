@@ -9,11 +9,12 @@ import { Notify } from './notify.js'
 import { DestinyApiClientConfigClass } from '../../infrastructure/destiny/destiny-api-client-config-class.js'
 import { DiscordConfigClass } from '../../presentation/discord/discord-config-class.js'
 import { MongoDbServiceConfigClass } from '../../infrastructure/services/mongo-db-service-config-class.js'
-import value from '../config-schema.js'
+import { notifierConfigSchema, validateSchema } from '../config-schema.js'
 
-const MONGO_DB_SERVICE_CONFIG = MongoDbServiceConfigClass.fromConfig(value)
-const DISCORD_CONFIG = DiscordConfigClass.fromConfig(value)
-const DESTINY_API_CLIENT_CONFIG = DestinyApiClientConfigClass.fromConfig(value)
+const config = validateSchema(notifierConfigSchema)
+const MONGO_DB_SERVICE_CONFIG = MongoDbServiceConfigClass.fromConfig(config)
+const DISCORD_CONFIG = DiscordConfigClass.fromConfig(config)
+const DESTINY_API_CLIENT_CONFIG = DestinyApiClientConfigClass.fromConfig(config)
 const destinyApiClient = new DestinyApiClient(
   new AxiosHttpClient(),
   new MongoUserRepository(),

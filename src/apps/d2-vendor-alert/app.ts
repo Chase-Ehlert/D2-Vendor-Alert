@@ -1,5 +1,5 @@
 import express from 'express'
-import value from '../config-schema.js'
+import { alertConfigSchema, validateSchema } from '../config-schema.js'
 import { AxiosHttpClient } from '../../infrastructure/database/axios-http-client.js'
 import { MongoUserRepository } from '../../infrastructure/database/mongo-user-repository.js'
 import { DestinyApiClient } from '../../infrastructure/destiny/destiny-api-client.js'
@@ -16,11 +16,12 @@ import { DiscordConfigClass } from '../../presentation/discord/discord-config-cl
 import { MongoDbServiceConfigClass } from '../../infrastructure/services/mongo-db-service-config-class.js'
 import { AlertCommandConfigClass } from '../../presentation/discord/commands/alert-command-config-class.js'
 
-const ALERT_COMMAND_CONFIG = AlertCommandConfigClass.fromConfig(value)
-const MONGO_DB_SERVICE_CONFIG = MongoDbServiceConfigClass.fromConfig(value)
-const DISCORD_CONFIG = DiscordConfigClass.fromConfig(value)
-const DISCORD_NOTIFIER_ADDRESS = NotifierServiceConfigClass.fromConfig(value)
-const DESTINY_API_CLIENT_CONFIG = DestinyApiClientConfigClass.fromConfig(value)
+const config = validateSchema(alertConfigSchema)
+const ALERT_COMMAND_CONFIG = AlertCommandConfigClass.fromConfig(config)
+const MONGO_DB_SERVICE_CONFIG = MongoDbServiceConfigClass.fromConfig(config)
+const DISCORD_CONFIG = DiscordConfigClass.fromConfig(config)
+const DISCORD_NOTIFIER_ADDRESS = NotifierServiceConfigClass.fromConfig(config)
+const DESTINY_API_CLIENT_CONFIG = DestinyApiClientConfigClass.fromConfig(config)
 const mongoUserRepo = new MongoUserRepository()
 const destinyApiClient = new DestinyApiClient(
   new AxiosHttpClient(),

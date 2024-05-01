@@ -2,7 +2,7 @@ import 'dotenv/config.js'
 import joi, { Schema } from 'joi'
 import { Config } from '../domain/config.js'
 
-const configSchema = joi
+export const notifierConfigSchema = joi
   .object<Config>()
   .keys({
     MONGO_URI: joi.string(),
@@ -26,23 +26,18 @@ const configSchema = joi
   .and('DATABASE_USER', 'DATABASE_CLUSTER', 'DATABASE_NAME', 'DATABASE_PASSWORD')
   .unknown()
 
-const alertConfigSchema = configSchema.append(
+export const alertConfigSchema = notifierConfigSchema.append(
   { DISCORD_NOTIFIER_ADDRESS: joi.string().required() }
 )
 
-const environmentVariableSchema = (schema: Schema): Schema => {
-  if (schema === alertConfigSchema) {
-    return schema.options({ allowUnknown: true })
+export function validateSchema (schema: Schema): Config {
+  const { value, error } = schema
+    .prefs({ errors: { label: 'key' } })
+    .validate(process.env)
+
+  if (error !== undefined) {
+    throw new Error(`Config validation error: ${error.message}`)
   }
-  return schema
+
+  return value
 }
-
-const { value, error } = environmentVariableSchema(alertConfigSchema)
-  .prefs({ errors: { label: 'key' } })
-  .validate(process.env)
-
-if (error !== undefined) {
-  throw new Error(`Config validation error: ${error.message}`)
-}
-
-export default value
