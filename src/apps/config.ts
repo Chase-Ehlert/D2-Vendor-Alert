@@ -1,6 +1,5 @@
 import 'dotenv/config.js'
 import joi from 'joi'
-import { DeployCommandsConfig } from '../presentation/discord/deploy-commands-config.js'
 import { Config } from '../domain/config.js'
 
 const environmentVariableSchema = joi
@@ -35,19 +34,4 @@ if (error !== undefined) {
   throw new Error(`Config validation error: ${error.message}`)
 }
 
-class DeployCommandsConfigClass implements DeployCommandsConfig {
-  constructor (
-    public readonly token?: string,
-    public readonly clientId?: string
-  ) { }
-
-  static fromConfig ({
-    DISCORD_TOKEN: token,
-    DISCORD_CLIENT_ID: clientId
-  }: Config): DeployCommandsConfig {
-    return new DeployCommandsConfigClass(token, clientId)
-  }
-}
-
-export const DEPLOY_COMMANDS_CONFIG = DeployCommandsConfigClass.fromConfig(value)
 export default value
