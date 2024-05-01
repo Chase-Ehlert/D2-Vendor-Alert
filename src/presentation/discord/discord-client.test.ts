@@ -29,7 +29,7 @@ jest.mock('discord.js', () => ({
     MessageContent: 4,
     GuildMessageReactions: 8
   }
-}));
+}))
 
 describe('DiscordClient', () => {
   it('should setup the Discord client', async () => {

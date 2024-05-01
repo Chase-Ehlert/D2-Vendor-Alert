@@ -39,7 +39,7 @@ jest.mock('express', () => {
 })
 
 jest.mock('mustache-express', () => {
-  return jest.fn(() => 'mockedMustacheEngine');
+  return jest.fn(() => 'mockedMustacheEngine')
 })
 
 let mongoUserRepo: MongoUserRepository

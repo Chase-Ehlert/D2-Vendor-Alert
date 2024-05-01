@@ -1,10 +1,5 @@
 import joi from 'joi'
-import { Config } from '../config.js'
-import { NotifierServiceConfig } from '../../infrastructure/services/notifier-service-config.js'
-
-interface AlertConfig extends Config {
-  DISCORD_NOTIFIER_ADDRESS?: string
-}
+import { AlertConfig } from '../../domain/alert-config'
 
 const environmentVariableSchema = joi
   .object<AlertConfig>()
@@ -40,12 +35,4 @@ if (error !== undefined) {
   throw new Error(`Config validation error: ${error.message}`)
 }
 
-class NotifierServiceConfigClass implements NotifierServiceConfig {
-  constructor (public readonly address?: string) { }
-  static fromConfig ({ DISCORD_NOTIFIER_ADDRESS: address }: AlertConfig): NotifierServiceConfig {
-    return new NotifierServiceConfigClass(address)
-  }
-}
-
-export const DISCORD_NOTIFIER_ADDRESS = NotifierServiceConfigClass.fromConfig(value)
 export default value
