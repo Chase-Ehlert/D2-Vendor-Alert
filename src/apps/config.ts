@@ -1,10 +1,10 @@
 import 'dotenv/config.js'
 import joi from 'joi'
-import { DestinyApiClientConfig } from './destiny-api-client-config.js'
-import { DiscordConfig } from './discord-config.js'
-import { MongoDbServiceConfig } from './mongo-db-service-config.js'
-import { DeployCommandsConfig } from './deploy-commands-config.js'
-import { AlertCommandConfig } from './../presentation/discord/commands/alert-command-config.js'
+import { DestinyApiClientConfig } from '../infrastructure/destiny/destiny-api-client-config.js'
+import { DiscordConfig } from '../presentation/discord/discord-config.js'
+import { MongoDbServiceConfig } from '../infrastructure/services/mongo-db-service-config.js'
+import { DeployCommandsConfig } from '../presentation/discord/deploy-commands-config.js'
+import { AlertCommandConfig } from '../presentation/discord/commands/alert-command-config.js'
 
 export interface Config {
   MONGO_URI?: string

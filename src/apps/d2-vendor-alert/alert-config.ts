@@ -1,6 +1,6 @@
 import joi from 'joi'
-import { Config } from './../../configs/config.js'
-import { NotifierServiceConfig } from './../../configs/notifier-service-config.js'
+import { Config } from '../config.js'
+import { NotifierServiceConfig } from '../../infrastructure/services/notifier-service-config.js'
 
 interface AlertConfig extends Config {
   DISCORD_NOTIFIER_ADDRESS?: string

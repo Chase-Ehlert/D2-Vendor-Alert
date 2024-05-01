@@ -1,4 +1,4 @@
-import { ALERT_COMMAND_CONFIG, DEPLOY_COMMANDS_CONFIG } from '../../configs/config.js'
+import { ALERT_COMMAND_CONFIG, DEPLOY_COMMANDS_CONFIG } from '../../apps/config.js'
 import { AlertCommand } from './commands/alert-command.js'
 import { DeployCommands } from './deploy-commands.js'
 

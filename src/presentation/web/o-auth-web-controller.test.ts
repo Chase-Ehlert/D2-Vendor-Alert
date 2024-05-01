@@ -1,4 +1,4 @@
-import { DestinyApiClientConfig } from '../../configs/destiny-api-client-config'
+import { DestinyApiClientConfig } from '../../infrastructure/destiny/destiny-api-client-config'
 import { OAuthRequest } from '../../domain/o-auth-request'
 import { OAuthResponse } from '../../domain/o-auth-response'
 import { TokenInfo } from '../../domain/token-info'

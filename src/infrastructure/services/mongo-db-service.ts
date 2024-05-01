@@ -1,4 +1,4 @@
-import { MongoDbServiceConfig } from '../../configs/mongo-db-service-config.js'
+import { MongoDbServiceConfig } from './mongo-db-service-config.js'
 import mongoose from 'mongoose'
 
 export class MongoDbService {

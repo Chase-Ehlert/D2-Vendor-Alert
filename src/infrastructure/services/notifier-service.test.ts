@@ -1,4 +1,4 @@
-import { NotifierServiceConfig } from '../../configs/notifier-service-config'
+import { NotifierServiceConfig } from './notifier-service-config'
 import { UserInterface } from '../../domain/user'
 import { MongoUserRepository } from '../database/mongo-user-repository'
 import axios from 'axios'

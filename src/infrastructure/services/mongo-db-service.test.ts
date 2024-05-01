@@ -1,5 +1,5 @@
 import { MongoDbService } from './mongo-db-service'
-import { MongoDbServiceConfig } from '../../configs/mongo-db-service-config'
+import { MongoDbServiceConfig } from './mongo-db-service-config'
 import mongoose from 'mongoose'
 
 beforeAll(() => {

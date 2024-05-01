@@ -5,7 +5,7 @@ import { Vendor } from '../../infrastructure/destiny/vendor.js'
 import { DiscordService } from '../../infrastructure/services/discord-service.js'
 import { MongoDbService } from '../../infrastructure/services/mongo-db-service.js'
 import { AxiosHttpClient } from '../../infrastructure/database/axios-http-client.js'
-import { DESTINY_API_CLIENT_CONFIG, DISCORD_CONFIG, MONGO_DB_SERVICE_CONFIG } from '../../configs/config.js'
+import { DESTINY_API_CLIENT_CONFIG, DISCORD_CONFIG, MONGO_DB_SERVICE_CONFIG } from '../config.js'
 import { Notify } from './notify.js'
 
 const destinyApiClient = new DestinyApiClient(

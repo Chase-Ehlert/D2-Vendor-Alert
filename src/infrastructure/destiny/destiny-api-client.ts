@@ -1,5 +1,5 @@
 import { HttpClient } from '../../domain/http-client.js'
-import { DestinyApiClientConfig } from '../../configs/destiny-api-client-config.js'
+import { DestinyApiClientConfig } from './destiny-api-client-config.js'
 import { UserInterface } from '../../domain/user.js'
 import { UserRepository } from '../../domain/user-repository.js'
 import { TokenInfo } from '../../domain/token-info.js'

@@ -1,5 +1,5 @@
 import express from 'express'
-import { ALERT_COMMAND_CONFIG, DESTINY_API_CLIENT_CONFIG, DISCORD_CONFIG, MONGO_DB_SERVICE_CONFIG } from '../../configs/config.js'
+import { ALERT_COMMAND_CONFIG, DESTINY_API_CLIENT_CONFIG, DISCORD_CONFIG, MONGO_DB_SERVICE_CONFIG } from '../config.js'
 import { DISCORD_NOTIFIER_ADDRESS } from '../d2-vendor-alert/alert-config.js'
 import { AxiosHttpClient } from '../../infrastructure/database/axios-http-client.js'
 import { MongoUserRepository } from '../../infrastructure/database/mongo-user-repository.js'
