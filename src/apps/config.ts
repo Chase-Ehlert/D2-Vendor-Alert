@@ -5,21 +5,7 @@ import { DiscordConfig } from '../presentation/discord/discord-config.js'
 import { MongoDbServiceConfig } from '../infrastructure/services/mongo-db-service-config.js'
 import { DeployCommandsConfig } from '../presentation/discord/deploy-commands-config.js'
 import { AlertCommandConfig } from '../presentation/discord/commands/alert-command-config.js'
-
-export interface Config {
-  MONGO_URI?: string
-  DATABASE_USER?: string
-  DATABASE_CLUSTER?: string
-  DATABASE_NAME?: string
-  DATABASE_PASSWORD?: string
-
-  DISCORD_TOKEN?: string
-  DISCORD_CLIENT_ID?: string
-
-  DESTINY_API_KEY?: string
-  DESTINY_OAUTH_CLIENT_ID?: string
-  DESTINY_OAUTH_SECRET?: string
-}
+import { Config } from '../domain/config.js'
 
 const environmentVariableSchema = joi
   .object<Config>()
@@ -51,22 +37,6 @@ const { value, error } = environmentVariableSchema
 
 if (error !== undefined) {
   throw new Error(`Config validation error: ${error.message}`)
-}
-
-class DestinyApiClientConfigClass implements DestinyApiClientConfig {
-  constructor (
-    public readonly apiKey?: string,
-    public readonly oauthSecret?: string,
-    public readonly oauthClientId?: string
-  ) { }
-
-  static fromConfig ({
-    DESTINY_API_KEY: apiKey,
-    DESTINY_OAUTH_SECRET: oauthSecret,
-    DESTINY_OAUTH_CLIENT_ID: oauthClientId
-  }: Config): DestinyApiClientConfig {
-    return new DestinyApiClientConfigClass(apiKey, oauthSecret, oauthClientId)
-  }
 }
 
 class DiscordConfigClass implements DiscordConfig {
@@ -126,7 +96,6 @@ class DeployCommandsConfigClass implements DeployCommandsConfig {
   }
 }
 
-export const DESTINY_API_CLIENT_CONFIG = DestinyApiClientConfigClass.fromConfig(value)
 export const DISCORD_CONFIG = DiscordConfigClass.fromConfig(value)
 export const MONGO_DB_SERVICE_CONFIG = MongoDbServiceConfigClass.fromConfig(value)
 export const ALERT_COMMAND_CONFIG = AlertCommandConfigClass.fromConfig(value)
