@@ -1,4 +1,4 @@
-import value from '../../apps/config-schema.js'
+import value from '../../apps/discord-notifier/notifier-config-schema.js'
 import { AlertCommand } from './commands/alert-command.js'
 import { DeployCommands } from './deploy-commands.js'
 import { AlertCommandConfigClass } from './commands/alert-command-config-class.js'

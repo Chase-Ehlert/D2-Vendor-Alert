@@ -1,5 +1,5 @@
 import express from 'express'
-import value from '../config-schema.js'
+import value from '../discord-notifier/notifier-config-schema.js'
 import { AxiosHttpClient } from '../../infrastructure/database/axios-http-client.js'
 import { MongoUserRepository } from '../../infrastructure/database/mongo-user-repository.js'
 import { DestinyApiClient } from '../../infrastructure/destiny/destiny-api-client.js'

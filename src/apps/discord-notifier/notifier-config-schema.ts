@@ -1,6 +1,6 @@
 import 'dotenv/config.js'
 import joi from 'joi'
-import { Config } from '../domain/config.js'
+import { Config } from '../../domain/config.js'
 
 const environmentVariableSchema = joi
   .object<Config>()
