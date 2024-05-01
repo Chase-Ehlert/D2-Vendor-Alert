@@ -1,6 +1,5 @@
 import 'dotenv/config.js'
 import joi from 'joi'
-import { MongoDbServiceConfig } from '../infrastructure/services/mongo-db-service-config.js'
 import { DeployCommandsConfig } from '../presentation/discord/deploy-commands-config.js'
 import { AlertCommandConfig } from '../presentation/discord/commands/alert-command-config.js'
 import { Config } from '../domain/config.js'
@@ -37,33 +36,6 @@ if (error !== undefined) {
   throw new Error(`Config validation error: ${error.message}`)
 }
 
-class MongoDbServiceConfigClass implements MongoDbServiceConfig {
-  constructor (
-    public readonly mongoUri?: string,
-    public readonly databaseUser?: string,
-    public readonly databasePassword?: string,
-    public readonly databaseCluster?: string,
-    public readonly databaseName?: string
-  ) { }
-
-  static fromConfig ({
-    MONGO_URI: mongoUri,
-    DATABASE_USER: databaseUser,
-    DATABASE_PASSWORD: databasePassword,
-    DATABASE_CLUSTER: databaseCluster,
-    DATABASE_NAME: databaseName
-  }: Config): MongoDbServiceConfig {
-    return new MongoDbServiceConfigClass(
-      mongoUri ??
-      'mongodb+srv://' +
-      `${String(databaseUser)}:` +
-      `${String(databasePassword)}@` +
-      `${String(databaseCluster)}.mongodb.net/` +
-      String(databaseName)
-    )
-  }
-}
-
 class AlertCommandConfigClass implements AlertCommandConfig {
   constructor (public readonly oauthClientId?: string) { }
 
@@ -86,7 +58,6 @@ class DeployCommandsConfigClass implements DeployCommandsConfig {
   }
 }
 
-export const MONGO_DB_SERVICE_CONFIG = MongoDbServiceConfigClass.fromConfig(value)
 export const ALERT_COMMAND_CONFIG = AlertCommandConfigClass.fromConfig(value)
 export const DEPLOY_COMMANDS_CONFIG = DeployCommandsConfigClass.fromConfig(value)
 export default value
