@@ -1,8 +1,9 @@
-import joi from 'joi'
-import { AlertConfig } from '../../domain/alert-config'
+import 'dotenv/config.js'
+import joi, { Schema } from 'joi'
+import { Config } from '../domain/config.js'
 
-const environmentVariableSchema = joi
-  .object<AlertConfig>()
+const configSchema = joi
+  .object<Config>()
   .keys({
     MONGO_URI: joi.string(),
     DATABASE_USER: joi.string(),
@@ -15,9 +16,7 @@ const environmentVariableSchema = joi
 
     DESTINY_API_KEY: joi.string().required(),
     DESTINY_OAUTH_CLIENT_ID: joi.string().required(),
-    DESTINY_OAUTH_SECRET: joi.string().required(),
-
-    DISCORD_NOTIFIER_ADDRESS: joi.string().required()
+    DESTINY_OAUTH_SECRET: joi.string().required()
   })
   .without('MONGO_URI', ['DATABASE_USER', 'DATABASE_CLUSTER', 'DATABASE_NAME', 'DATABASE_PASSWORD'])
   .or('DATABASE_USER', 'MONGO_URI')
@@ -27,7 +26,18 @@ const environmentVariableSchema = joi
   .and('DATABASE_USER', 'DATABASE_CLUSTER', 'DATABASE_NAME', 'DATABASE_PASSWORD')
   .unknown()
 
-const { value, error } = environmentVariableSchema
+const alertConfigSchema = configSchema.append(
+  { DISCORD_NOTIFIER_ADDRESS: joi.string().required() }
+)
+
+const environmentVariableSchema = (schema: Schema): Schema => {
+  if (schema === alertConfigSchema) {
+    return schema.options({ allowUnknown: true })
+  }
+  return schema
+}
+
+const { value, error } = environmentVariableSchema(alertConfigSchema)
   .prefs({ errors: { label: 'key' } })
   .validate(process.env)
 
