@@ -1,9 +1,9 @@
 import { hyperlink, SlashCommandBuilder } from 'discord.js'
-import { AlertConfig } from '../../../configs/alert-config.js'
+import { AlertCommandConfig } from '../../discord/commands/alert-command-config.js'
 import { SlashCommand } from '../../../domain/slash-command.js'
 
 export class AlertCommand {
-  constructor (private readonly config: AlertConfig) {}
+  constructor (private readonly config: AlertCommandConfig) {}
 
   setupCommand (): SlashCommand {
     const oauthClientId = this.config.oauthClientId

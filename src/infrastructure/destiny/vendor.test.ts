@@ -2,7 +2,7 @@ import { MongoUserRepository } from '../database/mongo-user-repository'
 import { UserInterface } from '../../domain/user'
 import { AxiosHttpClient } from '../database/axios-http-client'
 import { Mod } from '../../domain/mod'
-import { DestinyApiClientConfig } from '../../configs/destiny-api-client-config'
+import { DestinyApiClientConfig } from './destiny-api-client-config'
 import { DestinyApiClient } from './destiny-api-client'
 import { Vendor } from './vendor'
 
