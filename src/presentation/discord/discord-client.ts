@@ -121,7 +121,6 @@ export class DiscordClient {
      * Validate the user's submitted username exists in Destiny 2
      */
   private async doesBungieUsernameExistInDestiny (message: discord.Message<boolean>): Promise<boolean> {
-    // DOUBLE CHECK MY ASYNCHRONISITY
     const index = message.content.indexOf('#')
     const bungieUsername = message.content.substring(0, index)
     const bungieUsernameCode = message.content.substring(Number(index) + 1, message.content.length)
