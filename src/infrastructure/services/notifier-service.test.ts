@@ -31,6 +31,6 @@ describe('NotifierService', () => {
       { user: userB },
       { headers: { 'Content-Type': 'application/json' } }
     )
-    expect(axios.post).toBeCalledTimes(2)
+    expect(axios.post).toHaveBeenCalledTimes(2)
   })
 })
