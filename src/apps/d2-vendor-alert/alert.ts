@@ -2,14 +2,14 @@ import express from 'express'
 import mustacheExpress from 'mustache-express'
 import * as path from 'path'
 import * as url from 'url'
+import * as discord from 'discord.js'
+import metaUrl from '../../testing-helpers/url.js'
 import { DiscordClient } from '../../presentation/discord/discord-client.js'
 import { MongoDbService } from '../../infrastructure/services/mongo-db-service.js'
 import { OAuthWebController } from '../../presentation/web/o-auth-web-controller.js'
 import { AlertManager } from '../../presentation/discord/alert-manager.js'
-import metaUrl from '../../testing-helpers/url.js'
 import { OAuthResponse } from '../../domain/o-auth-response.js'
 import { OAuthRequest } from '../../domain/o-auth-request.js'
-import * as discord from 'discord.js'
 
 export class Alert {
   constructor (
@@ -49,7 +49,7 @@ export class Alert {
   private async startServer (
     app: { listen: (arg0: number, arg1: () => void) => void }
   ): Promise<void> {
-    const discordJsClient: any = new discord.Client({
+    const discordJsClient = new discord.Client({
       intents: [
         discord.GatewayIntentBits.Guilds,
         discord.GatewayIntentBits.GuildMessages,

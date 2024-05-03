@@ -1,10 +1,9 @@
 import { MongoUserRepository } from '../../infrastructure/database/mongo-user-repository'
 import { Alert } from './alert'
-import { AlertConfig } from '../../configs/alert-config'
-import { DestinyApiClientConfig } from '../../configs/destiny-api-client-config'
-import { DiscordConfig } from '../../configs/discord-config'
-import { MongoDbServiceConfig } from '../../configs/mongo-db-service-config'
-import { NotifierServiceConfig } from '../../configs/notifier-service-config'
+import { DestinyApiClientConfig } from '../../infrastructure/destiny/destiny-api-client-config'
+import { DiscordConfig } from '../../presentation/discord/discord-config'
+import { MongoDbServiceConfig } from '../../infrastructure/services/mongo-db-service-config'
+import { NotifierServiceConfig } from '../../infrastructure/services/notifier-service-config'
 import { AxiosHttpClient } from '../../infrastructure/database/axios-http-client'
 import { DestinyApiClient } from '../../infrastructure/destiny/destiny-api-client'
 import { MongoDbService } from '../../infrastructure/services/mongo-db-service'
@@ -13,11 +12,12 @@ import { AlertManager } from '../../presentation/discord/alert-manager'
 import { AlertCommand } from '../../presentation/discord/commands/alert-command'
 import { DiscordClient } from '../../presentation/discord/discord-client'
 import { OAuthWebController } from '../../presentation/web/o-auth-web-controller'
+import { OAuthResponse } from '../../domain/o-auth-response'
+import { AlertCommandConfig } from '../../presentation/discord/commands/alert-command-config.js'
 import express from 'express'
 import path from 'path'
 import * as url from 'url'
 import metaUrl from '../../testing-helpers/url'
-import { OAuthResponse } from '../../domain/o-auth-response'
 
 jest.mock('./../../testing-helpers/url', () => {
   return 'example'
@@ -39,7 +39,7 @@ jest.mock('express', () => {
 })
 
 jest.mock('mustache-express', () => {
-  return jest.fn(() => 'mockedMustacheEngine');
+  return jest.fn(() => 'mockedMustacheEngine')
 })
 
 let mongoUserRepo: MongoUserRepository
@@ -63,7 +63,7 @@ beforeEach(() => {
   discordClient = new DiscordClient(
     mongoUserRepo,
     destinyApiClient,
-    new AlertCommand({} satisfies AlertConfig),
+    new AlertCommand({} satisfies AlertCommandConfig),
     {} satisfies DiscordConfig
   )
   oAuthWebController = new OAuthWebController(destinyApiClient, mongoUserRepo)
@@ -88,7 +88,7 @@ describe('Alert', () => {
       path.join(url.fileURLToPath(new URL('../src/presentation', url.pathToFileURL(metaUrl).href)), 'views')
     )
     expect(mockApp.get).toHaveBeenCalledWith('/', expect.any(Function))
-    expect(mockApp.listen).toBeCalledWith(3001, expect.any(Function))
+    expect(mockApp.listen).toHaveBeenCalledWith(3001, expect.any(Function))
     expect(mongoDbService.connectToDatabase).toBeCalled()
     expect(discordClient.setupDiscordClient).toBeCalled()
     expect(alertManager.dailyReset).toBeCalled()
@@ -105,7 +105,7 @@ describe('Alert', () => {
 
     expectedFunction(expectedRequest, expectedResult)
 
-    expect(oAuthWebController.handleOAuth).toBeCalledWith(
+    expect(oAuthWebController.handleOAuth).toHaveBeenCalledWith(
       mockApp,
       expectedRequest,
       expectedResult

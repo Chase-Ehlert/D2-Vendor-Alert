@@ -1,6 +1,5 @@
 import express from 'express'
-import { ALERT_CONFIG, DESTINY_API_CLIENT_CONFIG, MONGO_DB_SERVICE_CONFIG, NOTIFIER_SERVICE_CONFIG } from '../../configs/config.js'
-import { DiscordConfig } from '../../configs/discord-config.js'
+import { alertConfigSchema, validateSchema } from '../config-schema.js'
 import { AxiosHttpClient } from '../../infrastructure/database/axios-http-client.js'
 import { MongoUserRepository } from '../../infrastructure/database/mongo-user-repository.js'
 import { DestinyApiClient } from '../../infrastructure/destiny/destiny-api-client.js'
@@ -11,7 +10,18 @@ import { AlertCommand } from '../../presentation/discord/commands/alert-command.
 import { DiscordClient } from '../../presentation/discord/discord-client.js'
 import { OAuthWebController } from '../../presentation/web/o-auth-web-controller.js'
 import { Alert } from './alert.js'
+import { NotifierServiceConfigClass } from '../../infrastructure/services/notifier-service-config-class.js'
+import { DestinyApiClientConfigClass } from '../../infrastructure/destiny/destiny-api-client-config-class.js'
+import { DiscordConfigClass } from '../../presentation/discord/discord-config-class.js'
+import { MongoDbServiceConfigClass } from '../../infrastructure/services/mongo-db-service-config-class.js'
+import { AlertCommandConfigClass } from '../../presentation/discord/commands/alert-command-config-class.js'
 
+const config = validateSchema(alertConfigSchema)
+const ALERT_COMMAND_CONFIG = AlertCommandConfigClass.fromConfig(config)
+const MONGO_DB_SERVICE_CONFIG = MongoDbServiceConfigClass.fromConfig(config)
+const DISCORD_CONFIG = DiscordConfigClass.fromConfig(config)
+const DISCORD_NOTIFIER_ADDRESS = NotifierServiceConfigClass.fromConfig(config)
+const DESTINY_API_CLIENT_CONFIG = DestinyApiClientConfigClass.fromConfig(config)
 const mongoUserRepo = new MongoUserRepository()
 const destinyApiClient = new DestinyApiClient(
   new AxiosHttpClient(),
@@ -25,10 +35,10 @@ const alert = new Alert(
   new DiscordClient(
     mongoUserRepo,
     destinyApiClient,
-    new AlertCommand(ALERT_CONFIG),
-  {} satisfies DiscordConfig
+    new AlertCommand(ALERT_COMMAND_CONFIG),
+    DISCORD_CONFIG
   ),
-  new AlertManager(new NotifierService(mongoUserRepo, NOTIFIER_SERVICE_CONFIG))
+  new AlertManager(new NotifierService(mongoUserRepo, DISCORD_NOTIFIER_ADDRESS))
 )
 
 await alert.runApp(express())

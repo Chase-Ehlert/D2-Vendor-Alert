@@ -1,12 +1,13 @@
 import { HttpClient } from '../../domain/http-client.js'
-import { DestinyApiClientConfig } from '../../configs/destiny-api-client-config.js'
+import { DestinyApiClientConfig } from './destiny-api-client-config.js'
 import { UserInterface } from '../../domain/user.js'
 import { UserRepository } from '../../domain/user-repository.js'
 import { TokenInfo } from '../../domain/token-info.js'
-import { Mod } from '../../domain/mod.js'
+import { Merchandise, Mod } from '../../domain/mod.js'
 import { Collectible } from '../../domain/collectible.js'
 import path from 'path'
 import metaUrl from '../../testing-helpers/url.js'
+import { OAuthResponse } from '../../domain/o-auth-response.js'
 
 export class DestinyApiClient {
   private readonly apiKeyHeader
@@ -30,14 +31,20 @@ export class DestinyApiClient {
 
   async getDestinyMembershipInfo (membershipId: string): Promise<string[]> {
     const { data } = await this.httpClient.get(
-      this.bungieDomain + `platform/User/GetMembershipsById/${membershipId}/3/`, {
+      this.bungieDomain + 'platform/User/GetMembershipsById/' + membershipId + '/3/', {
         headers: this.apiKeyHeader
       })
 
-    return [
-      data.Response.destinyMemberships[0].membershipId,
-      data.Response.destinyMemberships[0].displayName
-    ]
+    if (data.Response.destinyMemberships[0].membershipId !== undefined &&
+      data.Response.destinyMemberships[0].displayName !== undefined
+    ) {
+      return [
+        data.Response.destinyMemberships[0].membershipId,
+        data.Response.destinyMemberships[0].displayName
+      ]
+    } else {
+      throw new Error('Membership ID or Display Name are undefined.')
+    }
   }
 
   async getDestinyCharacterIds (destinyMembershipId: string): Promise<string> {
@@ -50,21 +57,40 @@ export class DestinyApiClient {
         }
       })
 
-    return data.Response.profile.data.characterIds[0]
+    if (data.Response.profile.data.characterIds[0] !== undefined) {
+      return data.Response.profile.data.characterIds[0]
+    } else {
+      throw new Error('Character ID is undefined!')
+    }
   }
 
-  async getDestinyInventoryItemDefinition (): Promise<Map<string, string>> {
+  async getDestinyEquippableMods (): Promise<Mod[]> {
     const { data } = await this.httpClient.get(
       this.bungieDomainWithDestinyDirectory + 'manifest/', {
         headers: this.apiKeyHeader
       })
+
     const manifestFileName: string = data.Response.jsonWorldContentPaths.en
     const response = await this.httpClient.get(this.bungieDomain + manifestFileName)
 
-    return this.getDestinyInventoryModDescriptions(response.data.DestinyInventoryItemDefinition)
+    const convertResponseToMods = Object.values(response.data.DestinyInventoryItemDefinition).map(
+      (mod: Mod) => (
+        new Mod(mod.hash, mod.displayProperties, mod.itemType)
+      )
+    )
+
+    const filterOutUnequippableMods = convertResponseToMods.filter((mod: Mod) => {
+      return (JSON.stringify(mod.itemType) === '19')
+    })
+
+    return filterOutUnequippableMods
   }
 
-  async getVendorInfo (destinyId: string, destinyCharacterId: string, refreshToken: string): Promise<Mod[]> {
+  async getVendorInfo (
+    destinyId: string,
+    destinyCharacterId: string,
+    refreshToken: string
+  ): Promise<string[]> {
     const getVendorSalesComponent = 402
     const tokenInfo = await this.getTokenInfo(refreshToken)
 
@@ -73,7 +99,7 @@ export class DestinyApiClient {
     const { data } = await this.httpClient.get(
       this.bungieDomainWithDestinyDirectory +
         this.profileDirectory +
-        `${destinyId}/Character/${destinyCharacterId}/Vendors/`, {
+        destinyId + '/Character/' + destinyCharacterId + '/Vendors/', {
         params: {
           components: getVendorSalesComponent
         },
@@ -83,7 +109,14 @@ export class DestinyApiClient {
         }
       })
 
-    return this.getAdaMerchandise(data.Response.sales.data)
+    const vendorMerchandiseMap = new Map<string, Map<string, Mod>>()
+
+    Object.entries(data.Response.sales.data).map(
+      ([vendorId, vendorMerchandise]: [string, {saleItems: Map<string, Mod>}]) =>
+        vendorMerchandiseMap.set(vendorId, vendorMerchandise.saleItems)
+    )
+
+    return this.getAdaMerchandiseHashes('350061650', vendorMerchandiseMap)
   }
 
   async getCollectibleInfo (destinyId: string): Promise<String[]> {
@@ -96,7 +129,11 @@ export class DestinyApiClient {
         headers: this.apiKeyHeader
       })
 
-    return this.getUnownedMods(data.Response.profileCollectibles.data.collectibles)
+    const collectibles = Object.entries(data.Response.profileCollectibles.data.collectibles).map(
+      ([id, value]: [string, {state: number}]) => new Collectible(id, value.state)
+    )
+
+    return this.getUnownedMods(collectibles)
   }
 
   /**
@@ -115,7 +152,7 @@ export class DestinyApiClient {
 
   async getRefreshTokenInfo (
     authorizationCode: string,
-    result: { sendFile: (arg0: string, arg1: { root: string }) => void }
+    result: OAuthResponse
   ): Promise<TokenInfo | void> {
     try {
       const { data } = await this.httpClient.post(
@@ -129,37 +166,28 @@ export class DestinyApiClient {
           headers: this.urlEncodedHeaders
         })
 
-      return new TokenInfo(
-        data.membership_id,
-        data.refresh_expires_in,
-        data.refresh_token
-      )
+      if (data.membership_id !== undefined &&
+        data.refresh_expires_in !== undefined &&
+        data.refresh_token !== undefined
+      ) {
+        return new TokenInfo(
+          String(data.membership_id),
+          String(data.refresh_expires_in),
+          String(data.refresh_token)
+        )
+      } else {
+        throw Error()
+      }
     } catch (error) {
       console.log('Error occurred while making the refresh token call with an authorization code')
       console.log(authorizationCode)
       if (result != null) {
-        result.sendFile('landing-page-error-auth-code.html', { root: path.join(metaUrl, 'src/views') })
+        result.sendFile(path.join(metaUrl, 'src/presentation/views/landing-page-error-auth-code.html'))
       }
     }
   }
 
-  /**
-     * Retrieves the merchandise sold by Ada
-     */
-  private getAdaMerchandise (vendorMerchandise: { [x: string]: { saleItems: any } }): Mod[] {
-    let adaMerchandise
-    const adaVendorId = '350061650'
-
-    for (const vendorId in vendorMerchandise) {
-      if (vendorId === adaVendorId) {
-        adaMerchandise = vendorMerchandise[vendorId].saleItems
-      }
-    }
-
-    return Object.values(adaMerchandise).map((item: Mod) => (new Mod(item.itemHash)))
-  }
-
-  async getDestinyUsername (bungieUsername: string, bungieUsernameCode: string): Promise<[]> {
+  async doesDestinyPlayerExist (bungieUsername: string, bungieUsernameCode: string): Promise<boolean> {
     const { data } = await this.httpClient.post(
       this.bungieDomainWithDestinyDirectory + 'SearchDestinyPlayerByBungieName/3/', {
         displayName: bungieUsername,
@@ -171,24 +199,23 @@ export class DestinyApiClient {
         }
       })
 
-    return data.Response
+    return data.Response.length !== 0
   }
 
-  private getDestinyInventoryModDescriptions (
-    destinyInventoryItemDefinition: { [s: string]: unknown } | ArrayLike<unknown>
-  ): Map<string, string> {
-    const filteredInventory = Object.values(destinyInventoryItemDefinition).filter((item: Partial<Mod>) => {
-      return (JSON.stringify(item.itemType) === '19') &&
-      (Boolean(Object.prototype.hasOwnProperty.call(item, 'hash')))
-    })
+  /**
+     * Retrieves the merchandise sold by Ada
+     */
+  private getAdaMerchandiseHashes (
+    vendorId: string,
+    vendorMerchandise: Map<string, Map<string, Mod>>
+  ): string[] {
+    const adaMerchandise = vendorMerchandise.get(vendorId)
 
-    const destinyInventoryMods: Mod[] = Object.values(filteredInventory).map((
-      { displayProperties, itemType, hash }: any
-    ) => (
-      new Mod(hash, displayProperties.name, itemType)
-    ))
-
-    return new Map(destinyInventoryMods.map(mod => [mod.itemHash, mod.displayPropertyName]))
+    if (adaMerchandise !== undefined) {
+      return Object.values(adaMerchandise).map((item: Merchandise) => (item.itemHash))
+    } else {
+      throw new Error('Ada does not have any merchandise!')
+    }
   }
 
   /**
@@ -205,20 +232,27 @@ export class DestinyApiClient {
         headers: this.urlEncodedHeaders
       })
 
-    return new TokenInfo(
-      data.membership_id,
-      data.refresh_expires_in,
-      data.refresh_token,
-      data.access_token
-    )
+    if (data.membership_id !== undefined &&
+      data.refresh_expires_in !== undefined &&
+      data.refresh_token !== undefined &&
+      data.access_token !== undefined
+    ) {
+      return new TokenInfo(
+        data.membership_id,
+        data.refresh_expires_in,
+        data.refresh_token,
+        data.access_token
+      )
+    } else {
+      throw new Error('Refresh token call failed!')
+    }
   }
 
   /**
      * Retrieves the list of unowned mods for a user
      */
-  private getUnownedMods (collectibleData: ArrayLike<unknown> | { [s: string]: unknown }): String[] {
+  private getUnownedMods (collectibles: Collectible[]): String[] {
     const unownedModStateId = 65
-    const collectibles = Object.entries(collectibleData).map(([id, value]: [string, {state: number}]) => new Collectible(id, value.state))
     const collectibleMods = collectibles.filter(mod => mod.state === unownedModStateId)
 
     return collectibleMods.map(collectible => collectible.id)

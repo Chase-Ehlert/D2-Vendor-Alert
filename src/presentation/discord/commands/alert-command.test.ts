@@ -1,10 +1,10 @@
-import { AlertConfig } from '../../../configs/alert-config'
 import { AlertCommand } from './alert-command'
+import { AlertCommandConfig } from './alert-command-config.js'
 
 describe('AlertCommand', () => {
   it('should setup the alert command', () => {
     const expectedOauthClientId = 'id'
-    const alertConfig = { oauthClientId: expectedOauthClientId } as unknown as AlertConfig
+    const alertConfig = { oauthClientId: expectedOauthClientId } as unknown as AlertCommandConfig
     const alertCommand = new AlertCommand(alertConfig)
 
     const command = alertCommand.setupCommand()

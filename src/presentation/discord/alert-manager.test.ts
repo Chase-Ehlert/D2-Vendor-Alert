@@ -1,4 +1,4 @@
-import { NotifierServiceConfig } from '../../configs/notifier-service-config'
+giimport { NotifierServiceConfig } from '../../infrastructure/services/notifier-service-config'
 import { MongoUserRepository } from '../../infrastructure/database/mongo-user-repository'
 import { NotifierService } from '../../infrastructure/services/notifier-service'
 import { AlertManager } from './alert-manager'
@@ -26,6 +26,6 @@ describe('AlertManager', () => {
 
     jest.advanceTimersByTime(0)
 
-    expect(notifierService.alertUsersOfUnownedModsForSale).toBeCalled()
+    expect(notifierService.alertUsersOfUnownedModsForSale).toHaveBeenCalled()
   })
 })

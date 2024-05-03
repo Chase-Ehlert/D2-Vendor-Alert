@@ -1,6 +1,6 @@
 import { REST, Routes } from 'discord.js'
 import { AlertCommand } from './commands/alert-command.js'
-import { DeployCommandsConfig } from '../../configs/deploy-commands-config.js'
+import { DeployCommandsConfig } from './deploy-commands-config.js'
 
 export class DeployCommands {
   constructor (
@@ -12,7 +12,7 @@ export class DeployCommands {
    * Update registered slash commands
    */
   async registerCommands (): Promise<void> {
-    const commands: any[] = []
+    const commands = []
     const commandAlert = this.alertCommand.setupCommand()
     commands.push(commandAlert.data)
 

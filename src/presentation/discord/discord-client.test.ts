@@ -1,11 +1,11 @@
-import { AlertConfig } from '../../configs/alert-config'
-import { DestinyApiClientConfig } from '../../configs/destiny-api-client-config'
-import { DiscordConfig } from '../../configs/discord-config'
+import { DestinyApiClientConfig } from '../../infrastructure/destiny/destiny-api-client-config'
+import { DiscordConfig } from './discord-config'
 import { AxiosHttpClient } from '../../infrastructure/database/axios-http-client'
 import { MongoUserRepository } from '../../infrastructure/database/mongo-user-repository'
 import { DestinyApiClient } from '../../infrastructure/destiny/destiny-api-client'
 import { AlertCommand } from './commands/alert-command'
 import { DiscordClient } from './discord-client'
+import { AlertCommandConfig } from './commands/alert-command-config.js'
 import * as discord from 'discord.js'
 
 jest.mock('./../../testing-helpers/url', () => {
@@ -29,7 +29,7 @@ jest.mock('discord.js', () => ({
     MessageContent: 4,
     GuildMessageReactions: 8
   }
-}));
+}))
 
 describe('DiscordClient', () => {
   it('should setup the Discord client', async () => {
@@ -39,7 +39,7 @@ describe('DiscordClient', () => {
       new AxiosHttpClient(),
       mongoUserRepo,
       {} satisfies DestinyApiClientConfig)
-    const alertCommand = new AlertCommand({} satisfies AlertConfig)
+    const alertCommand = new AlertCommand({} satisfies AlertCommandConfig)
     const discordClient = new DiscordClient(
       mongoUserRepo,
       destinyApiClient,
@@ -64,8 +64,8 @@ describe('DiscordClient', () => {
 
     await discordClient.setupDiscordClient(discordJsClient)
 
-    expect(discordJsClient.once).toBeCalledWith(discord.Events.ClientReady, expect.any(Function))
-    expect(discordJsClient.login).toBeCalledWith(expectedDiscordConfig.token)
-    expect(discordJsClient.on).toBeCalledWith(discord.Events.InteractionCreate, expect.any(Function))
+    expect(discordJsClient.once).toHaveBeenCalledWith(discord.Events.ClientReady, expect.any(Function))
+    expect(discordJsClient.login).toHaveBeenCalledWith(expectedDiscordConfig.token)
+    expect(discordJsClient.on).toHaveBeenCalledWith(discord.Events.InteractionCreate, expect.any(Function))
   })
 })

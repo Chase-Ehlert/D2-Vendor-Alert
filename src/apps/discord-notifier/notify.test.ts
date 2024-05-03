@@ -1,14 +1,13 @@
 import { MongoUserRepository } from '../../infrastructure/database/mongo-user-repository'
-import { DestinyApiClientConfig } from '../../configs/destiny-api-client-config'
-import { DiscordConfig } from '../../configs/discord-config'
-import { MongoDbServiceConfig } from '../../configs/mongo-db-service-config'
+import { DestinyApiClientConfig } from '../../infrastructure/destiny/destiny-api-client-config'
+import { DiscordConfig } from '../../presentation/discord/discord-config'
+import { MongoDbServiceConfig } from '../../infrastructure/services/mongo-db-service-config'
 import { AxiosHttpClient } from '../../infrastructure/database/axios-http-client'
 import { DestinyApiClient } from '../../infrastructure/destiny/destiny-api-client'
 import { MongoDbService } from '../../infrastructure/services/mongo-db-service'
 import { DiscordService } from '../../infrastructure/services/discord-service'
 import { Notify } from './notify'
 import { Vendor } from '../../infrastructure/destiny/vendor'
-import { ManifestService } from '../../infrastructure/services/manifest-service'
 import express from 'express'
 
 const jsonMock = jest.fn()
@@ -46,7 +45,7 @@ beforeEach(() => {
       {} satisfies DestinyApiClientConfig
   )
   discordService = new DiscordService(
-    new Vendor(destinyApiClient, new ManifestService(destinyApiClient)),
+    new Vendor(destinyApiClient),
     new AxiosHttpClient(),
       {} satisfies DiscordConfig
   )
@@ -78,7 +77,7 @@ describe('Notify', () => {
 
     await expectedFunction(request)
 
-    expect(destinyApiClient.checkRefreshTokenExpiration).toBeCalledWith(expectedUser)
-    expect(discordService.compareModsForSaleWithUserInventory).toBeCalledWith(expectedUser)
+    expect(destinyApiClient.checkRefreshTokenExpiration).toHaveBeenCalledWith(expectedUser)
+    expect(discordService.compareModsForSaleWithUserInventory).toHaveBeenCalledWith(expectedUser)
   })
 })

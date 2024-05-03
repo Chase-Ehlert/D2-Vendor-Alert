@@ -1,4 +1,4 @@
-import { DestinyApiClientConfig } from '../../configs/destiny-api-client-config'
+import { DestinyApiClientConfig } from '../../infrastructure/destiny/destiny-api-client-config'
 import { OAuthRequest } from '../../domain/o-auth-request'
 import { OAuthResponse } from '../../domain/o-auth-response'
 import { TokenInfo } from '../../domain/token-info'
@@ -7,9 +7,10 @@ import { MongoUserRepository } from '../../infrastructure/database/mongo-user-re
 import { DestinyApiClient } from '../../infrastructure/destiny/destiny-api-client'
 import { OAuthWebController } from './o-auth-web-controller'
 import express from 'express'
+import path from 'path'
 
 jest.mock('./../../testing-helpers/url', () => {
-  return 'example'
+  return 'example/somewhere'
 })
 
 beforeAll(() => {
@@ -55,7 +56,7 @@ describe('OAuthWebController', () => {
 
     await oauthWebController.handleOAuth(mockApp, request, mockResult)
 
-    expect(mockResult.render).toBeCalledWith('landing-page.mustache', { guardian: expectedBungieUsername })
+    expect(mockResult.render).toHaveBeenCalledWith('landing-page.mustache', { guardian: expectedBungieUsername })
   })
 
   it('should return an error page when the request code is undefined', async () => {
@@ -66,8 +67,10 @@ describe('OAuthWebController', () => {
 
     await oauthWebController.handleOAuth(mockApp, request, mockResult)
 
-    expect(consoleSpy).toBeCalledWith('Error with retreving code from authorization url on landing page')
-    expect(consoleSpy).toBeCalledWith(request)
-    expect(mockResult.sendFile).toBeCalledWith(String(mockApp.get('views')) + '/landing-page-error.html')
+    expect(consoleSpy).toHaveBeenCalledWith('Error with retreving code from authorization url on landing page')
+    expect(consoleSpy).toHaveBeenCalledWith(request)
+    expect(mockResult.sendFile).toHaveBeenCalledWith(
+      path.join('example/somewhere/src/presentation/views/landing-page-error.html')
+    )
   })
 })
