@@ -17,13 +17,22 @@ export class MongoDbServiceConfigClass implements MongoDbServiceConfig {
     DATABASE_CLUSTER: databaseCluster,
     DATABASE_NAME: databaseName
   }: Config): MongoDbServiceConfig {
-    return new MongoDbServiceConfigClass(
-      mongoUri ??
-      'mongodb+srv://' +
-      `${String(databaseUser)}:` +
-      `${String(databasePassword)}@` +
-      `${String(databaseCluster)}.mongodb.net/` +
-      String(databaseName)
-    )
+    if (mongoUri !== undefined) {
+      return new MongoDbServiceConfigClass(mongoUri)
+    } else if (
+      databaseUser !== undefined &&
+      databasePassword !== undefined &&
+       databaseCluster !== undefined &&
+        databaseName !== undefined
+    ) {
+      return new MongoDbServiceConfigClass(
+        `mongodb+srv://${databaseUser}:` +
+        `${databasePassword}@` +
+        `${databaseCluster}.mongodb.net/` +
+        databaseName
+      )
+    } else {
+      throw new Error('Mongo DB Service Config is missing uri info!')
+    }
   }
 }

@@ -1,11 +1,11 @@
 import { DestinyApiClientConfigClass } from './destiny-api-client-config-class.js'
 
 describe('DestinyApiClientConfigClass', () => {
-  it('should return DestinyApiClientConfigClass from the static fromConfig()', () => {
+  it('should return DestinyApiClientConfigClass from static fromConfig()', () => {
     const expectedApiKey = 'key'
     const expectedOauthSecret = 'secret'
     const expectedOauthClientId = 'id'
-    const expectedDestinyApiClientConfig = new DestinyApiClientConfigClass(
+    const expectedDestinyApiClientConfigClass = new DestinyApiClientConfigClass(
       expectedApiKey,
       expectedOauthSecret,
       expectedOauthClientId
@@ -17,6 +17,6 @@ describe('DestinyApiClientConfigClass', () => {
         DESTINY_OAUTH_SECRET: expectedOauthSecret,
         DESTINY_OAUTH_CLIENT_ID: expectedOauthClientId
       }
-    )).toStrictEqual(expectedDestinyApiClientConfig)
+    )).toStrictEqual(expectedDestinyApiClientConfigClass)
   })
 })
