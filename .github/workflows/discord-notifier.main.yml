@@ -50,7 +50,7 @@ jobs:
       - name: TSC
         run: npm run tsc
       - name: Test
-        run: npm run test
+        run: npm run tests
       - name: SSH into Droplet
         uses: appleboy/ssh-action@master
         with:
