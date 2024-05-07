@@ -5,6 +5,13 @@ import { NotifierService } from './notifier-service'
 import { AxiosHttpClient } from '../database/axios-http-client.js'
 import { AxiosResponse } from 'axios'
 
+beforeAll(() => {
+  global.console = {
+    ...console,
+    error: jest.fn()
+  }
+})
+
 describe('NotifierService', () => {
   const expectedAddress = 'localhost'
   const mongoUserRepo = new MongoUserRepository()
@@ -35,5 +42,21 @@ describe('NotifierService', () => {
       { headers: { 'Content-Type': 'application/json' } }
     )
     expect(postSpy).toHaveBeenCalledTimes(2)
+  })
+
+  it('should print error info for any user who wasnt alerted', async () => {
+    const userA = { bungieUsername: 'CoolDude' } as unknown as UserInterface
+    const error = new Error('Bad stuff')
+    const customObject = {}
+    const consoleSpy = jest.spyOn(console, 'error')
+
+    Error.captureStackTrace(error, customObject.constructor)
+    axiosHttpClient.post = jest.fn().mockRejectedValue(error)
+    mongoUserRepo.fetchAllUsers = jest.fn().mockResolvedValue([userA])
+
+    await notifierService.alertUsersOfUnownedModsForSale()
+
+    expect(consoleSpy).toHaveBeenCalledWith(`Failed to alert user ${userA.bungieUsername}`)
+    expect(consoleSpy).toHaveBeenCalledWith(error.stack)
   })
 })

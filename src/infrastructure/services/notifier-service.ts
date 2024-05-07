@@ -14,11 +14,16 @@ export class NotifierService {
    */
   async alertUsersOfUnownedModsForSale (): Promise<void> {
     for await (const user of await this.database.fetchAllUsers()) {
-      await this.httpClient.post(
-        String(this.config.address).concat(':3002/notify'),
-        { user: user },
-        { headers: { 'Content-Type': 'application/json' } }
-      )
+      try {
+        await this.httpClient.post(
+          String(this.config.address) + ':3002/notify',
+          { user: user },
+          { headers: { 'Content-Type': 'application/json' } }
+        )
+      } catch (error) {
+        console.error(`Failed to alert user ${user.bungieUsername}`)
+        console.error(error.stack)
+      }
     }
   }
 }
