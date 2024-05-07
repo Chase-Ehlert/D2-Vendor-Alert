@@ -38,7 +38,7 @@ const alert = new Alert(
     new AlertCommand(ALERT_COMMAND_CONFIG),
     DISCORD_CONFIG
   ),
-  new AlertManager(new NotifierService(mongoUserRepo, DISCORD_NOTIFIER_ADDRESS))
+  new AlertManager(new NotifierService(mongoUserRepo, DISCORD_NOTIFIER_ADDRESS, new AxiosHttpClient()))
 )
 
 await alert.runApp(express())
