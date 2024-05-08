@@ -59,4 +59,19 @@ describe('NotifierService', () => {
     expect(consoleSpy).toHaveBeenCalledWith(`Failed to alert user ${userA.bungieUsername}`)
     expect(consoleSpy).toHaveBeenCalledWith(error.stack)
   })
+
+  it('should throw an error when the address on the config is undefined', async () => {
+    const notifierService = new NotifierService(
+      new MongoUserRepository(),
+      { } as unknown as NotifierServiceConfig,
+      new AxiosHttpClient()
+    )
+
+    try {
+      await notifierService.alertUsersOfUnownedModsForSale()
+    } catch (error) {
+      expect(error).toBeInstanceOf(Error)
+      expect(error.message).toBe('Notifier address is undefined!')
+    }
+  })
 })

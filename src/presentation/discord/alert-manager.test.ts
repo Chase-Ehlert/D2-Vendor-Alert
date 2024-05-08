@@ -5,7 +5,7 @@ import { AlertManager } from './alert-manager'
 import { AxiosHttpClient } from '../../infrastructure/database/axios-http-client.js'
 
 describe('AlertManager', () => {
-  const notifierService = new NotifierService(new MongoUserRepository(), {} satisfies NotifierServiceConfig, new AxiosHttpClient())
+  const notifierService = new NotifierService(new MongoUserRepository(), { address: '' } satisfies NotifierServiceConfig, new AxiosHttpClient())
   const alertManager = new AlertManager(notifierService)
 
   it('should call beginAlerting() at 17:01:00 UTC the next day when its after 17:01:00', () => {
