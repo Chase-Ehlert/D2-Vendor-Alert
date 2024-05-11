@@ -1,3 +1,3 @@
 export interface NotifierServiceConfig {
-  readonly address?: string
+  readonly address: string
 }
