@@ -1,4 +1,4 @@
-import { NotifierServiceConfig } from '../../infrastructure/services/notifier-service-config'
+import { NotifierServiceConfig } from '../../infrastructure/services/notifier-service-config.js'
 import { MongoUserRepository } from '../../infrastructure/database/mongo-user-repository'
 import { NotifierService } from '../../infrastructure/services/notifier-service'
 import { AlertManager } from './alert-manager'

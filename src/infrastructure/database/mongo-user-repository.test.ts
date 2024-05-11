@@ -98,7 +98,7 @@ describe('MongoUserRepository', () => {
 
     const result = await mongoUserRepo.fetchAllUsers()
 
-    expect(User.find).toBeCalled()
+    expect(User.find).toHaveBeenCalled()
     expect(result).toEqual(expectedUsers)
   })
 })
