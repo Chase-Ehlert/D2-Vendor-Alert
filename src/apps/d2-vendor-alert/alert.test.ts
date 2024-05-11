@@ -89,13 +89,12 @@ describe('Alert', () => {
     )
     expect(mockApp.get).toHaveBeenCalledWith('/', expect.any(Function))
     expect(mockApp.listen).toHaveBeenCalledWith(3001, expect.any(Function))
-    expect(mongoDbService.connectToDatabase).toBeCalled()
-    expect(discordClient.setupDiscordClient).toBeCalled()
-    expect(alertManager.dailyReset).toBeCalled()
+    expect(mongoDbService.connectToDatabase).toHaveBeenCalled()
+    expect(discordClient.setupDiscordClient).toHaveBeenCalled()
+    expect(alertManager.dailyReset).toHaveBeenCalled()
   })
 
   it('should setup the get root endpoint with the handleOAuth function', () => {
-    // refactor this away from the "duct tape" approach
     const expectedFunction = (alert as any).rootHandler(mockApp)
     const expectedRequest = { query: { code: '123' } }
     const expectedResult: OAuthResponse = {

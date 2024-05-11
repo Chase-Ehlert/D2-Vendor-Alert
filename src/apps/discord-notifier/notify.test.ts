@@ -63,8 +63,8 @@ describe('Notify', () => {
   it('should setup the service', async () => {
     await notify.notifyUsers(mockApp)
 
-    expect(mockApp.use).toBeCalled()
-    expect(jsonMock).toBeCalled()
+    expect(mockApp.use).toHaveBeenCalled()
+    expect(jsonMock).toHaveBeenCalled()
     expect(mockApp.listen).toHaveBeenCalledWith(3002, expect.any(Function))
     expect(mockApp.post).toHaveBeenCalledWith('/notify', expect.any(Function))
     expect(mongoDbService.connectToDatabase).toHaveBeenCalled()

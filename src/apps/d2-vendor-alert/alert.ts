@@ -2,14 +2,14 @@ import express from 'express'
 import mustacheExpress from 'mustache-express'
 import * as path from 'path'
 import * as url from 'url'
+import * as discord from 'discord.js'
+import metaUrl from '../../testing-helpers/url.js'
 import { DiscordClient } from '../../presentation/discord/discord-client.js'
 import { MongoDbService } from '../../infrastructure/services/mongo-db-service.js'
 import { OAuthWebController } from '../../presentation/web/o-auth-web-controller.js'
 import { AlertManager } from '../../presentation/discord/alert-manager.js'
 import { OAuthResponse } from '../../domain/o-auth-response.js'
 import { OAuthRequest } from '../../domain/o-auth-request.js'
-import metaUrl from '../../testing-helpers/url.js'
-import * as discord from 'discord.js'
 
 export class Alert {
   constructor (
