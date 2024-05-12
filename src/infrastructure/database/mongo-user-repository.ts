@@ -64,13 +64,15 @@ export class MongoUserRepository implements UserRepository {
     characterId: string
   ): Promise<void> {
     const filter = { bungieUsername: bungieUsername }
-    const updatedUser = new User({
-      refreshExpiration: this.determineExpirationDate(refreshExpirationTime),
-      refreshToken: refreshToken,
-      destinyId: destinyId,
-      destinyCharacterId: characterId
-    },
-    { _id: false })
+    const updatedUser = new User(
+      {
+        refreshExpiration: this.determineExpirationDate(refreshExpirationTime),
+        refreshToken: refreshToken,
+        destinyId: destinyId,
+        destinyCharacterId: characterId
+      },
+      { _id: false }
+    )
 
     await User.findOneAndUpdate(filter, { $set: updatedUser })
   }
@@ -82,7 +84,7 @@ export class MongoUserRepository implements UserRepository {
     return User.find()
   }
 
-  public determineExpirationDate (refreshExpirationTime: string): string {
+  private determineExpirationDate (refreshExpirationTime: string): string {
     const daysTillTokenExpires = Number(refreshExpirationTime) / 60 / 60 / 24
     const expirationDate = new Date()
     expirationDate.setDate(expirationDate.getDate() + daysTillTokenExpires)
