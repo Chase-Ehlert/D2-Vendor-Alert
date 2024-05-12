@@ -9,12 +9,11 @@ describe('AxiosHttpClient', () => {
     const data = { grant_type: 'someType' }
     const config = { headers: { 'x-api-key': 'someKey' } }
     const expectedValue = { responseType: 'json' }
-
-    axios.post = jest.fn().mockResolvedValue(expectedValue)
+    const postSpy = jest.spyOn(axios, 'post').mockResolvedValue(expectedValue)
 
     const result = await axiosHttpClient.post(url, data, config)
 
-    expect(axios.post).toHaveBeenCalledWith(url, data, config)
+    expect(postSpy).toHaveBeenCalledWith(url, data, config)
     expect(result).toEqual(expectedValue)
   })
 
@@ -22,12 +21,11 @@ describe('AxiosHttpClient', () => {
     const url = 'somewhere.com'
     const config = { headers: { 'x-api-key': 'someKey' } }
     const expectedValue = { responseType: 'json' }
-
-    axios.get = jest.fn().mockResolvedValue(expectedValue)
+    const getSpy = jest.spyOn(axios, 'get').mockResolvedValue(expectedValue)
 
     const result = await axiosHttpClient.get(url, config)
 
-    expect(axios.get).toHaveBeenCalledWith(url, config)
+    expect(getSpy).toHaveBeenCalledWith(url, config)
     expect(result).toEqual(expectedValue)
   })
 })
