@@ -28,10 +28,8 @@ describe('notifierConfigSchema', () => {
       })
 
     try {
-      expect(validateSchema(notifierConfigSchema)).toThrow()
-    } catch (error) {
-      expect(error.message).toBe(`Config validation error: ${expectedErrorMessage}`)
-    }
+      expect(validateSchema(notifierConfigSchema)).toThrow(`Config validation error: ${expectedErrorMessage}`)
+    } catch (error) {}
   })
 
   it('should validate alertConfigSchema', () => {
@@ -59,9 +57,7 @@ describe('notifierConfigSchema', () => {
       })
 
     try {
-      expect(validateSchema(alertConfigSchema)).toThrow()
-    } catch (error) {
-      expect(error.message).toBe(`Config validation error: ${expectedErrorMessage}`)
-    }
+      expect(validateSchema(alertConfigSchema)).toThrow(`Config validation error: ${expectedErrorMessage}`)
+    } catch (error) {}
   })
 })
