@@ -32,6 +32,13 @@ jest.mock('./../../testing-helpers/url', () => {
   return 'example'
 })
 
+beforeAll(() => {
+  global.console = {
+    ...console,
+    log: jest.fn()
+  }
+})
+
 let destinyApiClient: DestinyApiClient
 let discordService: DiscordService
 let mongoDbService: MongoDbService
@@ -79,5 +86,14 @@ describe('Notify', () => {
 
     expect(destinyApiClient.checkRefreshTokenExpiration).toHaveBeenCalledWith(expectedUser)
     expect(discordService.compareModsForSaleWithUserInventory).toHaveBeenCalledWith(expectedUser)
+  })
+
+  it('should log that the notifier service is running', () => {
+    const logSpy = jest.spyOn(console, 'log')
+    const logNotifierIsRunning = (notify as any).logNotifierIsRunning()
+
+    logNotifierIsRunning()
+
+    expect(logSpy).toHaveBeenCalledWith('Discord-Notifier is running...')
   })
 })
