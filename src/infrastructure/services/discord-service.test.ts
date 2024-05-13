@@ -1,7 +1,7 @@
 import { MongoUserRepository } from '../database/mongo-user-repository'
 import { AxiosHttpClient } from '../database/axios-http-client'
 import { UserInterface } from '../../domain/user'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import { DestinyApiClientConfig } from '../destiny/destiny-api-client-config'
 import { DiscordConfig } from '../../presentation/discord/discord-config'
 import { DestinyApiClient } from '../destiny/destiny-api-client'
@@ -13,8 +13,9 @@ jest.mock('./../../testing-helpers/url', () => {
 })
 
 describe('DiscordService', () => {
+  const axiosHttpClient = new AxiosHttpClient()
   const destinyApiClient = new DestinyApiClient(
-    new AxiosHttpClient(),
+    axiosHttpClient,
     new MongoUserRepository(),
     {} satisfies DestinyApiClientConfig
   )
@@ -22,9 +23,11 @@ describe('DiscordService', () => {
   const expectedToken = '123Token'
   const discordService = new DiscordService(
     vendor,
-    new AxiosHttpClient(),
+    axiosHttpClient,
       { token: expectedToken } satisfies DiscordConfig
   )
+  const postResult = { status: 200 } as unknown as AxiosResponse
+  const postSpy = jest.spyOn(axiosHttpClient, 'post').mockResolvedValue(postResult)
 
   it('should message a user if they have any unowned mods', async () => {
     const user = {
@@ -44,13 +47,11 @@ describe('DiscordService', () => {
         'Content-Type': 'application/json'
       }
     }
-
     jest.spyOn(vendor, 'getUnownedModsForSaleByAda').mockResolvedValue(expectedUnownedMods)
-    axios.post = jest.fn().mockResolvedValue({ status: 200 })
 
     await discordService.compareModsForSaleWithUserInventory(user)
 
-    expect(axios.post).toHaveBeenCalledWith(expectedPostUrl, expectedPostData, expectedPostConfig)
+    expect(postSpy).toHaveBeenCalledWith(expectedPostUrl, expectedPostData, expectedPostConfig)
   })
 
   it('should update a user if they have no unowned mods', async () => {
@@ -69,12 +70,10 @@ describe('DiscordService', () => {
         'Content-Type': 'application/json'
       }
     }
-
     jest.spyOn(vendor, 'getUnownedModsForSaleByAda').mockResolvedValue(expectedUnownedMods)
-    axios.post = jest.fn().mockResolvedValue({ status: 200 })
 
     await discordService.compareModsForSaleWithUserInventory(user)
 
-    expect(axios.post).toHaveBeenCalledWith(expectedPostUrl, expectedPostData, expectedPostConfig)
+    expect(postSpy).toHaveBeenCalledWith(expectedPostUrl, expectedPostData, expectedPostConfig)
   })
 })
