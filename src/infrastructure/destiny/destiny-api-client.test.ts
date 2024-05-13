@@ -6,6 +6,7 @@ import { DestinyApiClientConfig } from './destiny-api-client-config'
 import { DestinyApiClient } from './destiny-api-client'
 import path from 'path'
 import { DisplayProperties, Merchandise, Mod } from '../../domain/mod.js'
+import { AxiosResponse } from 'axios'
 
 jest.mock('./../../testing-helpers/url', () => {
   return 'example/somewhere'
@@ -33,10 +34,17 @@ describe('DestinyApiClient', () => {
   const expectedRefreshExpiration = '456'
   const expectedRefreshToken = '789'
   const accessToken = '123'
+  const oauthSecret = 'secret'
+  const oauthClient = 'id'
+  const config = {
+    apiKey: expectedApiKey,
+    oauthSecret: oauthSecret,
+    oauthClientId: oauthClient
+  } satisfies DestinyApiClientConfig
   const destinyApiClient = new DestinyApiClient(
     axiosHttpClient,
     mongoUserRepository,
-      { apiKey: expectedApiKey } satisfies DestinyApiClientConfig
+    config
   )
   const response = {
     data: {
@@ -45,7 +53,7 @@ describe('DestinyApiClient', () => {
       refresh_token: expectedRefreshToken,
       access_token: accessToken
     }
-  }
+  } as unknown as AxiosResponse
   const user = {
     bungieUsername: 'name',
     bungieUsernameCode: 'code',
@@ -121,15 +129,28 @@ describe('DestinyApiClient', () => {
       data: {
         Response: { sales: { data: adaMerchandise } }
       }
-    }
-
-    axiosHttpClient.post = jest.fn().mockResolvedValue(response)
-    axiosHttpClient.get = jest.fn().mockResolvedValue(result)
+    } as unknown as AxiosResponse
+    const postSpy = jest.spyOn(axiosHttpClient, 'post').mockResolvedValue(response)
+    const getSpy = jest.spyOn(axiosHttpClient, 'get').mockResolvedValue(result)
     jest.spyOn(mongoUserRepository, 'updateUserByMembershipId').mockResolvedValue()
 
     const value = await destinyApiClient.getVendorInfo(user.destinyId, user.destinyCharacterId, accessToken)
 
-    expect(axiosHttpClient.get).toHaveBeenCalledWith(
+    expect(postSpy).toHaveBeenCalledWith(
+      'https://www.bungie.net/platform/app/oauth/token/',
+      {
+        grant_type: 'refresh_token',
+        refresh_token: accessToken,
+        client_id: config.oauthClientId,
+        client_secret: config.oauthSecret
+      }, {
+        headers: {
+          'content-type': 'application/x-www-form-urlencoded',
+          'x-api-key': config.apiKey
+        }
+      }
+    )
+    expect(getSpy).toHaveBeenCalledWith(
       `https://www.bungie.net/platform/destiny2/3/profile/${user.destinyId}/Character/${user.destinyCharacterId}/Vendors/`,
       {
         params: {
@@ -152,10 +173,10 @@ describe('DestinyApiClient', () => {
       data: {
         Response: { sales: { data: notAdasMerchandise } }
       }
-    }
+    } as unknown as AxiosResponse
+    jest.spyOn(axiosHttpClient, 'post').mockResolvedValue(response)
+    jest.spyOn(axiosHttpClient, 'get').mockResolvedValue(result)
 
-    axiosHttpClient.post = jest.fn().mockResolvedValue(response)
-    axiosHttpClient.get = jest.fn().mockResolvedValue(result)
     mongoUserRepository.updateUserByMembershipId = jest.fn()
 
     try {
@@ -180,7 +201,7 @@ describe('DestinyApiClient', () => {
         refresh_token: expectedRefreshToken,
         access_token: expectedAccessToken
       }
-    }
+    } as unknown as AxiosResponse
     const notAdasMerchandise = {
       350061651: {}
     }
@@ -188,10 +209,10 @@ describe('DestinyApiClient', () => {
       data: {
         Response: { sales: { data: notAdasMerchandise } }
       }
-    }
+    } as unknown as AxiosResponse
+    jest.spyOn(axiosHttpClient, 'post').mockResolvedValue(tokenResponse)
+    jest.spyOn(axiosHttpClient, 'get').mockResolvedValue(result)
 
-    axiosHttpClient.post = jest.fn().mockResolvedValue(tokenResponse)
-    axiosHttpClient.get = jest.fn().mockResolvedValue(result)
     mongoUserRepository.updateUserByMembershipId = jest.fn()
 
     try {
@@ -247,12 +268,12 @@ describe('DestinyApiClient', () => {
       data: {
         Response: { profileCollectibles: { data: { collectibles: { item1: { state: 65 } } } } }
       }
-    }
-    axiosHttpClient.get = jest.fn().mockResolvedValue(result)
+    } as unknown as AxiosResponse
+    const getSpy = jest.spyOn(axiosHttpClient, 'get').mockResolvedValue(result)
 
     const value = await destinyApiClient.getCollectibleInfo(destinyId)
 
-    expect(axiosHttpClient.get).toHaveBeenCalledWith(
+    expect(getSpy).toHaveBeenCalledWith(
       `https://www.bungie.net/platform/destiny2/3/profile/${destinyId}/`,
       {
         params: {
@@ -279,12 +300,12 @@ describe('DestinyApiClient', () => {
           }]
         }
       }
-    }
-    axiosHttpClient.get = jest.fn().mockResolvedValue(result)
+    } as unknown as AxiosResponse
+    const getSpy = jest.spyOn(axiosHttpClient, 'get').mockResolvedValue(result)
 
     const value = await destinyApiClient.getDestinyMembershipInfo(expectedMembershipId)
 
-    expect(axiosHttpClient.get).toHaveBeenCalledWith(
+    expect(getSpy).toHaveBeenCalledWith(
       `https://www.bungie.net/platform/User/GetMembershipsById/${expectedMembershipId}/3/`,
       {
         headers: {
@@ -296,10 +317,11 @@ describe('DestinyApiClient', () => {
   })
 
   it('should throw an error when Destiny info for a user is undefined', async () => {
-    const expectedMembershipId = '123'
     // eslint-disable-next-line no-undef-init
     let expectedDestinyMembershipId: any = undefined
     let expectedDisplayName: any = 'guardian'
+    let response
+    const expectedMembershipId = '123'
     const result = {
       data: {
         Response: {
@@ -309,10 +331,8 @@ describe('DestinyApiClient', () => {
           }]
         }
       }
-    }
-    let response
-
-    axiosHttpClient.get = jest.fn().mockResolvedValue(result)
+    } as unknown as AxiosResponse
+    jest.spyOn(axiosHttpClient, 'get').mockResolvedValue(result)
 
     try {
       response = await destinyApiClient.getDestinyMembershipInfo(expectedMembershipId)
@@ -349,12 +369,12 @@ describe('DestinyApiClient', () => {
           }
         }
       }
-    }
-    axiosHttpClient.get = jest.fn().mockResolvedValue(result)
+    } as unknown as AxiosResponse
+    const getSpy = jest.spyOn(axiosHttpClient, 'get').mockResolvedValue(result)
 
     const value = await destinyApiClient.getDestinyCharacterIds(expectedMembershipId)
 
-    expect(axiosHttpClient.get).toHaveBeenCalledWith(
+    expect(getSpy).toHaveBeenCalledWith(
       `https://www.bungie.net/platform/destiny2/3/profile/${expectedMembershipId}/`,
       {
         headers: {
@@ -379,8 +399,8 @@ describe('DestinyApiClient', () => {
           }
         }
       }
-    }
-    axiosHttpClient.get = jest.fn().mockResolvedValue(result)
+    } as unknown as AxiosResponse
+    jest.spyOn(axiosHttpClient, 'get').mockResolvedValue(result)
 
     try {
       response = await destinyApiClient.getDestinyCharacterIds(expectedMembershipId)
@@ -396,13 +416,18 @@ describe('DestinyApiClient', () => {
     const bungieUsername = 'name123'
     const bungieUsernameCode = '456'
     const expectedDestinyusername = 'coolGuy37'
-    const result = { data: { Response: [{ name: expectedDestinyusername }] } }
-
-    axiosHttpClient.post = jest.fn().mockResolvedValue(result)
+    const result = {
+      data: {
+        Response: [
+          { name: expectedDestinyusername }
+        ]
+      }
+    } as unknown as AxiosResponse
+    const postSpy = jest.spyOn(axiosHttpClient, 'post').mockResolvedValue(result)
 
     const value = await destinyApiClient.doesDestinyPlayerExist(bungieUsername, bungieUsernameCode)
 
-    expect(axiosHttpClient.post).toHaveBeenCalledWith(
+    expect(postSpy).toHaveBeenCalledWith(
       'https://www.bungie.net/platform/destiny2/SearchDestinyPlayerByBungieName/3/',
       {
         displayName: bungieUsername,
@@ -435,9 +460,8 @@ describe('DestinyApiClient', () => {
         refresh_token: expectedRefreshToken,
         access_token: 'accessToken'
       }
-    }
-
-    axiosHttpClient.post = jest.fn().mockResolvedValue(response)
+    } as unknown as AxiosResponse
+    jest.spyOn(axiosHttpClient, 'post').mockResolvedValue(response)
 
     const value = await destinyApiClient.getRefreshTokenInfo(
       expectedAuthCode,
@@ -452,11 +476,11 @@ describe('DestinyApiClient', () => {
 
   it('should throw an error when any value of a users token is undefined', async () => {
     let response
-    const expectedAuthCode = 'authCode'
     // eslint-disable-next-line no-undef-init
     let expectedMembershipId = undefined
     let expectedRefreshExpiration: any = '456'
     let expectedRefreshToken: any = '789'
+    const expectedAuthCode = 'authCode'
     const expectedResponse = {
       data: {
         membership_id: expectedMembershipId,
@@ -464,9 +488,9 @@ describe('DestinyApiClient', () => {
         refresh_token: expectedRefreshToken,
         access_token: 'accessToken'
       }
-    }
+    } as unknown as AxiosResponse
 
-    axiosHttpClient.post = jest.fn().mockResolvedValue(expectedResponse)
+    jest.spyOn(axiosHttpClient, 'post').mockResolvedValue(expectedResponse)
 
     try {
       response = await destinyApiClient.getRefreshTokenInfo(
@@ -544,7 +568,7 @@ describe('DestinyApiClient', () => {
         refresh_token: refreshToken,
         access_token: ''
       }
-    }
+    } as unknown as AxiosResponse
     const expectedTokenInfo = new TokenInfo(
       bungieMembershipId,
       refreshTokenExpirationTime,
@@ -553,8 +577,9 @@ describe('DestinyApiClient', () => {
     const mockDate = jest.fn()
     mockDate.mockReturnValueOnce(new Date()).mockReturnValueOnce(new Date(712345256981))
     global.Date = mockDate as any
-    axiosHttpClient.post = jest.fn().mockResolvedValue(expectedPostResponse)
-    mongoUserRepository.updateUserByMembershipId = jest.fn().mockResolvedValue({})
+
+    jest.spyOn(axiosHttpClient, 'post').mockResolvedValue(expectedPostResponse)
+    jest.spyOn(mongoUserRepository, 'updateUserByMembershipId').mockResolvedValue()
 
     await destinyApiClient.checkRefreshTokenExpiration(user)
 
