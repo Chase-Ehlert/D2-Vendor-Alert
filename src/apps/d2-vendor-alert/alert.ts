@@ -60,13 +60,17 @@ export class Alert {
 
     app.listen(
       3001,
-      () => {
-        console.log('Server is running...')
-      }
+      this.logServerIsRunning()
     )
 
     await this.mongoDbService.connectToDatabase()
     await this.discordClient.setupDiscordClient(discordJsClient)
     this.alertManager.dailyReset(17, 1, 0, 0)
+  }
+
+  private logServerIsRunning () {
+    return () => {
+      console.log('Server is running...')
+    }
   }
 }

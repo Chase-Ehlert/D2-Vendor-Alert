@@ -42,6 +42,13 @@ jest.mock('mustache-express', () => {
   return jest.fn(() => 'mockedMustacheEngine')
 })
 
+beforeAll(() => {
+  global.console = {
+    ...console,
+    log: jest.fn()
+  }
+})
+
 let mongoUserRepo: MongoUserRepository
 let mongoDbService: MongoDbService
 let alertManager: AlertManager
@@ -100,19 +107,28 @@ describe('Alert', () => {
   })
 
   it('should setup the get root endpoint with the handleOAuth function', () => {
-    const expectedFunction = (alert as any).rootHandler(mockApp)
+    const rootHandler = (alert as any).rootHandler(mockApp)
     const expectedRequest = { query: { code: '123' } }
     const expectedResult: OAuthResponse = {
       render: (_template: string, _data: Record<string, any>) => {},
       sendFile: (_path: string) => {}
     }
 
-    expectedFunction(expectedRequest, expectedResult)
+    rootHandler(expectedRequest, expectedResult)
 
     expect(oAuthWebController.handleOAuth).toHaveBeenCalledWith(
       mockApp,
       expectedRequest,
       expectedResult
     )
+  })
+
+  it('should log that the server is running', () => {
+    const logSpy = jest.spyOn(console, 'log')
+    const logServerIsRunning = (alert as any).logServerIsRunning()
+
+    logServerIsRunning()
+
+    expect(logSpy).toHaveBeenCalledWith('Server is running...')
   })
 })
