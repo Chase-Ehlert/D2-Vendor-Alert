@@ -54,7 +54,12 @@ let alert: Alert
 beforeEach(() => {
   mongoUserRepo = new MongoUserRepository()
   mongoDbService = new MongoDbService({} satisfies MongoDbServiceConfig)
-  alertManager = new AlertManager(new NotifierService(mongoUserRepo, { address: '' } satisfies NotifierServiceConfig, new AxiosHttpClient()))
+  alertManager = new AlertManager(
+    new NotifierService(
+      mongoUserRepo,
+       { address: '' } satisfies NotifierServiceConfig,
+       new AxiosHttpClient()
+    ))
   destinyApiClient = new DestinyApiClient(
     new AxiosHttpClient(),
     mongoUserRepo,

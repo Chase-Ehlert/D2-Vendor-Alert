@@ -46,12 +46,11 @@ describe('OAuthWebController', () => {
     const expectedDestinyId = 'destinyId'
     const expectedBungieUsername = 'username'
     const expectedDestinyCharacterId = 'characterId'
-
-    destinyApiClient.getRefreshTokenInfo = jest.fn().mockResolvedValue(tokenInfo)
-    destinyApiClient.getDestinyMembershipInfo = jest.fn().mockResolvedValue(
+    jest.spyOn(destinyApiClient, 'getRefreshTokenInfo').mockResolvedValue(tokenInfo)
+    jest.spyOn(destinyApiClient, 'getDestinyMembershipInfo').mockResolvedValue(
       [expectedDestinyId, expectedBungieUsername]
     )
-    destinyApiClient.getDestinyCharacterIds = jest.fn().mockResolvedValue(expectedDestinyCharacterId)
+    jest.spyOn(destinyApiClient, 'getDestinyCharacterIds').mockResolvedValue(expectedDestinyCharacterId)
     mongoUserRepo.updateUserByUsername = jest.fn()
 
     await oauthWebController.handleOAuth(mockApp, request, mockResult)

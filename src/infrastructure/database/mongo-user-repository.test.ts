@@ -2,70 +2,105 @@ import { TokenInfo } from '../../domain/token-info'
 import { User } from '../../domain/user'
 import { MongoUserRepository } from './mongo-user-repository'
 
+let realDate: any
+
+beforeEach(() => {
+  realDate = global.Date
+})
+
+afterEach(() => {
+  global.Date = realDate
+})
+
 describe('MongoUserRepository', () => {
   const mongoUserRepo = new MongoUserRepository()
 
   it('should return true if a user exists in the database', async () => {
-    User.exists = jest.fn().mockResolvedValue(true)
+    const username = 'bungieNetUsername'
+    const bungieUsername = username + '#123'
+    const existsSpy = jest.spyOn(User, 'exists').mockResolvedValue({ _id: 123 })
 
-    const value = await mongoUserRepo.doesUserExist('bungieNetUsername')
+    const value = await mongoUserRepo.doesUserExist(bungieUsername)
 
+    expect(existsSpy).toHaveBeenCalledWith({ bungieUsername: username })
     expect(value).toEqual(true)
   })
 
   it('should return false if a user does not exist in the database', async () => {
-    User.exists = jest.fn().mockResolvedValue(null)
+    jest.spyOn(User, 'exists').mockResolvedValue(null)
 
-    const value = await mongoUserRepo.doesUserExist('bungieNetUsername')
+    const value = await mongoUserRepo.doesUserExist('')
 
     expect(value).toEqual(false)
   })
 
   it('should add a user to the database', async () => {
-    const saveMock = jest.spyOn(User.prototype, 'save').mockResolvedValue({})
+    const saveSpy = jest.spyOn(User.prototype, 'save').mockResolvedValue({})
 
-    await mongoUserRepo.addUser('bungieNetUsername', 'bungieNetUsernameCode', 'discordId', 'discordChannelId')
+    await mongoUserRepo.addUser(
+      'bungieNetUsername',
+      'bungieNetUsernameCode',
+      'discordId',
+      'discordChannelId'
+    )
 
-    expect(saveMock).toHaveBeenCalled()
+    expect(saveSpy).toHaveBeenCalled()
   })
 
   it('should update a users record in the database by using their username', async () => {
     const bungieUsername = 'guardian'
     const refreshExpiration = '1000'
+    const expectedRefreshExpiration = '1970-01-01T00:00:01Z'
     const refreshToken = 'guardian#123'
     const destinyId = 'jack'
     const characterId = 'carl'
-    User.findOneAndUpdate = jest.fn().mockResolvedValue({})
+    const findOneAndUpdateSpy = jest.spyOn(User, 'findOneAndUpdate').mockResolvedValue({})
+    const mockDate = jest.fn()
+    mockDate.mockReturnValueOnce(new Date(Number(refreshExpiration)))
+    global.Date = mockDate as any
 
-    await mongoUserRepo.updateUserByUsername(bungieUsername, refreshExpiration, refreshToken, destinyId, characterId)
+    await mongoUserRepo.updateUserByUsername(
+      bungieUsername,
+      refreshExpiration,
+      refreshToken,
+      destinyId,
+      characterId
+    )
 
-    expect(User.findOneAndUpdate).toHaveBeenCalledWith(
+    expect(findOneAndUpdateSpy).toHaveBeenCalledWith(
       { bungieUsername: bungieUsername },
       {
         $set: expect.objectContaining(
           {
             destinyId: destinyId,
             destinyCharacterId: characterId,
-            refreshExpiration: mongoUserRepo.determineExpirationDate(refreshExpiration),
+            refreshExpiration: expectedRefreshExpiration,
             refreshToken: refreshToken
           }
         )
-      })
+      }
+    )
   })
 
   it('should update a users record in the database by using their membership id', async () => {
     const bungieMembershipId = 'guardian'
     const refreshExpiration = '1000'
+    const expectedRefreshExpiration = '1970-01-01T00:00:01Z'
     const refreshToken = 'guardian#123'
-    User.findOneAndUpdate = jest.fn().mockResolvedValue({})
+    const findOneAndUpdateSpy = jest.spyOn(User, 'findOneAndUpdate').mockResolvedValue({})
+    const mockDate = jest.fn()
+    mockDate.mockReturnValueOnce(new Date(Number(refreshExpiration)))
+    global.Date = mockDate as any
 
-    await mongoUserRepo.updateUserByMembershipId(new TokenInfo(bungieMembershipId, refreshExpiration, refreshToken))
+    await mongoUserRepo.updateUserByMembershipId(
+      new TokenInfo(bungieMembershipId, refreshExpiration, refreshToken)
+    )
 
-    expect(User.findOneAndUpdate).toHaveBeenCalledWith(
+    expect(findOneAndUpdateSpy).toHaveBeenCalledWith(
       { bungieMembershipId: bungieMembershipId },
       expect.objectContaining(
         {
-          refreshExpiration: mongoUserRepo.determineExpirationDate(refreshExpiration),
+          refreshExpiration: expectedRefreshExpiration,
           refreshToken: refreshToken
         })
     )
@@ -94,11 +129,11 @@ describe('MongoUserRepository', () => {
         refreshToken: 'string1'
       })
     ]
-    User.find = jest.fn().mockResolvedValue(expectedUsers)
+    const findSpy = jest.spyOn(User, 'find').mockResolvedValue(expectedUsers)
 
     const result = await mongoUserRepo.fetchAllUsers()
 
-    expect(User.find).toHaveBeenCalled()
+    expect(findSpy).toHaveBeenCalled()
     expect(result).toEqual(expectedUsers)
   })
 })
