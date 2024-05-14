@@ -8,9 +8,13 @@ export class MongoDbService {
      * Establishes a connection to the MongoDB for the list of users waiting for an alert
      */
   async connectToDatabase (): Promise<void> {
-    mongoose.set('strictQuery', false)
-    await mongoose.connect(String(this.config.mongoUri))
-    console.log('Database connection set')
+    if (this.config.mongoUri !== undefined) {
+      mongoose.set('strictQuery', false)
+      await mongoose.connect(this.config.mongoUri)
+      console.log('Database connection set')
+    } else {
+      throw new Error('Mongo URI is undefined in MongoDbService!')
+    }
   }
 
   /**
