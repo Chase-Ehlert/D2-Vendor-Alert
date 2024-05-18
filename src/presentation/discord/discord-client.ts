@@ -18,13 +18,20 @@ export class DiscordClient {
      */
   async setupDiscordClient (discordClient: discord.Client): Promise<void> {
     discordClient.commands = new discord.Collection()
-    discordClient.once(discord.Events.ClientReady, (eventClient) => {
-      console.log(`Ready, logged in as ${String(eventClient.user.tag)}`)
-    })
+    discordClient.once(
+      discord.Events.ClientReady,
+      this.logDiscordClientIsReady()
+    )
     await discordClient.login(this.config.token)
 
     this.setupSlashCommands(discordClient)
     this.replyToSlashCommands(discordClient)
+  }
+
+  private logDiscordClientIsReady () {
+    return (eventClient: { user: { tag: string } }) => {
+      console.log(`Ready, logged in as ${eventClient.user.tag}`)
+    }
   }
 
   /**
@@ -32,19 +39,21 @@ export class DiscordClient {
      */
   private setupSlashCommands (discordClient: discord.Client<boolean>): void {
     const command = this.alertCommand.setupCommand()
-
-    if ('data' in command && 'execute' in command) {
-      discordClient.commands.set(command.data.name, command)
-    } else {
-      console.log('The alert command is missing "data" or "execute"')
-    }
+    discordClient.commands.set(command.data.name, command)
   }
 
   /**
      * Respond to any slash command and prompt user for profile information
      */
   private replyToSlashCommands (discordClient: discord.Client<boolean>): void {
-    discordClient.on(discord.Events.InteractionCreate, async (interaction) => {
+    discordClient.on(
+      discord.Events.InteractionCreate,
+      this.handleInteraction()
+    )
+  }
+
+  private handleInteraction () {
+    return async (interaction: discord.ChatInputCommandInteraction<discord.CacheType>) => {
       if (!interaction.isCommand()) return
 
       const command: SlashCommand = interaction.client.commands.get(interaction.commandName)
@@ -55,22 +64,26 @@ export class DiscordClient {
         if (interaction.channel !== null) {
           const collector = interaction.channel.createMessageCollector({ filter, max: 1, time: 20000 })
 
-          collector.on('collect', async (message) => {
-            await this.handleIncommingMessage(message, interaction, command)
-          })
+          collector.on(
+            'collect',
+            async (message) => {
+              await this.handleIncommingMessage(message, interaction, command)
+            })
 
-          collector.on('end', async (collected) => {
-            if (collected.size === 0) {
-              await interaction.followUp({
-                content: 'The interaction has timed out. After you have found your Bungie Net username, try again.'
-              })
-            }
-          })
+          collector.on(
+            'end',
+            async (collected) => {
+              if (collected.size === 0) {
+                await interaction.followUp({
+                  content: 'The interaction has timed out. After you have found your Bungie Net username, try again.'
+                })
+              }
+            })
         }
       } catch (error) {
         await interaction.reply({ content: 'Something went wrong!' })
       }
-    })
+    }
   }
 
   /**
@@ -78,7 +91,7 @@ export class DiscordClient {
      */
   private async handleIncommingMessage (
     message: discord.Message<boolean>,
-    interaction: discord.ChatInputCommandInteraction<discord.CacheType> | discord.MessageContextMenuCommandInteraction<discord.CacheType> | discord.UserContextMenuCommandInteraction<discord.CacheType>,
+    interaction: discord.ChatInputCommandInteraction<discord.CacheType>,
     command: SlashCommand): Promise<void> {
     if (await this.doesBungieUsernameExistInDestiny(message)) {
       await this.database.doesUserExist(message.content)
@@ -92,7 +105,7 @@ export class DiscordClient {
   /**
      * Reply back to user that they're profile information exists in the database already
      */
-  private async replyUserExists (interaction: discord.ChatInputCommandInteraction<discord.CacheType> | discord.MessageContextMenuCommandInteraction<discord.CacheType> | discord.UserContextMenuCommandInteraction<discord.CacheType>): Promise<void> {
+  private async replyUserExists (interaction: discord.ChatInputCommandInteraction<discord.CacheType>): Promise<void> {
     await interaction.followUp({ content: 'User already exists!' })
   }
 
@@ -101,7 +114,7 @@ export class DiscordClient {
      */
   private async addUserToAlertBot (
     username: string,
-    interaction: discord.ChatInputCommandInteraction<discord.CacheType> | discord.MessageContextMenuCommandInteraction<discord.CacheType> | discord.UserContextMenuCommandInteraction<discord.CacheType>,
+    interaction: discord.ChatInputCommandInteraction<discord.CacheType>,
     command: SlashCommand
   ): Promise<void> {
     const index = username.indexOf('#')

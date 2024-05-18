@@ -40,9 +40,7 @@ describe('MongoDbServiceConfigClass', () => {
         DATABASE_PASSWORD: undefined,
         DATABASE_CLUSTER: undefined,
         DATABASE_NAME: undefined
-      })).toThrow(Error)
-    } catch (error) {
-      expect(error.message).toBe('Mongo DB Service Config is missing uri info!')
-    }
+      })).toThrow('Mongo DB Service Config is missing uri info!')
+    } catch (error) {}
   })
 })

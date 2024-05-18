@@ -13,9 +13,10 @@ export class Notify {
   async notifyUsers (app: express.Application): Promise<void> {
     app.use(express.json())
 
-    app.listen(3002, () => {
-      console.log('Discord-Notifier is running...')
-    })
+    app.listen(
+      3002,
+      this.logNotifierIsRunning()
+    )
 
     app.post(
       '/notify',
@@ -30,5 +31,11 @@ export class Notify {
       await this.destinyApiClient.checkRefreshTokenExpiration(request.body.user)
       await this.discordService.compareModsForSaleWithUserInventory(request.body.user)
     }) as express.RequestHandler
+  }
+
+  private logNotifierIsRunning () {
+    return () => {
+      console.log('Discord-Notifier is running...')
+    }
   }
 }

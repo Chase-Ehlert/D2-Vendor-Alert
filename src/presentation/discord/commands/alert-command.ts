@@ -6,17 +6,23 @@ export class AlertCommand {
   constructor (private readonly config: AlertCommandConfig) {}
 
   setupCommand (): SlashCommand {
-    const oauthClientId = this.config.oauthClientId
-
     return {
       data: new SlashCommandBuilder()
         .setName('alert')
         .setDescription('Invites user to be added to the alert list'),
-      execute (interaction: { followUp: (arg0: string) => void }): void {
+      execute: this.interactionFollowUp()
+    }
+  }
+
+  private interactionFollowUp () {
+    return (interaction: { followUp: (arg0: string) => void }) => {
+      if (this.config.oauthClientId !== undefined) {
         interaction.followUp(hyperlink(
           'Authorize D2 Vendor Alert',
-          `https://www.bungie.net/en/oauth/authorize?client_id=${String(oauthClientId)}&response_type=code`
+          `https://www.bungie.net/en/oauth/authorize?client_id=${this.config.oauthClientId}&response_type=code`
         ))
+      } else {
+        throw new Error('OAuth Client Id is undefined for the Alert command!')
       }
     }
   }

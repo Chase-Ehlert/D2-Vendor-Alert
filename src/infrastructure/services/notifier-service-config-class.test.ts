@@ -13,4 +13,12 @@ describe('NotifierServiceConfigClass', () => {
       }
     )).toStrictEqual(expectedNotifierServiceConfigClass)
   })
+
+  it('should throw an error when address is undefined', () => {
+    const alertConfig = { DISCORD_NOTIFIER_ADDRESS: undefined }
+
+    expect(() =>
+      NotifierServiceConfigClass.fromConfig(alertConfig)
+    ).toThrow('Discord notifier address is undefined!')
+  })
 })
