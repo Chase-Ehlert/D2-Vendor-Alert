@@ -1,7 +1,7 @@
 import express from 'express'
 import { DestinyApiClient } from '../../infrastructure/destiny/destiny-api-client.js'
 import { DiscordService } from '../../infrastructure/services/discord-service.js'
-import { MongoDbService } from '../../infrastructure/services/mongo-db-service.js'
+import { MongoDbService } from '../../infrastructure/database/mongo-db-service.js'
 
 export class Notify {
   constructor (
