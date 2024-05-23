@@ -1,6 +1,6 @@
-import { UserRepository } from '../../domain/user-repository.js'
-import { User, UserInterface } from '../../domain/user.js'
-import { TokenInfo } from '../../domain/token-info.js'
+import { UserRepository } from '../../domain/persistence/user-repository.js'
+import { User, UserInterface } from '../../domain/persistence/user.js'
+import { TokenInfo } from '../destiny/token-info.js'
 
 export class MongoUserRepository implements UserRepository {
   /**

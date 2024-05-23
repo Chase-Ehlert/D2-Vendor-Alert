@@ -1,9 +1,9 @@
-import { MongoUserRepository } from '../database/mongo-user-repository'
-import { UserInterface } from '../../domain/user'
-import { AxiosHttpClient } from '../database/axios-http-client'
-import { Mod } from '../../domain/mod'
-import { DestinyApiClientConfig } from './destiny-api-client-config'
-import { DestinyApiClient } from './destiny-api-client'
+import { MongoUserRepository } from '../../infrastructure/persistence/mongo-user-repository'
+import { UserInterface } from '../persistence/user'
+import { AxiosHttpClient } from '../../infrastructure/persistence/axios-http-client'
+import { Mod } from './mod'
+import { DestinyApiClientConfig } from '../../infrastructure/destiny/config/destiny-api-client-config'
+import { DestinyApiClient } from '../../infrastructure/destiny/destiny-api-client'
 import { Vendor } from './vendor'
 
 jest.mock('./../../testing-helpers/url', () => {

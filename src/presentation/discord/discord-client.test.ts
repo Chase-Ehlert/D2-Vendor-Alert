@@ -1,13 +1,13 @@
-import { DestinyApiClientConfig } from '../../infrastructure/destiny/destiny-api-client-config'
-import { DiscordConfig } from './discord-config'
-import { AxiosHttpClient } from '../../infrastructure/database/axios-http-client'
-import { MongoUserRepository } from '../../infrastructure/database/mongo-user-repository'
+import { DestinyApiClientConfig } from '../../infrastructure/destiny/config/destiny-api-client-config'
+import { DiscordConfig } from './configs/discord-config'
+import { AxiosHttpClient } from '../../infrastructure/persistence/axios-http-client'
+import { MongoUserRepository } from '../../infrastructure/persistence/mongo-user-repository'
 import { DestinyApiClient } from '../../infrastructure/destiny/destiny-api-client'
 import { AlertCommand } from './commands/alert-command'
 import { DiscordClient } from './discord-client'
 import { AlertCommandConfig } from './commands/alert-command-config.js'
 import * as discord from 'discord.js'
-import { SlashCommand } from '../../domain/slash-command.js'
+import { SlashCommand } from './commands/slash-command.js'
 
 jest.mock('./../../testing-helpers/url', () => {
   return 'example'

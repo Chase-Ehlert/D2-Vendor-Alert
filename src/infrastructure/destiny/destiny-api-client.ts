@@ -1,13 +1,13 @@
-import { HttpClient } from '../../domain/http-client.js'
-import { DestinyApiClientConfig } from './destiny-api-client-config.js'
-import { UserInterface } from '../../domain/user.js'
-import { UserRepository } from '../../domain/user-repository.js'
-import { TokenInfo } from '../../domain/token-info.js'
-import { Merchandise, Mod } from '../../domain/mod.js'
-import { Collectible } from '../../domain/collectible.js'
+import { HttpClient } from '../../domain/persistence/http-client.js'
+import { DestinyApiClientConfig } from './config/destiny-api-client-config.js'
+import { UserInterface } from '../../domain/persistence/user.js'
+import { UserRepository } from '../../domain/persistence/user-repository.js'
+import { TokenInfo } from './token-info.js'
+import { Merchandise, Mod } from '../../domain/destiny/mod.js'
+import { Collectible } from '../../domain/destiny/collectible.js'
 import path from 'path'
 import metaUrl from '../../testing-helpers/url.js'
-import { OAuthResponse } from '../../domain/o-auth-response.js'
+import { OAuthResponse } from '../../presentation/web/o-auth-response.js'
 
 export class DestinyApiClient {
   private readonly apiKeyHeader

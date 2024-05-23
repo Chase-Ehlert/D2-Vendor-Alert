@@ -1,4 +1,4 @@
-import { Config } from '../../domain/config.js'
+import { Config } from '../../../domain/config.js'
 import { DestinyApiClientConfig } from './destiny-api-client-config.js'
 
 export class DestinyApiClientConfigClass implements DestinyApiClientConfig {

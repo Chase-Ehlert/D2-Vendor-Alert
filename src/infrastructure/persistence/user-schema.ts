@@ -1,16 +1,5 @@
-import mongoose, { Document, Schema } from 'mongoose'
-
-export interface UserInterface extends Document {
-  bungieUsername: string
-  bungieUsernameCode: string
-  discordId: string
-  discordChannelId: string
-  bungieMembershipId: string
-  destinyId: string
-  destinyCharacterId: string
-  refreshExpiration: number
-  refreshToken: string
-}
+import mongoose, { Schema } from 'mongoose'
+import { UserInterface } from '../../domain/persistence/user.js'
 
 const UserSchema = new Schema({
   bungieUsername: { type: String, required: true },

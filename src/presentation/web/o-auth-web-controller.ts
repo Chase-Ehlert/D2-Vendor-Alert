@@ -1,9 +1,9 @@
 import express from 'express'
-import { TokenInfo } from '../../domain/token-info.js'
-import { MongoUserRepository } from '../../infrastructure/database/mongo-user-repository.js'
+import { TokenInfo } from '../../infrastructure/destiny/token-info.js'
+import { MongoUserRepository } from '../../infrastructure/persistence/mongo-user-repository.js'
 import { DestinyApiClient } from '../../infrastructure/destiny/destiny-api-client.js'
-import { OAuthResponse } from '../../domain/o-auth-response.js'
-import { OAuthRequest } from '../../domain/o-auth-request.js'
+import { OAuthResponse } from './o-auth-response.js'
+import { OAuthRequest } from './o-auth-request.js'
 import path from 'path'
 import metaUrl from '../../testing-helpers/url.js'
 

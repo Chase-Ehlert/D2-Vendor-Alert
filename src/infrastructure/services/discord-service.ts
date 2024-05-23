@@ -1,7 +1,7 @@
-import { Vendor } from '../destiny/vendor.js'
-import { UserInterface } from '../../domain/user.js'
-import { HttpClient } from '../../domain/http-client.js'
-import { DiscordConfig } from '../../presentation/discord/discord-config.js'
+import { Vendor } from '../../domain/destiny/vendor.js'
+import { UserInterface } from '../../domain/persistence/user.js'
+import { HttpClient } from '../../domain/persistence/http-client.js'
+import { DiscordConfig } from '../../presentation/discord/configs/discord-config.js'
 
 export class DiscordService {
   constructor (

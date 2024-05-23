@@ -5,11 +5,11 @@ import * as url from 'url'
 import * as discord from 'discord.js'
 import metaUrl from '../../testing-helpers/url.js'
 import { DiscordClient } from '../../presentation/discord/discord-client.js'
-import { MongoDbService } from '../../infrastructure/database/mongo-db-service.js'
+import { MongoDbService } from '../../infrastructure/persistence/services/mongo-db-service.js'
 import { OAuthWebController } from '../../presentation/web/o-auth-web-controller.js'
 import { AlertManager } from '../../presentation/discord/alert-manager.js'
-import { OAuthResponse } from '../../domain/o-auth-response.js'
-import { OAuthRequest } from '../../domain/o-auth-request.js'
+import { OAuthResponse } from '../../presentation/web/o-auth-response.js'
+import { OAuthRequest } from '../../presentation/web/o-auth-request.js'
 
 export class Alert {
   constructor (

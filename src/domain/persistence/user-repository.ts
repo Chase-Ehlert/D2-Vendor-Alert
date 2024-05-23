@@ -1,4 +1,4 @@
-import { TokenInfo } from './token-info.js'
+import { TokenInfo } from '../../infrastructure/destiny/token-info.js'
 import { UserInterface } from './user.js'
 
 export interface UserRepository {

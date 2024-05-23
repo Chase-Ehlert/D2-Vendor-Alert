@@ -1,6 +1,6 @@
-import { UserInterface } from '../../domain/user.js'
-import { Mod } from '../../domain/mod.js'
-import { DestinyApiClient } from './destiny-api-client.js'
+import { UserInterface } from '../persistence/user.js'
+import { Mod } from './mod.js'
+import { DestinyApiClient } from '../../infrastructure/destiny/destiny-api-client.js'
 
 export class Vendor {
   constructor (

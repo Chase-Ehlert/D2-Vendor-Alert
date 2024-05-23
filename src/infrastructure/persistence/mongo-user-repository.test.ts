@@ -1,5 +1,5 @@
-import { TokenInfo } from '../../domain/token-info'
-import { User } from '../../domain/user'
+import { TokenInfo } from '../destiny/token-info'
+import { User } from '../../domain/persistence/user'
 import { MongoUserRepository } from './mongo-user-repository'
 
 let realDate: any

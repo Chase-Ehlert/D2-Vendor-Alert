@@ -1,7 +1,7 @@
 import { AlertCommand } from './commands/alert-command.js'
 import { DeployCommands } from './deploy-commands.js'
 import { AlertCommandConfigClass } from './commands/alert-command-config-class.js'
-import { DeployCommandsConfigClass } from './deploy-commands-config-class.js'
+import { DeployCommandsConfigClass } from './configs/deploy-commands-config-class.js'
 import { notifierConfigSchema, validateSchema } from '../../apps/config-schema.js'
 
 const config = validateSchema(notifierConfigSchema)
