@@ -1,6 +1,6 @@
 import { TokenInfo } from '../destiny/token-info'
-import { User } from '../../domain/persistence/user'
 import { MongoUserRepository } from './mongo-user-repository'
+import { User } from './user-schema.js'
 
 let realDate: any
 
