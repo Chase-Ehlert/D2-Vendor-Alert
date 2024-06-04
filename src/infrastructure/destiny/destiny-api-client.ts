@@ -8,8 +8,9 @@ import { Collectible } from '../../domain/destiny/collectible.js'
 import path from 'path'
 import metaUrl from '../../testing-helpers/url.js'
 import { OAuthResponse } from '../../presentation/web/o-auth-response.js'
+import { DestinyClient } from '../../domain/destiny/destiny-client.js'
 
-export class DestinyApiClient {
+export class DestinyApiClient implements DestinyClient {
   private readonly apiKeyHeader
   private readonly urlEncodedHeaders
   private readonly bungieDomain = 'https://www.bungie.net/'
