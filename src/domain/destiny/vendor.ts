@@ -1,6 +1,6 @@
 import { UserInterface } from '../user/user.js'
 import { Mod } from './mod.js'
-import { DestinyService } from './destiny-client.js'
+import { DestinyService } from './destiny-service.js'
 
 export class Vendor {
   constructor (private readonly destinyService: DestinyService) { }

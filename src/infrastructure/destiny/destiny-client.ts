@@ -8,7 +8,7 @@ import { Collectible } from '../../domain/destiny/collectible.js'
 import path from 'path'
 import metaUrl from '../../testing-helpers/url.js'
 import { OAuthResponse } from '../../presentation/web/o-auth-response.js'
-import { DestinyService } from '../../domain/destiny/destiny-client.js'
+import { DestinyService } from '../../domain/destiny/destiny-service.js'
 
 export class DestinyClient implements DestinyService {
   private readonly apiKeyHeader
