@@ -95,7 +95,11 @@ export class DestinyApiClient implements DestinyClient {
     const getVendorSalesComponent = 402
     const tokenInfo = await this.getTokenInfo(refreshToken)
 
-    await this.database.updateUserByMembershipId(tokenInfo)
+    await this.database.updateUserByMembershipId(
+      tokenInfo.bungieMembershipId,
+      tokenInfo.refreshToken,
+      tokenInfo.refreshTokenExpirationTime
+    )
 
     const { data } = await this.httpClient.get(
       this.bungieDomainWithDestinyDirectory +
@@ -147,7 +151,11 @@ export class DestinyApiClient implements DestinyClient {
 
     if (currentDate.getTime() > expirationDate.getTime()) {
       const tokenInfo = await this.getTokenInfo(user.refreshToken)
-      await this.database.updateUserByMembershipId(tokenInfo)
+      await this.database.updateUserByMembershipId(
+        tokenInfo.bungieMembershipId,
+        tokenInfo.refreshToken,
+        tokenInfo.refreshTokenExpirationTime
+      )
     }
   }
 

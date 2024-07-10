@@ -1,6 +1,5 @@
 import { UserRepository } from '../../domain/persistence/user-repository.js'
 import { UserInterface } from '../../domain/persistence/user.js'
-import { TokenInfo } from '../destiny/token-info.js'
 import { User } from './user-schema.js'
 
 export class MongoUserRepository implements UserRepository {
@@ -42,11 +41,15 @@ export class MongoUserRepository implements UserRepository {
   /**
      * Updates the database information for a specific user using their Bungie membership id
      */
-  async updateUserByMembershipId (tokenInfo: TokenInfo): Promise<void> {
-    const filter = { bungieMembershipId: tokenInfo.bungieMembershipId }
+  async updateUserByMembershipId (
+    membershipId: string,
+    refreshToken: string,
+    refreshTokenExpirationTime: string
+  ): Promise<void> {
+    const filter = { bungieMembershipId: membershipId }
     const updatedUser = new User({
-      refreshExpiration: this.determineExpirationDate(tokenInfo.refreshTokenExpirationTime),
-      refreshToken: tokenInfo.refreshToken
+      refreshExpiration: this.determineExpirationDate(refreshTokenExpirationTime),
+      refreshToken: refreshToken
     },
     { _id: false }
     )

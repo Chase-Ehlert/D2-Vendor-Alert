@@ -1,4 +1,3 @@
-import { TokenInfo } from '../../infrastructure/destiny/token-info.js'
 import { UserInterface } from './user.js'
 
 export interface UserRepository {
@@ -11,7 +10,11 @@ export interface UserRepository {
     discordChannelId: string
   ) => Promise<void>
 
-  updateUserByMembershipId: (tokenInfo: TokenInfo) => Promise<void>
+  updateUserByMembershipId: (
+    membershipId: string,
+    refreshToken: string,
+    refreshTokenExpirationTime: string
+  ) => Promise<void>
 
   updateUserByUsername: (
     bungieUsername: string,

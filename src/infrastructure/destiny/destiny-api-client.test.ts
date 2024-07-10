@@ -569,11 +569,6 @@ describe('DestinyApiClient', () => {
         access_token: ''
       }
     } as unknown as AxiosResponse
-    const expectedTokenInfo = new TokenInfo(
-      bungieMembershipId,
-      refreshTokenExpirationTime,
-      refreshToken
-    )
     const mockDate = jest.fn()
     mockDate.mockReturnValueOnce(new Date()).mockReturnValueOnce(new Date(712345256981))
     global.Date = mockDate as any
@@ -583,6 +578,10 @@ describe('DestinyApiClient', () => {
 
     await destinyApiClient.checkRefreshTokenExpiration(user)
 
-    expect(mongoUserRepository.updateUserByMembershipId).toHaveBeenCalledWith(expectedTokenInfo)
+    expect(mongoUserRepository.updateUserByMembershipId).toHaveBeenCalledWith(
+      bungieMembershipId,
+      refreshToken,
+      refreshTokenExpirationTime
+    )
   })
 })

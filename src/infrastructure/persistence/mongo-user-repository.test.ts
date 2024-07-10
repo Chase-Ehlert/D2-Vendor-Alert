@@ -1,4 +1,3 @@
-import { TokenInfo } from '../destiny/token-info'
 import { MongoUserRepository } from './mongo-user-repository'
 import { User } from './user-schema.js'
 
@@ -93,7 +92,9 @@ describe('MongoUserRepository', () => {
     global.Date = mockDate as any
 
     await mongoUserRepo.updateUserByMembershipId(
-      new TokenInfo(bungieMembershipId, refreshExpiration, refreshToken)
+      bungieMembershipId,
+      refreshToken,
+      refreshExpiration
     )
 
     expect(findOneAndUpdateSpy).toHaveBeenCalledWith(
