@@ -1,8 +1,8 @@
-import { DestinyApiClientConfig } from '../../infrastructure/destiny/config/destiny-api-client-config'
+import { DestinyClientConfig } from '../../infrastructure/destiny/config/destiny-client-config'
 import { DiscordConfig } from './configs/discord-config'
 import { AxiosHttpClient } from '../../infrastructure/persistence/axios-http-client'
 import { MongoUserRepository } from '../../infrastructure/persistence/mongo-user-repository'
-import { DestinyApiClient } from '../../infrastructure/destiny/destiny-api-client'
+import { DestinyClient } from '../../infrastructure/destiny/destiny-client'
 import { AlertCommand } from './commands/alert-command'
 import { DiscordClient } from './discord-client'
 import { AlertCommandConfig } from './commands/alert-command-config.js'
@@ -42,14 +42,14 @@ beforeAll(() => {
 describe('DiscordClient', () => {
   const expectedDiscordConfig = { token: 'token' } as unknown as DiscordConfig
   const mongoUserRepo = new MongoUserRepository()
-  const destinyApiClient = new DestinyApiClient(
+  const destinyClient = new DestinyClient(
     new AxiosHttpClient(),
     mongoUserRepo,
-    {} satisfies DestinyApiClientConfig)
+    {} satisfies DestinyClientConfig)
   const alertCommand = new AlertCommand({} satisfies AlertCommandConfig)
   const discordClient = new DiscordClient(
     mongoUserRepo,
-    destinyApiClient,
+    destinyClient,
     alertCommand,
     expectedDiscordConfig
   )

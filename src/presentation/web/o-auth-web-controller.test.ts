@@ -1,10 +1,10 @@
-import { DestinyApiClientConfig } from '../../infrastructure/destiny/config/destiny-api-client-config'
+import { DestinyClientConfig } from '../../infrastructure/destiny/config/destiny-client-config'
 import { OAuthRequest } from './o-auth-request'
 import { OAuthResponse } from './o-auth-response'
 import { TokenInfo } from '../../infrastructure/destiny/token-info'
 import { AxiosHttpClient } from '../../infrastructure/persistence/axios-http-client'
 import { MongoUserRepository } from '../../infrastructure/persistence/mongo-user-repository'
-import { DestinyApiClient } from '../../infrastructure/destiny/destiny-api-client'
+import { DestinyClient } from '../../infrastructure/destiny/destiny-client'
 import { OAuthWebController } from './o-auth-web-controller'
 import express from 'express'
 import path from 'path'
@@ -21,13 +21,13 @@ beforeAll(() => {
 })
 
 describe('OAuthWebController', () => {
-  const destinyApiClient = new DestinyApiClient(
+  const destinyClient = new DestinyClient(
     new AxiosHttpClient(),
     new MongoUserRepository(),
-    {} satisfies DestinyApiClientConfig
+    {} satisfies DestinyClientConfig
   )
   const mongoUserRepo = new MongoUserRepository()
-  const oauthWebController = new OAuthWebController(destinyApiClient, mongoUserRepo)
+  const oauthWebController = new OAuthWebController(destinyClient, mongoUserRepo)
 
   it('should handle the OAuth handshake', async () => {
     const mockApp = express()
@@ -46,11 +46,11 @@ describe('OAuthWebController', () => {
     const expectedDestinyId = 'destinyId'
     const expectedBungieUsername = 'username'
     const expectedDestinyCharacterId = 'characterId'
-    jest.spyOn(destinyApiClient, 'getRefreshTokenInfo').mockResolvedValue(tokenInfo)
-    jest.spyOn(destinyApiClient, 'getDestinyMembershipInfo').mockResolvedValue(
+    jest.spyOn(destinyClient, 'getRefreshTokenInfo').mockResolvedValue(tokenInfo)
+    jest.spyOn(destinyClient, 'getDestinyMembershipInfo').mockResolvedValue(
       [expectedDestinyId, expectedBungieUsername]
     )
-    jest.spyOn(destinyApiClient, 'getDestinyCharacterIds').mockResolvedValue(expectedDestinyCharacterId)
+    jest.spyOn(destinyClient, 'getDestinyCharacterIds').mockResolvedValue(expectedDestinyCharacterId)
     mongoUserRepo.updateUserByUsername = jest.fn()
 
     await oauthWebController.handleOAuth(mockApp, request, mockResult)

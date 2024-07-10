@@ -1,5 +1,5 @@
 import { HttpClient } from '../persistence/http-client.js'
-import { DestinyApiClientConfig } from './config/destiny-api-client-config.js'
+import { DestinyClientConfig } from './config/destiny-client-config.js'
 import { UserInterface } from '../../domain/user/user.js'
 import { UserRepository } from '../../domain/user/user-repository.js'
 import { TokenInfo } from './token-info.js'
@@ -8,9 +8,9 @@ import { Collectible } from '../../domain/destiny/collectible.js'
 import path from 'path'
 import metaUrl from '../../testing-helpers/url.js'
 import { OAuthResponse } from '../../presentation/web/o-auth-response.js'
-import { DestinyClient } from '../../domain/destiny/destiny-client.js'
+import { DestinyService } from '../../domain/destiny/destiny-client.js'
 
-export class DestinyApiClient implements DestinyClient {
+export class DestinyClient implements DestinyService {
   private readonly apiKeyHeader
   private readonly urlEncodedHeaders
   private readonly bungieDomain = 'https://www.bungie.net/'
@@ -21,7 +21,7 @@ export class DestinyApiClient implements DestinyClient {
   constructor (
     private readonly httpClient: HttpClient,
     private readonly database: UserRepository,
-    private readonly config: DestinyApiClientConfig
+    private readonly config: DestinyClientConfig
   ) {
     this.apiKeyHeader = { 'x-api-key': this.config.apiKey }
     this.urlEncodedHeaders = {

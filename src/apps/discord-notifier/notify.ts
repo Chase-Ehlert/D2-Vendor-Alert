@@ -1,11 +1,11 @@
 import express from 'express'
-import { DestinyApiClient } from '../../infrastructure/destiny/destiny-api-client.js'
+import { DestinyClient } from '../../infrastructure/destiny/destiny-client.js'
 import { DiscordService } from '../../infrastructure/services/discord-service.js'
 import { MongoDbService } from '../../infrastructure/persistence/services/mongo-db-service.js'
 
 export class Notify {
   constructor (
-    private readonly destinyApiClient: DestinyApiClient,
+    private readonly destinyClient: DestinyClient,
     private readonly discordService: DiscordService,
     private readonly mongoDbService: MongoDbService
   ) {}
@@ -28,7 +28,7 @@ export class Notify {
 
   private notifyHandler (app: express.Application): Function {
     return (async (request, result) => {
-      await this.destinyApiClient.checkRefreshTokenExpiration(request.body.user)
+      await this.destinyClient.checkRefreshTokenExpiration(request.body.user)
       await this.discordService.compareModsForSaleWithUserInventory(request.body.user)
     }) as express.RequestHandler
   }

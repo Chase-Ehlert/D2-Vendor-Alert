@@ -1,6 +1,6 @@
 import { Mod } from './mod.js'
 
-export interface DestinyClient {
+export interface DestinyService {
   getCollectibleInfo: (destinyId: string) => Promise<String[]>
   getVendorInfo: (
     destinyId: string,

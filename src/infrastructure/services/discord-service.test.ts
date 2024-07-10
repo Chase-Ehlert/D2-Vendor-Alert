@@ -2,9 +2,9 @@ import { MongoUserRepository } from '../persistence/mongo-user-repository'
 import { AxiosHttpClient } from '../persistence/axios-http-client'
 import { UserInterface } from '../../domain/user/user'
 import { AxiosResponse } from 'axios'
-import { DestinyApiClientConfig } from '../destiny/config/destiny-api-client-config'
+import { DestinyClientConfig } from '../destiny/config/destiny-client-config'
 import { DiscordConfig } from '../../presentation/discord/configs/discord-config'
-import { DestinyApiClient } from '../destiny/destiny-api-client'
+import { DestinyClient } from '../destiny/destiny-client'
 import { Vendor } from '../../domain/destiny/vendor'
 import { DiscordService } from './discord-service'
 
@@ -14,12 +14,12 @@ jest.mock('./../../testing-helpers/url', () => {
 
 describe('DiscordService', () => {
   const axiosHttpClient = new AxiosHttpClient()
-  const destinyApiClient = new DestinyApiClient(
+  const destinyClient = new DestinyClient(
     axiosHttpClient,
     new MongoUserRepository(),
-    {} satisfies DestinyApiClientConfig
+    {} satisfies DestinyClientConfig
   )
-  const vendor = new Vendor(destinyApiClient)
+  const vendor = new Vendor(destinyClient)
   const expectedToken = '123Token'
   const discordService = new DiscordService(
     vendor,

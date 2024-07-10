@@ -1,7 +1,7 @@
 import { Config } from '../../../domain/config.js'
-import { DestinyApiClientConfig } from './destiny-api-client-config.js'
+import { DestinyClientConfig } from './destiny-client-config.js'
 
-export class DestinyApiClientConfigClass implements DestinyApiClientConfig {
+export class DestinyClientConfigClass implements DestinyClientConfig {
   constructor (
     public readonly apiKey?: string,
     public readonly oauthSecret?: string,
@@ -12,7 +12,7 @@ export class DestinyApiClientConfigClass implements DestinyApiClientConfig {
     DESTINY_API_KEY: apiKey,
     DESTINY_OAUTH_SECRET: oauthSecret,
     DESTINY_OAUTH_CLIENT_ID: oauthClientId
-  }: Config): DestinyApiClientConfig {
-    return new DestinyApiClientConfigClass(apiKey, oauthSecret, oauthClientId)
+  }: Config): DestinyClientConfig {
+    return new DestinyClientConfigClass(apiKey, oauthSecret, oauthClientId)
   }
 }

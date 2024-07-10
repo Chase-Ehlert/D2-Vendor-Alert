@@ -1,7 +1,7 @@
 import express from 'express'
 import { TokenInfo } from '../../infrastructure/destiny/token-info.js'
 import { MongoUserRepository } from '../../infrastructure/persistence/mongo-user-repository.js'
-import { DestinyApiClient } from '../../infrastructure/destiny/destiny-api-client.js'
+import { DestinyClient } from '../../infrastructure/destiny/destiny-client.js'
 import { OAuthResponse } from './o-auth-response.js'
 import { OAuthRequest } from './o-auth-request.js'
 import path from 'path'
@@ -9,7 +9,7 @@ import metaUrl from '../../testing-helpers/url.js'
 
 export class OAuthWebController {
   constructor (
-    private readonly destinyApiClient: DestinyApiClient,
+    private readonly destinyClient: DestinyClient,
     private readonly mongoUserRepo: MongoUserRepository
   ) {}
 
@@ -37,11 +37,11 @@ export class OAuthWebController {
     authorizationCode: string,
     result: OAuthResponse
   ): Promise<void | string> {
-    const tokenInfo = await this.destinyApiClient.getRefreshTokenInfo(authorizationCode, result)
+    const tokenInfo = await this.destinyClient.getRefreshTokenInfo(authorizationCode, result)
 
     if (tokenInfo instanceof TokenInfo) {
-      const destinyMembershipInfo = await this.destinyApiClient.getDestinyMembershipInfo(tokenInfo.bungieMembershipId)
-      const destinyCharacterId = await this.destinyApiClient.getDestinyCharacterIds(destinyMembershipInfo[0])
+      const destinyMembershipInfo = await this.destinyClient.getDestinyMembershipInfo(tokenInfo.bungieMembershipId)
+      const destinyCharacterId = await this.destinyClient.getDestinyCharacterIds(destinyMembershipInfo[0])
 
       await this.mongoUserRepo.updateUserByUsername(
         destinyMembershipInfo[1],

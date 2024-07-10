@@ -1,11 +1,11 @@
 import { MongoUserRepository } from '../../infrastructure/persistence/mongo-user-repository'
 import { Alert } from './alert'
-import { DestinyApiClientConfig } from '../../infrastructure/destiny/config/destiny-api-client-config'
+import { DestinyClientConfig } from '../../infrastructure/destiny/config/destiny-client-config'
 import { DiscordConfig } from '../../presentation/discord/configs/discord-config'
 import { MongoDbServiceConfig } from '../../infrastructure/persistence/configs/mongo-db-service-config'
 import { NotifierServiceConfig } from '../../infrastructure/services/configs/notifier-service-config'
 import { AxiosHttpClient } from '../../infrastructure/persistence/axios-http-client'
-import { DestinyApiClient } from '../../infrastructure/destiny/destiny-api-client'
+import { DestinyClient } from '../../infrastructure/destiny/destiny-client'
 import { MongoDbService } from '../../infrastructure/persistence/services/mongo-db-service'
 import { NotifierService } from '../../infrastructure/services/notifier-service'
 import { AlertManager } from '../../presentation/discord/alert-manager'
@@ -52,7 +52,7 @@ beforeAll(() => {
 let mongoUserRepo: MongoUserRepository
 let mongoDbService: MongoDbService
 let alertManager: AlertManager
-let destinyApiClient: DestinyApiClient
+let destinyClient: DestinyClient
 let discordClient: DiscordClient
 let oAuthWebController: OAuthWebController
 let mockApp: express.Application
@@ -67,18 +67,18 @@ beforeEach(() => {
        { address: '' } satisfies NotifierServiceConfig,
        new AxiosHttpClient()
     ))
-  destinyApiClient = new DestinyApiClient(
+  destinyClient = new DestinyClient(
     new AxiosHttpClient(),
     mongoUserRepo,
-      {} satisfies DestinyApiClientConfig
+      {} satisfies DestinyClientConfig
   )
   discordClient = new DiscordClient(
     mongoUserRepo,
-    destinyApiClient,
+    destinyClient,
     new AlertCommand({} satisfies AlertCommandConfig),
     {} satisfies DiscordConfig
   )
-  oAuthWebController = new OAuthWebController(destinyApiClient, mongoUserRepo)
+  oAuthWebController = new OAuthWebController(destinyClient, mongoUserRepo)
   mockApp = express()
 
   alert = new Alert(oAuthWebController, mongoDbService, discordClient, alertManager)
