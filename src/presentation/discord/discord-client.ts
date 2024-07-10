@@ -1,4 +1,4 @@
-import { UserRepository } from '../../domain/persistence/user-repository.js'
+import { UserRepository } from '../../domain/user/user-repository.js'
 import { DiscordConfig } from './configs/discord-config.js'
 import { DestinyApiClient } from '../../infrastructure/destiny/destiny-api-client.js'
 import { AlertCommand } from './commands/alert-command.js'

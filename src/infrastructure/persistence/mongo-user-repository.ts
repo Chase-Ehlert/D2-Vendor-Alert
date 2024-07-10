@@ -1,5 +1,5 @@
-import { UserRepository } from '../../domain/persistence/user-repository.js'
-import { UserInterface } from '../../domain/persistence/user.js'
+import { UserRepository } from '../../domain/user/user-repository.js'
+import { UserInterface } from '../../domain/user/user.js'
 import { User } from './user-schema.js'
 
 export class MongoUserRepository implements UserRepository {

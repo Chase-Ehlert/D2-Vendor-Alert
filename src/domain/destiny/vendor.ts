@@ -1,4 +1,4 @@
-import { UserInterface } from '../persistence/user.js'
+import { UserInterface } from '../user/user.js'
 import { Mod } from './mod.js'
 import { DestinyClient } from './destiny-client.js'
 

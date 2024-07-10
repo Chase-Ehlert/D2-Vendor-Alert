@@ -1,6 +1,6 @@
-import { UserRepository } from '../../domain/persistence/user-repository.js'
+import { UserRepository } from '../../domain/user/user-repository.js'
 import { NotifierServiceConfig } from './configs/notifier-service-config.js'
-import { HttpClient } from '../../domain/persistence/http-client.js'
+import { HttpClient } from '../persistence/http-client.js'
 
 export class NotifierService {
   constructor (

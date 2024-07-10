@@ -1,6 +1,6 @@
 import { AxiosHttpClient } from '../persistence/axios-http-client'
 import { MongoUserRepository } from '../persistence/mongo-user-repository'
-import { UserInterface } from '../../domain/persistence/user'
+import { UserInterface } from '../../domain/user/user'
 import { TokenInfo } from './token-info'
 import { DestinyApiClientConfig } from './config/destiny-api-client-config'
 import { DestinyApiClient } from './destiny-api-client'

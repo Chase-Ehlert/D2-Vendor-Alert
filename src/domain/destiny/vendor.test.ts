@@ -1,5 +1,5 @@
 import { MongoUserRepository } from '../../infrastructure/persistence/mongo-user-repository'
-import { UserInterface } from '../persistence/user'
+import { UserInterface } from '../user/user'
 import { AxiosHttpClient } from '../../infrastructure/persistence/axios-http-client'
 import { Mod } from './mod'
 import { DestinyApiClientConfig } from '../../infrastructure/destiny/config/destiny-api-client-config'

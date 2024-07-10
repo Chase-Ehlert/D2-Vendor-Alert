@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose'
-import { UserInterface } from '../../domain/persistence/user.js'
+import { UserInterface } from '../../domain/user/user.js'
 
 const UserSchema = new Schema({
   bungieUsername: { type: String, required: true },
