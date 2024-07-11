@@ -16,7 +16,7 @@ export class DiscordService {
   async compareModsForSaleWithUserInventory (
     user: UserInterface
   ): Promise<void> {
-    const unownedMods = await this.vendor.getUnownedModsForSaleByAda(user)
+    const unownedMods = await this.vendor.getUnownedMods(user)
 
     if (unownedMods.length > 0) {
       await this.messageUnownedModsList(user, unownedMods)

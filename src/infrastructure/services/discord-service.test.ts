@@ -47,7 +47,7 @@ describe('DiscordService', () => {
         'Content-Type': 'application/json'
       }
     }
-    jest.spyOn(vendor, 'getUnownedModsForSaleByAda').mockResolvedValue(expectedUnownedMods)
+    jest.spyOn(vendor, 'getUnownedMods').mockResolvedValue(expectedUnownedMods)
 
     await discordService.compareModsForSaleWithUserInventory(user)
 
@@ -70,7 +70,7 @@ describe('DiscordService', () => {
         'Content-Type': 'application/json'
       }
     }
-    jest.spyOn(vendor, 'getUnownedModsForSaleByAda').mockResolvedValue(expectedUnownedMods)
+    jest.spyOn(vendor, 'getUnownedMods').mockResolvedValue(expectedUnownedMods)
 
     await discordService.compareModsForSaleWithUserInventory(user)
 

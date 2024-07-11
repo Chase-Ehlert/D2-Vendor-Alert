@@ -8,32 +8,33 @@ export class Vendor {
   /**
    * Collect mods for sale by Ada-1 that are not owned by the user
    */
-  async getUnownedModsForSaleByAda (user: UserInterface): Promise<string[]> {
-    const ownedModHashIds = await this.destinyClient.getCollectibleInfo(user.destinyId)
+  async getUnownedMods (user: UserInterface): Promise<string[]> {
+    const unownedModIds = await this.destinyClient.getUnownedModIds(user.destinyId)
     const modsForSaleByAda = await this.getModsForSaleByAda(user)
-    const unownedModsForSaleByAda = modsForSaleByAda.filter((mod) => {
-      return !ownedModHashIds.includes(mod.hash)
+    const unownedMods = modsForSaleByAda.filter((mod) => {
+      return !unownedModIds.includes(mod.id)
     })
 
-    return unownedModsForSaleByAda.map((mod) => mod.displayProperties.name)
+    return unownedMods.map((mod) => mod.displayProperties.name)
   }
 
   /**
    * Collect mod info of merchandise for sale by Ada
    */
   private async getModsForSaleByAda (user: UserInterface): Promise<Mod[]> {
-    const adaMerchandise = await this.destinyClient.getVendorInfo(
+    const adaVendorId = '350061650'
+    const vendorMerchandise = await this.destinyClient.getVendorMerchandise(
       user.destinyId,
       user.destinyCharacterId,
       user.refreshToken
     )
-
-    const equippableMods = await this.destinyClient.getDestinyEquippableMods()
-    const unownedModHashes = adaMerchandise.filter(
-      (itemHash) =>
-        equippableMods.some((mod) => mod.hash === itemHash)
+    const adaMerchandiseIds = this.destinyClient.getAdaMerchandiseIds(adaVendorId, vendorMerchandise)
+    const equippableMods = await this.destinyClient.getEquippableMods()
+    const unownedModIds = adaMerchandiseIds.filter(
+      (itemId) =>
+        equippableMods.some((mod) => mod.id === itemId)
     )
-    const unownedEquippableModsFromAda = equippableMods.filter((mod) => unownedModHashes.includes(mod.hash))
+    const unownedEquippableModsFromAda = equippableMods.filter((mod) => unownedModIds.includes(mod.id))
 
     return unownedEquippableModsFromAda
   }

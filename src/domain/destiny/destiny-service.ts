@@ -1,11 +1,11 @@
 import { Mod } from './mod.js'
 
 export interface DestinyService {
-  getCollectibleInfo: (destinyId: string) => Promise<String[]>
-  getVendorInfo: (
+  getUnownedModIds: (destinyId: string) => Promise<String[]>
+  getVendorMerchandise: (
     destinyId: string,
     destinyCharacterId: string,
     refreshToken: string
-  ) => Promise<string[]>
-  getDestinyEquippableMods: () => Promise<Mod[]>
+  ) => Promise<Map<string, Map<string, Mod>>>
+  getEquippableMods: () => Promise<Mod[]>
 }

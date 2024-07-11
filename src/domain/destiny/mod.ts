@@ -1,6 +1,6 @@
 export class Mod {
   constructor (
-    public readonly hash: string,
+    public readonly id: string,
     public readonly displayProperties: DisplayProperties,
     public readonly itemType: string = ''
   ) {}
@@ -11,5 +11,5 @@ export interface DisplayProperties {
 }
 
 export interface Merchandise {
-  itemHash: string
+  itemId: string
 }
