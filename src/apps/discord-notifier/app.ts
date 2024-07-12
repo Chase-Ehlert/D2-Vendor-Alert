@@ -10,9 +10,11 @@ import { DestinyClientConfigClass } from '../../infrastructure/destiny/config/de
 import { DiscordClientConfigClass } from '../../presentation/discord/configs/discord-client-config-class.js'
 import { MongoDbServiceConfigClass } from '../../infrastructure/persistence/configs/mongo-db-service-config-class.js'
 import { notifierConfigSchema, validateSchema } from '../config-schema.js'
+import { databaseConfigSchema, validateDatabaseSchema } from '../../infrastructure/persistence/configs/database-config-schema.js'
 
 const config = validateSchema(notifierConfigSchema)
-const MONGO_DB_SERVICE_CONFIG = MongoDbServiceConfigClass.fromConfig(config)
+const databaseConfig = validateDatabaseSchema(databaseConfigSchema)
+const MONGO_DB_SERVICE_CONFIG = MongoDbServiceConfigClass.fromConfig(databaseConfig)
 const DISCORD_CONFIG = DiscordClientConfigClass.fromConfig(config)
 const DESTINY_API_CLIENT_CONFIG = DestinyClientConfigClass.fromConfig(config)
 const destinyClient = new DestinyClient(

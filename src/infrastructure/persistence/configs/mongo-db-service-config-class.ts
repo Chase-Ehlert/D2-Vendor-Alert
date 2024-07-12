@@ -1,4 +1,4 @@
-import { Config } from '../../../domain/config.js'
+import { DatabaseConfig } from './database-config.js'
 import { MongoDbServiceConfig } from './mongo-db-service-config.js'
 
 export class MongoDbServiceConfigClass implements MongoDbServiceConfig {
@@ -16,7 +16,7 @@ export class MongoDbServiceConfigClass implements MongoDbServiceConfig {
     DATABASE_PASSWORD: databasePassword,
     DATABASE_CLUSTER: databaseCluster,
     DATABASE_NAME: databaseName
-  }: Config): MongoDbServiceConfig {
+  }: DatabaseConfig): MongoDbServiceConfig {
     if (mongoUri !== undefined) {
       return new MongoDbServiceConfigClass(mongoUri)
     } else if (

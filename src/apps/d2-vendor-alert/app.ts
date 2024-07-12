@@ -15,10 +15,12 @@ import { DestinyClientConfigClass } from '../../infrastructure/destiny/config/de
 import { DiscordClientConfigClass } from '../../presentation/discord/configs/discord-client-config-class.js'
 import { MongoDbServiceConfigClass } from '../../infrastructure/persistence/configs/mongo-db-service-config-class.js'
 import { AlertCommandConfigClass } from '../../presentation/discord/commands/alert-command-config-class.js'
+import { databaseConfigSchema, validateDatabaseSchema } from '../../infrastructure/persistence/configs/database-config-schema.js'
 
 const config = validateSchema(alertConfigSchema)
+const databaseConfig = validateDatabaseSchema(databaseConfigSchema)
 const ALERT_COMMAND_CONFIG = AlertCommandConfigClass.fromConfig(config)
-const MONGO_DB_SERVICE_CONFIG = MongoDbServiceConfigClass.fromConfig(config)
+const MONGO_DB_SERVICE_CONFIG = MongoDbServiceConfigClass.fromConfig(databaseConfig)
 const DISCORD_CONFIG = DiscordClientConfigClass.fromConfig(config)
 const DISCORD_NOTIFIER_ADDRESS = NotifierServiceConfigClass.fromConfig(config)
 const DESTINY_API_CLIENT_CONFIG = DestinyClientConfigClass.fromConfig(config)
