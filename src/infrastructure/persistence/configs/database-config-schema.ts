@@ -1,5 +1,5 @@
 import 'dotenv/config.js'
-import joi, { Schema } from 'joi'
+import joi from 'joi'
 import { DatabaseConfig } from './database-config.js'
 
 export const databaseConfigSchema = joi
@@ -21,15 +21,3 @@ export const databaseConfigSchema = joi
   .or('DATABASE_PASSWORD', 'MONGO_URI')
   .and('DATABASE_USER', 'DATABASE_CLUSTER', 'DATABASE_NAME', 'DATABASE_PASSWORD')
   .unknown()
-
-export function validateDatabaseSchema (schema: Schema): DatabaseConfig {
-  const { value, error } = schema
-    .prefs({ errors: { label: 'key' } })
-    .validate(process.env)
-
-  if (error !== undefined) {
-    throw new Error(`Config validation error: ${error.message}`)
-  }
-
-  return value
-}

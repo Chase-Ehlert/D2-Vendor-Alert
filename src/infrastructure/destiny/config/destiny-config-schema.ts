@@ -1,5 +1,5 @@
 import 'dotenv/config.js'
-import joi, { Schema } from 'joi'
+import joi from 'joi'
 import { DestinyConfig } from './destiny-config.js'
 
 export const destinyConfigSchema = joi
@@ -10,15 +10,3 @@ export const destinyConfigSchema = joi
     DESTINY_OAUTH_SECRET: joi.string().required()
   })
   .unknown()
-
-export function validateDestinySchema (schema: Schema): DestinyConfig {
-  const { value, error } = schema
-    .prefs({ errors: { label: 'key' } })
-    .validate(process.env)
-
-  if (error !== undefined) {
-    throw new Error(`Config validation error: ${error.message}`)
-  }
-
-  return value
-}

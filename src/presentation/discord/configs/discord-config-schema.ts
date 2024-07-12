@@ -1,5 +1,5 @@
 import 'dotenv/config.js'
-import joi, { Schema } from 'joi'
+import joi from 'joi'
 import { DiscordConfig } from './discord-config.js'
 
 export const discordConfigSchema = joi
@@ -13,15 +13,3 @@ export const discordConfigSchema = joi
 export const alertConfigSchema = discordConfigSchema.append(
   { DISCORD_NOTIFIER_ADDRESS: joi.string().required() }
 )
-
-export function validateDiscordSchema (schema: Schema): DiscordConfig {
-  const { value, error } = schema
-    .prefs({ errors: { label: 'key' } })
-    .validate(process.env)
-
-  if (error !== undefined) {
-    throw new Error(`Config validation error: ${error.message}`)
-  }
-
-  return value
-}
