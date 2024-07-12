@@ -10,6 +10,10 @@ export const discordConfigSchema = joi
   })
   .unknown()
 
+export const alertConfigSchema = discordConfigSchema.append(
+  { DISCORD_NOTIFIER_ADDRESS: joi.string().required() }
+)
+
 export function validateDiscordSchema (schema: Schema): DiscordConfig {
   const { value, error } = schema
     .prefs({ errors: { label: 'key' } })

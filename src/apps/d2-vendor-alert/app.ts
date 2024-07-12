@@ -1,5 +1,4 @@
 import express from 'express'
-import { alertConfigSchema, validateSchema } from '../config-schema.js'
 import { AxiosHttpClient } from '../../infrastructure/persistence/axios-http-client.js'
 import { MongoUserRepository } from '../../infrastructure/persistence/mongo-user-repository.js'
 import { DestinyClient } from '../../infrastructure/destiny/destiny-client.js'
@@ -17,15 +16,16 @@ import { MongoDbServiceConfigClass } from '../../infrastructure/persistence/conf
 import { AlertCommandConfigClass } from '../../presentation/discord/commands/alert-command-config-class.js'
 import { databaseConfigSchema, validateDatabaseSchema } from '../../infrastructure/persistence/configs/database-config-schema.js'
 import { discordConfigSchema, validateDiscordSchema } from '../../presentation/discord/configs/discord-config-schema.js'
+import { destinyConfigSchema, validateDestinySchema } from '../../infrastructure/destiny/config/destiny-config-schema.js'
 
-const config = validateSchema(alertConfigSchema)
 const databaseConfig = validateDatabaseSchema(databaseConfigSchema)
 const discordConfig = validateDiscordSchema(discordConfigSchema)
-const ALERT_COMMAND_CONFIG = AlertCommandConfigClass.fromConfig(config)
+const destinyConfig = validateDestinySchema(destinyConfigSchema)
+const ALERT_COMMAND_CONFIG = AlertCommandConfigClass.fromConfig(destinyConfig)
 const MONGO_DB_SERVICE_CONFIG = MongoDbServiceConfigClass.fromConfig(databaseConfig)
 const DISCORD_CONFIG = DiscordClientConfigClass.fromConfig(discordConfig)
-const DISCORD_NOTIFIER_ADDRESS = NotifierServiceConfigClass.fromConfig(config)
-const DESTINY_API_CLIENT_CONFIG = DestinyClientConfigClass.fromConfig(config)
+const DISCORD_NOTIFIER_ADDRESS = NotifierServiceConfigClass.fromConfig(discordConfig)
+const DESTINY_API_CLIENT_CONFIG = DestinyClientConfigClass.fromConfig(destinyConfig)
 const mongoUserRepo = new MongoUserRepository()
 const destinyClient = new DestinyClient(
   new AxiosHttpClient(),
@@ -42,7 +42,9 @@ const alert = new Alert(
     new AlertCommand(ALERT_COMMAND_CONFIG),
     DISCORD_CONFIG
   ),
-  new AlertManager(new NotifierService(mongoUserRepo, DISCORD_NOTIFIER_ADDRESS, new AxiosHttpClient()))
+  new AlertManager(
+    new NotifierService(mongoUserRepo, DISCORD_NOTIFIER_ADDRESS, new AxiosHttpClient())
+  )
 )
 
 await alert.runApp(express())

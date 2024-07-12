@@ -1,5 +1,5 @@
-import { Config } from '../../../domain/config.js';
+import { DiscordConfig } from '../../../presentation/discord/configs/discord-config.js';
 
-export interface AlertConfig extends Config {
+export interface AlertConfig extends DiscordConfig {
   DISCORD_NOTIFIER_ADDRESS?: string
 }
