@@ -7,13 +7,13 @@ import { MongoDbService } from '../../infrastructure/persistence/services/mongo-
 import { AxiosHttpClient } from '../../infrastructure/persistence/axios-http-client.js'
 import { Notify } from './notify.js'
 import { DestinyClientConfigClass } from '../../infrastructure/destiny/config/destiny-client-config-class.js'
-import { DiscordConfigClass } from '../../presentation/discord/configs/discord-config-class.js'
+import { DiscordClientConfigClass } from '../../presentation/discord/configs/discord-client-config-class.js'
 import { MongoDbServiceConfigClass } from '../../infrastructure/persistence/configs/mongo-db-service-config-class.js'
 import { notifierConfigSchema, validateSchema } from '../config-schema.js'
 
 const config = validateSchema(notifierConfigSchema)
 const MONGO_DB_SERVICE_CONFIG = MongoDbServiceConfigClass.fromConfig(config)
-const DISCORD_CONFIG = DiscordConfigClass.fromConfig(config)
+const DISCORD_CONFIG = DiscordClientConfigClass.fromConfig(config)
 const DESTINY_API_CLIENT_CONFIG = DestinyClientConfigClass.fromConfig(config)
 const destinyClient = new DestinyClient(
   new AxiosHttpClient(),

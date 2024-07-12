@@ -1,6 +1,6 @@
 import { MongoUserRepository } from '../../infrastructure/persistence/mongo-user-repository'
 import { DestinyClientConfig } from '../../infrastructure/destiny/config/destiny-client-config'
-import { DiscordConfig } from '../../presentation/discord/configs/discord-config'
+import { DiscordClientConfig } from '../../presentation/discord/configs/discord-client-config'
 import { MongoDbServiceConfig } from '../../infrastructure/persistence/configs/mongo-db-service-config'
 import { AxiosHttpClient } from '../../infrastructure/persistence/axios-http-client'
 import { DestinyClient } from '../../infrastructure/destiny/destiny-client'
@@ -54,7 +54,7 @@ beforeEach(() => {
   discordService = new DiscordService(
     new Vendor(destinyClient),
     new AxiosHttpClient(),
-      {} satisfies DiscordConfig
+      {} satisfies DiscordClientConfig
   )
   mongoDbService = new MongoDbService({} satisfies MongoDbServiceConfig)
   mockApp = express()

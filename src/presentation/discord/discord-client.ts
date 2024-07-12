@@ -1,5 +1,5 @@
 import { UserRepository } from '../../domain/user/user-repository.js'
-import { DiscordConfig } from './configs/discord-config.js'
+import { DiscordClientConfig } from './configs/discord-client-config.js'
 import { DestinyClient } from '../../infrastructure/destiny/destiny-client.js'
 import { AlertCommand } from './commands/alert-command.js'
 import { SlashCommand } from './commands/slash-command.js'
@@ -10,7 +10,7 @@ export class DiscordClient {
     private readonly database: UserRepository,
     private readonly destinyClient: DestinyClient,
     private readonly alertCommand: AlertCommand,
-    private readonly config: DiscordConfig
+    private readonly config: DiscordClientConfig
   ) { }
 
   /**

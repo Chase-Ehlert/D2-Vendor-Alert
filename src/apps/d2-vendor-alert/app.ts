@@ -12,14 +12,14 @@ import { OAuthWebController } from '../../presentation/web/o-auth-web-controller
 import { Alert } from './alert.js'
 import { NotifierServiceConfigClass } from '../../infrastructure/services/configs/notifier-service-config-class.js'
 import { DestinyClientConfigClass } from '../../infrastructure/destiny/config/destiny-client-config-class.js'
-import { DiscordConfigClass } from '../../presentation/discord/configs/discord-config-class.js'
+import { DiscordClientConfigClass } from '../../presentation/discord/configs/discord-client-config-class.js'
 import { MongoDbServiceConfigClass } from '../../infrastructure/persistence/configs/mongo-db-service-config-class.js'
 import { AlertCommandConfigClass } from '../../presentation/discord/commands/alert-command-config-class.js'
 
 const config = validateSchema(alertConfigSchema)
 const ALERT_COMMAND_CONFIG = AlertCommandConfigClass.fromConfig(config)
 const MONGO_DB_SERVICE_CONFIG = MongoDbServiceConfigClass.fromConfig(config)
-const DISCORD_CONFIG = DiscordConfigClass.fromConfig(config)
+const DISCORD_CONFIG = DiscordClientConfigClass.fromConfig(config)
 const DISCORD_NOTIFIER_ADDRESS = NotifierServiceConfigClass.fromConfig(config)
 const DESTINY_API_CLIENT_CONFIG = DestinyClientConfigClass.fromConfig(config)
 const mongoUserRepo = new MongoUserRepository()
