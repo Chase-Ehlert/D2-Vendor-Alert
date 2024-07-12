@@ -5,9 +5,6 @@ import { Config } from '../domain/config.js'
 export const notifierConfigSchema = joi
   .object<Config>()
   .keys({
-    DISCORD_TOKEN: joi.string().required(),
-    DISCORD_CLIENT_ID: joi.string().required(),
-
     DESTINY_API_KEY: joi.string().required(),
     DESTINY_OAUTH_CLIENT_ID: joi.string().required(),
     DESTINY_OAUTH_SECRET: joi.string().required()
