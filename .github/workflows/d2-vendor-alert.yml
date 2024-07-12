@@ -70,6 +70,7 @@ jobs:
           script: |
             cd workspaces/D2-Vendor-Alert/
             git checkout .
+            git checkout main
             git pull
             npm install
             npm run tsc
