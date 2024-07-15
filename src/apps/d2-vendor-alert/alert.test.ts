@@ -109,17 +109,17 @@ describe('Alert', () => {
   it('should setup the get root endpoint with the handleOAuth function', () => {
     const rootHandler = (alert as any).rootHandler(mockApp)
     const expectedRequest = { query: { code: '123' } }
-    const expectedResult: OAuthResponse = {
+    const expectedResponse: OAuthResponse = {
       render: (_template: string, _data: Record<string, any>) => {},
       sendFile: (_path: string) => {}
     }
 
-    rootHandler(expectedRequest, expectedResult)
+    rootHandler(expectedRequest, expectedResponse)
 
     expect(oAuthWebController.handleOAuth).toHaveBeenCalledWith(
       mockApp,
       expectedRequest,
-      expectedResult
+      expectedResponse
     )
   })
 

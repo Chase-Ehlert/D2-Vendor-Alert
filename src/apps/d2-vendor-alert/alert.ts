@@ -11,6 +11,8 @@ import { AlertManager } from '../../presentation/discord/alert-manager.js'
 import { OAuthResponse } from '../../presentation/web/o-auth-response.js'
 import { OAuthRequest } from '../../presentation/web/o-auth-request.js'
 
+type OAuthHandler = (request: OAuthRequest, response: OAuthResponse) => Promise<void>
+
 export class Alert {
   constructor (
     private readonly oAuthWebController: OAuthWebController,
@@ -33,16 +35,13 @@ export class Alert {
     )
     app.get(
       '/',
-      this.rootHandler(app) as express.RequestHandler
+      () => this.rootHandler(app)
     )
   }
 
-  private rootHandler (app: express.Application): Function {
-    return async (
-      request: OAuthRequest,
-      result: OAuthResponse
-    ) => {
-      await this.oAuthWebController.handleOAuth(app, request, result)
+  private rootHandler (app: express.Application): OAuthHandler {
+    return async (request: OAuthRequest, response: OAuthResponse): Promise<void> => {
+      await this.oAuthWebController.handleOAuth(app, request, response)
     }
   }
 
