@@ -3,12 +3,16 @@ import { DestinyClientConfig } from './config/destiny-client-config.js'
 import { UserInterface } from '../../domain/user/user.js'
 import { UserRepository } from '../../domain/user/user-repository.js'
 import { TokenInfo } from './token-info.js'
-import { Mod } from '../../domain/destiny/mod.js'
+import { Merchandise, Mod } from '../../domain/destiny/mod.js'
 import { Collectible } from '../../domain/destiny/collectible.js'
 import path from 'path'
 import metaUrl from '../../testing-helpers/url.js'
 import { OAuthResponse } from '../../presentation/web/o-auth-response.js'
 import { DestinyService } from '../../domain/destiny/destiny-service.js'
+
+interface VendorMerchandise {
+  saleItems: { [key: string]: Merchandise }
+}
 
 export class DestinyClient implements DestinyService {
   private readonly apiKeyHeader
@@ -76,12 +80,12 @@ export class DestinyClient implements DestinyService {
 
     const convertResponseToMods = Object.values(response.data.DestinyInventoryItemDefinition).map(
       (mod: Mod) => (
-        new Mod(mod.id, mod.displayProperties, mod.itemType)
+        new Mod(String(mod.hash), mod.displayProperties, String(mod.itemType))
       )
     )
 
     const filterOutUnequippableMods = convertResponseToMods.filter((mod: Mod) => {
-      return (JSON.stringify(mod.itemType) === '19')
+      return (mod.itemType === '19')
     })
 
     return filterOutUnequippableMods
@@ -91,7 +95,7 @@ export class DestinyClient implements DestinyService {
     destinyId: string,
     destinyCharacterId: string,
     refreshToken: string
-  ): Promise<Map<string, Map<string, Mod>>> {
+  ): Promise<Map<string, Map<string, Merchandise>>> {
     const getVendorSalesComponent = 402
     const tokenInfo = await this.getTokenInfo(refreshToken)
 
@@ -114,14 +118,7 @@ export class DestinyClient implements DestinyService {
         }
       })
 
-    const vendorMerchandiseMap = new Map<string, Map<string, Mod>>()
-
-    Object.entries(data.Response.sales.data).map(
-      ([vendorId, vendorMerchandise]: [string, {saleItems: Map<string, Mod>}]) =>
-        vendorMerchandiseMap.set(vendorId, vendorMerchandise.saleItems)
-    )
-
-    return vendorMerchandiseMap
+    return this.convertMerchandiseToMap(data.Response.sales.data)
   }
 
   async getUnownedModIds (destinyId: string): Promise<String[]> {
@@ -214,14 +211,14 @@ export class DestinyClient implements DestinyService {
   /**
      * Retrieves the merchandise sold by Ada
      */
-  getAdaMerchandiseIds (
+  getAdaMerchandiseHashes (
     vendorId: string,
-    vendorMerchandise: Map<string, Map<string, Mod>>
+    vendorMerchandise: Map<string, Map<string, Merchandise>>
   ): string[] {
-    const adaMerchandise = vendorMerchandise.get(vendorId)
+    const adaMerchandise = vendorMerchandise.get(vendorId) as Map<string, Merchandise>
 
     if (adaMerchandise !== undefined && adaMerchandise.size > 0) {
-      return Array.from(adaMerchandise.keys())
+      return Array.from(adaMerchandise.values()).map((item: Merchandise) => String(item.itemHash))
     } else {
       throw new Error('Ada does not have any merchandise!')
     }
@@ -265,5 +262,17 @@ export class DestinyClient implements DestinyService {
     const collectibleMods = collectibles.filter(mod => mod.state === unownedModStateId)
 
     return collectibleMods.map(collectible => collectible.id)
+  }
+
+  private convertMerchandiseToMap (vendorMerchandise: Object): Map<string, Map<string, Merchandise>> {
+    const vendorMerchandiseMap = new Map<string, Map<string, Merchandise>>()
+
+    Object.entries(vendorMerchandise).forEach(
+      ([vendorId, vendorMerchandise]: [string, VendorMerchandise]) => {
+        const saleItems = new Map<string, Merchandise>(Object.entries(vendorMerchandise.saleItems))
+        vendorMerchandiseMap.set(vendorId, saleItems)
+      }
+    )
+    return vendorMerchandiseMap
   }
 }

@@ -1,4 +1,4 @@
-import { Mod } from './mod.js'
+import { Merchandise, Mod } from './mod.js'
 
 export interface DestinyService {
   getUnownedModIds: (destinyId: string) => Promise<String[]>
@@ -6,6 +6,6 @@ export interface DestinyService {
     destinyId: string,
     destinyCharacterId: string,
     refreshToken: string
-  ) => Promise<Map<string, Map<string, Mod>>>
+  ) => Promise<Map<string, Map<string, Merchandise>>>
   getEquippableMods: () => Promise<Mod[]>
 }

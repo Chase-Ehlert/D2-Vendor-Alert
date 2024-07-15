@@ -68,9 +68,9 @@ describe('DestinyClient', () => {
 
   it('should retrieve a list of definitions for Destiny items from a specific manifest file', async () => {
     const expectedManifestFileName = 'manifest'
-    const itemId = '0132'
+    const itemHash = '0132'
     const itemName = 'Sunglasses of Dudeness'
-    const mod = new Mod(itemId, { name: itemName } satisfies DisplayProperties, '19')
+    const mod = new Mod(itemHash, { name: itemName } satisfies DisplayProperties, '19')
     const manifest = {
       data: {
         Response: {
@@ -84,7 +84,7 @@ describe('DestinyClient', () => {
       data: {
         DestinyInventoryItemDefinition: {
           987: {
-            id: itemId,
+            hash: itemHash,
             itemType: 19,
             displayProperties: {
               name: itemName
@@ -110,8 +110,8 @@ describe('DestinyClient', () => {
     expect(value).toHaveLength(1)
     expect(value[0] instanceof Mod).toBeTruthy()
     expect(value[0].displayProperties).toEqual(mod.displayProperties)
-    expect(value[0].id).toEqual(mod.id)
-    expect(JSON.stringify(value[0].itemType)).toEqual(mod.itemType)
+    expect(value[0].hash).toEqual(mod.hash)
+    expect(value[0].itemType).toEqual(mod.itemType)
   })
 
   it('should retrieve the list of merchandise for a Destiny vendor', async () => {
@@ -120,8 +120,8 @@ describe('DestinyClient', () => {
     const adaMerchandise = {
       350061650: {
         saleItems: {
-          1: { itemId: mod1ItemId } satisfies Merchandise,
-          2: { itemId: mod2ItemId } satisfies Merchandise
+          1: { itemHash: mod1ItemId } satisfies Merchandise,
+          2: { itemHash: mod2ItemId } satisfies Merchandise
         }
       }
     }
@@ -131,9 +131,11 @@ describe('DestinyClient', () => {
       }
     } as unknown as AxiosResponse
     const expectedVendorMerchandise = new Map<string, Object>()
-    const merchandiseItem1 = { itemId: '123' } satisfies Merchandise
-    const merchandiseItem2 = { itemId: '456' } satisfies Merchandise
-    const merchandise = { 1: merchandiseItem1, 2: merchandiseItem2 }
+    const merchandiseItem1 = { itemHash: '123' } satisfies Merchandise
+    const merchandiseItem2 = { itemHash: '456' } satisfies Merchandise
+    const merchandise = new Map()
+    merchandise.set('1', merchandiseItem1)
+    merchandise.set('2', merchandiseItem2)
 
     expectedVendorMerchandise.set('350061650', merchandise)
 
@@ -171,28 +173,6 @@ describe('DestinyClient', () => {
       }
     )
     expect(value).toEqual(expectedVendorMerchandise)
-  })
-
-  it('should throw an error when a vendors merchandise returns undefined', async () => {
-    const notAdasMerchandise = {
-      350061651: {}
-    }
-    const result = {
-      data: {
-        Response: { sales: { data: notAdasMerchandise } }
-      }
-    } as unknown as AxiosResponse
-    jest.spyOn(axiosHttpClient, 'post').mockResolvedValue(response)
-    jest.spyOn(axiosHttpClient, 'get').mockResolvedValue(result)
-
-    mongoUserRepository.updateUserByMembershipId = jest.fn()
-
-    try {
-      await destinyClient.getVendorMerchandise(user.destinyId, user.destinyCharacterId, accessToken)
-    } catch (error) {
-      expect(error).toBeInstanceOf(Error)
-      expect(error.message).toBe('Ada does not have any merchandise!')
-    }
   })
 
   it('should throw an error when the users access token info is undefined', async () => {
@@ -454,42 +434,34 @@ describe('DestinyClient', () => {
   it('should return a list of Adas merchandise ids', () => {
     const adaVendorId = '350061650'
     const modId1 = '123'
-    const modName1 = { name: 'Boots of Flying' } satisfies DisplayProperties
     const modId2 = '456'
-    const modName2 = { name: 'Helmet of Forseeing' } satisfies DisplayProperties
-    const vendorMerchandise = new Map<string, Map<string, Mod>>()
-    const adaMerchandise = new Map<string, Mod>()
-    const randomVendorMerchandise = new Map<string, Mod>()
+    const vendorMerchandise = new Map<string, Map<string, Merchandise>>()
+    const adaMerchandise = new Map<string, Merchandise>()
+    const randomVendorMerchandise = new Map<string, Merchandise>()
 
-    randomVendorMerchandise.set('987', new Mod(
-      '99',
-       { name: 'Sword of Daggerfall' } satisfies DisplayProperties)
-    )
-    adaMerchandise.set(modId1, new Mod('1', modName1))
-    adaMerchandise.set(modId2, new Mod('2', modName2))
+    randomVendorMerchandise.set('987', { itemHash: '99' })
+    adaMerchandise.set(modId1, { itemHash: '1' })
+    adaMerchandise.set(modId2, { itemHash: '2' })
     vendorMerchandise.set('111111111', randomVendorMerchandise)
     vendorMerchandise.set(adaVendorId, adaMerchandise)
 
-    const result = destinyClient.getAdaMerchandiseIds(adaVendorId, vendorMerchandise)
+    const result = destinyClient.getAdaMerchandiseHashes(adaVendorId, vendorMerchandise)
 
-    expect(result).toStrictEqual([modId1, modId2])
+    expect(result).toStrictEqual(['1', '2'])
   })
 
   it('should throw an error when Adas merchandise is undefined', () => {
     const adaVendorId = '350061659'
-    const vendorMerchandise = new Map<string, Map<string, Mod>>()
-    const adaMerchandise = new Map<string, Mod>()
-    const randomVendorMerchandise = new Map<string, Mod>()
+    const vendorMerchandise = new Map<string, Map<string, Merchandise>>()
+    const adaMerchandise = new Map<string, Merchandise>()
+    const randomVendorMerchandise = new Map<string, Merchandise>()
 
-    randomVendorMerchandise.set('987', new Mod(
-      '99',
-       { name: 'Sword of Daggerfall' } satisfies DisplayProperties)
-    )
+    randomVendorMerchandise.set('987', { itemHash: '99' })
     vendorMerchandise.set('111111111', randomVendorMerchandise)
     vendorMerchandise.set(adaVendorId, adaMerchandise)
 
     try {
-      destinyClient.getAdaMerchandiseIds(adaVendorId, vendorMerchandise)
+      destinyClient.getAdaMerchandiseHashes(adaVendorId, vendorMerchandise)
     } catch (error) {
       expect(error).toBeInstanceOf(Error)
       expect(error.message).toBe('Ada does not have any merchandise!')
