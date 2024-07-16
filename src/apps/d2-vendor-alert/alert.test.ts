@@ -105,6 +105,35 @@ describe('Alert', () => {
     expect(alertManager.dailyReset).toHaveBeenCalled()
   })
 
+  it('should create and start the server in the correct order', async () => {
+    const appEngineMock = jest.fn()
+    const appSetMock = jest.fn()
+    const appGetMock = jest.fn()
+    const connectToDatabaseMock = jest.fn()
+    const setupDiscordClientMock = jest.fn()
+    const appListenMock = jest.fn()
+    const alertMangerMock = jest.fn()
+
+    mockApp.engine = appEngineMock
+    mockApp.set = appSetMock
+    mockApp.get = appGetMock
+    mongoDbService.connectToDatabase = connectToDatabaseMock
+    discordClient.setupDiscordClient = setupDiscordClientMock
+    mockApp.listen = appListenMock
+    alertManager.dailyReset = alertMangerMock
+
+    await alert.runApp(mockApp)
+
+    expect(appEngineMock).toHaveBeenCalledBefore(appSetMock)
+    expect(appSetMock).toHaveBeenCalledTimes(2)
+    expect(appSetMock).toHaveBeenCalledBefore(appGetMock)
+    expect(appGetMock).toHaveBeenCalledBefore(connectToDatabaseMock)
+    expect(connectToDatabaseMock).toHaveBeenCalledBefore(setupDiscordClientMock)
+    expect(setupDiscordClientMock).toHaveBeenCalledBefore(appListenMock)
+    expect(appListenMock).toHaveBeenCalledBefore(alertMangerMock)
+    expect(alertMangerMock).toHaveBeenCalledAfter(appListenMock)
+  })
+
   it('should log that the server is running', () => {
     const logSpy = jest.spyOn(console, 'log')
     const logServerIsRunning = (alert as any).logServerIsRunning()
