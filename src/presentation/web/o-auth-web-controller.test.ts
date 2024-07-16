@@ -6,7 +6,6 @@ import { AxiosHttpClient } from '../../infrastructure/persistence/axios-http-cli
 import { MongoUserRepository } from '../../infrastructure/persistence/mongo-user-repository'
 import { DestinyClient } from '../../infrastructure/destiny/destiny-client'
 import { OAuthWebController } from './o-auth-web-controller'
-import express from 'express'
 import path from 'path'
 
 jest.mock('./../../testing-helpers/url', () => {
@@ -30,7 +29,6 @@ describe('OAuthWebController', () => {
   const oauthWebController = new OAuthWebController(destinyClient, mongoUserRepo)
 
   it('should handle the OAuth handshake', async () => {
-    const mockApp = express()
     const request: OAuthRequest = { query: { code: '123' } }
     const mockResult: jest.Mocked<OAuthResponse> = { render: jest.fn(), sendFile: jest.fn() }
     const expectedBungieMembershipId = 'id'
@@ -53,18 +51,17 @@ describe('OAuthWebController', () => {
     jest.spyOn(destinyClient, 'getDestinyCharacterIds').mockResolvedValue(expectedDestinyCharacterId)
     mongoUserRepo.updateUserByUsername = jest.fn()
 
-    await oauthWebController.handleOAuth(mockApp, request, mockResult)
+    await oauthWebController.handleOAuth(request, mockResult)
 
     expect(mockResult.render).toHaveBeenCalledWith('landing-page.mustache', { guardian: expectedBungieUsername })
   })
 
   it('should return an error page when the request code is undefined', async () => {
-    const mockApp = express()
     const request = { query: { code: undefined } } as unknown as OAuthRequest
     const mockResult: jest.Mocked<OAuthResponse> = { render: jest.fn(), sendFile: jest.fn() }
     const consoleSpy = jest.spyOn(console, 'log')
 
-    await oauthWebController.handleOAuth(mockApp, request, mockResult)
+    await oauthWebController.handleOAuth(request, mockResult)
 
     expect(consoleSpy).toHaveBeenCalledWith('Error with retreving code from authorization url on landing page')
     expect(consoleSpy).toHaveBeenCalledWith(request)

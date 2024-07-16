@@ -77,17 +77,6 @@ describe('Notify', () => {
     expect(mongoDbService.connectToDatabase).toHaveBeenCalled()
   })
 
-  it('should setup the post notify endpoint with checking the refresh token and comparing mods', async () => {
-    const expectedFunction = (notify as any).notifyHandler()
-    const expectedUser = '123'
-    const request = { body: { user: expectedUser } }
-
-    await expectedFunction(request)
-
-    expect(destinyClient.checkRefreshTokenExpiration).toHaveBeenCalledWith(expectedUser)
-    expect(discordService.compareModsForSaleWithUserInventory).toHaveBeenCalledWith(expectedUser)
-  })
-
   it('should log that the notifier service is running', () => {
     const logSpy = jest.spyOn(console, 'log')
     const logNotifierIsRunning = (notify as any).logNotifierIsRunning()

@@ -3,11 +3,9 @@ import { DestinyClient } from '../../infrastructure/destiny/destiny-client.js'
 import { DiscordService } from '../../infrastructure/services/discord-service.js'
 import { MongoDbService } from '../../infrastructure/persistence/services/mongo-db-service.js'
 import { UserInterface } from '../../domain/user/user.js'
-import asyncHandler from 'express-async-handler'
 
 interface User { user: UserInterface}
 interface UserRequest { body: User}
-type NotifyHandler = (request: UserRequest, response: Object) => Promise<void>
 
 export class Notify {
   constructor (
@@ -26,17 +24,14 @@ export class Notify {
 
     app.post(
       '/notify',
-      asyncHandler(this.notifyHandler())
+      (request: UserRequest, response, next) => {
+        this.destinyClient.checkRefreshTokenExpiration(request.body.user).then(() => {
+          this.discordService.compareModsForSaleWithUserInventory(request.body.user).catch(next)
+        }).catch(next)
+      }
     )
 
     await this.mongoDbService.connectToDatabase()
-  }
-
-  private notifyHandler (): NotifyHandler {
-    return async (request, result) => {
-      await this.destinyClient.checkRefreshTokenExpiration(request.body.user)
-      await this.discordService.compareModsForSaleWithUserInventory(request.body.user)
-    }
   }
 
   private logNotifierIsRunning () {
