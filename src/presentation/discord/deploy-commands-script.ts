@@ -8,9 +8,9 @@ import { validateSchema } from '../../apps/validate-config-schema.js'
 
 const discordConfig = validateSchema(discordConfigSchema)
 const destinyConfig = validateSchema(destinyConfigSchema)
-const DEPLOY_COMMANDS_CONFIG = DeployCommandsConfigClass.fromConfig(discordConfig)
-const ALERT_COMMAND_CONFIG = AlertCommandConfigClass.fromConfig(destinyConfig)
+const deployCommandsConfig = DeployCommandsConfigClass.fromConfig(discordConfig)
+const alertCommandConfig = AlertCommandConfigClass.fromConfig(destinyConfig)
 
-const deployCommands = new DeployCommands(DEPLOY_COMMANDS_CONFIG, new AlertCommand(ALERT_COMMAND_CONFIG))
+const deployCommands = new DeployCommands(deployCommandsConfig, new AlertCommand(alertCommandConfig))
 
 await deployCommands.registerCommands()
