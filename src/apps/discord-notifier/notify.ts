@@ -15,12 +15,9 @@ export class Notify {
   ) {}
 
   async notifyUsers (app: express.Application): Promise<void> {
-    app.use(express.json())
+    await this.mongoDbService.connectToDatabase()
 
-    app.listen(
-      3002,
-      this.logNotifierIsRunning()
-    )
+    app.use(express.json())
 
     app.post(
       '/notify',
@@ -31,7 +28,10 @@ export class Notify {
       }
     )
 
-    await this.mongoDbService.connectToDatabase()
+    app.listen(
+      3002,
+      this.logNotifierIsRunning()
+    )
   }
 
   private logNotifierIsRunning () {

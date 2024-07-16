@@ -12,6 +12,7 @@
     "typeRoots": ["src/d2-vendor-alert/@types", "node_modules/@types", "jest"],
     "esModuleInterop": true
   },
+  "files": ["global.d.ts"],
   "include": [
     "src/**/*.ts"
   ],
