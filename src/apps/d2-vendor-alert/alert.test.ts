@@ -4,7 +4,6 @@ import { DestinyClientConfig } from '../../infrastructure/destiny/config/destiny
 import { DiscordClientConfig } from '../../presentation/discord/configs/discord-client-config'
 import { MongoDbServiceConfig } from '../../infrastructure/persistence/configs/mongo-db-service-config'
 import { NotifierServiceConfig } from '../../infrastructure/services/configs/notifier-service-config'
-import { AxiosHttpClient } from '../../infrastructure/persistence/axios-http-client'
 import { DestinyClient } from '../../infrastructure/destiny/destiny-client'
 import { MongoDbService } from '../../infrastructure/persistence/services/mongo-db-service'
 import { NotifierService } from '../../infrastructure/services/notifier-service'
@@ -17,6 +16,7 @@ import express from 'express'
 import path from 'path'
 import * as url from 'url'
 import metaUrl from '../../testing-helpers/url'
+import { AxiosHttpClient } from '../../adapter/axios-http-client.js'
 
 jest.mock('./../../testing-helpers/url', () => {
   return 'example'

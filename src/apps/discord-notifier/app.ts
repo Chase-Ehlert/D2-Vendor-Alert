@@ -4,7 +4,6 @@ import { DestinyClient } from '../../infrastructure/destiny/destiny-client.js'
 import { Vendor } from '../../domain/destiny/vendor.js'
 import { DiscordService } from '../../infrastructure/services/discord-service.js'
 import { MongoDbService } from '../../infrastructure/persistence/services/mongo-db-service.js'
-import { AxiosHttpClient } from '../../infrastructure/persistence/axios-http-client.js'
 import { Notify } from './notify.js'
 import { DestinyClientConfigClass } from '../../infrastructure/destiny/config/destiny-client-config-class.js'
 import { DiscordClientConfigClass } from '../../presentation/discord/configs/discord-client-config-class.js'
@@ -13,6 +12,7 @@ import { databaseConfigSchema } from '../../infrastructure/persistence/configs/d
 import { discordConfigSchema } from '../../presentation/discord/configs/discord-config-schema.js'
 import { destinyConfigSchema } from '../../infrastructure/destiny/config/destiny-config-schema.js'
 import { validateSchema } from '../validate-config-schema.js'
+import { AxiosHttpClient } from '../../adapter/axios-http-client.js'
 
 const databaseConfig = validateSchema(databaseConfigSchema)
 const discordConfig = validateSchema(discordConfigSchema)

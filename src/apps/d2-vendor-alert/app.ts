@@ -1,5 +1,4 @@
 import express from 'express'
-import { AxiosHttpClient } from '../../infrastructure/persistence/axios-http-client.js'
 import { MongoUserRepository } from '../../infrastructure/persistence/mongo-user-repository.js'
 import { DestinyClient } from '../../infrastructure/destiny/destiny-client.js'
 import { MongoDbService } from '../../infrastructure/persistence/services/mongo-db-service.js'
@@ -18,6 +17,7 @@ import { databaseConfigSchema } from '../../infrastructure/persistence/configs/d
 import { discordConfigSchema } from '../../presentation/discord/configs/discord-config-schema.js'
 import { destinyConfigSchema } from '../../infrastructure/destiny/config/destiny-config-schema.js'
 import { validateSchema } from '../validate-config-schema.js'
+import { AxiosHttpClient } from '../../adapter/axios-http-client.js'
 
 const databaseConfig = validateSchema(databaseConfigSchema)
 const discordConfig = validateSchema(discordConfigSchema)

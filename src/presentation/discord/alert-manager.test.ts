@@ -2,7 +2,7 @@ import { NotifierServiceConfig } from '../../infrastructure/services/configs/not
 import { MongoUserRepository } from '../../infrastructure/persistence/mongo-user-repository.js'
 import { NotifierService } from '../../infrastructure/services/notifier-service'
 import { AlertManager } from './alert-manager'
-import { AxiosHttpClient } from '../../infrastructure/persistence/axios-http-client.js'
+import { AxiosHttpClient } from '../../adapter/axios-http-client.js'
 
 describe('AlertManager', () => {
   const notifierService = new NotifierService(new MongoUserRepository(), { address: '' } satisfies NotifierServiceConfig, new AxiosHttpClient())

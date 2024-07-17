@@ -1,6 +1,5 @@
 import { DestinyClientConfig } from '../../infrastructure/destiny/config/destiny-client-config'
 import { DiscordClientConfig } from './configs/discord-client-config'
-import { AxiosHttpClient } from '../../infrastructure/persistence/axios-http-client'
 import { MongoUserRepository } from '../../infrastructure/persistence/mongo-user-repository'
 import { DestinyClient } from '../../infrastructure/destiny/destiny-client'
 import { AlertCommand } from './commands/alert-command'
@@ -8,6 +7,7 @@ import { DiscordClient } from './discord-client'
 import { AlertCommandConfig } from './commands/alert-command-config.js'
 import * as discord from 'discord.js'
 import { SlashCommand } from './commands/slash-command.js'
+import { AxiosHttpClient } from '../../adapter/axios-http-client.js'
 
 jest.mock('./../../testing-helpers/url', () => {
   return 'example'

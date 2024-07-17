@@ -2,13 +2,13 @@ import { MongoUserRepository } from '../../infrastructure/persistence/mongo-user
 import { DestinyClientConfig } from '../../infrastructure/destiny/config/destiny-client-config'
 import { DiscordClientConfig } from '../../presentation/discord/configs/discord-client-config'
 import { MongoDbServiceConfig } from '../../infrastructure/persistence/configs/mongo-db-service-config'
-import { AxiosHttpClient } from '../../infrastructure/persistence/axios-http-client'
 import { DestinyClient } from '../../infrastructure/destiny/destiny-client'
 import { MongoDbService } from '../../infrastructure/persistence/services/mongo-db-service'
 import { DiscordService } from '../../infrastructure/services/discord-service'
 import { Notify } from './notify'
 import { Vendor } from '../../domain/destiny/vendor'
 import express from 'express'
+import { AxiosHttpClient } from '../../adapter/axios-http-client.js'
 
 const jsonMock = jest.fn()
 
