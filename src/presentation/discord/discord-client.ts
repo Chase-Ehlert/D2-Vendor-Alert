@@ -48,7 +48,13 @@ export class DiscordClient {
   private replyToSlashCommands (discordClient: discord.Client<boolean>): void {
     discordClient.on(
       discord.Events.InteractionCreate,
-      this.handleInteraction()
+      () => {
+        try {
+          this.handleInteraction()
+        } catch (error) {
+          throw new Error(error.message)
+        }
+      }
     )
   }
 
@@ -66,17 +72,17 @@ export class DiscordClient {
 
           collector.on(
             'collect',
-            async (message) => {
-              await this.handleIncommingMessage(message, interaction, command)
+            (message) => {
+              this.handleIncommingMessage(message, interaction, command).catch(() => { throw new Error('Failed to handle incoming message from Discord!') })
             })
 
           collector.on(
             'end',
-            async (collected) => {
+            (collected) => {
               if (collected.size === 0) {
-                await interaction.followUp({
+                interaction.followUp({
                   content: 'The interaction has timed out. After you have found your Bungie Net username, try again.'
-                })
+                }).catch(() => { throw new Error('Failed to reply to interaction from Discord!') })
               }
             })
         }
