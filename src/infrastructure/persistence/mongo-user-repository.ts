@@ -12,11 +12,7 @@ export class MongoUserRepository implements UserRepository {
 
     const doesUserExist = await User.exists({ bungieUsername: username })
 
-    if (doesUserExist !== null) {
-      return true
-    } else {
-      return false
-    }
+    return doesUserExist !== null
   }
 
   /**
