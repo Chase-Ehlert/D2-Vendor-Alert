@@ -2,14 +2,22 @@
     "version": "0.2.0",
     "configurations": [
       {
-        "name": "Chrome",
-        "type": "chrome",
+        "name": "Launch App",
+        "type": "node",
         "request": "launch",
-        "url": "http://localhost:3000",
-        "webRoot": "${workspaceFolder}/src",
-        "sourceMapPathOverrides": {
-          "webpack:///src/*": "${webRoot}/*"
-        }
+        "skipFiles": [
+          "**\\node_modules\\**",
+          "<node_internals>/**",
+          "${workspaceFolder}/<node_internals>/**",
+          "${workspaceFolder}\\<node_internals>\\**",
+          "${workspaceFolder}/<node_internals>/**/*.js",
+          "${workspaceFolder}\\<node_internals>\\**\\*.js",
+          "${workspaceFolder}/node_modules/**",
+          "${workspaceFolder}\\node_modules\\**",
+          "${workspaceFolder}/node_modules/**/*.js",
+          "${workspaceFolder}\\node_modules\\**\\*.js"
+        ],
+        "program": "${workspaceFolder}/dist/apps/d2-vendor-alert/app.js"
       }
-    ]
+    ]  
   }
