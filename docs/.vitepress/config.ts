@@ -3,7 +3,7 @@ import { defineConfig } from 'vitepress'
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "D2 Vendor Alert",
-  description: "A Discord bot integrated with Destiny 2's API. It's function is to alert users of any unowned mods sold by the vendors, Banshee-44 and Ada-1.",
+  description: "A Discord bot integrated with Destiny 2's API",
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
@@ -22,7 +22,7 @@ export default defineConfig({
     ],
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/vuejs/vitepress' }
+      { icon: 'github', link: 'https://github.com/Chase-Ehlert/D2-Vendor-Alert' }
     ]
   }
 })

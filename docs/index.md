@@ -4,7 +4,7 @@ layout: home
 
 hero:
   name: "D2 Vendor Alert"
-  text: "A Discord bot integrated with Destiny 2's API. It's function is to alert users of any unowned mods sold by the vendors, Banshee-44 and Ada-1."
+  text: "A Discord bot integrated with Destiny 2's API"
   tagline: My great project tagline
   actions:
     - theme: brand
