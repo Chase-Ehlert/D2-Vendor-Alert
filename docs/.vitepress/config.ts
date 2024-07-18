@@ -24,5 +24,6 @@ export default defineConfig({
     socialLinks: [
       { icon: 'github', link: 'https://github.com/Chase-Ehlert/D2-Vendor-Alert' }
     ]
-  }
+  },
+  base: "/docs/"
 })
