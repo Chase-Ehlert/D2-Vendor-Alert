@@ -25,5 +25,5 @@ export default defineConfig({
       { icon: 'github', link: 'https://github.com/Chase-Ehlert/D2-Vendor-Alert' }
     ]
   },
-  base: "/docs/"
+  base: "/D2-Vendor-Alert/"
 })
