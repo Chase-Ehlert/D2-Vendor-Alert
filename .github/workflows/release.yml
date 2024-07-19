@@ -19,9 +19,9 @@ jobs:
       cancel-in-progress: true
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4.1.7
       - name: Setup node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4.0.3
         with:
           node-version: 18.11.x
           cache: npm
@@ -40,12 +40,6 @@ jobs:
           envkey_DISCORD_NOTIFIER_ADDRESS: ${{ secrets.DISCORD_NOTIFIER_ADDRESS }}
       - name: Install
         run: npm ci
-      - name: Gather files changed
-        uses: trilom/file-changes-action@a6ca26c14274c33b15e6499323aac178af06ad4b
-        with:
-          fileOutput: 'json'
-      - name: Show files changed
-        run: cat $HOME/files.json
       - name: Lint
         run: npm run lint
       - name: TSC
@@ -83,11 +77,11 @@ jobs:
       cancel-in-progress: false
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.7
         with:
           fetch-depth: 0
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v4.0.3
         with:
           node-version: 20
           cache: npm
