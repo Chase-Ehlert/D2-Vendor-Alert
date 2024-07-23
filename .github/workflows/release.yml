@@ -104,7 +104,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     needs: build-vitepress-site
     runs-on: ubuntu-latest
-    name: Deploy
+    name: deploy
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
