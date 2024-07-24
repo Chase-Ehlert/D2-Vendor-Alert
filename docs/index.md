@@ -5,13 +5,6 @@ hero:
   name: "D2 Vendor Alert"
   text: "A Discord bot using Destiny 2's API"
   tagline: Alerting Guardians of their unowned mods for sale
-  actions:
-    - theme: brand
-      text: Markdown Examples
-      link: /markdown-examples
-    - theme: alt
-      text: API Examples
-      link: /api-examples
 
 features:
   - title: Use Case
@@ -24,4 +17,3 @@ features:
     link: /software-architecture
     linkText: Click here!
 ---
-
