@@ -1,4 +1,4 @@
-import { DeployCommandsConfigClass } from './deploy-commands-config-class.js'
+import { DeployCommandsConfigClass } from '../deploy-commands/deploy-commands-config-class.js'
 
 describe('DeployCommandsConfigClass', () => {
   it('should return DestinyClientConfigClass from static fromConfig()', () => {
