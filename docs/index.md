@@ -20,8 +20,8 @@ features:
   - title: Installation
     link: /installation
     linkText: Click here!
-  - title: Architecture
-    link: something
+  - title: Software Architecture
+    link: /software-architecture
     linkText: Click here!
 ---
 
