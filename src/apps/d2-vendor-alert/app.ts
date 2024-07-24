@@ -6,7 +6,7 @@ import { DestinyClient } from '../../infrastructure/destiny/destiny-client.js'
 import { MongoDbService } from '../../infrastructure/persistence/services/mongo-db-service.js'
 import { NotifierService } from '../../infrastructure/services/notifier-service.js'
 import { AlertManager } from '../../presentation/discord/alert-manager.js'
-import { AlertCommand } from '../../presentation/discord/commands/alert-command.js'
+import { AlertCommand } from '../../presentation/discord/alert-command/alert-command.js'
 import { DiscordClient } from '../../presentation/discord/discord-client.js'
 import { OAuthWebController } from '../../presentation/web/o-auth-web-controller.js'
 import { Alert } from './alert.js'
@@ -14,7 +14,7 @@ import { NotifierServiceConfigClass } from '../../infrastructure/services/config
 import { DestinyClientConfigClass } from '../../infrastructure/destiny/config/destiny-client-config-class.js'
 import { DiscordConfigClass } from '../../presentation/discord/configs/discord-config-class.js'
 import { MongoDbServiceConfigClass } from '../../infrastructure/persistence/configs/mongo-db-service-config-class.js'
-import { AlertCommandConfigClass } from '../../presentation/discord/commands/alert-command-config-class.js'
+import { AlertCommandConfigClass } from '../../presentation/discord/alert-command/alert-command-config-class.js'
 
 const config = validateSchema(alertConfigSchema)
 const ALERT_COMMAND_CONFIG = AlertCommandConfigClass.fromConfig(config)
