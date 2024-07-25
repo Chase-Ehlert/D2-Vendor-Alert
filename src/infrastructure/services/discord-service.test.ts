@@ -3,7 +3,7 @@ import { AxiosHttpClient } from '../persistence/axios-http-client'
 import { UserInterface } from '../../domain/user/user'
 import { AxiosResponse } from 'axios'
 import { DestinyClientConfig } from '../destiny/config/destiny-client-config'
-import { DiscordConfig } from '../../presentation/discord/configs/discord-config'
+import { DiscordClientConfig } from '../../presentation/discord/configs/discord-client-config'
 import { DestinyClient } from '../destiny/destiny-client'
 import { Vendor } from '../../domain/destiny/vendor'
 import { DiscordService } from './discord-service'
@@ -24,7 +24,7 @@ describe('DiscordService', () => {
   const discordService = new DiscordService(
     vendor,
     axiosHttpClient,
-      { token: expectedToken } satisfies DiscordConfig
+      { token: expectedToken } satisfies DiscordClientConfig
   )
   const postResult = { status: 200 } as unknown as AxiosResponse
   const postSpy = jest.spyOn(axiosHttpClient, 'post').mockResolvedValue(postResult)

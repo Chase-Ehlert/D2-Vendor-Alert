@@ -1,7 +1,7 @@
 import { MongoUserRepository } from '../../infrastructure/persistence/mongo-user-repository'
 import { UserInterface } from '../user/user'
 import { AxiosHttpClient } from '../../infrastructure/persistence/axios-http-client'
-import { DisplayProperties, Mod } from './mod'
+import { DisplayProperties, Merchandise, Mod } from './mod'
 import { DestinyClientConfig } from '../../infrastructure/destiny/config/destiny-client-config'
 import { DestinyClient } from '../../infrastructure/destiny/destiny-client'
 import { Vendor } from './vendor'
@@ -36,17 +36,14 @@ describe('Vendor', () => {
     const modName2 = { name: 'Helmet of Forseeing' } satisfies DisplayProperties
     const expectedCollectibleList = [modName1.name, modName2.name]
     const unownedMods = ['111', '222']
-    const vendorMerchandise = new Map<string, Map<string, Mod>>()
-    const adaMerchandise = new Map<string, Mod>()
-    const randomVendorMerchandise = new Map<string, Mod>()
+    const vendorMerchandise = new Map<string, Map<string, Merchandise>>()
+    const adaMerchandise = new Map<string, Merchandise>()
+    const randomVendorMerchandise = new Map<string, Merchandise>()
     const adaMerchandiseInfo = [new Mod(modId1, modName1), new Mod(modId2, modName2)]
 
-    randomVendorMerchandise.set('987', new Mod(
-      '99',
-       { name: 'Sword of Daggerfall' } satisfies DisplayProperties)
-    )
-    adaMerchandise.set(modId1, new Mod('1', modName1))
-    adaMerchandise.set(modId2, new Mod('2', modName2))
+    randomVendorMerchandise.set('987', { itemHash: '99' } satisfies Merchandise)
+    adaMerchandise.set(modId1, { itemHash: '1' })
+    adaMerchandise.set(modId2, { itemHash: '2' })
     vendorMerchandise.set('111111111', randomVendorMerchandise)
     vendorMerchandise.set('350061650', adaMerchandise)
 
@@ -54,7 +51,7 @@ describe('Vendor', () => {
     const getVendorInfoSpy = jest.spyOn(destinyClient, 'getVendorMerchandise').mockResolvedValue(
       vendorMerchandise
     )
-    const getAdaMerchandiseIdsSpy = jest.spyOn(destinyClient, 'getAdaMerchandiseIds').mockReturnValue(
+    const getAdaMerchandiseHashesSpy = jest.spyOn(destinyClient, 'getAdaMerchandiseHashes').mockReturnValue(
       [modId1, modId2]
     )
     const getEquippableModsSpy = jest.spyOn(destinyClient, 'getEquippableMods')
@@ -64,7 +61,7 @@ describe('Vendor', () => {
 
     expect(getUnownedModsSpy).toHaveBeenCalledWith(user.destinyId)
     expect(getVendorInfoSpy).toHaveBeenCalledWith(user.destinyId, user.destinyCharacterId, user.refreshToken)
-    expect(getAdaMerchandiseIdsSpy).toHaveBeenCalledWith('350061650', vendorMerchandise)
+    expect(getAdaMerchandiseHashesSpy).toHaveBeenCalledWith('350061650', vendorMerchandise)
     expect(getEquippableModsSpy).toHaveBeenCalled()
     expect(result).toEqual(expectedCollectibleList)
   })

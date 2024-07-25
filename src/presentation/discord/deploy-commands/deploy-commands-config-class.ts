@@ -1,5 +1,5 @@
 import { DeployCommandsConfig } from './deploy-commands-config.js'
-import { Config } from '../../../domain/config.js'
+import { DiscordConfig } from './discord-config.js'
 
 export class DeployCommandsConfigClass implements DeployCommandsConfig {
   constructor (
@@ -10,7 +10,7 @@ export class DeployCommandsConfigClass implements DeployCommandsConfig {
   static fromConfig ({
     DISCORD_TOKEN: token,
     DISCORD_CLIENT_ID: clientId
-  }: Config): DeployCommandsConfig {
+  }: DiscordConfig): DeployCommandsConfig {
     return new DeployCommandsConfigClass(token, clientId)
   }
 }

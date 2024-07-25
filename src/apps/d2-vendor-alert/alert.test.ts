@@ -1,7 +1,7 @@
 import { MongoUserRepository } from '../../infrastructure/persistence/mongo-user-repository'
 import { Alert } from './alert'
 import { DestinyClientConfig } from '../../infrastructure/destiny/config/destiny-client-config'
-import { DiscordConfig } from '../../presentation/discord/configs/discord-config'
+import { DiscordClientConfig } from '../../presentation/discord/configs/discord-client-config'
 import { MongoDbServiceConfig } from '../../infrastructure/persistence/configs/mongo-db-service-config'
 import { NotifierServiceConfig } from '../../infrastructure/services/configs/notifier-service-config'
 import { AxiosHttpClient } from '../../infrastructure/persistence/axios-http-client'
@@ -76,7 +76,7 @@ beforeEach(() => {
     mongoUserRepo,
     destinyClient,
     new AlertCommand({} satisfies AlertCommandConfig),
-    {} satisfies DiscordConfig
+    {} satisfies DiscordClientConfig
   )
   oAuthWebController = new OAuthWebController(destinyClient, mongoUserRepo)
   mockApp = express()

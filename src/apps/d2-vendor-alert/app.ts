@@ -1,5 +1,4 @@
 import express from 'express'
-import { alertConfigSchema, validateSchema } from '../config-schema.js'
 import { AxiosHttpClient } from '../../infrastructure/persistence/axios-http-client.js'
 import { MongoUserRepository } from '../../infrastructure/persistence/mongo-user-repository.js'
 import { DestinyClient } from '../../infrastructure/destiny/destiny-client.js'
@@ -12,16 +11,22 @@ import { OAuthWebController } from '../../presentation/web/o-auth-web-controller
 import { Alert } from './alert.js'
 import { NotifierServiceConfigClass } from '../../infrastructure/services/configs/notifier-service-config-class.js'
 import { DestinyClientConfigClass } from '../../infrastructure/destiny/config/destiny-client-config-class.js'
-import { DiscordConfigClass } from '../../presentation/discord/configs/discord-config-class.js'
+import { DiscordClientConfigClass } from '../../presentation/discord/configs/discord-client-config-class.js'
 import { MongoDbServiceConfigClass } from '../../infrastructure/persistence/configs/mongo-db-service-config-class.js'
+import { databaseConfigSchema } from '../../infrastructure/persistence/configs/database-config-schema.js'
+import { discordConfigSchema } from '../../presentation/discord/configs/discord-config-schema.js'
+import { destinyConfigSchema } from '../../infrastructure/destiny/config/destiny-config-schema.js'
+import { validateSchema } from '../validate-config-schema.js'
 import { AlertCommandConfigClass } from '../../presentation/discord/alert-command/alert-command-config-class.js'
 
-const config = validateSchema(alertConfigSchema)
-const ALERT_COMMAND_CONFIG = AlertCommandConfigClass.fromConfig(config)
-const MONGO_DB_SERVICE_CONFIG = MongoDbServiceConfigClass.fromConfig(config)
-const DISCORD_CONFIG = DiscordConfigClass.fromConfig(config)
-const DISCORD_NOTIFIER_ADDRESS = NotifierServiceConfigClass.fromConfig(config)
-const DESTINY_API_CLIENT_CONFIG = DestinyClientConfigClass.fromConfig(config)
+const databaseConfig = validateSchema(databaseConfigSchema)
+const discordConfig = validateSchema(discordConfigSchema)
+const destinyConfig = validateSchema(destinyConfigSchema)
+const ALERT_COMMAND_CONFIG = AlertCommandConfigClass.fromConfig(destinyConfig)
+const MONGO_DB_SERVICE_CONFIG = MongoDbServiceConfigClass.fromConfig(databaseConfig)
+const DISCORD_CONFIG = DiscordClientConfigClass.fromConfig(discordConfig)
+const DISCORD_NOTIFIER_ADDRESS = NotifierServiceConfigClass.fromConfig(discordConfig)
+const DESTINY_API_CLIENT_CONFIG = DestinyClientConfigClass.fromConfig(destinyConfig)
 const mongoUserRepo = new MongoUserRepository()
 const destinyClient = new DestinyClient(
   new AxiosHttpClient(),
@@ -38,7 +43,9 @@ const alert = new Alert(
     new AlertCommand(ALERT_COMMAND_CONFIG),
     DISCORD_CONFIG
   ),
-  new AlertManager(new NotifierService(mongoUserRepo, DISCORD_NOTIFIER_ADDRESS, new AxiosHttpClient()))
+  new AlertManager(
+    new NotifierService(mongoUserRepo, DISCORD_NOTIFIER_ADDRESS, new AxiosHttpClient())
+  )
 )
 
 await alert.runApp(express())

@@ -9,10 +9,10 @@ export class Vendor {
    * Collect mods for sale by Ada-1 that are not owned by the user
    */
   async getUnownedMods (user: UserInterface): Promise<string[]> {
-    const unownedModIds = await this.destinyClient.getUnownedModIds(user.destinyId)
+    const unownedModHashes = await this.destinyClient.getUnownedModIds(user.destinyId)
     const modsForSaleByAda = await this.getModsForSaleByAda(user)
     const unownedMods = modsForSaleByAda.filter((mod) => {
-      return !unownedModIds.includes(mod.id)
+      return !unownedModHashes.includes(mod.hash)
     })
 
     return unownedMods.map((mod) => mod.displayProperties.name)
@@ -22,20 +22,27 @@ export class Vendor {
    * Collect mod info of merchandise for sale by Ada
    */
   private async getModsForSaleByAda (user: UserInterface): Promise<Mod[]> {
+    const equippableMods = await this.destinyClient.getEquippableMods()
+    const unownedModHashesFromAda = await this.getUnownedModHashesFromAda(user, equippableMods)
+    const unownedEquippableModsFromAda = equippableMods.filter((mod) => unownedModHashesFromAda.includes(mod.hash))
+
+    return unownedEquippableModsFromAda
+  }
+
+  private async getUnownedModHashesFromAda (user: UserInterface, equippableMods: Mod[]): Promise<string[]> {
     const adaVendorId = '350061650'
     const vendorMerchandise = await this.destinyClient.getVendorMerchandise(
       user.destinyId,
       user.destinyCharacterId,
       user.refreshToken
     )
-    const adaMerchandiseIds = this.destinyClient.getAdaMerchandiseIds(adaVendorId, vendorMerchandise)
-    const equippableMods = await this.destinyClient.getEquippableMods()
-    const unownedModIds = adaMerchandiseIds.filter(
-      (itemId) =>
-        equippableMods.some((mod) => mod.id === itemId)
-    )
-    const unownedEquippableModsFromAda = equippableMods.filter((mod) => unownedModIds.includes(mod.id))
+    const equippableModHashes = equippableMods.map((mod) => mod.hash)
 
-    return unownedEquippableModsFromAda
+    const adaMerchandiseHashes = this.destinyClient.getAdaMerchandiseHashes(adaVendorId, vendorMerchandise)
+    return adaMerchandiseHashes.filter(
+      (itemHash) => {
+        return equippableModHashes.includes(itemHash)
+      }
+    )
   }
 }
