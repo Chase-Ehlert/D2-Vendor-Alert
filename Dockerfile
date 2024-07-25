@@ -17,4 +17,4 @@ COPY ./package*.json ./
 COPY --from=devBuilder /app/dist/ ./dist
 COPY --from=prodBuilder /app/node_modules ./node_modules
 EXPOSE 3001
-CMD ["npm", "start"]
+CMD ["node", "dist/apps/d2-vendor-alert/app.js"]
