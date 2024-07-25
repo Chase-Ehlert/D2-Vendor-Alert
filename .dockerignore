@@ -6,6 +6,7 @@ coverage
 docs/.vitepress/dist
 docs/.vitepress/cache
 src/presentation/discord/deploy-commands
+.env
 .env.test
 .example.env
 README.md

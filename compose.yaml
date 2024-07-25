@@ -1,0 +1,30 @@
+services:
+  notifier:
+    environment:
+      - DATABASE_USER
+      - DATABASE_CLUSTER
+      - DATABASE_NAME
+      - DATABASE_PASSWORD
+      - DESTINY_API_KEY
+      - DISCORD_TOKEN
+      - DISCORD_CLIENT_ID
+      - DESTINY_OAUTH_CLIENT_ID
+      - DESTINY_OAUTH_SECRET
+    build:
+      dockerfile: ./docker/discord-notifier/Dockerfile
+      context: .
+  alert:
+    environment:
+      - DATABASE_USER
+      - DATABASE_CLUSTER
+      - DATABASE_NAME
+      - DATABASE_PASSWORD
+      - DESTINY_API_KEY
+      - DISCORD_TOKEN
+      - DISCORD_CLIENT_ID
+      - DESTINY_OAUTH_CLIENT_ID
+      - DESTINY_OAUTH_SECRET
+      - DISCORD_NOTIFIER_ADDRESS
+    build:
+      dockerfile: ./docker/d2-vendor-alert/Dockerfile
+      context: .
