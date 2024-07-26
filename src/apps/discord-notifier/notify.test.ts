@@ -9,6 +9,9 @@ import { Notify } from './notify'
 import { Vendor } from '../../domain/destiny/vendor'
 import express from 'express'
 import { AxiosHttpClient } from '../../adapter/axios-http-client.js'
+import { AlertCommandConfig } from '../../presentation/discord/commands/alert-command-config.js'
+import { TokenInfo } from '../../infrastructure/destiny/token-info.js'
+import { hyperlink } from 'discord.js'
 
 const jsonMock = jest.fn()
 
@@ -39,6 +42,8 @@ beforeAll(() => {
   }
 })
 
+const next = jest.fn()
+const expectedOauthClientId = '123abc'
 let destinyClient: DestinyClient
 let discordService: DiscordService
 let mongoDbService: MongoDbService
@@ -59,10 +64,13 @@ beforeEach(() => {
   mongoDbService = new MongoDbService({} satisfies MongoDbServiceConfig)
   mockApp = express()
 
-  notify = new Notify(destinyClient, discordService, mongoDbService)
+  notify = new Notify(
+    destinyClient,
+    discordService,
+    mongoDbService,
+      { oauthClientId: expectedOauthClientId } satisfies AlertCommandConfig
+  )
 
-  destinyClient.checkRefreshTokenExpiration = jest.fn()
-  discordService.compareModsForSaleWithUserInventory = jest.fn()
   mongoDbService.connectToDatabase = jest.fn()
 })
 
@@ -94,6 +102,49 @@ describe('Notify', () => {
     expect(appUseMock).toHaveBeenCalledBefore(appPostMock)
     expect(appPostMock).toHaveBeenCalledBefore(appListenMock)
     expect(appListenMock).toHaveBeenCalledAfter(appPostMock)
+  })
+
+  it('should handle notifying users by checking the refresh token and then comparing mods', async () => {
+    const expectedFunction = (notify as any).handleNotifyingUsers()
+    const expectedRefreshToken = '123'
+    const expectedUser = { refreshToken: expectedRefreshToken }
+    const request = { body: { user: expectedUser } }
+    const getTokenInfoSpy = jest.spyOn(destinyClient, 'getTokenInfo').mockResolvedValue(new TokenInfo('', '', ''))
+    const checkRefreshTokenExpirationSpy = jest.spyOn(destinyClient, 'checkRefreshTokenExpiration').mockResolvedValue()
+    const compareModsForSaleWithUserInventorySpy = jest.spyOn(discordService, 'compareModsForSaleWithUserInventory').mockResolvedValue()
+
+    await Promise.all([
+      expectedFunction(request, {}, next)
+    ])
+
+    expect(getTokenInfoSpy).toHaveBeenCalledWith(expectedRefreshToken)
+    expect(checkRefreshTokenExpirationSpy).toHaveBeenCalledWith(expectedUser)
+    expect(compareModsForSaleWithUserInventorySpy).toHaveBeenCalled()
+  })
+
+  it('should alert users to reauthorize when the refresh token is too old', async () => {
+    const expectedFunction = (notify as any).handleNotifyingUsers()
+    const expectedRefreshToken = '123'
+    const expectedDiscordId = '321'
+    const expectedUser = {
+      refreshToken: expectedRefreshToken,
+      discordId: expectedDiscordId
+    }
+    const request = { body: { user: expectedUser } }
+    const expectedMessage = `<@${request.body.user.discordId}> needs to reauthorize. To do so, click ` +
+      hyperlink(
+        'here!',
+        `https://www.bungie.net/en/oauth/authorize?client_id=${expectedOauthClientId}&response_type=code`
+      )
+    const discordRequestSpy = jest.spyOn(discordService, 'discordRequest').mockResolvedValue()
+
+    jest.spyOn(destinyClient, 'getTokenInfo').mockRejectedValue(new Error())
+
+    await Promise.all([
+      expectedFunction(request, {}, next)
+    ])
+
+    expect(discordRequestSpy).toHaveBeenCalledWith(expectedUser, expectedMessage)
   })
 
   it('should log that the notifier service is running', () => {

@@ -9,10 +9,11 @@ import { DestinyClientConfigClass } from '../../infrastructure/destiny/config/de
 import { DiscordClientConfigClass } from '../../presentation/discord/configs/discord-client-config-class.js'
 import { MongoDbServiceConfigClass } from '../../infrastructure/persistence/configs/mongo-db-service-config-class.js'
 import { databaseConfigSchema } from '../../infrastructure/persistence/configs/database-config-schema.js'
-import { discordConfigSchema } from '../../presentation/discord/configs/discord-config-schema.js'
+import { alertConfigSchema, discordConfigSchema } from '../../presentation/discord/configs/discord-config-schema.js'
 import { destinyConfigSchema } from '../../infrastructure/destiny/config/destiny-config-schema.js'
 import { validateSchema } from '../validate-config-schema.js'
 import { AxiosHttpClient } from '../../adapter/axios-http-client.js'
+import { AlertCommandConfigClass } from '../../presentation/discord/commands/alert-command-config-class.js'
 
 const databaseConfig = validateSchema(databaseConfigSchema)
 const discordConfig = validateSchema(discordConfigSchema)
@@ -33,7 +34,8 @@ const notify = new Notify(
     new AxiosHttpClient(),
     discordClientConfig
   ),
-  new MongoDbService(mongoDbServiceConfig)
+  new MongoDbService(mongoDbServiceConfig),
+  AlertCommandConfigClass.fromConfig(validateSchema(alertConfigSchema))
 )
 
 await notify.notifyUsers(express())
