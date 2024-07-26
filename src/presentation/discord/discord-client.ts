@@ -1,13 +1,13 @@
-import { UserRepository } from '../../domain/user/user-repository.js'
 import { DiscordClientConfig } from './configs/discord-client-config.js'
 import { DestinyClient } from '../../infrastructure/destiny/destiny-client.js'
 import { AlertCommand } from './commands/alert-command.js'
 import { SlashCommand } from './commands/slash-command.js'
 import * as discord from 'discord.js'
+import { MongoUserRepository } from '../../infrastructure/persistence/mongo-user-repository.js'
 
 export class DiscordClient {
   constructor (
-    private readonly database: UserRepository,
+    private readonly database: MongoUserRepository,
     private readonly destinyClient: DestinyClient,
     private readonly alertCommand: AlertCommand,
     private readonly config: DiscordClientConfig

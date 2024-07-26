@@ -1,7 +1,6 @@
 import { HttpClient } from '../persistence/http-client.js'
 import { DestinyClientConfig } from './config/destiny-client-config.js'
 import { UserInterface } from '../../domain/user/user.js'
-import { UserRepository } from '../../domain/user/user-repository.js'
 import { TokenInfo } from './token-info.js'
 import { Merchandise, Mod } from '../../domain/destiny/mod.js'
 import { Collectible } from '../../domain/destiny/collectible.js'
@@ -9,6 +8,7 @@ import path from 'path'
 import metaUrl from '../../testing-helpers/url.js'
 import { OAuthResponse } from '../../presentation/web/o-auth-response.js'
 import { DestinyService } from '../../domain/destiny/destiny-service.js'
+import { MongoUserRepository } from '../persistence/mongo-user-repository.js'
 
 interface VendorMerchandise {
   saleItems: { [key: string]: Merchandise }
@@ -24,7 +24,7 @@ export class DestinyClient implements DestinyService {
 
   constructor (
     private readonly httpClient: HttpClient,
-    private readonly database: UserRepository,
+    private readonly database: MongoUserRepository,
     private readonly config: DestinyClientConfig
   ) {
     this.apiKeyHeader = { 'x-api-key': this.config.apiKey }
