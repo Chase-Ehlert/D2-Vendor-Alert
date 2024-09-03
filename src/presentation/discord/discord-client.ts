@@ -73,7 +73,9 @@ export class DiscordClient {
           collector.on(
             'collect',
             (message) => {
-              this.handleIncommingMessage(message, interaction, command).catch(() => { throw new Error('Failed to handle incoming message from Discord!') })
+              this.handleIncommingMessage(message, interaction, command).catch(
+                () => { throw new Error('Failed to handle incoming message from Discord!') }
+              )
             })
 
           collector.on(
