@@ -1,5 +1,5 @@
-import { Config } from '../../../domain/config.js'
 import { DestinyClientConfig } from './destiny-client-config.js'
+import { DestinyConfig } from './destiny-config.js'
 
 export class DestinyClientConfigClass implements DestinyClientConfig {
   constructor (
@@ -12,7 +12,7 @@ export class DestinyClientConfigClass implements DestinyClientConfig {
     DESTINY_API_KEY: apiKey,
     DESTINY_OAUTH_SECRET: oauthSecret,
     DESTINY_OAUTH_CLIENT_ID: oauthClientId
-  }: Config): DestinyClientConfig {
+  }: DestinyConfig): DestinyClientConfig {
     return new DestinyClientConfigClass(apiKey, oauthSecret, oauthClientId)
   }
 }

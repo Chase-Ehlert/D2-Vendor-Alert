@@ -1,5 +1,5 @@
-import { DiscordConfig } from '../configs/discord-config.js'
 import { DeployCommandsConfig } from './deploy-commands-config.js'
+import { DiscordConfig } from './discord-config.js'
 
 export class DeployCommandsConfigClass implements DeployCommandsConfig {
   constructor (

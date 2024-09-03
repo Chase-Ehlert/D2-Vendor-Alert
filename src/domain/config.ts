@@ -1,14 +1,5 @@
-export interface Config {
-  MONGO_URI?: string
-  DATABASE_USER?: string
-  DATABASE_CLUSTER?: string
-  DATABASE_NAME?: string
-  DATABASE_PASSWORD?: string
+import { DestinyConfig } from '../infrastructure/destiny/config/destiny-config.js';
+import { DatabaseConfig } from '../infrastructure/persistence/configs/database-config.js';
+import { DiscordConfig } from '../presentation/discord/configs/discord-config.js';
 
-  DISCORD_TOKEN?: string
-  DISCORD_CLIENT_ID?: string
-
-  DESTINY_API_KEY?: string
-  DESTINY_OAUTH_CLIENT_ID?: string
-  DESTINY_OAUTH_SECRET?: string
-}
+export interface Config extends DatabaseConfig, DiscordConfig, DestinyConfig{}

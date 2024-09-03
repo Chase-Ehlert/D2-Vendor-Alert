@@ -1,3 +1,4 @@
 export interface DiscordConfig {
-  readonly token?: string
+  readonly DISCORD_TOKEN?: string
+  readonly DISCORD_CLIENT_ID?: string
 }
