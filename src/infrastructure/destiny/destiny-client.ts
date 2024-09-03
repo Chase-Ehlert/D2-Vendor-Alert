@@ -1,15 +1,16 @@
-import { HttpClient } from '../../domain/http-client.js'
-import { DestinyApiClientConfig } from './destiny-api-client-config.js'
-import { UserInterface } from '../../domain/user.js'
-import { UserRepository } from '../../domain/user-repository.js'
-import { TokenInfo } from '../../domain/token-info.js'
-import { Merchandise, Mod } from '../../domain/mod.js'
-import { Collectible } from '../../domain/collectible.js'
+import { HttpClient } from '../persistence/http-client.js'
+import { DestinyClientConfig } from './config/destiny-client-config.js'
+import { UserInterface } from '../../domain/user/user.js'
+import { UserRepository } from '../../domain/user/user-repository.js'
+import { TokenInfo } from './token-info.js'
+import { Mod } from '../../domain/destiny/mod.js'
+import { Collectible } from '../../domain/destiny/collectible.js'
 import path from 'path'
 import metaUrl from '../../testing-helpers/url.js'
-import { OAuthResponse } from '../../domain/o-auth-response.js'
+import { OAuthResponse } from '../../presentation/web/o-auth-response.js'
+import { DestinyService } from '../../domain/destiny/destiny-service.js'
 
-export class DestinyApiClient {
+export class DestinyClient implements DestinyService {
   private readonly apiKeyHeader
   private readonly urlEncodedHeaders
   private readonly bungieDomain = 'https://www.bungie.net/'
@@ -20,7 +21,7 @@ export class DestinyApiClient {
   constructor (
     private readonly httpClient: HttpClient,
     private readonly database: UserRepository,
-    private readonly config: DestinyApiClientConfig
+    private readonly config: DestinyClientConfig
   ) {
     this.apiKeyHeader = { 'x-api-key': this.config.apiKey }
     this.urlEncodedHeaders = {
@@ -64,7 +65,7 @@ export class DestinyApiClient {
     }
   }
 
-  async getDestinyEquippableMods (): Promise<Mod[]> {
+  async getEquippableMods (): Promise<Mod[]> {
     const { data } = await this.httpClient.get(
       this.bungieDomainWithDestinyDirectory + 'manifest/', {
         headers: this.apiKeyHeader
@@ -75,7 +76,7 @@ export class DestinyApiClient {
 
     const convertResponseToMods = Object.values(response.data.DestinyInventoryItemDefinition).map(
       (mod: Mod) => (
-        new Mod(mod.hash, mod.displayProperties, mod.itemType)
+        new Mod(mod.id, mod.displayProperties, mod.itemType)
       )
     )
 
@@ -86,15 +87,19 @@ export class DestinyApiClient {
     return filterOutUnequippableMods
   }
 
-  async getVendorInfo (
+  async getVendorMerchandise (
     destinyId: string,
     destinyCharacterId: string,
     refreshToken: string
-  ): Promise<string[]> {
+  ): Promise<Map<string, Map<string, Mod>>> {
     const getVendorSalesComponent = 402
     const tokenInfo = await this.getTokenInfo(refreshToken)
 
-    await this.database.updateUserByMembershipId(tokenInfo)
+    await this.database.updateUserByMembershipId(
+      tokenInfo.bungieMembershipId,
+      tokenInfo.refreshToken,
+      tokenInfo.refreshTokenExpirationTime
+    )
 
     const { data } = await this.httpClient.get(
       this.bungieDomainWithDestinyDirectory +
@@ -116,10 +121,10 @@ export class DestinyApiClient {
         vendorMerchandiseMap.set(vendorId, vendorMerchandise.saleItems)
     )
 
-    return this.getAdaMerchandiseHashes('350061650', vendorMerchandiseMap)
+    return vendorMerchandiseMap
   }
 
-  async getCollectibleInfo (destinyId: string): Promise<String[]> {
+  async getUnownedModIds (destinyId: string): Promise<String[]> {
     const getCollectiblesComponent = 800
     const { data } = await this.httpClient.get(
       this.bungieDomainWithDestinyDirectory + this.profileDirectory + `${destinyId}/`, {
@@ -133,7 +138,7 @@ export class DestinyApiClient {
       ([id, value]: [string, {state: number}]) => new Collectible(id, value.state)
     )
 
-    return this.getUnownedMods(collectibles)
+    return this.filterUnownedModIds(collectibles)
   }
 
   /**
@@ -146,7 +151,11 @@ export class DestinyApiClient {
 
     if (currentDate.getTime() > expirationDate.getTime()) {
       const tokenInfo = await this.getTokenInfo(user.refreshToken)
-      await this.database.updateUserByMembershipId(tokenInfo)
+      await this.database.updateUserByMembershipId(
+        tokenInfo.bungieMembershipId,
+        tokenInfo.refreshToken,
+        tokenInfo.refreshTokenExpirationTime
+      )
     }
   }
 
@@ -205,14 +214,14 @@ export class DestinyApiClient {
   /**
      * Retrieves the merchandise sold by Ada
      */
-  private getAdaMerchandiseHashes (
+  getAdaMerchandiseIds (
     vendorId: string,
     vendorMerchandise: Map<string, Map<string, Mod>>
   ): string[] {
     const adaMerchandise = vendorMerchandise.get(vendorId)
 
-    if (adaMerchandise !== undefined) {
-      return Object.values(adaMerchandise).map((item: Merchandise) => (item.itemHash))
+    if (adaMerchandise !== undefined && adaMerchandise.size > 0) {
+      return Array.from(adaMerchandise.keys())
     } else {
       throw new Error('Ada does not have any merchandise!')
     }
@@ -251,7 +260,7 @@ export class DestinyApiClient {
   /**
      * Retrieves the list of unowned mods for a user
      */
-  private getUnownedMods (collectibles: Collectible[]): String[] {
+  private filterUnownedModIds (collectibles: Collectible[]): String[] {
     const unownedModStateId = 65
     const collectibleMods = collectibles.filter(mod => mod.state === unownedModStateId)
 

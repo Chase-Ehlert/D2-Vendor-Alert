@@ -1,14 +1,14 @@
-import { UserRepository } from '../../domain/user-repository.js'
-import { DiscordConfig } from './discord-config.js'
-import { DestinyApiClient } from '../../infrastructure/destiny/destiny-api-client.js'
-import { AlertCommand } from './commands/alert-command.js'
-import { SlashCommand } from '../../domain/slash-command.js'
+import { UserRepository } from '../../domain/user/user-repository.js'
+import { DiscordConfig } from './configs/discord-config.js'
+import { DestinyClient } from '../../infrastructure/destiny/destiny-client.js'
+import { AlertCommand } from './alert-command/alert-command.js'
+import { SlashCommand } from '../../domain/discord/slash-command.js'
 import * as discord from 'discord.js'
 
 export class DiscordClient {
   constructor (
     private readonly database: UserRepository,
-    private readonly destinyApiClient: DestinyApiClient,
+    private readonly destinyClient: DestinyClient,
     private readonly alertCommand: AlertCommand,
     private readonly config: DiscordConfig
   ) { }
@@ -146,6 +146,6 @@ export class DiscordClient {
     const bungieUsername = message.content.substring(0, index)
     const bungieUsernameCode = message.content.substring(Number(index) + 1, message.content.length)
 
-    return this.destinyApiClient.doesDestinyPlayerExist(bungieUsername, bungieUsernameCode)
+    return this.destinyClient.doesDestinyPlayerExist(bungieUsername, bungieUsernameCode)
   }
 }

@@ -1,4 +1,4 @@
-import { AlertConfig } from '../../domain/alert-config.js'
+import { AlertConfig } from './alert-config.js'
 import { NotifierServiceConfig } from './notifier-service-config.js'
 
 export class NotifierServiceConfigClass implements NotifierServiceConfig {

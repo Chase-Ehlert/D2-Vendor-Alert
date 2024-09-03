@@ -1,11 +1,11 @@
-import { AxiosHttpClient } from '../database/axios-http-client'
-import { MongoUserRepository } from '../database/mongo-user-repository'
-import { UserInterface } from '../../domain/user'
-import { TokenInfo } from '../../domain/token-info'
-import { DestinyApiClientConfig } from './destiny-api-client-config'
-import { DestinyApiClient } from './destiny-api-client'
+import { AxiosHttpClient } from '../persistence/axios-http-client'
+import { MongoUserRepository } from '../persistence/mongo-user-repository'
+import { UserInterface } from '../../domain/user/user'
+import { TokenInfo } from './token-info'
+import { DestinyClientConfig } from './config/destiny-client-config'
+import { DestinyClient } from './destiny-client'
 import path from 'path'
-import { DisplayProperties, Merchandise, Mod } from '../../domain/mod.js'
+import { DisplayProperties, Merchandise, Mod } from '../../domain/destiny/mod.js'
 import { AxiosResponse } from 'axios'
 
 jest.mock('./../../testing-helpers/url', () => {
@@ -24,7 +24,7 @@ beforeEach(() => {
   global.Date = Date
 })
 
-describe('DestinyApiClient', () => {
+describe('DestinyClient', () => {
   const axiosHttpClient = new AxiosHttpClient()
   const mongoUserRepository = new MongoUserRepository()
   const expectedApiKey = '123key'
@@ -40,8 +40,8 @@ describe('DestinyApiClient', () => {
     apiKey: expectedApiKey,
     oauthSecret: oauthSecret,
     oauthClientId: oauthClient
-  } satisfies DestinyApiClientConfig
-  const destinyApiClient = new DestinyApiClient(
+  } satisfies DestinyClientConfig
+  const destinyClient = new DestinyClient(
     axiosHttpClient,
     mongoUserRepository,
     config
@@ -68,9 +68,9 @@ describe('DestinyApiClient', () => {
 
   it('should retrieve a list of definitions for Destiny items from a specific manifest file', async () => {
     const expectedManifestFileName = 'manifest'
-    const itemHash = '0132'
+    const itemId = '0132'
     const itemName = 'Sunglasses of Dudeness'
-    const mod = new Mod(itemHash, { name: itemName } satisfies DisplayProperties, '19')
+    const mod = new Mod(itemId, { name: itemName } satisfies DisplayProperties, '19')
     const manifest = {
       data: {
         Response: {
@@ -84,7 +84,7 @@ describe('DestinyApiClient', () => {
       data: {
         DestinyInventoryItemDefinition: {
           987: {
-            hash: itemHash,
+            id: itemId,
             itemType: 19,
             displayProperties: {
               name: itemName
@@ -103,25 +103,25 @@ describe('DestinyApiClient', () => {
       }
     })
 
-    const value = await destinyApiClient.getDestinyEquippableMods()
+    const value = await destinyClient.getEquippableMods()
 
     expect(axiosHttpClient.get).toHaveBeenCalledWith('https://www.bungie.net/manifest')
     expect(axiosHttpClient.get).toHaveBeenCalledWith(`https://www.bungie.net/${expectedManifestFileName}`)
     expect(value).toHaveLength(1)
     expect(value[0] instanceof Mod).toBeTruthy()
     expect(value[0].displayProperties).toEqual(mod.displayProperties)
-    expect(value[0].hash).toEqual(mod.hash)
+    expect(value[0].id).toEqual(mod.id)
     expect(JSON.stringify(value[0].itemType)).toEqual(mod.itemType)
   })
 
   it('should retrieve the list of merchandise for a Destiny vendor', async () => {
-    const mod1ItemHash = '123'
-    const mod2ItemHash = '456'
+    const mod1ItemId = '123'
+    const mod2ItemId = '456'
     const adaMerchandise = {
       350061650: {
         saleItems: {
-          1: { itemHash: mod1ItemHash } satisfies Merchandise,
-          2: { itemHash: mod2ItemHash } satisfies Merchandise
+          1: { itemId: mod1ItemId } satisfies Merchandise,
+          2: { itemId: mod2ItemId } satisfies Merchandise
         }
       }
     }
@@ -130,11 +130,19 @@ describe('DestinyApiClient', () => {
         Response: { sales: { data: adaMerchandise } }
       }
     } as unknown as AxiosResponse
+    const expectedVendorMerchandise = new Map<string, Object>()
+    const merchandiseItem1 = { itemId: '123' } satisfies Merchandise
+    const merchandiseItem2 = { itemId: '456' } satisfies Merchandise
+    const merchandise = { 1: merchandiseItem1, 2: merchandiseItem2 }
+
+    expectedVendorMerchandise.set('350061650', merchandise)
+
     const postSpy = jest.spyOn(axiosHttpClient, 'post').mockResolvedValue(response)
     const getSpy = jest.spyOn(axiosHttpClient, 'get').mockResolvedValue(result)
+
     jest.spyOn(mongoUserRepository, 'updateUserByMembershipId').mockResolvedValue()
 
-    const value = await destinyApiClient.getVendorInfo(user.destinyId, user.destinyCharacterId, accessToken)
+    const value = await destinyClient.getVendorMerchandise(user.destinyId, user.destinyCharacterId, accessToken)
 
     expect(postSpy).toHaveBeenCalledWith(
       'https://www.bungie.net/platform/app/oauth/token/',
@@ -162,7 +170,7 @@ describe('DestinyApiClient', () => {
         }
       }
     )
-    expect(value).toEqual([mod1ItemHash, mod2ItemHash])
+    expect(value).toEqual(expectedVendorMerchandise)
   })
 
   it('should throw an error when a vendors merchandise returns undefined', async () => {
@@ -180,7 +188,7 @@ describe('DestinyApiClient', () => {
     mongoUserRepository.updateUserByMembershipId = jest.fn()
 
     try {
-      await destinyApiClient.getVendorInfo(user.destinyId, user.destinyCharacterId, accessToken)
+      await destinyClient.getVendorMerchandise(user.destinyId, user.destinyCharacterId, accessToken)
     } catch (error) {
       expect(error).toBeInstanceOf(Error)
       expect(error.message).toBe('Ada does not have any merchandise!')
@@ -216,7 +224,7 @@ describe('DestinyApiClient', () => {
     mongoUserRepository.updateUserByMembershipId = jest.fn()
 
     try {
-      response = await destinyApiClient.getVendorInfo(user.destinyId, user.destinyCharacterId, accessToken)
+      response = await destinyClient.getVendorMerchandise(user.destinyId, user.destinyCharacterId, accessToken)
     } catch (error) {
       expect(error).toBeInstanceOf(Error)
       expect(error.message).toBe('Refresh token call failed!')
@@ -228,7 +236,7 @@ describe('DestinyApiClient', () => {
     expectedRefreshExpiration = undefined
 
     try {
-      response = await destinyApiClient.getVendorInfo(user.destinyId, user.destinyCharacterId, accessToken)
+      response = await destinyClient.getVendorMerchandise(user.destinyId, user.destinyCharacterId, accessToken)
     } catch (error) {
       expect(error).toBeInstanceOf(Error)
       expect(error.message).toBe('Refresh token call failed!')
@@ -240,7 +248,7 @@ describe('DestinyApiClient', () => {
     expectedRefreshToken = undefined
 
     try {
-      response = await destinyApiClient.getVendorInfo(user.destinyId, user.destinyCharacterId, accessToken)
+      response = await destinyClient.getVendorMerchandise(user.destinyId, user.destinyCharacterId, accessToken)
     } catch (error) {
       expect(error).toBeInstanceOf(Error)
       expect(error.message).toBe('Refresh token call failed!')
@@ -252,7 +260,7 @@ describe('DestinyApiClient', () => {
     expectedAccessToken = undefined
 
     try {
-      response = await destinyApiClient.getVendorInfo(user.destinyId, user.destinyCharacterId, accessToken)
+      response = await destinyClient.getVendorMerchandise(user.destinyId, user.destinyCharacterId, accessToken)
     } catch (error) {
       expect(error).toBeInstanceOf(Error)
       expect(error.message).toBe('Refresh token call failed!')
@@ -271,7 +279,7 @@ describe('DestinyApiClient', () => {
     } as unknown as AxiosResponse
     const getSpy = jest.spyOn(axiosHttpClient, 'get').mockResolvedValue(result)
 
-    const value = await destinyApiClient.getCollectibleInfo(destinyId)
+    const value = await destinyClient.getUnownedModIds(destinyId)
 
     expect(getSpy).toHaveBeenCalledWith(
       `https://www.bungie.net/platform/destiny2/3/profile/${destinyId}/`,
@@ -303,7 +311,7 @@ describe('DestinyApiClient', () => {
     } as unknown as AxiosResponse
     const getSpy = jest.spyOn(axiosHttpClient, 'get').mockResolvedValue(result)
 
-    const value = await destinyApiClient.getDestinyMembershipInfo(expectedMembershipId)
+    const value = await destinyClient.getDestinyMembershipInfo(expectedMembershipId)
 
     expect(getSpy).toHaveBeenCalledWith(
       `https://www.bungie.net/platform/User/GetMembershipsById/${expectedMembershipId}/3/`,
@@ -335,7 +343,7 @@ describe('DestinyApiClient', () => {
     jest.spyOn(axiosHttpClient, 'get').mockResolvedValue(result)
 
     try {
-      response = await destinyApiClient.getDestinyMembershipInfo(expectedMembershipId)
+      response = await destinyClient.getDestinyMembershipInfo(expectedMembershipId)
     } catch (error) {
       expect(error).toBeInstanceOf(Error)
       expect(error.message).toBe('Membership ID or Display Name are undefined.')
@@ -347,7 +355,7 @@ describe('DestinyApiClient', () => {
     expectedDisplayName = undefined
 
     try {
-      response = await destinyApiClient.getDestinyMembershipInfo(expectedMembershipId)
+      response = await destinyClient.getDestinyMembershipInfo(expectedMembershipId)
     } catch (error) {
       expect(error).toBeInstanceOf(Error)
       expect(error.message).toBe('Membership ID or Display Name are undefined.')
@@ -372,7 +380,7 @@ describe('DestinyApiClient', () => {
     } as unknown as AxiosResponse
     const getSpy = jest.spyOn(axiosHttpClient, 'get').mockResolvedValue(result)
 
-    const value = await destinyApiClient.getDestinyCharacterIds(expectedMembershipId)
+    const value = await destinyClient.getDestinyCharacterIds(expectedMembershipId)
 
     expect(getSpy).toHaveBeenCalledWith(
       `https://www.bungie.net/platform/destiny2/3/profile/${expectedMembershipId}/`,
@@ -403,7 +411,7 @@ describe('DestinyApiClient', () => {
     jest.spyOn(axiosHttpClient, 'get').mockResolvedValue(result)
 
     try {
-      response = await destinyApiClient.getDestinyCharacterIds(expectedMembershipId)
+      response = await destinyClient.getDestinyCharacterIds(expectedMembershipId)
     } catch (error) {
       expect(error).toBeInstanceOf(Error)
       expect(error.message).toBe('Character ID is undefined!')
@@ -425,7 +433,7 @@ describe('DestinyApiClient', () => {
     } as unknown as AxiosResponse
     const postSpy = jest.spyOn(axiosHttpClient, 'post').mockResolvedValue(result)
 
-    const value = await destinyApiClient.doesDestinyPlayerExist(bungieUsername, bungieUsernameCode)
+    const value = await destinyClient.doesDestinyPlayerExist(bungieUsername, bungieUsernameCode)
 
     expect(postSpy).toHaveBeenCalledWith(
       'https://www.bungie.net/platform/destiny2/SearchDestinyPlayerByBungieName/3/',
@@ -441,6 +449,51 @@ describe('DestinyApiClient', () => {
       }
     )
     expect(value).toBeTruthy()
+  })
+
+  it('should return a list of Adas merchandise ids', () => {
+    const adaVendorId = '350061650'
+    const modId1 = '123'
+    const modName1 = { name: 'Boots of Flying' } satisfies DisplayProperties
+    const modId2 = '456'
+    const modName2 = { name: 'Helmet of Forseeing' } satisfies DisplayProperties
+    const vendorMerchandise = new Map<string, Map<string, Mod>>()
+    const adaMerchandise = new Map<string, Mod>()
+    const randomVendorMerchandise = new Map<string, Mod>()
+
+    randomVendorMerchandise.set('987', new Mod(
+      '99',
+       { name: 'Sword of Daggerfall' } satisfies DisplayProperties)
+    )
+    adaMerchandise.set(modId1, new Mod('1', modName1))
+    adaMerchandise.set(modId2, new Mod('2', modName2))
+    vendorMerchandise.set('111111111', randomVendorMerchandise)
+    vendorMerchandise.set(adaVendorId, adaMerchandise)
+
+    const result = destinyClient.getAdaMerchandiseIds(adaVendorId, vendorMerchandise)
+
+    expect(result).toStrictEqual([modId1, modId2])
+  })
+
+  it('should throw an error when Adas merchandise is undefined', () => {
+    const adaVendorId = '350061659'
+    const vendorMerchandise = new Map<string, Map<string, Mod>>()
+    const adaMerchandise = new Map<string, Mod>()
+    const randomVendorMerchandise = new Map<string, Mod>()
+
+    randomVendorMerchandise.set('987', new Mod(
+      '99',
+       { name: 'Sword of Daggerfall' } satisfies DisplayProperties)
+    )
+    vendorMerchandise.set('111111111', randomVendorMerchandise)
+    vendorMerchandise.set(adaVendorId, adaMerchandise)
+
+    try {
+      destinyClient.getAdaMerchandiseIds(adaVendorId, vendorMerchandise)
+    } catch (error) {
+      expect(error).toBeInstanceOf(Error)
+      expect(error.message).toBe('Ada does not have any merchandise!')
+    }
   })
 
   it('should retrieve a users refresh token', async () => {
@@ -463,7 +516,7 @@ describe('DestinyApiClient', () => {
     } as unknown as AxiosResponse
     jest.spyOn(axiosHttpClient, 'post').mockResolvedValue(response)
 
-    const value = await destinyApiClient.getRefreshTokenInfo(
+    const value = await destinyClient.getRefreshTokenInfo(
       expectedAuthCode,
       {
         render: jest.fn(),
@@ -493,7 +546,7 @@ describe('DestinyApiClient', () => {
     jest.spyOn(axiosHttpClient, 'post').mockResolvedValue(expectedResponse)
 
     try {
-      response = await destinyApiClient.getRefreshTokenInfo(
+      response = await destinyClient.getRefreshTokenInfo(
         expectedAuthCode,
         {
           render: jest.fn(),
@@ -511,7 +564,7 @@ describe('DestinyApiClient', () => {
     expectedRefreshToken = '789'
 
     try {
-      response = await destinyApiClient.getRefreshTokenInfo(
+      response = await destinyClient.getRefreshTokenInfo(
         expectedAuthCode,
         {
           render: jest.fn(),
@@ -529,7 +582,7 @@ describe('DestinyApiClient', () => {
     expectedRefreshToken = undefined
 
     try {
-      response = await destinyApiClient.getRefreshTokenInfo(
+      response = await destinyClient.getRefreshTokenInfo(
         expectedAuthCode,
         {
           render: jest.fn(),
@@ -546,7 +599,7 @@ describe('DestinyApiClient', () => {
   it('should redirect when the call to destiny api client fails', async () => {
     const expectedResult: any = { sendFile: jest.fn() }
 
-    await destinyApiClient.getRefreshTokenInfo('1', expectedResult)
+    await destinyClient.getRefreshTokenInfo('1', expectedResult)
 
     expect(expectedResult.sendFile).toHaveBeenCalledWith(
       path.join('example/somewhere/src/presentation/views/landing-page-error-auth-code.html')
@@ -569,11 +622,6 @@ describe('DestinyApiClient', () => {
         access_token: ''
       }
     } as unknown as AxiosResponse
-    const expectedTokenInfo = new TokenInfo(
-      bungieMembershipId,
-      refreshTokenExpirationTime,
-      refreshToken
-    )
     const mockDate = jest.fn()
     mockDate.mockReturnValueOnce(new Date()).mockReturnValueOnce(new Date(712345256981))
     global.Date = mockDate as any
@@ -581,8 +629,12 @@ describe('DestinyApiClient', () => {
     jest.spyOn(axiosHttpClient, 'post').mockResolvedValue(expectedPostResponse)
     jest.spyOn(mongoUserRepository, 'updateUserByMembershipId').mockResolvedValue()
 
-    await destinyApiClient.checkRefreshTokenExpiration(user)
+    await destinyClient.checkRefreshTokenExpiration(user)
 
-    expect(mongoUserRepository.updateUserByMembershipId).toHaveBeenCalledWith(expectedTokenInfo)
+    expect(mongoUserRepository.updateUserByMembershipId).toHaveBeenCalledWith(
+      bungieMembershipId,
+      refreshToken,
+      refreshTokenExpirationTime
+    )
   })
 })

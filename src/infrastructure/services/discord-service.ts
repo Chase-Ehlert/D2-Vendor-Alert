@@ -1,7 +1,7 @@
-import { Vendor } from '../destiny/vendor.js'
-import { UserInterface } from '../../domain/user.js'
-import { HttpClient } from '../../domain/http-client.js'
-import { DiscordConfig } from '../../presentation/discord/discord-config.js'
+import { Vendor } from '../../domain/destiny/vendor.js'
+import { UserInterface } from '../../domain/user/user.js'
+import { HttpClient } from '../persistence/http-client.js'
+import { DiscordConfig } from '../../presentation/discord/configs/discord-config.js'
 
 export class DiscordService {
   constructor (
@@ -16,7 +16,7 @@ export class DiscordService {
   async compareModsForSaleWithUserInventory (
     user: UserInterface
   ): Promise<void> {
-    const unownedMods = await this.vendor.getUnownedModsForSaleByAda(user)
+    const unownedMods = await this.vendor.getUnownedMods(user)
 
     if (unownedMods.length > 0) {
       await this.messageUnownedModsList(user, unownedMods)

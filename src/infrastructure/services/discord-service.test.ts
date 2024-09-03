@@ -1,11 +1,11 @@
-import { MongoUserRepository } from '../database/mongo-user-repository'
-import { AxiosHttpClient } from '../database/axios-http-client'
-import { UserInterface } from '../../domain/user'
+import { MongoUserRepository } from '../persistence/mongo-user-repository'
+import { AxiosHttpClient } from '../persistence/axios-http-client'
+import { UserInterface } from '../../domain/user/user'
 import { AxiosResponse } from 'axios'
-import { DestinyApiClientConfig } from '../destiny/destiny-api-client-config'
-import { DiscordConfig } from '../../presentation/discord/discord-config'
-import { DestinyApiClient } from '../destiny/destiny-api-client'
-import { Vendor } from '../destiny/vendor'
+import { DestinyClientConfig } from '../destiny/config/destiny-client-config'
+import { DiscordConfig } from '../../presentation/discord/configs/discord-config'
+import { DestinyClient } from '../destiny/destiny-client'
+import { Vendor } from '../../domain/destiny/vendor'
 import { DiscordService } from './discord-service'
 
 jest.mock('./../../testing-helpers/url', () => {
@@ -14,12 +14,12 @@ jest.mock('./../../testing-helpers/url', () => {
 
 describe('DiscordService', () => {
   const axiosHttpClient = new AxiosHttpClient()
-  const destinyApiClient = new DestinyApiClient(
+  const destinyClient = new DestinyClient(
     axiosHttpClient,
     new MongoUserRepository(),
-    {} satisfies DestinyApiClientConfig
+    {} satisfies DestinyClientConfig
   )
-  const vendor = new Vendor(destinyApiClient)
+  const vendor = new Vendor(destinyClient)
   const expectedToken = '123Token'
   const discordService = new DiscordService(
     vendor,
@@ -47,7 +47,7 @@ describe('DiscordService', () => {
         'Content-Type': 'application/json'
       }
     }
-    jest.spyOn(vendor, 'getUnownedModsForSaleByAda').mockResolvedValue(expectedUnownedMods)
+    jest.spyOn(vendor, 'getUnownedMods').mockResolvedValue(expectedUnownedMods)
 
     await discordService.compareModsForSaleWithUserInventory(user)
 
@@ -70,7 +70,7 @@ describe('DiscordService', () => {
         'Content-Type': 'application/json'
       }
     }
-    jest.spyOn(vendor, 'getUnownedModsForSaleByAda').mockResolvedValue(expectedUnownedMods)
+    jest.spyOn(vendor, 'getUnownedMods').mockResolvedValue(expectedUnownedMods)
 
     await discordService.compareModsForSaleWithUserInventory(user)
 

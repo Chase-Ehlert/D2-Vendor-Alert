@@ -1,4 +1,4 @@
-import { Config } from '../../domain/config.js'
+import { Config } from '../../../domain/config.js'
 import { MongoDbServiceConfig } from './mongo-db-service-config.js'
 
 export class MongoDbServiceConfigClass implements MongoDbServiceConfig {

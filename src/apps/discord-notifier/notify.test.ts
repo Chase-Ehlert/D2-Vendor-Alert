@@ -1,13 +1,13 @@
-import { MongoUserRepository } from '../../infrastructure/database/mongo-user-repository'
-import { DestinyApiClientConfig } from '../../infrastructure/destiny/destiny-api-client-config'
-import { DiscordConfig } from '../../presentation/discord/discord-config'
-import { MongoDbServiceConfig } from '../../infrastructure/database/mongo-db-service-config'
-import { AxiosHttpClient } from '../../infrastructure/database/axios-http-client'
-import { DestinyApiClient } from '../../infrastructure/destiny/destiny-api-client'
-import { MongoDbService } from '../../infrastructure/database/mongo-db-service'
+import { MongoUserRepository } from '../../infrastructure/persistence/mongo-user-repository'
+import { DestinyClientConfig } from '../../infrastructure/destiny/config/destiny-client-config'
+import { DiscordConfig } from '../../presentation/discord/configs/discord-config'
+import { MongoDbServiceConfig } from '../../infrastructure/persistence/configs/mongo-db-service-config'
+import { AxiosHttpClient } from '../../infrastructure/persistence/axios-http-client'
+import { DestinyClient } from '../../infrastructure/destiny/destiny-client'
+import { MongoDbService } from '../../infrastructure/persistence/services/mongo-db-service'
 import { DiscordService } from '../../infrastructure/services/discord-service'
 import { Notify } from './notify'
-import { Vendor } from '../../infrastructure/destiny/vendor'
+import { Vendor } from '../../domain/destiny/vendor'
 import express from 'express'
 
 const jsonMock = jest.fn()
@@ -39,29 +39,29 @@ beforeAll(() => {
   }
 })
 
-let destinyApiClient: DestinyApiClient
+let destinyClient: DestinyClient
 let discordService: DiscordService
 let mongoDbService: MongoDbService
 let mockApp: express.Application
 let notify: Notify
 
 beforeEach(() => {
-  destinyApiClient = new DestinyApiClient(
+  destinyClient = new DestinyClient(
     new AxiosHttpClient(),
     new MongoUserRepository(),
-      {} satisfies DestinyApiClientConfig
+      {} satisfies DestinyClientConfig
   )
   discordService = new DiscordService(
-    new Vendor(destinyApiClient),
+    new Vendor(destinyClient),
     new AxiosHttpClient(),
       {} satisfies DiscordConfig
   )
   mongoDbService = new MongoDbService({} satisfies MongoDbServiceConfig)
   mockApp = express()
 
-  notify = new Notify(destinyApiClient, discordService, mongoDbService)
+  notify = new Notify(destinyClient, discordService, mongoDbService)
 
-  destinyApiClient.checkRefreshTokenExpiration = jest.fn()
+  destinyClient.checkRefreshTokenExpiration = jest.fn()
   discordService.compareModsForSaleWithUserInventory = jest.fn()
   mongoDbService.connectToDatabase = jest.fn()
 })
@@ -84,7 +84,7 @@ describe('Notify', () => {
 
     await expectedFunction(request)
 
-    expect(destinyApiClient.checkRefreshTokenExpiration).toHaveBeenCalledWith(expectedUser)
+    expect(destinyClient.checkRefreshTokenExpiration).toHaveBeenCalledWith(expectedUser)
     expect(discordService.compareModsForSaleWithUserInventory).toHaveBeenCalledWith(expectedUser)
   })
 

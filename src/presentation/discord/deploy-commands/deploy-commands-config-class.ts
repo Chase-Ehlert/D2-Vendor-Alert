@@ -1,5 +1,5 @@
 import { DeployCommandsConfig } from './deploy-commands-config.js'
-import { Config } from '../../domain/config.js'
+import { Config } from '../../../domain/config.js'
 
 export class DeployCommandsConfigClass implements DeployCommandsConfig {
   constructor (

@@ -1,6 +1,5 @@
-import { TokenInfo } from '../../domain/token-info'
-import { User } from '../../domain/user'
 import { MongoUserRepository } from './mongo-user-repository'
+import { User } from './user-schema.js'
 
 let realDate: any
 
@@ -93,7 +92,9 @@ describe('MongoUserRepository', () => {
     global.Date = mockDate as any
 
     await mongoUserRepo.updateUserByMembershipId(
-      new TokenInfo(bungieMembershipId, refreshExpiration, refreshToken)
+      bungieMembershipId,
+      refreshToken,
+      refreshExpiration
     )
 
     expect(findOneAndUpdateSpy).toHaveBeenCalledWith(
