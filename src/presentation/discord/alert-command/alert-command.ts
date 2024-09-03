@@ -1,5 +1,5 @@
 import { hyperlink, SlashCommandBuilder } from 'discord.js'
-import { AlertCommandConfig } from '../../discord/commands/alert-command-config.js'
+import { AlertCommandConfig } from '../../discord/alert-command/alert-command-config.js'
 import { SlashCommand } from './slash-command.js'
 
 export class AlertCommand {
