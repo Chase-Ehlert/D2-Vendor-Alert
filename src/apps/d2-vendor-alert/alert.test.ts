@@ -12,7 +12,6 @@ import { AlertManager } from '../../presentation/discord/alert-manager'
 import { AlertCommand } from '../../presentation/discord/alert-command/alert-command'
 import { DiscordClient } from '../../presentation/discord/discord-client'
 import { OAuthWebController } from '../../presentation/web/o-auth-web-controller'
-import { OAuthResponse } from '../../presentation/web/o-auth-response'
 import { AlertCommandConfig } from '../../presentation/discord/alert-command/alert-command-config.js'
 import express from 'express'
 import path from 'path'
@@ -104,23 +103,6 @@ describe('Alert', () => {
     expect(mongoDbService.connectToDatabase).toHaveBeenCalled()
     expect(discordClient.setupDiscordClient).toHaveBeenCalled()
     expect(alertManager.dailyReset).toHaveBeenCalled()
-  })
-
-  it('should setup the get root endpoint with the handleOAuth function', () => {
-    const rootHandler = (alert as any).rootHandler(mockApp)
-    const expectedRequest = { query: { code: '123' } }
-    const expectedResult: OAuthResponse = {
-      render: (_template: string, _data: Record<string, any>) => {},
-      sendFile: (_path: string) => {}
-    }
-
-    rootHandler(expectedRequest, expectedResult)
-
-    expect(oAuthWebController.handleOAuth).toHaveBeenCalledWith(
-      mockApp,
-      expectedRequest,
-      expectedResult
-    )
   })
 
   it('should log that the server is running', () => {

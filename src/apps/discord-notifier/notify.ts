@@ -2,6 +2,10 @@ import express from 'express'
 import { DestinyClient } from '../../infrastructure/destiny/destiny-client.js'
 import { DiscordService } from '../../infrastructure/services/discord-service.js'
 import { MongoDbService } from '../../infrastructure/persistence/services/mongo-db-service.js'
+import { UserInterface } from '../../domain/user/user.js'
+
+interface User { user: UserInterface}
+interface UserRequest { body: User}
 
 export class Notify {
   constructor (
@@ -20,17 +24,14 @@ export class Notify {
 
     app.post(
       '/notify',
-      this.notifyHandler(app) as express.RequestHandler
+      (request: UserRequest, response, next) => {
+        this.destinyClient.checkRefreshTokenExpiration(request.body.user).then(() => {
+          this.discordService.compareModsForSaleWithUserInventory(request.body.user).catch(next)
+        }).catch(next)
+      }
     )
 
     await this.mongoDbService.connectToDatabase()
-  }
-
-  private notifyHandler (app: express.Application): Function {
-    return (async (request, result) => {
-      await this.destinyClient.checkRefreshTokenExpiration(request.body.user)
-      await this.discordService.compareModsForSaleWithUserInventory(request.body.user)
-    }) as express.RequestHandler
   }
 
   private logNotifierIsRunning () {

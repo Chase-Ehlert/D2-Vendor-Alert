@@ -1,4 +1,3 @@
-import express from 'express'
 import { TokenInfo } from '../../infrastructure/destiny/token-info.js'
 import { MongoUserRepository } from '../../infrastructure/persistence/mongo-user-repository.js'
 import { DestinyClient } from '../../infrastructure/destiny/destiny-client.js'
@@ -14,7 +13,6 @@ export class OAuthWebController {
   ) {}
 
   async handleOAuth (
-    app: express.Application,
     request: OAuthRequest,
     result: OAuthResponse
   ): Promise<void> {

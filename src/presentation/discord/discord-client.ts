@@ -2,8 +2,8 @@ import { UserRepository } from '../../domain/user/user-repository.js'
 import { DiscordClientConfig } from './configs/discord-client-config.js'
 import { DestinyClient } from '../../infrastructure/destiny/destiny-client.js'
 import { AlertCommand } from './alert-command/alert-command.js'
-import { SlashCommand } from './alert-command/slash-command.js'
 import * as discord from 'discord.js'
+import { SlashCommand } from '../../domain/discord/slash-command.js'
 
 export class DiscordClient {
   constructor (

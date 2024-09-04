@@ -33,17 +33,10 @@ export class Alert {
     )
     app.get(
       '/',
-      this.rootHandler(app) as express.RequestHandler
+      (request: OAuthRequest, response: OAuthResponse, next) => {
+        this.oAuthWebController.handleOAuth(request, response).catch(next)
+      }
     )
-  }
-
-  private rootHandler (app: express.Application): Function {
-    return async (
-      request: OAuthRequest,
-      result: OAuthResponse
-    ) => {
-      await this.oAuthWebController.handleOAuth(app, request, result)
-    }
   }
 
   private async startServer (
