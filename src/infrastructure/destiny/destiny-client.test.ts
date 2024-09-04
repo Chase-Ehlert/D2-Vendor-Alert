@@ -84,7 +84,7 @@ describe('DestinyClient', () => {
       data: {
         DestinyInventoryItemDefinition: {
           987: {
-            id: itemId,
+            hash: itemId,
             itemType: 19,
             displayProperties: {
               name: itemName
