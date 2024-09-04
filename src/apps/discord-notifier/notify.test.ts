@@ -77,6 +77,25 @@ describe('Notify', () => {
     expect(mongoDbService.connectToDatabase).toHaveBeenCalled()
   })
 
+  it('should setup the service in the correct order', async () => {
+    const connectToDatabaseMock = jest.fn()
+    const appUseMock = jest.fn()
+    const appPostMock = jest.fn()
+    const appListenMock = jest.fn()
+
+    mongoDbService.connectToDatabase = connectToDatabaseMock
+    mockApp.use = appUseMock
+    mockApp.post = appPostMock
+    mockApp.listen = appListenMock
+
+    await notify.notifyUsers(mockApp)
+
+    expect(connectToDatabaseMock).toHaveBeenCalledBefore(appUseMock)
+    expect(appUseMock).toHaveBeenCalledBefore(appPostMock)
+    expect(appPostMock).toHaveBeenCalledBefore(appListenMock)
+    expect(appListenMock).toHaveBeenCalledAfter(appPostMock)
+  })
+
   it('should log that the notifier service is running', () => {
     const logSpy = jest.spyOn(console, 'log')
     const logNotifierIsRunning = (notify as any).logNotifierIsRunning()
