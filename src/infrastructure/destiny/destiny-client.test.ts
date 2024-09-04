@@ -68,9 +68,9 @@ describe('DestinyClient', () => {
 
   it('should retrieve a list of definitions for Destiny items from a specific manifest file', async () => {
     const expectedManifestFileName = 'manifest'
-    const itemHash = '0132'
+    const itemId = '0132'
     const itemName = 'Sunglasses of Dudeness'
-    const mod = new Mod(itemHash, { name: itemName } satisfies DisplayProperties, '19')
+    const mod = new Mod(itemId, { name: itemName } satisfies DisplayProperties, '19')
     const manifest = {
       data: {
         Response: {
@@ -84,7 +84,7 @@ describe('DestinyClient', () => {
       data: {
         DestinyInventoryItemDefinition: {
           987: {
-            hash: itemHash,
+            hash: itemId,
             itemType: 19,
             displayProperties: {
               name: itemName

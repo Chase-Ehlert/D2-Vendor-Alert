@@ -16,5 +16,5 @@ WORKDIR /app
 COPY ./package*.json ./
 COPY --from=devBuilder /app/dist/ ./dist
 COPY --from=prodBuilder /app/node_modules ./node_modules
-EXPOSE 3001
-CMD ["npm", "start"]
+EXPOSE 3002
+CMD ["node", "dist/apps/discord-notifier/app.js"]

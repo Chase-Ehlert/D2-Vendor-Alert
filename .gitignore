@@ -4,3 +4,5 @@ aggregate*.json
 manifest*.json
 dist
 coverage
+docs/.vitepress/dist
+docs/.vitepress/cache
