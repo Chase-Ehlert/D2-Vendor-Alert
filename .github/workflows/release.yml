@@ -1,36 +1,27 @@
 name: Install & Lint & Build & Deploy
 
 on:
-  workflow_dispatch:
   push:
-    branches:
-      - main
+    branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: read
+  pages: write
+  id-token: write
   pull-requests: read
 
-concurrency:
-  group: '${{ github.workflow }} @ ${{ github.head_ref || github.ref }}'
-  cancel-in-progress: true
-
 jobs:
-  pre-job:
-    runs-on: ubuntu-latest
-    outputs:
-      should_skip: ${{ steps.skip_check.outputs.should_skip }}
-    steps:
-      - id: skip_check
-        uses: fkirc/skip-duplicate-actions@v3.4.0
-        with:
-          skip_after_successful_duplicate: 'true'
   update-deployment:
     runs-on: ubuntu-latest
+    concurrency:
+      group: '${{ github.workflow }} @ ${{ github.head_ref || github.ref }}'
+      cancel-in-progress: true
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4.1.7
       - name: Setup node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4.0.3
         with:
           node-version: 18.11.x
           cache: npm
@@ -49,12 +40,6 @@ jobs:
           envkey_DISCORD_NOTIFIER_ADDRESS: ${{ secrets.DISCORD_NOTIFIER_ADDRESS }}
       - name: Install
         run: npm ci
-      - name: Gather files changed
-        uses: trilom/file-changes-action@a6ca26c14274c33b15e6499323aac178af06ad4b
-        with:
-          fileOutput: 'json'
-      - name: Show files changed
-        run: cat $HOME/files.json
       - name: Lint
         run: npm run lint
       - name: TSC
@@ -70,6 +55,7 @@ jobs:
           script: |
             cd workspaces/D2-Vendor-Alert/
             git checkout .
+            git checkout main
             git pull
             npm install
             npm run tsc
@@ -84,3 +70,42 @@ jobs:
               DESTINY_OAUTH_SECRET=${{ secrets.DESTINY_OAUTH_SECRET }} \
               DISCORD_NOTIFIER_ADDRESS=${{ secrets.DISCORD_NOTIFIER_ADDRESS }} \
               pm2 restart 0 --update-env
+  build-vitepress-site:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.1.7
+        with:
+          fetch-depth: 0
+      - name: Setup Node
+        uses: actions/setup-node@v4.0.3
+        with:
+          node-version: 20
+          cache: npm
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+      - name: Install dependencies
+        run: npm ci
+      - name: Build with VitePress
+        run: npm run docs:build
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/.vitepress/dist
+  deploy-vitepress-site:
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: build-vitepress-site
+    runs-on: ubuntu-latest
+    name: deploy
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
