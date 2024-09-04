@@ -7,7 +7,7 @@ import { AlertCommand } from './alert-command/alert-command'
 import { DiscordClient } from './discord-client'
 import { AlertCommandConfig } from './alert-command/alert-command-config.js'
 import * as discord from 'discord.js'
-import { SlashCommand } from '../../domain/discord/slash-command.js'
+import { SlashCommand } from './alert-command/slash-command.js'
 
 jest.mock('./../../testing-helpers/url', () => {
   return 'example'

@@ -13,11 +13,11 @@ import { NotifierServiceConfigClass } from '../../infrastructure/services/config
 import { DestinyClientConfigClass } from '../../infrastructure/destiny/config/destiny-client-config-class.js'
 import { DiscordClientConfigClass } from '../../presentation/discord/configs/discord-client-config-class.js'
 import { MongoDbServiceConfigClass } from '../../infrastructure/persistence/configs/mongo-db-service-config-class.js'
+import { AlertCommandConfigClass } from '../../presentation/discord/alert-command/alert-command-config-class.js'
 import { databaseConfigSchema } from '../../infrastructure/persistence/configs/database-config-schema.js'
 import { discordConfigSchema } from '../../presentation/discord/configs/discord-config-schema.js'
 import { destinyConfigSchema } from '../../infrastructure/destiny/config/destiny-config-schema.js'
 import { validateSchema } from '../validate-config-schema.js'
-import { AlertCommandConfigClass } from '../../presentation/discord/alert-command/alert-command-config-class.js'
 
 const databaseConfig = validateSchema(databaseConfigSchema)
 const discordConfig = validateSchema(discordConfigSchema)

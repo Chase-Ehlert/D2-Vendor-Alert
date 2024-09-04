@@ -2,7 +2,7 @@ import { UserRepository } from '../../domain/user/user-repository.js'
 import { DiscordClientConfig } from './configs/discord-client-config.js'
 import { DestinyClient } from '../../infrastructure/destiny/destiny-client.js'
 import { AlertCommand } from './alert-command/alert-command.js'
-import { SlashCommand } from '../../domain/discord/slash-command.js'
+import { SlashCommand } from './alert-command/slash-command.js'
 import * as discord from 'discord.js'
 
 export class DiscordClient {
@@ -73,7 +73,9 @@ export class DiscordClient {
           collector.on(
             'collect',
             (message) => {
-              this.handleIncommingMessage(message, interaction, command).catch(() => { throw new Error('Failed to handle incoming message from Discord!') })
+              this.handleIncommingMessage(message, interaction, command).catch(
+                () => { throw new Error('Failed to handle incoming message from Discord!') }
+              )
             })
 
           collector.on(

@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 import { DeployCommandsConfig } from './deploy-commands-config.js'
 import { DiscordConfig } from './discord-config.js'
+=======
+import { DiscordConfig } from '../configs/discord-config.js'
+import { DeployCommandsConfig } from './deploy-commands-config.js'
+>>>>>>> main
 
 export class DeployCommandsConfigClass implements DeployCommandsConfig {
   constructor (
