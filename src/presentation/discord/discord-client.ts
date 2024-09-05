@@ -1,13 +1,13 @@
+import { UserRepository } from '../../domain/user/user-repository.js'
 import { DiscordClientConfig } from './configs/discord-client-config.js'
 import { DestinyClient } from '../../infrastructure/destiny/destiny-client.js'
-import { AlertCommand } from './commands/alert-command.js'
-import { SlashCommand } from './commands/slash-command.js'
+import { AlertCommand } from './alert-command/alert-command.js'
 import * as discord from 'discord.js'
-import { MongoUserRepository } from '../../infrastructure/persistence/mongo-user-repository.js'
+import { SlashCommand } from '../../domain/discord/slash-command.js'
 
 export class DiscordClient {
   constructor (
-    private readonly database: MongoUserRepository,
+    private readonly database: UserRepository,
     private readonly destinyClient: DestinyClient,
     private readonly alertCommand: AlertCommand,
     private readonly config: DiscordClientConfig
@@ -48,7 +48,13 @@ export class DiscordClient {
   private replyToSlashCommands (discordClient: discord.Client<boolean>): void {
     discordClient.on(
       discord.Events.InteractionCreate,
-      this.handleInteraction()
+      () => {
+        try {
+          this.handleInteraction()
+        } catch (error) {
+          throw new Error(error.message)
+        }
+      }
     )
   }
 
@@ -66,17 +72,19 @@ export class DiscordClient {
 
           collector.on(
             'collect',
-            async (message) => {
-              await this.handleIncommingMessage(message, interaction, command)
+            (message) => {
+              this.handleIncommingMessage(message, interaction, command).catch(
+                () => { throw new Error('Failed to handle incoming message from Discord!') }
+              )
             })
 
           collector.on(
             'end',
-            async (collected) => {
+            (collected) => {
               if (collected.size === 0) {
-                await interaction.followUp({
+                interaction.followUp({
                   content: 'The interaction has timed out. After you have found your Bungie Net username, try again.'
-                })
+                }).catch(() => { throw new Error('Failed to reply to interaction from Discord!') })
               }
             })
         }
