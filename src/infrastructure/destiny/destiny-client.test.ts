@@ -1,4 +1,3 @@
-import { AxiosHttpClient } from '../persistence/axios-http-client'
 import { MongoUserRepository } from '../persistence/mongo-user-repository'
 import { UserInterface } from '../../domain/user/user'
 import { TokenInfo } from './token-info'
@@ -7,6 +6,7 @@ import { DestinyClient } from './destiny-client'
 import path from 'path'
 import { DisplayProperties, Merchandise, Mod } from '../../domain/destiny/mod.js'
 import { AxiosResponse } from 'axios'
+import { AxiosHttpClient } from '../../adapter/axios-http-client.js'
 
 jest.mock('./../../testing-helpers/url', () => {
   return 'example/somewhere'

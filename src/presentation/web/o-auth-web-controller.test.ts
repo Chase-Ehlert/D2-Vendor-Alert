@@ -2,11 +2,11 @@ import { DestinyClientConfig } from '../../infrastructure/destiny/config/destiny
 import { OAuthRequest } from './o-auth-request'
 import { OAuthResponse } from './o-auth-response'
 import { TokenInfo } from '../../infrastructure/destiny/token-info'
-import { AxiosHttpClient } from '../../infrastructure/persistence/axios-http-client'
 import { MongoUserRepository } from '../../infrastructure/persistence/mongo-user-repository'
 import { DestinyClient } from '../../infrastructure/destiny/destiny-client'
 import { OAuthWebController } from './o-auth-web-controller'
 import path from 'path'
+import { AxiosHttpClient } from '../../adapter/axios-http-client.js'
 
 jest.mock('./../../testing-helpers/url', () => {
   return 'example/somewhere'
