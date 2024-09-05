@@ -227,7 +227,7 @@ export class DestinyClient implements DestinyService {
   /**
      * Retrieve the user's access token by calling the Destiny API with their refresh token
      */
-  private async getTokenInfo (refreshToken: string): Promise<TokenInfo> {
+  async getTokenInfo (refreshToken: string): Promise<TokenInfo> {
     const { data } = await this.httpClient.post(
       this.bungieDomainWithTokenDirectory, {
         grant_type: 'refresh_token',

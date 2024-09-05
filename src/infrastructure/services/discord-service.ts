@@ -50,7 +50,7 @@ export class DiscordService {
   /**
    * Send off message to user's desired Discord alert channel
    */
-  private async discordRequest (
+  async discordRequest (
     user: UserInterface,
     message: string
   ): Promise<void> {
