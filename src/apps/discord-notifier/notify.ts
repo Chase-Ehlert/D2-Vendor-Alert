@@ -4,7 +4,7 @@ import { DiscordService } from '../../infrastructure/services/discord-service.js
 import { MongoDbService } from '../../infrastructure/persistence/services/mongo-db-service.js'
 import { UserInterface } from '../../domain/user/user.js'
 import { hyperlink } from 'discord.js'
-import { AlertCommandConfig } from '../../presentation/discord/commands/alert-command-config.js'
+import { AlertCommandConfig } from '../../presentation/discord/alert-command/alert-command-config.js'
 
 interface User { user: UserInterface}
 interface UserRequest { body: User}

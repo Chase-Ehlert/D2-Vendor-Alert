@@ -13,7 +13,7 @@ import { alertConfigSchema, discordConfigSchema } from '../../presentation/disco
 import { destinyConfigSchema } from '../../infrastructure/destiny/config/destiny-config-schema.js'
 import { validateSchema } from '../validate-config-schema.js'
 import { AxiosHttpClient } from '../../adapter/axios-http-client.js'
-import { AlertCommandConfigClass } from '../../presentation/discord/commands/alert-command-config-class.js'
+import { AlertCommandConfigClass } from '../../presentation/discord/alert-command/alert-command-config-class.js'
 
 const databaseConfig = validateSchema(databaseConfigSchema)
 const discordConfig = validateSchema(discordConfigSchema)

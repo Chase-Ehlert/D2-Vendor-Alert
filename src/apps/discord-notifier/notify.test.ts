@@ -9,9 +9,9 @@ import { Notify } from './notify'
 import { Vendor } from '../../domain/destiny/vendor'
 import express from 'express'
 import { AxiosHttpClient } from '../../adapter/axios-http-client.js'
-import { AlertCommandConfig } from '../../presentation/discord/commands/alert-command-config.js'
 import { TokenInfo } from '../../infrastructure/destiny/token-info.js'
 import { hyperlink } from 'discord.js'
+import { AlertCommandConfig } from '../../presentation/discord/alert-command/alert-command-config.js'
 
 const jsonMock = jest.fn()
 
