@@ -1,5 +1,14 @@
 node_modules
 dist
 coverage
-manifest*.json
-aggregate*.json
+.github
+.vscode
+docs/.vitepress/dist
+docs/.vitepress/cache
+src/presentation/discord/deploy-commands
+**/*.test.ts
+.env
+.env.test
+.example.env
+README.md
+concurrent-processing.md
