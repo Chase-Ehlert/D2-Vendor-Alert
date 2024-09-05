@@ -17,13 +17,13 @@ import { validateSchema } from '../validate-config-schema.js'
 const databaseConfig = validateSchema(databaseConfigSchema)
 const discordConfig = validateSchema(discordConfigSchema)
 const destinyConfig = validateSchema(destinyConfigSchema)
-const MONGO_DB_SERVICE_CONFIG = MongoDbServiceConfigClass.fromConfig(databaseConfig)
-const DISCORD_CONFIG = DiscordClientConfigClass.fromConfig(discordConfig)
-const DESTINY_API_CLIENT_CONFIG = DestinyClientConfigClass.fromConfig(destinyConfig)
+const mongoDbServiceConfig = MongoDbServiceConfigClass.fromConfig(databaseConfig)
+const discordClientConfig = DiscordClientConfigClass.fromConfig(discordConfig)
+const destinyApiClientConfig = DestinyClientConfigClass.fromConfig(destinyConfig)
 const destinyClient = new DestinyClient(
   new AxiosHttpClient(),
   new MongoUserRepository(),
-  DESTINY_API_CLIENT_CONFIG
+  destinyApiClientConfig
 )
 
 const notify = new Notify(
@@ -31,9 +31,9 @@ const notify = new Notify(
   new DiscordService(
     new Vendor(destinyClient),
     new AxiosHttpClient(),
-    DISCORD_CONFIG
+    discordClientConfig
   ),
-  new MongoDbService(MONGO_DB_SERVICE_CONFIG)
+  new MongoDbService(mongoDbServiceConfig)
 )
 
 await notify.notifyUsers(express())
