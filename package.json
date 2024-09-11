@@ -73,11 +73,11 @@
     ],
     "modulePathIgnorePatterns": [
       ".dist/",
-      ".src/testing-helpers/",
       ".src/apps/d2-vendor-alert/app.ts",
       ".src/apps/d2-vendor-alert/@types",
       ".src/apps/discord-notifier/app.ts",
-      ".src/presentation/discord/deploy-commands/deploy-commands-script.ts"
+      ".src/slash-command-registration",
+      ".src/testing-helpers/"
     ],
     "setupFiles": [
       "./jest.setup.ts"
