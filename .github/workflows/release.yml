@@ -1,0 +1,111 @@
+name: Install & Lint & Build & Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+  pull-requests: read
+
+jobs:
+  update-deployment:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: '${{ github.workflow }} @ ${{ github.head_ref || github.ref }}'
+      cancel-in-progress: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.1.7
+      - name: Setup node
+        uses: actions/setup-node@v4.0.3
+        with:
+          node-version: 18.11.x
+          cache: npm
+      - name: Create .env file
+        uses: SpicyPizza/create-envfile@v2.0
+        with:
+          envkey_DATABASE_USER: ${{ secrets.DATABASE_USER }}
+          envkey_DATABASE_CLUSTER: ${{ secrets.DATABASE_CLUSTER }}
+          envkey_DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+          envkey_DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+          envkey_DESTINY_API_KEY: ${{ secrets.DESTINY_API_KEY }}
+          envkey_DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+          envkey_DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
+          envkey_DESTINY_OAUTH_CLIENT_ID: ${{ secrets.DESTINY_OAUTH_CLIENT_ID }}
+          envkey_DESTINY_OAUTH_SECRET: ${{ secrets.DESTINY_OAUTH_SECRET }}
+          envkey_DISCORD_NOTIFIER_ADDRESS: ${{ secrets.DISCORD_NOTIFIER_ADDRESS }}
+      - name: Install
+        run: npm ci
+      - name: Lint
+        run: npm run lint
+      - name: TSC
+        run: npm run tsc
+      - name: Test
+        run: npm run tests
+      - name: SSH into Droplet
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.IP_ADDRESS }}
+          username: root
+          key: ${{ secrets.DEPLOY_SECRET }}
+          script: |
+            cd workspaces/D2-Vendor-Alert/
+            git checkout .
+            git checkout main
+            git pull
+            npm install
+            npm run tsc
+            DATABASE_USER=${{ secrets.DATABASE_USER }} \
+              DATABASE_CLUSTER=${{ secrets.DATABASE_CLUSTER }} \
+              DATABASE_NAME=${{ secrets.DATABASE_NAME }} \
+              DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} \
+              DESTINY_API_KEY=${{ secrets.DESTINY_API_KEY }} \
+              DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }} \
+              DISCORD_CLIENT_ID=${{ secrets.DISCORD_CLIENT_ID }} \
+              DESTINY_OAUTH_CLIENT_ID=${{ secrets.DESTINY_OAUTH_CLIENT_ID }} \
+              DESTINY_OAUTH_SECRET=${{ secrets.DESTINY_OAUTH_SECRET }} \
+              DISCORD_NOTIFIER_ADDRESS=${{ secrets.DISCORD_NOTIFIER_ADDRESS }} \
+              pm2 restart 0 --update-env
+  build-vitepress-site:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.1.7
+        with:
+          fetch-depth: 0
+      - name: Setup Node
+        uses: actions/setup-node@v4.0.3
+        with:
+          node-version: 20
+          cache: npm
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+      - name: Install dependencies
+        run: npm ci
+      - name: Build with VitePress
+        run: npm run docs:build
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/.vitepress/dist
+  deploy-vitepress-site:
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: build-vitepress-site
+    runs-on: ubuntu-latest
+    name: deploy
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

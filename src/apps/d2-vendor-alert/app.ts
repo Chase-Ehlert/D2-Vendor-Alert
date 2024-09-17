@@ -1,44 +1,51 @@
 import express from 'express'
-import { alertConfigSchema, validateSchema } from '../config-schema.js'
-import { AxiosHttpClient } from '../../infrastructure/database/axios-http-client.js'
-import { MongoUserRepository } from '../../infrastructure/database/mongo-user-repository.js'
-import { DestinyApiClient } from '../../infrastructure/destiny/destiny-api-client.js'
-import { MongoDbService } from '../../infrastructure/database/mongo-db-service.js'
+import { MongoUserRepository } from '../../infrastructure/persistence/mongo-user-repository.js'
+import { DestinyClient } from '../../infrastructure/destiny/destiny-client.js'
+import { MongoDbService } from '../../infrastructure/persistence/services/mongo-db-service.js'
 import { NotifierService } from '../../infrastructure/services/notifier-service.js'
 import { AlertManager } from '../../presentation/discord/alert-manager.js'
-import { AlertCommand } from '../../presentation/discord/commands/alert-command.js'
+import { AlertCommand } from '../../presentation/discord/alert-command/alert-command.js'
 import { DiscordClient } from '../../presentation/discord/discord-client.js'
 import { OAuthWebController } from '../../presentation/web/o-auth-web-controller.js'
 import { Alert } from './alert.js'
-import { NotifierServiceConfigClass } from '../../infrastructure/services/notifier-service-config-class.js'
-import { DestinyApiClientConfigClass } from '../../infrastructure/destiny/destiny-api-client-config-class.js'
-import { DiscordConfigClass } from '../../presentation/discord/discord-config-class.js'
-import { MongoDbServiceConfigClass } from '../../infrastructure/database/mongo-db-service-config-class.js'
-import { AlertCommandConfigClass } from '../../presentation/discord/commands/alert-command-config-class.js'
+import { NotifierServiceConfigClass } from '../../infrastructure/services/configs/notifier-service-config-class.js'
+import { DestinyClientConfigClass } from '../../infrastructure/destiny/config/destiny-client-config-class.js'
+import { DiscordClientConfigClass } from '../../presentation/discord/configs/discord-client-config-class.js'
+import { MongoDbServiceConfigClass } from '../../infrastructure/persistence/configs/mongo-db-service-config-class.js'
+import { AlertCommandConfigClass } from '../../presentation/discord/alert-command/alert-command-config-class.js'
+import { databaseConfigSchema } from '../../infrastructure/persistence/configs/database-config-schema.js'
+import { discordConfigSchema } from '../../presentation/discord/configs/discord-config-schema.js'
+import { destinyConfigSchema } from '../../infrastructure/destiny/config/destiny-config-schema.js'
+import { validateSchema } from '../validate-config-schema.js'
+import { AxiosHttpClient } from '../../adapter/axios-http-client.js'
 
-const config = validateSchema(alertConfigSchema)
-const ALERT_COMMAND_CONFIG = AlertCommandConfigClass.fromConfig(config)
-const MONGO_DB_SERVICE_CONFIG = MongoDbServiceConfigClass.fromConfig(config)
-const DISCORD_CONFIG = DiscordConfigClass.fromConfig(config)
-const DISCORD_NOTIFIER_ADDRESS = NotifierServiceConfigClass.fromConfig(config)
-const DESTINY_API_CLIENT_CONFIG = DestinyApiClientConfigClass.fromConfig(config)
+const databaseConfig = validateSchema(databaseConfigSchema)
+const discordConfig = validateSchema(discordConfigSchema)
+const destinyConfig = validateSchema(destinyConfigSchema)
+const alertCommandConfig = AlertCommandConfigClass.fromConfig(destinyConfig)
+const mongoDbServiceConfig = MongoDbServiceConfigClass.fromConfig(databaseConfig)
+const discordClientConfig = DiscordClientConfigClass.fromConfig(discordConfig)
+const discordNotifierAddress = NotifierServiceConfigClass.fromConfig(discordConfig)
+const destinyApiClientConfig = DestinyClientConfigClass.fromConfig(destinyConfig)
 const mongoUserRepo = new MongoUserRepository()
-const destinyApiClient = new DestinyApiClient(
+const destinyClient = new DestinyClient(
   new AxiosHttpClient(),
   mongoUserRepo,
-  DESTINY_API_CLIENT_CONFIG
+  destinyApiClientConfig
 )
 
 const alert = new Alert(
-  new OAuthWebController(destinyApiClient, mongoUserRepo),
-  new MongoDbService(MONGO_DB_SERVICE_CONFIG),
+  new OAuthWebController(destinyClient, mongoUserRepo),
+  new MongoDbService(mongoDbServiceConfig),
   new DiscordClient(
     mongoUserRepo,
-    destinyApiClient,
-    new AlertCommand(ALERT_COMMAND_CONFIG),
-    DISCORD_CONFIG
+    destinyClient,
+    new AlertCommand(alertCommandConfig),
+    discordClientConfig
   ),
-  new AlertManager(new NotifierService(mongoUserRepo, DISCORD_NOTIFIER_ADDRESS, new AxiosHttpClient()))
+  new AlertManager(
+    new NotifierService(mongoUserRepo, discordNotifierAddress, new AxiosHttpClient())
+  )
 )
 
 await alert.runApp(express())

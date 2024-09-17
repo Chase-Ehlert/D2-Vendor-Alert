@@ -1,10 +1,10 @@
-import { UserRepository } from '../../domain/user-repository.js'
-import { NotifierServiceConfig } from './notifier-service-config.js'
-import { HttpClient } from '../../domain/http-client.js'
+import { NotifierServiceConfig } from './configs/notifier-service-config.js'
+import { HttpClient } from '../persistence/http-client.js'
+import { MongoUserRepository } from '../persistence/mongo-user-repository.js'
 
 export class NotifierService {
   constructor (
-    private readonly database: UserRepository,
+    private readonly database: MongoUserRepository,
     private readonly config: NotifierServiceConfig,
     private readonly httpClient: HttpClient
   ) { }

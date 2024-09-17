@@ -1,13 +1,13 @@
-import { Vendor } from '../destiny/vendor.js'
-import { UserInterface } from '../../domain/user.js'
-import { HttpClient } from '../../domain/http-client.js'
-import { DiscordConfig } from '../../presentation/discord/discord-config.js'
+import { Vendor } from '../../domain/destiny/vendor.js'
+import { UserInterface } from '../../domain/user/user.js'
+import { HttpClient } from '../persistence/http-client.js'
+import { DiscordClientConfig } from '../../presentation/discord/configs/discord-client-config.js'
 
 export class DiscordService {
   constructor (
     private readonly vendor: Vendor,
     private readonly httpClient: HttpClient,
-    private readonly config: DiscordConfig
+    private readonly config: DiscordClientConfig
   ) {}
 
   /**
@@ -16,7 +16,7 @@ export class DiscordService {
   async compareModsForSaleWithUserInventory (
     user: UserInterface
   ): Promise<void> {
-    const unownedMods = await this.vendor.getUnownedModsForSaleByAda(user)
+    const unownedMods = await this.vendor.getUnownedMods(user)
 
     if (unownedMods.length > 0) {
       await this.messageUnownedModsList(user, unownedMods)
@@ -50,7 +50,7 @@ export class DiscordService {
   /**
    * Send off message to user's desired Discord alert channel
    */
-  private async discordRequest (
+  async discordRequest (
     user: UserInterface,
     message: string
   ): Promise<void> {

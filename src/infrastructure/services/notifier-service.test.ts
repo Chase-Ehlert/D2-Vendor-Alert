@@ -1,9 +1,9 @@
-import { NotifierServiceConfig } from './notifier-service-config'
-import { UserInterface } from '../../domain/user'
-import { MongoUserRepository } from '../database/mongo-user-repository'
+import { NotifierServiceConfig } from './configs/notifier-service-config'
+import { UserInterface } from '../../domain/user/user'
+import { MongoUserRepository } from '../persistence/mongo-user-repository'
 import { NotifierService } from './notifier-service'
-import { AxiosHttpClient } from '../database/axios-http-client.js'
 import { AxiosResponse } from 'axios'
+import { AxiosHttpClient } from '../../adapter/axios-http-client.js'
 
 beforeAll(() => {
   global.console = {

@@ -1,23 +1,22 @@
-import { MongoUserRepository } from '../../infrastructure/database/mongo-user-repository'
+import { MongoUserRepository } from '../../infrastructure/persistence/mongo-user-repository'
 import { Alert } from './alert'
-import { DestinyApiClientConfig } from '../../infrastructure/destiny/destiny-api-client-config'
-import { DiscordConfig } from '../../presentation/discord/discord-config'
-import { MongoDbServiceConfig } from '../../infrastructure/database/mongo-db-service-config'
-import { NotifierServiceConfig } from '../../infrastructure/services/notifier-service-config'
-import { AxiosHttpClient } from '../../infrastructure/database/axios-http-client'
-import { DestinyApiClient } from '../../infrastructure/destiny/destiny-api-client'
-import { MongoDbService } from '../../infrastructure/database/mongo-db-service'
+import { DestinyClientConfig } from '../../infrastructure/destiny/config/destiny-client-config'
+import { DiscordClientConfig } from '../../presentation/discord/configs/discord-client-config'
+import { MongoDbServiceConfig } from '../../infrastructure/persistence/configs/mongo-db-service-config'
+import { NotifierServiceConfig } from '../../infrastructure/services/configs/notifier-service-config'
+import { DestinyClient } from '../../infrastructure/destiny/destiny-client'
+import { MongoDbService } from '../../infrastructure/persistence/services/mongo-db-service'
 import { NotifierService } from '../../infrastructure/services/notifier-service'
 import { AlertManager } from '../../presentation/discord/alert-manager'
-import { AlertCommand } from '../../presentation/discord/commands/alert-command'
+import { AlertCommand } from '../../presentation/discord/alert-command/alert-command'
 import { DiscordClient } from '../../presentation/discord/discord-client'
 import { OAuthWebController } from '../../presentation/web/o-auth-web-controller'
-import { OAuthResponse } from '../../domain/o-auth-response'
-import { AlertCommandConfig } from '../../presentation/discord/commands/alert-command-config.js'
+import { AlertCommandConfig } from '../../presentation/discord/alert-command/alert-command-config.js'
 import express from 'express'
 import path from 'path'
 import * as url from 'url'
 import metaUrl from '../../testing-helpers/url'
+import { AxiosHttpClient } from '../../adapter/axios-http-client.js'
 
 jest.mock('./../../testing-helpers/url', () => {
   return 'example'
@@ -52,7 +51,7 @@ beforeAll(() => {
 let mongoUserRepo: MongoUserRepository
 let mongoDbService: MongoDbService
 let alertManager: AlertManager
-let destinyApiClient: DestinyApiClient
+let destinyClient: DestinyClient
 let discordClient: DiscordClient
 let oAuthWebController: OAuthWebController
 let mockApp: express.Application
@@ -67,18 +66,18 @@ beforeEach(() => {
        { address: '' } satisfies NotifierServiceConfig,
        new AxiosHttpClient()
     ))
-  destinyApiClient = new DestinyApiClient(
+  destinyClient = new DestinyClient(
     new AxiosHttpClient(),
     mongoUserRepo,
-      {} satisfies DestinyApiClientConfig
+      {} satisfies DestinyClientConfig
   )
   discordClient = new DiscordClient(
     mongoUserRepo,
-    destinyApiClient,
+    destinyClient,
     new AlertCommand({} satisfies AlertCommandConfig),
-    {} satisfies DiscordConfig
+    {} satisfies DiscordClientConfig
   )
-  oAuthWebController = new OAuthWebController(destinyApiClient, mongoUserRepo)
+  oAuthWebController = new OAuthWebController(destinyClient, mongoUserRepo)
   mockApp = express()
 
   alert = new Alert(oAuthWebController, mongoDbService, discordClient, alertManager)
@@ -106,21 +105,33 @@ describe('Alert', () => {
     expect(alertManager.dailyReset).toHaveBeenCalled()
   })
 
-  it('should setup the get root endpoint with the handleOAuth function', () => {
-    const rootHandler = (alert as any).rootHandler(mockApp)
-    const expectedRequest = { query: { code: '123' } }
-    const expectedResult: OAuthResponse = {
-      render: (_template: string, _data: Record<string, any>) => {},
-      sendFile: (_path: string) => {}
-    }
+  it('should create and start the server in the correct order', async () => {
+    const appEngineMock = jest.fn()
+    const appSetMock = jest.fn()
+    const appGetMock = jest.fn()
+    const connectToDatabaseMock = jest.fn()
+    const setupDiscordClientMock = jest.fn()
+    const appListenMock = jest.fn()
+    const alertMangerMock = jest.fn()
 
-    rootHandler(expectedRequest, expectedResult)
+    mockApp.engine = appEngineMock
+    mockApp.set = appSetMock
+    mockApp.get = appGetMock
+    mongoDbService.connectToDatabase = connectToDatabaseMock
+    discordClient.setupDiscordClient = setupDiscordClientMock
+    mockApp.listen = appListenMock
+    alertManager.dailyReset = alertMangerMock
 
-    expect(oAuthWebController.handleOAuth).toHaveBeenCalledWith(
-      mockApp,
-      expectedRequest,
-      expectedResult
-    )
+    await alert.runApp(mockApp)
+
+    expect(appEngineMock).toHaveBeenCalledBefore(appSetMock)
+    expect(appSetMock).toHaveBeenCalledTimes(2)
+    expect(appSetMock).toHaveBeenCalledBefore(appGetMock)
+    expect(appGetMock).toHaveBeenCalledBefore(connectToDatabaseMock)
+    expect(connectToDatabaseMock).toHaveBeenCalledBefore(setupDiscordClientMock)
+    expect(setupDiscordClientMock).toHaveBeenCalledBefore(appListenMock)
+    expect(appListenMock).toHaveBeenCalledBefore(alertMangerMock)
+    expect(alertMangerMock).toHaveBeenCalledAfter(appListenMock)
   })
 
   it('should log that the server is running', () => {

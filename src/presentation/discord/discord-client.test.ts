@@ -1,13 +1,13 @@
-import { DestinyApiClientConfig } from '../../infrastructure/destiny/destiny-api-client-config'
-import { DiscordConfig } from './discord-config'
-import { AxiosHttpClient } from '../../infrastructure/database/axios-http-client'
-import { MongoUserRepository } from '../../infrastructure/database/mongo-user-repository'
-import { DestinyApiClient } from '../../infrastructure/destiny/destiny-api-client'
-import { AlertCommand } from './commands/alert-command'
+import { DestinyClientConfig } from '../../infrastructure/destiny/config/destiny-client-config'
+import { DiscordClientConfig } from './configs/discord-client-config'
+import { MongoUserRepository } from '../../infrastructure/persistence/mongo-user-repository'
+import { DestinyClient } from '../../infrastructure/destiny/destiny-client'
+import { AlertCommand } from './alert-command/alert-command'
 import { DiscordClient } from './discord-client'
-import { AlertCommandConfig } from './commands/alert-command-config.js'
+import { AlertCommandConfig } from './alert-command/alert-command-config.js'
 import * as discord from 'discord.js'
-import { SlashCommand } from '../../domain/slash-command.js'
+import { SlashCommand } from '../../domain/discord/slash-command.js'
+import { AxiosHttpClient } from '../../adapter/axios-http-client.js'
 
 jest.mock('./../../testing-helpers/url', () => {
   return 'example'
@@ -40,16 +40,16 @@ beforeAll(() => {
 })
 
 describe('DiscordClient', () => {
-  const expectedDiscordConfig = { token: 'token' } as unknown as DiscordConfig
+  const expectedDiscordConfig = { token: 'token' } as unknown as DiscordClientConfig
   const mongoUserRepo = new MongoUserRepository()
-  const destinyApiClient = new DestinyApiClient(
+  const destinyClient = new DestinyClient(
     new AxiosHttpClient(),
     mongoUserRepo,
-    {} satisfies DestinyApiClientConfig)
+    {} satisfies DestinyClientConfig)
   const alertCommand = new AlertCommand({} satisfies AlertCommandConfig)
   const discordClient = new DiscordClient(
     mongoUserRepo,
-    destinyApiClient,
+    destinyClient,
     alertCommand,
     expectedDiscordConfig
   )

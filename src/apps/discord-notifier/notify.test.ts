@@ -1,14 +1,17 @@
-import { MongoUserRepository } from '../../infrastructure/database/mongo-user-repository'
-import { DestinyApiClientConfig } from '../../infrastructure/destiny/destiny-api-client-config'
-import { DiscordConfig } from '../../presentation/discord/discord-config'
-import { MongoDbServiceConfig } from '../../infrastructure/database/mongo-db-service-config'
-import { AxiosHttpClient } from '../../infrastructure/database/axios-http-client'
-import { DestinyApiClient } from '../../infrastructure/destiny/destiny-api-client'
-import { MongoDbService } from '../../infrastructure/database/mongo-db-service'
+import { MongoUserRepository } from '../../infrastructure/persistence/mongo-user-repository'
+import { DestinyClientConfig } from '../../infrastructure/destiny/config/destiny-client-config'
+import { DiscordClientConfig } from '../../presentation/discord/configs/discord-client-config'
+import { MongoDbServiceConfig } from '../../infrastructure/persistence/configs/mongo-db-service-config'
+import { DestinyClient } from '../../infrastructure/destiny/destiny-client'
+import { MongoDbService } from '../../infrastructure/persistence/services/mongo-db-service'
 import { DiscordService } from '../../infrastructure/services/discord-service'
 import { Notify } from './notify'
-import { Vendor } from '../../infrastructure/destiny/vendor'
+import { Vendor } from '../../domain/destiny/vendor'
 import express from 'express'
+import { AxiosHttpClient } from '../../adapter/axios-http-client.js'
+import { TokenInfo } from '../../infrastructure/destiny/token-info.js'
+import { hyperlink } from 'discord.js'
+import { AlertCommandConfig } from '../../presentation/discord/alert-command/alert-command-config.js'
 
 const jsonMock = jest.fn()
 
@@ -39,30 +42,35 @@ beforeAll(() => {
   }
 })
 
-let destinyApiClient: DestinyApiClient
+const next = jest.fn()
+const expectedOauthClientId = '123abc'
+let destinyClient: DestinyClient
 let discordService: DiscordService
 let mongoDbService: MongoDbService
 let mockApp: express.Application
 let notify: Notify
 
 beforeEach(() => {
-  destinyApiClient = new DestinyApiClient(
+  destinyClient = new DestinyClient(
     new AxiosHttpClient(),
     new MongoUserRepository(),
-      {} satisfies DestinyApiClientConfig
+      {} satisfies DestinyClientConfig
   )
   discordService = new DiscordService(
-    new Vendor(destinyApiClient),
+    new Vendor(destinyClient),
     new AxiosHttpClient(),
-      {} satisfies DiscordConfig
+      {} satisfies DiscordClientConfig
   )
   mongoDbService = new MongoDbService({} satisfies MongoDbServiceConfig)
   mockApp = express()
 
-  notify = new Notify(destinyApiClient, discordService, mongoDbService)
+  notify = new Notify(
+    destinyClient,
+    discordService,
+    mongoDbService,
+      { oauthClientId: expectedOauthClientId } satisfies AlertCommandConfig
+  )
 
-  destinyApiClient.checkRefreshTokenExpiration = jest.fn()
-  discordService.compareModsForSaleWithUserInventory = jest.fn()
   mongoDbService.connectToDatabase = jest.fn()
 })
 
@@ -77,15 +85,66 @@ describe('Notify', () => {
     expect(mongoDbService.connectToDatabase).toHaveBeenCalled()
   })
 
-  it('should setup the post notify endpoint with checking the refresh token and comparing mods', async () => {
-    const expectedFunction = (notify as any).notifyHandler(mockApp)
-    const expectedUser = '123'
+  it('should setup the service in the correct order', async () => {
+    const connectToDatabaseMock = jest.fn()
+    const appUseMock = jest.fn()
+    const appPostMock = jest.fn()
+    const appListenMock = jest.fn()
+
+    mongoDbService.connectToDatabase = connectToDatabaseMock
+    mockApp.use = appUseMock
+    mockApp.post = appPostMock
+    mockApp.listen = appListenMock
+
+    await notify.notifyUsers(mockApp)
+
+    expect(connectToDatabaseMock).toHaveBeenCalledBefore(appUseMock)
+    expect(appUseMock).toHaveBeenCalledBefore(appPostMock)
+    expect(appPostMock).toHaveBeenCalledBefore(appListenMock)
+    expect(appListenMock).toHaveBeenCalledAfter(appPostMock)
+  })
+
+  it('should handle notifying users by checking the refresh token and then comparing mods', async () => {
+    const expectedFunction = (notify as any).handleNotifyingUsers()
+    const expectedRefreshToken = '123'
+    const expectedUser = { refreshToken: expectedRefreshToken }
     const request = { body: { user: expectedUser } }
+    const getTokenInfoSpy = jest.spyOn(destinyClient, 'getTokenInfo').mockResolvedValue(new TokenInfo('', '', ''))
+    const checkRefreshTokenExpirationSpy = jest.spyOn(destinyClient, 'checkRefreshTokenExpiration').mockResolvedValue()
+    const compareModsForSaleWithUserInventorySpy = jest.spyOn(discordService, 'compareModsForSaleWithUserInventory').mockResolvedValue()
 
-    await expectedFunction(request)
+    await Promise.all([
+      expectedFunction(request, {}, next)
+    ])
 
-    expect(destinyApiClient.checkRefreshTokenExpiration).toHaveBeenCalledWith(expectedUser)
-    expect(discordService.compareModsForSaleWithUserInventory).toHaveBeenCalledWith(expectedUser)
+    expect(getTokenInfoSpy).toHaveBeenCalledWith(expectedRefreshToken)
+    expect(checkRefreshTokenExpirationSpy).toHaveBeenCalledWith(expectedUser)
+    expect(compareModsForSaleWithUserInventorySpy).toHaveBeenCalled()
+  })
+
+  it('should alert users to reauthorize when the refresh token is too old', async () => {
+    const expectedFunction = (notify as any).handleNotifyingUsers()
+    const expectedRefreshToken = '123'
+    const expectedDiscordId = '321'
+    const expectedUser = {
+      refreshToken: expectedRefreshToken,
+      discordId: expectedDiscordId
+    }
+    const request = { body: { user: expectedUser } }
+    const expectedMessage = `<@${request.body.user.discordId}> needs to reauthorize. To do so, click ` +
+      hyperlink(
+        'here!',
+        `https://www.bungie.net/en/oauth/authorize?client_id=${expectedOauthClientId}&response_type=code`
+      )
+    const discordRequestSpy = jest.spyOn(discordService, 'discordRequest').mockResolvedValue()
+
+    jest.spyOn(destinyClient, 'getTokenInfo').mockRejectedValue(new Error())
+
+    await Promise.all([
+      expectedFunction(request, {}, next)
+    ])
+
+    expect(discordRequestSpy).toHaveBeenCalledWith(expectedUser, expectedMessage)
   })
 
   it('should log that the notifier service is running', () => {

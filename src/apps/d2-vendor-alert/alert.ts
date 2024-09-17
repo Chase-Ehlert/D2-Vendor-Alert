@@ -5,11 +5,11 @@ import * as url from 'url'
 import * as discord from 'discord.js'
 import metaUrl from '../../testing-helpers/url.js'
 import { DiscordClient } from '../../presentation/discord/discord-client.js'
-import { MongoDbService } from '../../infrastructure/database/mongo-db-service.js'
+import { MongoDbService } from '../../infrastructure/persistence/services/mongo-db-service.js'
 import { OAuthWebController } from '../../presentation/web/o-auth-web-controller.js'
 import { AlertManager } from '../../presentation/discord/alert-manager.js'
-import { OAuthResponse } from '../../domain/o-auth-response.js'
-import { OAuthRequest } from '../../domain/o-auth-request.js'
+import { OAuthResponse } from '../../presentation/web/o-auth-response.js'
+import { OAuthRequest } from '../../presentation/web/o-auth-request.js'
 
 export class Alert {
   constructor (
@@ -33,17 +33,10 @@ export class Alert {
     )
     app.get(
       '/',
-      this.rootHandler(app) as express.RequestHandler
+      (request: OAuthRequest, response: OAuthResponse, next) => {
+        this.oAuthWebController.handleOAuth(request, response).catch(next)
+      }
     )
-  }
-
-  private rootHandler (app: express.Application): Function {
-    return async (
-      request: OAuthRequest,
-      result: OAuthResponse
-    ) => {
-      await this.oAuthWebController.handleOAuth(app, request, result)
-    }
   }
 
   private async startServer (
@@ -58,13 +51,14 @@ export class Alert {
       ]
     })
 
+    await this.mongoDbService.connectToDatabase()
+    await this.discordClient.setupDiscordClient(discordJsClient)
+
     app.listen(
       3001,
       this.logServerIsRunning()
     )
 
-    await this.mongoDbService.connectToDatabase()
-    await this.discordClient.setupDiscordClient(discordJsClient)
     this.alertManager.dailyReset(17, 1, 0, 0)
   }
 
