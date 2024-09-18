@@ -42,7 +42,7 @@ export class Alert {
   private async startServer (
     app: { listen: (arg0: number, arg1: () => void) => void }
   ): Promise<void> {
-    const discordJsClient = new discord.Client({
+    const discordClient = new discord.Client({
       intents: [
         discord.GatewayIntentBits.Guilds,
         discord.GatewayIntentBits.GuildMessages,
@@ -52,7 +52,7 @@ export class Alert {
     })
 
     await this.mongoDbService.connectToDatabase()
-    await this.discordClient.setupDiscordClient(discordJsClient)
+    await this.discordClient.setupDiscordClient(discordClient)
 
     app.listen(
       3001,
