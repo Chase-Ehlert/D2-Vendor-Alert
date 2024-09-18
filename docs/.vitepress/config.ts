@@ -1,26 +1,29 @@
 import { defineConfig } from 'vitepress'
 
-// https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "D2 Vendor Alert",
   description: "A Discord bot integrated with Destiny 2's API",
   themeConfig: {
-    // https://vitepress.dev/reference/default-theme-config
     nav: [
-      { text: 'Home', link: '/' },
-      { text: 'Examples', link: '/markdown-examples' }
+      { text: 'Home', link: '/' }
     ],
 
     sidebar: [
       {
-        text: 'Examples',
+        text: 'Navigate',
         items: [
-          { text: 'Markdown Examples', link: '/markdown-examples' },
-          { text: 'Runtime API Examples', link: '/api-examples' }
+          { text: 'Installation', link: '/installation' },
+          {
+             text: 'Software Architecture',
+             items: [
+              { text: 'Project Context', link: '/software-architecture/context' },
+              { text: 'D2 Vendor Alert', link: '/software-architecture/d2-vendor-alert' },
+              { text: 'Discord Notifier', link: '/software-architecture/discord-notifier' }
+            ]
+          }
         ]
       }
     ],
-
     socialLinks: [
       { icon: 'github', link: 'https://github.com/Chase-Ehlert/D2-Vendor-Alert' }
     ]
