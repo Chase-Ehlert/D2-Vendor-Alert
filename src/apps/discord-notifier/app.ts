@@ -39,4 +39,3 @@ const notify = new Notify(
 )
 
 await notify.notifyUsers(express())
-// Need to figure out how to close the database connection
