@@ -21,4 +21,4 @@ Create a pull request against the main branch and if it passes through the GitHu
   - You should be good to go! Run the `npm run start` command in a termainal from the root of the project and the bot will start up.
 
 ## Documentation
-Check out my doc [site](https://chase-ehlert.github.io/D2-Vendor-Alert/) for this project!
+Check out my doc [site](https://chase-ehlert.github.io/D2-Vendor-Alert/){:target="_blank"} for this project!
