@@ -14,6 +14,6 @@ features:
     link: /installation
     linkText: Click here!
   - title: Software Architecture
-    link: /software-architecture
+    link: /software-architecture/context
     linkText: Click here!
 ---
