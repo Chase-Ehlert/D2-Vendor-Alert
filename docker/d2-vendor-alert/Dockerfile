@@ -1,5 +1,5 @@
 FROM node:19-alpine AS devBuilder
-MAINTAINER Chase Ehlert <chaseehlert123@gmail.com>
+LABEL org.opencontainers.image.authors="chaseehlert123@gmail.com"
 WORKDIR /app
 COPY ./package*.json ./
 RUN npm install && npm cache clean --force
