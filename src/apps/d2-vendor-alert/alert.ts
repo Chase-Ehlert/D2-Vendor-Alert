@@ -29,7 +29,7 @@ export class Alert {
     app.set('view engine', 'mustache')
     app.set(
       'views',
-      path.join(url.fileURLToPath(new URL('../src/presentation', url.pathToFileURL(metaUrl).href)), 'views')
+      path.join(url.fileURLToPath(new URL('src/presentation', url.pathToFileURL(metaUrl).href)), 'views')
     )
     app.get(
       '/',

@@ -4,6 +4,7 @@ import { DestinyClient } from '../../infrastructure/destiny/destiny-client.js'
 import { OAuthResponse } from './o-auth-response.js'
 import { OAuthRequest } from './o-auth-request.js'
 import path from 'path'
+import * as url from 'url'
 import metaUrl from '../../testing-helpers/url.js'
 
 export class OAuthWebController {
@@ -22,14 +23,16 @@ export class OAuthWebController {
         result.render('landing-page.mustache', { guardian })
       }
     } else {
-      console.log('Error with retreving code from authorization url on landing page')
+      console.log('Error with retrieving code from authorization url on landing page')
       console.log(request)
       result.sendFile(path.join(metaUrl, 'src/presentation/views/landing-page-error.html'))
+      result.sendFile(path.join(url.fileURLToPath(new URL('../src/presentation', url.pathToFileURL(metaUrl).href)), 'views')
+      )
     }
   }
 
   /**
- * Uses the authorization code to retreive the user's token information and then save it to the database
+ * Uses the authorization code to retrieve the user's token information and then save it to the database
  */
   private async handleAuthorizationCode (
     authorizationCode: string,
