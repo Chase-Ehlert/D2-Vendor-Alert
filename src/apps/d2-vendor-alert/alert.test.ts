@@ -96,7 +96,7 @@ describe('Alert', () => {
     expect(mockApp.set).toHaveBeenCalledWith('view engine', 'mustache')
     expect(mockApp.set).toHaveBeenCalledWith(
       'views',
-      path.join(url.fileURLToPath(new URL('../src/presentation', url.pathToFileURL(metaUrl).href)), 'views')
+      path.join(url.fileURLToPath(new URL('src/presentation', url.pathToFileURL(metaUrl).href)), 'views')
     )
     expect(mockApp.get).toHaveBeenCalledWith('/', expect.any(Function))
     expect(mockApp.listen).toHaveBeenCalledWith(3001, expect.any(Function))

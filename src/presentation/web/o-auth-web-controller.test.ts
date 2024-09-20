@@ -63,7 +63,7 @@ describe('OAuthWebController', () => {
 
     await oauthWebController.handleOAuth(request, mockResult)
 
-    expect(consoleSpy).toHaveBeenCalledWith('Error with retreving code from authorization url on landing page')
+    expect(consoleSpy).toHaveBeenCalledWith('Error with retrieving code from authorization url on landing page')
     expect(consoleSpy).toHaveBeenCalledWith(request)
     expect(mockResult.sendFile).toHaveBeenCalledWith(
       path.join('example/somewhere/src/presentation/views/landing-page-error.html')
